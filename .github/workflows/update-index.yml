@@ -1,0 +1,34 @@
+name: Update Prompt Index
+
+on:
+  push:
+    paths:
+      - 'prompts/*.html'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Update index.json
+      run: |
+        cd prompts
+        ls -1 *.html 2>/dev/null | jq -R -s 'split("\n")[:-1]' > index.json
+        
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add prompts/index.json
+        git diff --staged --quiet || git commit -m "Auto-update index.json"
+        git push
