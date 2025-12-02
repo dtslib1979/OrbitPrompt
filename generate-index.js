@@ -10,11 +10,11 @@ if (!fs.existsSync(promptsDir)) {
   fs.mkdirSync(promptsDir, { recursive: true });
 }
 
-// Read all files in prompts directory
+// Read all .html files in prompts directory
 const files = fs.readdirSync(promptsDir)
   .filter(file => {
-    // Exclude index.json and hidden files
-    return file !== 'index.json' && !file.startsWith('.');
+    // Include only .html files
+    return file.endsWith('.html');
   })
   .sort(); // Sort alphabetically
 
