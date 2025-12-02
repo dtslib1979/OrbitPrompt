@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parksy Emotion Audio Map</title>
+  <style>
+    :root {
+      --bg: #05070b;
+      --fg: #f5f5f5;
+      --accent: #ffd86b;
+      --accent-soft: rgba(255, 216, 107, 0.1);
+      --card-bg: #0d1016;
+      --muted: #9ca3af;
+      --border: #1f2933;
+      --radius-lg: 18px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #111827, #020308 55%);
+      color: var(--fg);
+    }
+
+    .app-shell {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 16px 14px 40px;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .title-pill {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(255, 216, 107, 0.35);
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0 6px;
+    }
+
+    .filter-group {
+      flex: 1 1 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    select,
+    input[type="search"] {
+      width: 100%;
+      padding: 7px 9px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--fg);
+      font-size: 0.82rem;
+      appearance: none;
+    }
+
+    select:focus,
+    input[type="search"]:focus {
+      outline: 1px solid rgba(255, 216, 107, 0.7);
+      border-color: rgba(255, 216, 107, 0.9);
+    }
+
+    .chips-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 6px 0 12px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.8);
+      gap: 6px;
+    }
+
+    .chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .reset-btn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.72rem;
+      padding: 4px 0;
+      text-decoration: underline;
+    }
+
+    .reset-btn:hover {
+      color: var(--fg);
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card {
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(3, 7, 18, 1));
+      border: 1px solid rgba(15, 23, 42, 0.9);
+      padding: 10px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .item-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .persona-pill {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      color: #e5e7eb;
+      white-space: nowrap;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      color: var(--muted);
+    }
+
+    .tag--key {
+      border-color: rgba(96, 165, 250, 0.8);
+      color: #bfdbfe;
+    }
+
+    .tag--emotion {
+      border-color: rgba(248, 250, 252, 0.12);
+      background: radial-gradient(circle at top left, rgba(255, 216, 107, 0.15), transparent 60%);
+      color: #e5e7eb;
+    }
+
+    .empty {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 24px;
+    }
+
+    @media (min-width: 600px) {
+      .app-shell {
+        padding-top: 24px;
+      }
+      .title {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div class="title">
+        Parksy Emotion Audio Map
+        <span class="title-pill">58 tracks · 5 personas</span>
+      </div>
+      <div class="subtitle">
+        장르 prefix로 페르소나를, key로 파트 구조와 Plutchik 감정을 매칭한 박씨 전용 마스터 데이터셋입니다.
+      </div>
+    </header>
+
+    <section class="filters" aria-label="필터">
+      <div class="filter-group">
+        <label for="personaFilter">Persona</label>
+        <select id="personaFilter">
+          <option value="">전체</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="emotionFilter">Plutchik Emotion</label>
+        <select id="emotionFilter">
+          <option value="">전체</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="searchInput">Item / 키워드 검색</label>
+        <input id="searchInput" type="search" placeholder="예: Disco, Techno, G- ..." />
+      </div>
+    </section>
+
+    <div class="chips-row">
+      <div class="chip">
+        <span class="chip-dot"></span>
+        <span id="resultCount">0</span>
+        <span>tracks</span>
+      </div>
+      <button class="reset-btn" type="button" id="resetBtn">필터 초기화</button>
+    </div>
+
+    <main class="list" id="trackList" aria-live="polite"></main>
+    <div class="empty" id="emptyState" style="display:none;">조건에 맞는 트랙이 없습니다.</div>
+  </div>
+
+  <script>
+    const DATA = [
+      { item: "80s Disco_A-", persona: "Musician", partKey: "A-", emotion: "Joy" },
+      { item: "80s Disco_A", persona: "Musician", partKey: "A", emotion: "Joy" },
+      { item: "80s Disco_B-", persona: "Musician", partKey: "B-", emotion: "Trust" },
+      { item: "80s Disco_B", persona: "Musician", partKey: "B", emotion: "Trust" },
+      { item: "80s Disco_C", persona: "Musician", partKey: "C", emotion: "Anticipation" },
+      { item: "80s Disco_Cs-", persona: "Musician", partKey: "Cs-", emotion: "Surprise" },
+      { item: "80s Disco_D-", persona: "Musician", partKey: "D-", emotion: "Anger" },
+      { item: "80s Disco_Eb", persona: "Musician", partKey: "Eb", emotion: "Sadness" },
+      { item: "80s Disco_F", persona: "Musician", partKey: "F", emotion: "Fear" },
+      { item: "80s Disco_G-", persona: "Musician", partKey: "G-", emotion: "Ecstasy" },
+      { item: "90s NewA_A-", persona: "Blogger", partKey: "A-", emotion: "Joy" },
+      { item: "90s NewA_A", persona: "Blogger", partKey: "A", emotion: "Joy" },
+      { item: "90s NewA_C", persona: "Blogger", partKey: "C", emotion: "Anticipation" },
+      { item: "90s NewA_Cs-", persona: "Blogger", partKey: "Cs-", emotion: "Surprise" },
+      { item: "90s NewA_D-", persona: "Blogger", partKey: "D-", emotion: "Anger" },
+      { item: "90s NewA_E-", persona: "Blogger", partKey: "E-", emotion: "Disgust" },
+      { item: "90s NewA_Eb", persona: "Blogger", partKey: "Eb", emotion: "Sadness" },
+      { item: "90s NewA_F", persona: "Blogger", partKey: "F", emotion: "Fear" },
+      { item: "90s NewA_G-", persona: "Blogger", partKey: "G-", emotion: "Ecstasy" },
+      { item: "90s NewA_G", persona: "Blogger", partKey: "G", emotion: "Ecstasy" },
+      { item: "JazzP_A-", persona: "Philosopher", partKey: "A-", emotion: "Joy" },
+      { item: "JazzP_A", persona: "Philosopher", partKey: "A", emotion: "Joy" },
+      { item: "JazzP_B-", persona: "Philosopher", partKey: "B-", emotion: "Trust" },
+      { item: "JazzP_B", persona: "Philosopher", partKey: "B", emotion: "Trust" },
+      { item: "JazzP_C-", persona: "Philosopher", partKey: "C-", emotion: "Anticipation" },
+      { item: "JazzP_Cs-", persona: "Philosopher", partKey: "Cs-", emotion: "Surprise" },
+      { item: "JazzP_D", persona: "Philosopher", partKey: "D", emotion: "Anger" },
+      { item: "JazzP_F", persona: "Philosopher", partKey: "F", emotion: "Fear" },
+      { item: "JazzP_G-", persona: "Philosopher", partKey: "G-", emotion: "Ecstasy" },
+      { item: "JazzP_G", persona: "Philosopher", partKey: "G", emotion: "Ecstasy" },
+      { item: "ST_A-", persona: "Engineer", partKey: "A-", emotion: "Joy" },
+      { item: "ST_A", persona: "Engineer", partKey: "A", emotion: "Joy" },
+      { item: "ST_B-", persona: "Engineer", partKey: "B-", emotion: "Trust" },
+      { item: "ST_C", persona: "Engineer", partKey: "C", emotion: "Anticipation" },
+      { item: "ST_D-", persona: "Engineer", partKey: "D-", emotion: "Anger" },
+      { item: "ST_D", persona: "Engineer", partKey: "D", emotion: "Anger" },
+      { item: "ST_E-", persona: "Engineer", partKey: "E-", emotion: "Disgust" },
+      { item: "ST_F", persona: "Engineer", partKey: "F", emotion: "Fear" },
+      { item: "ST_G-", persona: "Engineer", partKey: "G-", emotion: "Ecstasy" },
+      { item: "ST_G", persona: "Engineer", partKey: "G", emotion: "Ecstasy" },
+      { item: "Techno_A", persona: "Artist", partKey: "A", emotion: "Joy" },
+      { item: "Techno_B-", persona: "Artist", partKey: "B-", emotion: "Trust" },
+      { item: "Techno_C-", persona: "Artist", partKey: "C-", emotion: "Anticipation" },
+      { item: "Techno_C", persona: "Artist", partKey: "C", emotion: "Anticipation" },
+      { item: "Techno_D", persona: "Artist", partKey: "D", emotion: "Anger" },
+      { item: "Techno_E-", persona: "Artist", partKey: "E-", emotion: "Disgust" },
+      { item: "Techno_E", persona: "Artist", partKey: "E", emotion: "Disgust" },
+      { item: "Techno_F", persona: "Artist", partKey: "F", emotion: "Fear" },
+      { item: "Techno_G", persona: "Artist", partKey: "G", emotion: "Ecstasy" },
+      { item: "TropicalH_A-", persona: "Engineer-Practical", partKey: "A-", emotion: "Joy" },
+      { item: "TropicalH_A", persona: "Engineer-Practical", partKey: "A", emotion: "Joy" },
+      { item: "TropicalH_C", persona: "Engineer-Practical", partKey: "C", emotion: "Anticipation" },
+      { item: "TropicalH_Cs-", persona: "Engineer-Practical", partKey: "Cs-", emotion: "Surprise" },
+      { item: "TropicalH_D", persona: "Engineer-Practical", partKey: "D", emotion: "Anger" },
+      { item: "TropicalH_E-", persona: "Engineer-Practical", partKey: "E-", emotion: "Disgust" },
+      { item: "TropicalH_F", persona: "Engineer-Practical", partKey: "F", emotion: "Fear" },
+      { item: "TropicalH_G-", persona: "Engineer-Practical", partKey: "G-", emotion: "Ecstasy" },
+      { item: "TropicalH_G", persona: "Engineer-Practical", partKey: "G", emotion: "Ecstasy" }
+    ];
+
+    const personaFilter = document.getElementById("personaFilter");
+    const emotionFilter = document.getElementById("emotionFilter");
+    const searchInput = document.getElementById("searchInput");
+    const trackList = document.getElementById("trackList");
+    const emptyState = document.getElementById("emptyState");
+    const resultCount = document.getElementById("resultCount");
+    const resetBtn = document.getElementById("resetBtn");
+
+    function initFilters() {
+      const personas = [...new Set(DATA.map(d => d.persona))].sort();
+      personas.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p;
+        opt.textContent = p;
+        personaFilter.appendChild(opt);
+      });
+
+      const emotions = [...new Set(DATA.map(d => d.emotion))].sort();
+      emotions.forEach(e => {
+        const opt = document.createElement("option");
+        opt.value = e;
+        opt.textContent = e;
+        emotionFilter.appendChild(opt);
+      });
+    }
+
+    function renderList() {
+      const personaVal = personaFilter.value;
+      const emotionVal = emotionFilter.value;
+      const searchVal = searchInput.value.trim().toLowerCase();
+
+      const filtered = DATA.filter(d => {
+        if (personaVal && d.persona !== personaVal) return false;
+        if (emotionVal && d.emotion !== emotionVal) return false;
+        if (searchVal) {
+          const hay = `${d.item} ${d.persona} ${d.partKey} ${d.emotion}`.toLowerCase();
+          if (!hay.includes(searchVal)) return false;
+        }
+        return true;
+      });
+
+      trackList.innerHTML = "";
+      resultCount.textContent = filtered.length.toString();
+
+      if (!filtered.length) {
+        emptyState.style.display = "block";
+        return;
+      }
+      emptyState.style.display = "none";
+
+      filtered.forEach(d => {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        const header = document.createElement("div");
+        header.className = "card-header";
+
+        const name = document.createElement("div");
+        name.className = "item-name";
+        name.textContent = d.item;
+
+        const persona = document.createElement("div");
+        persona.className = "persona-pill";
+        persona.textContent = d.persona;
+
+        header.appendChild(name);
+        header.appendChild(persona);
+
+        const metaRow = document.createElement("div");
+        metaRow.className = "meta-row";
+
+        const keyTag = document.createElement("span");
+        keyTag.className = "tag tag--key";
+        keyTag.textContent = `Part key: ${d.partKey}`;
+
+        const emoTag = document.createElement("span");
+        emoTag.className = "tag tag--emotion";
+        emoTag.textContent = d.emotion;
+
+        metaRow.appendChild(keyTag);
+        metaRow.appendChild(emoTag);
+
+        card.appendChild(header);
+        card.appendChild(metaRow);
+        trackList.appendChild(card);
+      });
+    }
+
+    function resetFilters() {
+      personaFilter.value = "";
+      emotionFilter.value = "";
+      searchInput.value = "";
+      renderList();
+    }
+
+    personaFilter.addEventListener("change", renderList);
+    emotionFilter.addEventListener("change", renderList);
+    searchInput.addEventListener("input", () => {
+      window.clearTimeout(searchInput._debounceId);
+      searchInput._debounceId = window.setTimeout(renderList, 120);
+    });
+    resetBtn.addEventListener("click", resetFilters);
+
+    initFilters();
+    renderList();
+  </script>
+</body>
+</html>
