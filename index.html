@@ -672,7 +672,7 @@
                 }
             }
             
-            // Fallback method using textarea
+            // Fallback method using textarea and deprecated execCommand (for older browsers)
             try {
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
