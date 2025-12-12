@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -380,7 +380,7 @@
 <body>
     <div class="container">
         <h1>🚀 OrbitPrompt Setup Guide</h1>
-        <p class="subtitle">사전 준비 → GitHub 설정 → 변수 입력 → Agent 인스트럭션</p>
+        <p class="subtitle">Prerequisites → GitHub Setup → Variables → Agent Instructions</p>
         
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill" style="width: 25%"></div>
@@ -389,7 +389,7 @@
         <div class="phase-indicator">
             <button class="phase-tab active" onclick="goPhase(1)" id="tab1">
                 <span class="num">1</span>
-                사전 준비
+                Prerequisites
             </button>
             <button class="phase-tab" onclick="goPhase(2)" id="tab2">
                 <span class="num">2</span>
@@ -397,171 +397,171 @@
             </button>
             <button class="phase-tab" onclick="goPhase(3)" id="tab3">
                 <span class="num">3</span>
-                변수
+                Variables
             </button>
             <button class="phase-tab" onclick="goPhase(4)" id="tab4">
                 <span class="num">4</span>
-                인스트럭션
+                Instructions
             </button>
         </div>
         
         <!-- PHASE 1 -->
         <div class="section active" id="phase1">
-            <h2 class="section-title">📋 Phase 1: 사전 준비 체크리스트</h2>
+            <h2 class="section-title">📋 Phase 1: Prerequisites Checklist</h2>
             
             <div class="warning-box">
                 <span class="icon">⚠️</span>
-                <span class="text">모든 항목을 체크해야 다음 단계로 진행할 수 있습니다.</span>
+                <span class="text">You must check all items to proceed to the next step.</span>
             </div>
             
             <ul class="checklist" id="checklist1">
                 <li>
                     <input type="checkbox" onchange="updatePhase1()">
                     <div class="check-content">
-                        <div class="check-title">GitHub 계정 로그인</div>
-                        <div class="check-desc">GitHub에 로그인되어 있어야 합니다</div>
+                        <div class="check-title">GitHub Account Logged In</div>
+                        <div class="check-desc">You must be logged into GitHub</div>
                         <div class="check-detail">
-                            <a href="https://github.com/login" target="_blank">→ GitHub 로그인</a>
+                            <a href="https://github.com/login" target="_blank">→ GitHub Login</a>
                         </div>
                     </div>
                 </li>
                 <li>
                     <input type="checkbox" onchange="updatePhase1()">
                     <div class="check-content">
-                        <div class="check-title">Git 설치 확인</div>
-                        <div class="check-desc">로컬에 Git이 설치되어 있어야 합니다</div>
+                        <div class="check-title">Git Installed</div>
+                        <div class="check-desc">Git must be installed on your local machine</div>
                         <div class="check-detail">
-                            터미널: <code>git --version</code><br>
-                            <a href="https://git-scm.com/downloads" target="_blank">→ Git 다운로드</a>
+                            Terminal: <code>git --version</code><br>
+                            <a href="https://git-scm.com/downloads" target="_blank">→ Download Git</a>
                         </div>
                     </div>
                 </li>
                 <li>
                     <input type="checkbox" onchange="updatePhase1()">
                     <div class="check-content">
-                        <div class="check-title">Node.js 설치 (선택)</div>
-                        <div class="check-desc">로컬 테스트시 필요 (v20+)</div>
+                        <div class="check-title">Node.js Installed (Optional)</div>
+                        <div class="check-desc">Required for local testing (v20+)</div>
                         <div class="check-detail">
-                            터미널: <code>node --version</code><br>
-                            <a href="https://nodejs.org/" target="_blank">→ Node.js 다운로드</a>
+                            Terminal: <code>node --version</code><br>
+                            <a href="https://nodejs.org/" target="_blank">→ Download Node.js</a>
                         </div>
                     </div>
                 </li>
                 <li>
                     <input type="checkbox" onchange="updatePhase1()">
                     <div class="check-content">
-                        <div class="check-title">GitHub Copilot 활성화</div>
-                        <div class="check-desc">인스트럭션을 실행할 Copilot 필요</div>
+                        <div class="check-title">GitHub Copilot Enabled</div>
+                        <div class="check-desc">Copilot Agent required to execute instructions</div>
                         <div class="check-detail">
-                            VS Code 확장 또는 GitHub 웹 Copilot Chat<br>
-                            <a href="https://github.com/features/copilot" target="_blank">→ Copilot 정보</a>
+                            VS Code Extension or GitHub Web Copilot Chat<br>
+                            <a href="https://github.com/features/copilot" target="_blank">→ Copilot Info</a>
                         </div>
                     </div>
                 </li>
             </ul>
             
-            <div class="checklist-status" id="status1">0 / 4 완료</div>
+            <div class="checklist-status" id="status1">0 / 4 completed</div>
             
             <div class="nav-buttons">
-                <button class="nav-btn prev" disabled>← 이전</button>
-                <button class="nav-btn next" id="next1" disabled onclick="goPhase(2)">다음: GitHub 설정 →</button>
+                <button class="nav-btn prev" disabled>← Previous</button>
+                <button class="nav-btn next" id="next1" disabled onclick="goPhase(2)">Next: GitHub Setup →</button>
             </div>
         </div>
         
         <!-- PHASE 2 -->
         <div class="section" id="phase2">
-            <h2 class="section-title">⚙️ Phase 2: GitHub 저장소 설정 (수작업)</h2>
+            <h2 class="section-title">⚙️ Phase 2: GitHub Repository Setup (Manual)</h2>
             
             <div class="warning-box">
                 <span class="icon">⚠️</span>
-                <span class="text">이 단계는 GitHub 웹에서 직접 해야 합니다. Agent가 대신할 수 없습니다!</span>
+                <span class="text">This step must be done manually on GitHub. The Agent cannot do this for you!</span>
             </div>
             
             <ul class="checklist" id="checklist2">
                 <li>
                     <input type="checkbox" onchange="updatePhase2()">
                     <div class="check-content">
-                        <div class="check-title"><span class="step-badge">1</span>저장소 Fork</div>
-                        <div class="check-desc">OrbitPrompt 템플릿을 내 계정으로 복사</div>
+                        <div class="check-title"><span class="step-badge">1</span>Fork Repository</div>
+                        <div class="check-desc">Copy OrbitPrompt template to your account</div>
                         <div class="check-detail">
-                            1. <a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank">OrbitPrompt 원본</a> 방문<br>
-                            2. 우측 상단 <strong>"Fork"</strong> 버튼 클릭<br>
-                            3. <strong>"Create fork"</strong> 클릭
+                            1. Visit <a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank">OrbitPrompt Original</a><br>
+                            2. Click <strong>"Fork"</strong> button (top right)<br>
+                            3. Click <strong>"Create fork"</strong>
                         </div>
                     </div>
                 </li>
                 <li>
                     <input type="checkbox" onchange="updatePhase2()">
                     <div class="check-content">
-                        <div class="check-title"><span class="step-badge">2</span>Public 설정 확인</div>
-                        <div class="check-desc">GitHub Pages는 Public 저장소만 무료</div>
+                        <div class="check-title"><span class="step-badge">2</span>Verify Public Setting</div>
+                        <div class="check-desc">GitHub Pages is free only for Public repos</div>
                         <div class="check-detail">
                             Settings → General → Danger Zone<br>
-                            "Change visibility" → <strong>Public</strong> 확인
+                            "Change visibility" → Confirm <strong>Public</strong>
                         </div>
                     </div>
                 </li>
                 <li>
                     <input type="checkbox" onchange="updatePhase2()">
                     <div class="check-content">
-                        <div class="check-title"><span class="step-badge">3</span>GitHub Pages 활성화</div>
-                        <div class="check-desc">정적 사이트 호스팅 ON</div>
+                        <div class="check-title"><span class="step-badge">3</span>Enable GitHub Pages</div>
+                        <div class="check-desc">Turn ON static site hosting</div>
                         <div class="check-detail">
                             1. Settings → <strong>Pages</strong><br>
                             2. Source: <strong>"Deploy from a branch"</strong><br>
                             3. Branch: <strong>"main"</strong> / Folder: <strong>"/ (root)"</strong><br>
-                            4. <strong>Save</strong> 클릭
+                            4. Click <strong>Save</strong>
                         </div>
                     </div>
                 </li>
                 <li>
                     <input type="checkbox" onchange="updatePhase2()">
                     <div class="check-content">
-                        <div class="check-title"><span class="step-badge">4</span>Actions 권한 설정</div>
-                        <div class="check-desc">자동 인덱싱 워크플로우 권한</div>
+                        <div class="check-title"><span class="step-badge">4</span>Configure Actions Permissions</div>
+                        <div class="check-desc">Required for auto-indexing workflow</div>
                         <div class="check-detail">
                             1. Settings → <strong>Actions</strong> → General<br>
                             2. Actions permissions: <strong>"Allow all actions"</strong><br>
                             3. Workflow permissions: <strong>"Read and write permissions"</strong><br>
                             4. ✅ "Allow GitHub Actions to create and approve pull requests"<br>
-                            5. <strong>Save</strong>
+                            5. Click <strong>Save</strong>
                         </div>
                     </div>
                 </li>
                 <li>
                     <input type="checkbox" onchange="updatePhase2()">
                     <div class="check-content">
-                        <div class="check-title"><span class="step-badge">5</span>배포 확인 (1~2분 대기)</div>
-                        <div class="check-desc">Pages 배포 완료 확인</div>
+                        <div class="check-title"><span class="step-badge">5</span>Verify Deployment (Wait 1-2 min)</div>
+                        <div class="check-desc">Confirm Pages deployment is complete</div>
                         <div class="check-detail">
-                            1. Actions 탭 → "pages-build-deployment" 확인<br>
-                            2. 녹색 ✓ 표시되면 완료<br>
-                            3. <code>https://[USERNAME].github.io/OrbitPrompt/</code> 접속 테스트
+                            1. Actions tab → Check "pages-build-deployment"<br>
+                            2. Green ✓ means complete<br>
+                            3. Test: <code>https://[USERNAME].github.io/OrbitPrompt/</code>
                         </div>
                     </div>
                 </li>
             </ul>
             
-            <div class="checklist-status" id="status2">0 / 5 완료</div>
+            <div class="checklist-status" id="status2">0 / 5 completed</div>
             
             <div class="nav-buttons">
-                <button class="nav-btn prev" onclick="goPhase(1)">← 이전</button>
-                <button class="nav-btn next" id="next2" disabled onclick="goPhase(3)">다음: 변수 입력 →</button>
+                <button class="nav-btn prev" onclick="goPhase(1)">← Previous</button>
+                <button class="nav-btn next" id="next2" disabled onclick="goPhase(3)">Next: Variables →</button>
             </div>
         </div>
         
         <!-- PHASE 3 -->
         <div class="section" id="phase3">
-            <h2 class="section-title">📝 Phase 3: 변수 입력</h2>
+            <h2 class="section-title">📝 Phase 3: Enter Variables</h2>
             
             <p style="color: #888; margin-bottom: 1.5rem;">
-                Phase 2에서 설정한 정보를 입력하세요. 실시간으로 URL이 미리보기됩니다.
+                Enter the information from Phase 2. URL preview updates in real-time.
             </p>
             
             <div class="config-grid">
                 <div class="field">
                     <label>GitHub Username *</label>
-                    <input type="text" id="username" placeholder="예: dtslib1979" oninput="updatePreview()">
+                    <input type="text" id="username" placeholder="e.g. dtslib1979" oninput="updatePreview()">
                 </div>
                 <div class="field">
                     <label>Repository Name *</label>
@@ -572,64 +572,64 @@
                     <input type="text" id="branch" value="main">
                 </div>
                 <div class="field">
-                    <label>Custom Domain (선택)</label>
-                    <input type="text" id="domain" placeholder="예: prompts.mysite.com" oninput="updatePreview()">
+                    <label>Custom Domain (Optional)</label>
+                    <input type="text" id="domain" placeholder="e.g. prompts.mysite.com" oninput="updatePreview()">
                 </div>
             </div>
             
             <div class="config-grid">
                 <div class="field">
-                    <label>PWA 테스트</label>
+                    <label>PWA Test</label>
                     <select id="pwa">
-                        <option value="true">포함</option>
-                        <option value="false">제외</option>
+                        <option value="true">Include</option>
+                        <option value="false">Exclude</option>
                     </select>
                 </div>
                 <div class="field">
-                    <label>프롬프트 추가 테스트</label>
+                    <label>Prompt Addition Test</label>
                     <select id="testPrompt">
-                        <option value="true">포함</option>
-                        <option value="false">제외</option>
+                        <option value="true">Include</option>
+                        <option value="false">Exclude</option>
                     </select>
                 </div>
             </div>
             
             <div class="url-preview">
-                <div class="url-preview-title">📍 배포될 URL 미리보기</div>
+                <div class="url-preview-title">📍 Deployment URL Preview</div>
                 <div class="url-preview-url" id="urlPreview">https://[username].github.io/[repo]/</div>
                 <div class="url-preview-url" id="urlPreviewDomain" style="margin-top: 0.3rem; display: none;"></div>
             </div>
             
             <div class="nav-buttons">
-                <button class="nav-btn prev" onclick="goPhase(2)">← 이전</button>
-                <button class="nav-btn next" onclick="generateAndGo()">인스트럭션 생성 →</button>
+                <button class="nav-btn prev" onclick="goPhase(2)">← Previous</button>
+                <button class="nav-btn next" onclick="generateAndGo()">Generate Instructions →</button>
             </div>
         </div>
         
         <!-- PHASE 4 -->
         <div class="section" id="phase4">
-            <h2 class="section-title">📋 Phase 4: Agent 인스트럭션</h2>
+            <h2 class="section-title">📋 Phase 4: Agent Instructions</h2>
             
             <div class="warning-box success">
                 <span class="icon">✅</span>
-                <span class="text">아래 인스트럭션을 복사하여 GitHub Copilot Chat에 붙여넣기!</span>
+                <span class="text">Copy the instructions below and paste into GitHub Copilot Chat!</span>
             </div>
             
             <div id="httpsWarning" class="warning-box error" style="display: none;">
                 <span class="icon">🔒</span>
-                <span class="text">HTTPS 환경에서만 복사 기능이 작동합니다. 텍스트를 직접 선택하여 복사하세요.</span>
+                <span class="text">Copy function only works in HTTPS environment. Please select and copy text manually.</span>
             </div>
             
-            <button class="copy-all-btn" onclick="copyAll()" id="copyBtn">📋 전체 인스트럭션 복사</button>
-            <p class="hint">복사 → Copilot Chat에 붙여넣기 → Agent가 실행</p>
+            <button class="copy-all-btn" onclick="copyAll()" id="copyBtn">📋 Copy All Instructions</button>
+            <p class="hint">Copy → Paste into Copilot Chat → Agent Executes</p>
             
             <div class="result-box">
                 <pre id="resultText"></pre>
             </div>
             
             <div class="nav-buttons">
-                <button class="nav-btn prev" onclick="goPhase(3)">← 수정하기</button>
-                <button class="nav-btn next" onclick="window.print()">🖨️ 인쇄</button>
+                <button class="nav-btn prev" onclick="goPhase(3)">← Edit</button>
+                <button class="nav-btn next" onclick="window.print()">🖨️ Print</button>
             </div>
         </div>
     </div>
@@ -638,25 +638,25 @@
         let currentPhase = 1;
         let fullInstruction = '';
         
-        const TEMPLATE = `# OrbitPrompt 설치 및 검증
+        const TEMPLATE = `# OrbitPrompt Installation & Verification
 
-아래 단계를 순서대로 실행해주세요.
+Please execute the following steps in order.
 
-## 준비 정보
+## Setup Info
 - Repository: {{USERNAME}}/{{REPO}}
 - Branch: {{BRANCH}}
 - URL: https://{{USERNAME}}.github.io/{{REPO}}/
 
 ---
 
-## Step 1: 저장소 클론
+## Step 1: Clone Repository
 
 \`\`\`bash
 git clone https://github.com/{{USERNAME}}/{{REPO}}.git
 cd {{REPO}}
 \`\`\`
 
-**확인:** 다음 파일 존재 확인
+**Verify:** Check that these files exist:
 - index.html
 - generate-index.js
 - sw.js
@@ -666,34 +666,34 @@ cd {{REPO}}
 
 ---
 
-## Step 2: 사이트 접속 확인
+## Step 2: Verify Site Access
 
 \`\`\`
 https://{{USERNAME}}.github.io/{{REPO}}/
 \`\`\`
 
-**확인:** 페이지 로드, OrbitPrompt 타이틀 표시
+**Verify:** Page loads, OrbitPrompt title displays
 
 ---
 
-## Step 3: index.json 확인
+## Step 3: Verify index.json
 
 \`\`\`
 https://{{USERNAME}}.github.io/{{REPO}}/prompts/index.json
 \`\`\`
 
-**확인:** JSON 배열 표시
+**Verify:** JSON array displays
 
 {{#IF_TEST}}
 ---
 
-## Step 4: 프롬프트 추가 테스트
+## Step 4: Test Prompt Addition
 
 \`\`\`bash
 cd prompts
 \`\`\`
 
-D1xP1xL1xC1xE1.html 생성:
+Create D1xP1xL1xC1xE1.html:
 \`\`\`html
 <!DOCTYPE html>
 <html lang="en">
@@ -708,7 +708,7 @@ D1xP1xL1xC1xE1.html 생성:
 </html>
 \`\`\`
 
-커밋:
+Commit:
 \`\`\`bash
 cd ..
 git add prompts/D1xP1xL1xC1xE1.html
@@ -716,23 +716,23 @@ git commit -m "Add test prompt"
 git push origin {{BRANCH}}
 \`\`\`
 
-**확인:** Actions 탭에서 워크플로우 실행, index.json 업데이트
+**Verify:** Check Actions tab for workflow execution, index.json update
 {{/IF_TEST}}
 
 {{#IF_PWA}}
 ---
 
-## Step 5: PWA 확인
+## Step 5: Verify PWA
 
-브라우저 F12 → Application 탭:
-- Manifest 섹션 확인
-- Service Workers에서 sw.js 등록 확인
+Browser F12 → Application tab:
+- Check Manifest section
+- Verify sw.js registered in Service Workers
 {{/IF_PWA}}
 
 {{#IF_DOMAIN}}
 ---
 
-## Step 6: 커스텀 도메인
+## Step 6: Custom Domain
 
 \`\`\`bash
 echo "{{DOMAIN}}" > CNAME
@@ -741,12 +741,12 @@ git commit -m "Add custom domain"
 git push origin {{BRANCH}}
 \`\`\`
 
-DNS 설정: CNAME → {{USERNAME}}.github.io
+DNS Setup: CNAME → {{USERNAME}}.github.io
 {{/IF_DOMAIN}}
 
 ---
 
-## ✅ 완료!
+## ✅ Complete!
 
 **URL:** https://{{USERNAME}}.github.io/{{REPO}}/
 {{#IF_DOMAIN}}
@@ -762,7 +762,7 @@ DNS 설정: CNAME → {{USERNAME}}.github.io
             });
             
             const status = document.getElementById('status1');
-            status.textContent = `${count} / ${checks.length} 완료`;
+            status.textContent = `${count} / ${checks.length} completed`;
             status.classList.toggle('complete', count === checks.length);
             document.getElementById('next1').disabled = count < checks.length;
         }
@@ -776,7 +776,7 @@ DNS 설정: CNAME → {{USERNAME}}.github.io
             });
             
             const status = document.getElementById('status2');
-            status.textContent = `${count} / ${checks.length} 완료`;
+            status.textContent = `${count} / ${checks.length} completed`;
             status.classList.toggle('complete', count === checks.length);
             document.getElementById('next2').disabled = count < checks.length;
         }
@@ -847,12 +847,12 @@ DNS 설정: CNAME → {{USERNAME}}.github.io
             };
             
             if (!vars.USERNAME) {
-                alert('GitHub Username을 입력해주세요.');
+                alert('Please enter GitHub Username.');
                 document.getElementById('username').focus();
                 return;
             }
             if (!vars.REPO) {
-                alert('Repository Name을 입력해주세요.');
+                alert('Please enter Repository Name.');
                 document.getElementById('repoName').focus();
                 return;
             }
@@ -878,25 +878,25 @@ DNS 설정: CNAME → {{USERNAME}}.github.io
         
         function copyAll() {
             if (!fullInstruction) {
-                alert('먼저 인스트럭션을 생성해주세요.');
+                alert('Please generate instructions first.');
                 return;
             }
             
             if (!navigator.clipboard) {
-                alert('이 환경에서는 복사 기능을 사용할 수 없습니다.\n텍스트를 직접 선택하여 복사해주세요.');
+                alert('Copy function not available in this environment.\nPlease select and copy text manually.');
                 return;
             }
             
             navigator.clipboard.writeText(fullInstruction).then(() => {
                 const btn = document.getElementById('copyBtn');
-                btn.textContent = '✅ 복사 완료!';
+                btn.textContent = '✅ Copied!';
                 btn.classList.add('copied');
                 setTimeout(() => {
-                    btn.textContent = '📋 전체 인스트럭션 복사';
+                    btn.textContent = '📋 Copy All Instructions';
                     btn.classList.remove('copied');
                 }, 3000);
             }).catch(err => {
-                alert('복사에 실패했습니다. 텍스트를 직접 선택하여 복사해주세요.');
+                alert('Copy failed. Please select and copy text manually.');
             });
         }
         
