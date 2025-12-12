@@ -559,6 +559,11 @@
     </footer>
 
     <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+
         // Data parsing functions
         function parsePromptFile(filename) {
             const base = filename.replace('.html', '');
