@@ -8,6 +8,10 @@ A minimal, production-ready GitHub Pages prompt archive with searchable D1xP5x s
 
 Visit the live site at: `https://dtslib1979.github.io/OrbitPrompt/`
 
+## 📖 Documentation
+
+- **[Technical Specifications](./TECHNICAL_SPECIFICATIONS.md)** - Complete technical documentation for system architects and developers who want to understand, replicate, or extend this system
+
 ## 📁 Repository Structure
 
 ```
@@ -18,7 +22,8 @@ Visit the live site at: `https://dtslib1979.github.io/OrbitPrompt/`
 │   ├── index.json         # Auto-generated file list
 │   ├── D1xP1xL1xC1xE1.html  # Example prompt
 │   └── D1xP5xL2xC3xE5.html  # Example prompt
-└── README.md
+├── README.md
+└── TECHNICAL_SPECIFICATIONS.md  # Complete technical documentation
 ```
 
 ## 🚀 GitHub Pages Setup
