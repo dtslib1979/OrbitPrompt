@@ -825,7 +825,7 @@
             toast.textContent = message;
             toast.className = `toast ${type}`;
             
-            // Show toast
+            // Small delay to ensure CSS transition triggers properly
             setTimeout(() => {
                 toast.classList.add('show');
             }, 10);
@@ -848,7 +848,7 @@
                 }
             }
             
-            // Fallback: textarea + execCommand
+            // Fallback: textarea + execCommand (deprecated but needed for legacy browser support)
             const textarea = document.createElement('textarea');
             textarea.value = text;
             textarea.style.position = 'fixed';
