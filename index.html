@@ -11,6 +11,8 @@
     <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#000000">
     
+    <link rel="preconnect" href="https://www.youtube.com">
+    <link rel="preconnect" href="https://www.google.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -228,6 +230,47 @@
             text-align: center;
         }
 
+        .hero-video-container {
+            width: 100%;
+            height: 120px;
+            overflow: hidden;
+            background: #000;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-video-container {
+                height: 80px;
+            }
+        }
+
+        .hero-video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            pointer-events: none;
+        }
+
+        .hero-video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease-out;
+            z-index: 1;
+        }
+
+        .hero-video-overlay.loaded {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         h1 {
             font-size: 2rem;
             font-weight: 700;
@@ -248,7 +291,7 @@
         .control-bar {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 1.5rem 1.5rem;
+            padding: 0 1.5rem 1rem;
             display: flex;
             gap: 1.5rem;
             align-items: center;
@@ -288,7 +331,7 @@
 
         .stats-inline {
             display: flex;
-            gap: 2rem;
+            gap: 1.25rem;
         }
 
         .stat-inline {
@@ -299,7 +342,7 @@
         }
 
         .stat-number {
-            font-size: 1.125rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--primary);
         }
@@ -345,18 +388,17 @@
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 0.875rem 1rem;
+            padding: 0.6rem 0.75rem;
             transition: all 0.15s var(--transition);
             cursor: pointer;
             text-decoration: none;
             color: inherit;
-            min-height: 48px;
         }
 
         .prompt-bar:hover {
             background: var(--bg);
             border-color: var(--accent);
-            transform: translateX(4px);
+            transform: translateX(2px);
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
@@ -371,11 +413,12 @@
 
         .bar-title-text {
             flex-shrink: 0;
+            font-size: 0.875rem;
         }
 
         .bar-description {
             color: var(--secondary);
-            font-size: 0.8125rem;
+            font-size: 0.75rem;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -609,6 +652,22 @@
 
     <!-- Hero Section -->
     <section class="hero">
+        <div class="hero-video-container">
+            <div class="hero-video-overlay">
+                <div class="orbit-animation">
+                    <div class="orbit-ring">
+                        <div class="orbit-dot"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- TODO: Replace placeholder video ID (dQw4w9WgXcQ) with actual OrbitPrompt brand video -->
+            <iframe 
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&controls=0&playsinline=1&modestbranding=1&rel=0&loop=1&playlist=dQw4w9WgXcQ" 
+                loading="eager"
+                allow="autoplay; encrypted-media"
+                allowfullscreen>
+            </iframe>
+        </div>
         <h1>OrbitPrompt Archive</h1>
         <p class="hero-description">Engineered prompts for precision AI interactions</p>
     </section>
@@ -882,6 +941,17 @@
                 showToast('복사에 실패했습니다', 'error');
             }
         });
+
+        // Hide video overlay after YouTube loads
+        const heroVideoIframe = document.querySelector('.hero-video-container iframe');
+        if (heroVideoIframe) {
+            heroVideoIframe.addEventListener('load', () => {
+                setTimeout(() => {
+                    const overlay = document.querySelector('.hero-video-overlay');
+                    if (overlay) overlay.classList.add('loaded');
+                }, 500);
+            });
+        }
 
         // Initialize
         loadPrompts();
