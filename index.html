@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OrbitPrompt — Archive</title>
     
-    <!-- PWA / Icons -->
-    <link rel="icon" href="orbitprompt-logo.png" type="image/png">
-    <link rel="apple-touch-icon" href="orbitprompt-logo.png">
+    <!-- Icons for home screen add -->
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/orbitprompt-logo.png">
     <link rel="manifest" href="manifest.webmanifest">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#0071e3">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="OrbitPrompt">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -663,11 +667,6 @@
     <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
     <script>
-        // Register Service Worker for PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-
         // Data parsing functions
         function parsePromptFile(filename) {
             const base = filename.replace('.html', '');

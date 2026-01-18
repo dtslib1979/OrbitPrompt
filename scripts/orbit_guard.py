@@ -8,6 +8,7 @@ ROOT = pathlib.Path(".").resolve()
 # ✅ Engine Repo Root Whitelist
 ROOT_WHITELIST = {
     "index.html",
+    "manifest.webmanifest",
     "README.md",
     ".gitignore",
     ".nojekyll",
@@ -18,10 +19,9 @@ ROOT_WHITELIST = {
     ".github",
 }
 
-# ❌ PWA 금지
-PWA_BLOCK_PATTERNS = [
+# ❌ Service Worker 금지 (캐시 문제 방지)
+SERVICE_WORKER_PATTERNS = [
     r"(^|/)(sw\.js)$",
-    r"(^|/)(manifest(\.webmanifest|\.json)?)$",
     r"(^|/)workbox-.*\.js$",
 ]
 
@@ -61,9 +61,9 @@ def main():
         if len(rel.parts) == 1 and not is_allowed_root(p):
             violations.append((rel_str, "ROOT_WHITELIST_VIOLATION"))
 
-        # 2) PWA 차단
-        if matches_any(PWA_BLOCK_PATTERNS, rel_str):
-            violations.append((rel_str, "PWA_FORBIDDEN"))
+        # 2) Service Worker 차단
+        if matches_any(SERVICE_WORKER_PATTERNS, rel_str):
+            violations.append((rel_str, "SERVICE_WORKER_FORBIDDEN"))
 
         # 3) pycache/pyc 차단
         if matches_any(PY_TRASH_PATTERNS, rel_str):
