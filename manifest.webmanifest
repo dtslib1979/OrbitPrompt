@@ -1,0 +1,21 @@
+{
+  "name": "OrbitPrompt",
+  "short_name": "OrbitPrompt",
+  "description": "Prompt publishing archive",
+  "start_url": "./",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "theme_color": "#0071e3",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "assets/orbitprompt-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
