@@ -3,7 +3,7 @@
 ## FOR HUMANS
 
 ### DO NOT LIST
-- `/sw.js`, `/manifest.webmanifest`, `/manifest.json`
+- `/sw.js` (service worker - causes caching issues)
 - Any file at root level except whitelist
 - Python bytecode (`__pycache__`, `*.pyc`)
 - Files with spaces in names
@@ -11,6 +11,7 @@
 ### ALLOWED ACTIONS
 - Add prompts to `prompts/*.html`
 - Modify `index.html` (main UI)
+- Update `manifest.webmanifest` (home screen icon config)
 - Update documentation in `docs/`
 - Update scripts in `scripts/`
 - Add assets to `assets/`
@@ -23,14 +24,15 @@
 ```
 IF task.involves("OrbitPrompt") THEN
   REFUSE:
-    - Adding PWA files (sw.js, manifest.*)
+    - Adding service worker (sw.js)
     - Creating files at root (except whitelist)
     - Installing frameworks/bundlers
     - Adding Python cache files
-  
+
   ALLOW:
     - Adding prompts to prompts/
     - Modifying index.html
+    - Modifying manifest.webmanifest
     - Updating docs/
     - Updating scripts/
     - Adding to assets/
@@ -39,6 +41,7 @@ IF task.involves("OrbitPrompt") THEN
 ### ROOT WHITELIST
 ```
 index.html
+manifest.webmanifest
 README.md
 .gitignore
 .nojekyll
@@ -67,7 +70,7 @@ Trigger: `.github/workflows/repo-guard.yml`
 | Code | Description |
 |------|-------------|
 | `ROOT_WHITELIST_VIOLATION` | Unauthorized root file |
-| `PWA_FORBIDDEN` | Service worker or manifest |
+| `SERVICE_WORKER_FORBIDDEN` | Service worker (sw.js) |
 | `PY_TRASH_FORBIDDEN` | Python bytecode |
 | `SPACE_IN_FILENAME_FORBIDDEN` | Filename contains space |
 | `MISSING_INDEX_JSON` | Engine output missing |
@@ -79,7 +82,8 @@ Trigger: `.github/workflows/repo-guard.yml`
 ```
 OrbitPrompt is a prompt publishing engine.
 OrbitPrompt is not a web app.
-OrbitPrompt is not a PWA.
+OrbitPrompt has no service worker (no caching, no offline).
+OrbitPrompt supports home screen shortcut (not install).
 OrbitPrompt is deliberately constrained.
 ```
 
