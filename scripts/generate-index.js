@@ -3,24 +3,25 @@
 const fs = require('fs');
 const path = require('path');
 
-const promptsDir = path.join(__dirname, 'prompts');
+const promptsDir = path.join(__dirname, '..', 'prompts');
+const categories = ['broadcast', 'engine', 'guide'];
 
-// Ensure prompts directory exists
-if (!fs.existsSync(promptsDir)) {
-  fs.mkdirSync(promptsDir, { recursive: true });
-}
+const index = {};
 
-// Read all .html files in prompts directory
-const files = fs.readdirSync(promptsDir)
-  .filter(file => {
-    // Include only .html files
-    return file.endsWith('.html');
-  })
-  .sort(); // Sort alphabetically
+categories.forEach(cat => {
+  const catDir = path.join(promptsDir, cat);
+  if (fs.existsSync(catDir)) {
+    index[cat] = fs.readdirSync(catDir)
+      .filter(f => f.endsWith('.html'))
+      .sort();
+  }
+});
 
-// Write to index.json
 const indexPath = path.join(promptsDir, 'index.json');
-fs.writeFileSync(indexPath, JSON.stringify(files, null, 2));
+fs.writeFileSync(indexPath, JSON.stringify(index, null, 2) + '\n');
 
-console.log(`Generated index.json with ${files.length} files:`);
-files.forEach(file => console.log(`  - ${file}`));
+console.log('Generated index.json:');
+Object.entries(index).forEach(([cat, files]) => {
+  console.log(`  ${cat}/: ${files.length} files`);
+  files.forEach(f => console.log(`    - ${f}`));
+});
