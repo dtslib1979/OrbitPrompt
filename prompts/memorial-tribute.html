@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memorial Tribute Studio</title>
+<style>
+:root {
+  --bg: #050505;
+  --panel: #111;
+  --accent: #d4a574;
+  --accent-soft: rgba(212,165,116,0.15);
+  --text: #e8e0d8;
+  --dim: #8a7a6a;
+  --border: #2a2520;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Georgia', serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.app { max-width: 960px; margin: 0 auto; padding: 1rem; }
+
+.progress { display: flex; gap: 2px; margin-bottom: 1.5rem; }
+.progress-dot { flex: 1; height: 3px; background: #222; border-radius: 2px; transition: 0.3s; }
+.progress-dot.active { background: var(--accent); }
+.progress-dot.done { background: #6a5a4a; }
+
+.tabs { display: flex; gap: 0; margin-bottom: 1rem; overflow-x: auto; }
+.tab {
+  flex: 1; padding: 0.7rem 0.3rem; text-align: center;
+  background: #1a1a1a; border: none; color: var(--dim);
+  font-size: 0.7rem; cursor: pointer; border-right: 1px solid #222;
+}
+.tab:last-child { border-right: none; }
+.tab.active { background: var(--accent); color: #000; }
+.tab .num { display: block; font-size: 1rem; font-weight: 700; }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* Memorial frame */
+.frame {
+  background: linear-gradient(180deg, #0a0a08, #111110);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  min-height: 450px;
+  text-align: center;
+}
+.frame-title {
+  font-size: 1.4rem; color: var(--accent);
+  margin-bottom: 0.5rem; font-style: italic;
+}
+.frame-subtitle {
+  font-size: 0.9rem; color: var(--dim); margin-bottom: 1.5rem;
+}
+
+/* Photo placeholder */
+.photo-area {
+  width: 100%; max-width: 400px; margin: 0 auto 1.5rem;
+  aspect-ratio: 4/3; background: #1a1816;
+  border: 2px dashed var(--border); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--dim); font-size: 0.9rem; cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.photo-area img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+
+/* Text areas */
+.tribute-text {
+  width: 100%; background: transparent; border: 1px dashed var(--border);
+  border-radius: 8px; color: var(--text); font-family: 'Georgia', serif;
+  font-size: 1.1rem; line-height: 2; padding: 1rem; resize: vertical;
+  min-height: 150px; text-align: center;
+}
+
+/* Quote block */
+.quote-block {
+  background: var(--accent-soft); border-left: 3px solid var(--accent);
+  padding: 1.5rem; margin: 1rem 0; border-radius: 0 8px 8px 0;
+  font-style: italic; font-size: 1.2rem; text-align: left;
+}
+
+/* Music indicator */
+.music-bar {
+  background: #1a1816; border-radius: 20px; padding: 0.5rem 1rem;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.8rem; color: var(--dim); margin-top: 1rem;
+}
+
+.nav { display: flex; gap: 1rem; margin-top: 1.5rem; }
+.nav-btn {
+  flex: 1; padding: 1rem; border: none; border-radius: 8px;
+  font-size: 1rem; font-weight: 600; cursor: pointer;
+}
+.nav-btn.prev { background: #222; color: #fff; }
+.nav-btn.next { background: var(--accent); color: #000; }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="progress" id="progress"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="panels"></div>
+  <div class="nav">
+    <button class="nav-btn prev" id="prevBtn" onclick="go(-1)">← 이전</button>
+    <button class="nav-btn next" id="nextBtn" onclick="go(1)">다음 →</button>
+  </div>
+</div>
+<script>
+const pages = [
+  { num: 1, label: '소개', title: '고인 소개', sub: '이름과 대표 사진', type: 'intro' },
+  { num: 2, label: '유년기', title: '유년기', sub: '어린 시절의 기억', type: 'photos' },
+  { num: 3, label: '청년기', title: '청년기 · 가정', sub: '꿈을 키우던 시절', type: 'photos' },
+  { num: 4, label: '함께', title: '함께한 순간들', sub: '가족, 친구, 동료', type: 'photos' },
+  { num: 5, label: '말씀', title: '고인의 말씀', sub: '좌우명, 편지, 유언', type: 'quote' },
+  { num: 6, label: '메시지', title: '가족 메시지', sub: '남은 가족의 마음', type: 'message' },
+  { num: 7, label: '추모', title: '영원히 기억합니다', sub: 'BGM 페이드아웃', type: 'ending' }
+];
+
+let current = 0;
+
+function renderPanel(p, i) {
+  let content = '';
+  if (p.type === 'intro') {
+    content = `
+      <div class="photo-area" onclick="this.querySelector('span').textContent='사진을 터치하여 교체'">
+        <span>대표 사진 영역 (터치)</span>
+      </div>
+      <textarea class="tribute-text" placeholder="고인의 성함\n(0000.00.00 ~ 0000.00.00)" id="input${i}">${localStorage.getItem('mem_'+i)||''}</textarea>
+    `;
+  } else if (p.type === 'photos') {
+    content = `
+      <div class="photo-area"><span>사진 ${p.num} (Ken Burns 줌/팬 효과)</span></div>
+      <textarea class="tribute-text" placeholder="이 시기에 대한 내레이션을 적으세요..." id="input${i}">${localStorage.getItem('mem_'+i)||''}</textarea>
+    `;
+  } else if (p.type === 'quote') {
+    content = `
+      <div class="quote-block">
+        <textarea class="tribute-text" style="background:transparent;border:none;font-style:italic;text-align:left;" placeholder="고인의 말씀, 좌우명, 편지 내용..." id="input${i}">${localStorage.getItem('mem_'+i)||''}</textarea>
+      </div>
+    `;
+  } else if (p.type === 'message') {
+    content = `
+      <textarea class="tribute-text" placeholder="가족이 전하는 메시지...\n\n아버지, 보고 싶습니다.\n항상 웃으시던 그 모습 기억하겠습니다." id="input${i}">${localStorage.getItem('mem_'+i)||''}</textarea>
+    `;
+  } else if (p.type === 'ending') {
+    content = `
+      <div class="photo-area"><span>대표 사진 (페이드아웃)</span></div>
+      <div class="music-bar">♪ BGM 페이드아웃 구간</div>
+      <textarea class="tribute-text" placeholder="마지막 자막\n\n영원히 기억하겠습니다." id="input${i}">${localStorage.getItem('mem_'+i)||''}</textarea>
+    `;
+  }
+  return content;
+}
+
+function render() {
+  document.getElementById('progress').innerHTML = pages.map((_, i) =>
+    `<div class="progress-dot ${i < current ? 'done' : i === current ? 'active' : ''}"></div>`
+  ).join('');
+
+  document.getElementById('tabs').innerHTML = pages.map((p, i) =>
+    `<button class="tab ${i === current ? 'active' : ''}" onclick="goTo(${i})">
+      <span class="num">${p.num}</span>${p.label}
+    </button>`
+  ).join('');
+
+  document.getElementById('panels').innerHTML = pages.map((p, i) => `
+    <div class="panel ${i === current ? 'active' : ''}">
+      <div class="frame">
+        <div class="frame-title">${p.title}</div>
+        <div class="frame-subtitle">${p.sub}</div>
+        ${renderPanel(p, i)}
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').textContent = current === pages.length - 1 ? '완료 ✓' : '다음 →';
+}
+
+function save() {
+  const input = document.getElementById('input' + current);
+  if (input) localStorage.setItem('mem_' + current, input.value);
+}
+
+function go(dir) { save(); goTo(current + dir); }
+function goTo(i) { save(); current = Math.max(0, Math.min(pages.length - 1, i)); render(); }
+
+render();
+</script>
+</body>
+</html>
