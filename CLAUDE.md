@@ -23,6 +23,7 @@ PPT 대신, OBS 대신, 편집 없이.
 
 ```
 orbitprompt/
+├── index.html              ← Mission Control (메인 대시보드)
 ├── prompts/
 │   ├── broadcast/          ← 방송용 칠판 템플릿
 │   │   ├── math-tutor.html       (Khan Academy 포맷)
@@ -30,13 +31,23 @@ orbitprompt/
 │   │   ├── memorial-tribute.html (Ken Burns 포맷)
 │   │   └── pwa-demo.html         (Apple Keynote 포맷)
 │   ├── engine/             ← 프롬프트 생성 엔진
-│   │   └── Gitgub-publishing.html
 │   └── guide/              ← 설치/빌드 가이드
-│       └── Github-page-build-instructionE.html
+├── topics/                 ← Topics DB (오늘의 주제)
+│   ├── index.json          (카테고리 인덱스)
+│   ├── math.json           (8개 수학 토픽)
+│   ├── music.json          (8개 음악 토픽)
+│   ├── memorial.json       (5개 추모 템플릿)
+│   └── pwa-demo.json       (6개 PWA 데모 토픽)
+├── api/                    ← Branch Distribution API
+│   ├── templates.json      (템플릿 카탈로그)
+│   └── customize.js        (브랜치 커스터마이징)
+├── docs/
+│   └── branch-guide.html   ← 브랜치 사용 가이드
+├── scripts/
+│   ├── asset-loader.js     ← 스튜디오 에셋 로더
+│   └── topics-loader.js    ← Topics DB 로더
 ├── config/
 │   └── sources.json        ← 스튜디오 연결 설정
-├── scripts/
-│   └── asset-loader.js     ← 에셋 로더
 └── CLAUDE.md               ← 이 파일
 ```
 
@@ -90,40 +101,90 @@ const timing = AssetLoader.getDesignTokens('timing');
 | music-curation | NPR Tiny Desk | 음악 감상/큐레이션 |
 | pwa-demo | Apple Keynote | 앱 데모/설치 가이드 |
 
+## 완료된 작업 (2026-01-25)
+
+| 작업 | 상태 | 설명 |
+|------|------|------|
+| Mission Control | ✅ | index.html — Day 카운터 + 칠판 선택 + 주제 입력 |
+| Topics DB | ✅ | 4개 카테고리, 27개 토픽, 오늘의 추천 자동 표시 |
+| Branch Distribution | ✅ | API + customize.js + 브랜치 가이드 |
+| 이중언어 지원 | ✅ | KO/EN 토글, Bing 번역 호환 |
+
 ## TODO (다음 세션)
 
-| 순위 | 작업 | 설명 |
+| 순위 | 작업 | 상태 |
 |------|------|------|
-| 1 | **Mission Control** | index.html — "Day 47. 오늘은 수학과외" + 버튼 하나 |
-| 2 | **Topics DB** | topics/math.json 등 — 오늘의 미션 자동 생성 |
-| 3 | **Manifesto** | 첫 방문 시 철학 주입 페이지 |
-| 4 | 실제 에셋 추가 | 칠판 배경 이미지, BGM 등 |
-| 5 | End-to-end 테스트 | OrbitPrompt → 녹화 → YouTube 업로드 |
-| 6 | Day 1 시작 | 100일 스트릭 목표 |
+| 1 | 브라우저 테스트 (Mission Control 풀 플로우) | ⬜ |
+| 2 | Topics 콘텐츠 보강 (outline 구체화) | ⬜ |
+| 3 | Manifesto 페이지 (철학 온보딩) | ⬜ |
+| 4 | 실제 에셋 추가 (배경/BGM) | ⬜ |
+| 5 | 스튜디오 manifest 연동 | ⬜ |
+| 6 | E2E 테스트 (녹화 → YouTube) | ⬜ |
 
-## Mission Control 설계 (예정)
+## Branch Distribution System
+
+OrbitPrompt = **PD Studio**. 템플릿을 만들어 브랜치(KOOSY, GOHSY 등)에 전달.
+
+### 사용법
+
+```javascript
+// URL 파라미터로 브랜치 지정
+https://orbitprompt.com/prompts/broadcast/math-tutor.html?branch=koosy
+
+// 또는 JS API
+OrbitCustomize.applyPreset('koosy');
+```
+
+### 등록된 브랜치
+
+| 브랜치 | 테마 컬러 |
+|--------|----------|
+| koosy | #ff6b6b (레드) |
+| gohsy | #4ecdc4 (민트) |
+| artrew | #ff6b6b (레드) |
+| papafly | #ffd93d (옐로우) |
+| lotus | #a371f7 (퍼플) |
+| tango-magenta | #ff00ff (마젠타) |
+
+## Topics DB
+
+날짜 기반 오늘의 주제 자동 선택. 같은 날 = 같은 토픽.
+
+```javascript
+await TopicsLoader.init();
+const topic = await TopicsLoader.getTodaysTopic('math-tutor');
+// → { id: 'quadratic-formula', title: '근의 공식', ... }
+```
+
+### 카테고리
+
+| ID | 토픽 수 | autoSuggest |
+|----|--------|-------------|
+| math-tutor | 8 | ✅ |
+| music-curation | 8 | ✅ |
+| memorial-tribute | 5 | ❌ (수동 선택) |
+| pwa-demo | 6 | ✅ |
+
+## Mission Control (완료)
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  Day 47                                         │
+│  Day 1                                          │
+│  ○○○○○○● (7일 스트릭)                          │
 │                                                 │
-│  오늘의 칠판: 수학과외                          │
-│  오늘의 주제: 근의 공식                         │
+│  [📐 Math] [🎵 Music] [🎬 Memorial] [📱 PWA]   │
 │                                                 │
-│  ┌─────────────────────────────────────────┐   │
-│  │ 도입: "이차방정식 풀 때 막히죠?"        │   │
-│  │ 본론: "공식은 이겁니다: x = ..."        │   │
-│  │ 마무리: "다음엔 판별식 해봅시다"        │   │
-│  └─────────────────────────────────────────┘   │
+│  오늘의 주제: [_______________]                 │
+│  💡 오늘의 추천: 근의 공식 ← 클릭하면 자동입력  │
 │                                                 │
-│        [ 🔴 칠판 열고 녹화 시작 ]              │
+│        [ 🔴 REC 칠판 열기 ]                    │
 └─────────────────────────────────────────────────┘
 ```
 
 **원칙:**
 - 마찰 제로: 버튼 하나로 시작
 - 고민 금지: 오늘의 주제가 이미 정해져 있음
-- 스트릭 가시화: "Day 47" 표시
+- 스트릭 가시화: "Day N" 표시
 
 ## 아이디어 평가: 8.2/10
 
