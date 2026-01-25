@@ -261,6 +261,11 @@ async function initStudioConnection() {
   }
 }
 initStudioConnection();
+
+// Branch customization support
+const branchScript = document.createElement('script');
+branchScript.src = '../../api/customize.js';
+document.head.appendChild(branchScript);
 </script>
 <script src="../../scripts/asset-loader.js"></script>
 </body>
