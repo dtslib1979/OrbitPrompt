@@ -1,0 +1,28 @@
+{
+  "version": "1.0",
+  "description": "OrbitPrompt 스튜디오 연동 설정",
+  "studios": {
+    "image": {
+      "name": "parksy-image",
+      "description": "이미지 스튜디오 (시각)",
+      "manifest": "https://dtslib1979.github.io/parksy-image/assets/manifest.json",
+      "provides": ["thumbnails", "backgrounds", "characters"]
+    },
+    "audio": {
+      "name": "parksy-audio",
+      "description": "오디오 스튜디오 (청각)",
+      "manifest": "https://dtslib1979.github.io/parksy-audio/assets/manifest.json",
+      "provides": ["bgm", "sfx", "intro"]
+    },
+    "experience": {
+      "name": "tango-magenta",
+      "description": "경험 스튜디오 (체감)",
+      "manifest": "https://dtslib1979.github.io/tango-magenta/api/content.json",
+      "provides": ["designTokens", "timing", "easing"]
+    }
+  },
+  "defaults": {
+    "background": "chalkboard-dark",
+    "timing": "beat"
+  }
+}
