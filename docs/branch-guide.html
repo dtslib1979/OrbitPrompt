@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Branch Guide | OrbitPrompt</title>
+  <meta name="description" content="OrbitPrompt 템플릿을 브랜치에서 사용하는 방법">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --success: #3fb950;
+      --code-bg: #0d1117;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--accent), #a371f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--accent);
+    }
+
+    p { margin-bottom: 1rem; }
+
+    code {
+      background: var(--surface);
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+    }
+
+    .step {
+      display: flex;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background: var(--surface);
+      border-radius: 8px;
+      border-left: 3px solid var(--accent);
+    }
+
+    .step-num {
+      min-width: 32px;
+      height: 32px;
+      background: var(--accent);
+      color: #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .step-content h4 {
+      margin-bottom: 0.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.2em 0.6em;
+      background: var(--accent);
+      color: #000;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    a { color: var(--accent); }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .back-link:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html" class="back-link">← Mission Control</a>
+
+    <h1>Branch Guide</h1>
+    <p class="subtitle">OrbitPrompt 템플릿을 브랜치에서 사용하는 방법</p>
+
+    <h2>1. 개요</h2>
+    <p>OrbitPrompt는 방송용 칠판 템플릿을 제공하는 <strong>PD 스튜디오</strong>입니다. 각 브랜치(KOOSY, GOHSY, LOTUS 등)는 이 템플릿을 가져와 자신의 브랜딩으로 커스터마이징할 수 있습니다.</p>
+
+    <h2>2. 빠른 시작</h2>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>템플릿 URL에 branch 파라미터 추가</h4>
+        <p>가장 간단한 방법: URL에 <code>?branch=브랜치명</code> 추가</p>
+        <pre><code>https://dtslib1979.github.io/OrbitPrompt/prompts/broadcast/math-tutor.html?branch=koosy</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>또는 커스텀 스크립트 사용</h4>
+        <p>더 세밀한 커스터마이징이 필요하면:</p>
+        <pre><code>&lt;script src="https://dtslib1979.github.io/OrbitPrompt/api/customize.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  OrbitCustomize.init({
+    branch: 'koosy',
+    colors: {
+      primary: '#ff6b6b',
+      accent: '#ffd93d',
+      bg: '#1a1a2e'
+    },
+    logo: 'https://koosy.kr/logo.png'
+  });
+&lt;/script&gt;</code></pre>
+      </div>
+    </div>
+
+    <h2>3. 사용 가능한 템플릿</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>템플릿</th>
+          <th>포맷</th>
+          <th>용도</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>math-tutor</code></td>
+          <td>Khan Academy</td>
+          <td>수학 과외 방송</td>
+        </tr>
+        <tr>
+          <td><code>music-curation</code></td>
+          <td>NPR Tiny Desk</td>
+          <td>음악 큐레이션</td>
+        </tr>
+        <tr>
+          <td><code>memorial-tribute</code></td>
+          <td>Ken Burns</td>
+          <td>추모 영상</td>
+        </tr>
+        <tr>
+          <td><code>pwa-demo</code></td>
+          <td>Apple Keynote</td>
+          <td>앱 데모</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. 커스터마이징 옵션</h2>
+
+    <h3>색상</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>변수</th>
+          <th>설명</th>
+          <th>기본값</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>primary</code></td>
+          <td>주 브랜드 색상</td>
+          <td>#58a6ff</td>
+        </tr>
+        <tr>
+          <td><code>accent</code></td>
+          <td>강조 색상</td>
+          <td>#a371f7</td>
+        </tr>
+        <tr>
+          <td><code>bg</code></td>
+          <td>배경 색상</td>
+          <td>#0d1117</td>
+        </tr>
+        <tr>
+          <td><code>surface</code></td>
+          <td>카드/패널 색상</td>
+          <td>#161b22</td>
+        </tr>
+        <tr>
+          <td><code>text</code></td>
+          <td>텍스트 색상</td>
+          <td>#e6edf3</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>기타 옵션</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>옵션</th>
+          <th>타입</th>
+          <th>설명</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>logo</code></td>
+          <td>URL</td>
+          <td>브랜치 로고 이미지 URL</td>
+        </tr>
+        <tr>
+          <td><code>font</code></td>
+          <td>string</td>
+          <td>커스텀 폰트 이름</td>
+        </tr>
+        <tr>
+          <td><code>watermark</code></td>
+          <td>boolean</td>
+          <td>"Powered by OrbitPrompt" 표시 여부</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>5. 등록된 브랜치 프리셋</h2>
+
+    <p>다음 브랜치들은 프리셋이 등록되어 있어 <code>?branch=이름</code>만으로 바로 사용 가능:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>브랜치</th>
+          <th>Primary</th>
+          <th>Accent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag">koosy</span></td>
+          <td style="color:#ff6b6b">#ff6b6b</td>
+          <td style="color:#ffd93d">#ffd93d</td>
+        </tr>
+        <tr>
+          <td><span class="tag">gohsy</span></td>
+          <td style="color:#4ecdc4">#4ecdc4</td>
+          <td style="color:#44a08d">#44a08d</td>
+        </tr>
+        <tr>
+          <td><span class="tag">lotus</span></td>
+          <td style="color:#e91e63">#e91e63</td>
+          <td style="color:#9c27b0">#9c27b0</td>
+        </tr>
+        <tr>
+          <td><span class="tag">tango-magenta</span></td>
+          <td style="color:#e91e63">#e91e63</td>
+          <td style="color:#ffd54f">#ffd54f</td>
+        </tr>
+        <tr>
+          <td><span class="tag">artrew</span></td>
+          <td style="color:#ff9800">#ff9800</td>
+          <td style="color:#ff5722">#ff5722</td>
+        </tr>
+        <tr>
+          <td><span class="tag">papafly</span></td>
+          <td style="color:#2196f3">#2196f3</td>
+          <td style="color:#03a9f4">#03a9f4</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>6. API 엔드포인트</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>엔드포인트</th>
+          <th>설명</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>/api/templates.json</code></td>
+          <td>템플릿 카탈로그 (버전, URL, 설명)</td>
+        </tr>
+        <tr>
+          <td><code>/api/customize.js</code></td>
+          <td>브랜치 커스터마이징 스크립트</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>7. 브랜치 등록 요청</h2>
+
+    <p>새 브랜치 프리셋 등록은 <a href="https://github.com/dtslib1979/dtslib-branch">dtslib-branch</a> 레포에서 요청하세요.</p>
+
+    <h2>8. 사용 예시</h2>
+
+    <h3>iframe으로 삽입</h3>
+    <pre><code>&lt;iframe
+  src="https://dtslib1979.github.io/OrbitPrompt/prompts/broadcast/math-tutor.html?branch=koosy"
+  width="100%"
+  height="600"
+  frameborder="0"
+&gt;&lt;/iframe&gt;</code></pre>
+
+    <h3>직접 링크</h3>
+    <pre><code>&lt;a href="https://dtslib1979.github.io/OrbitPrompt/prompts/broadcast/pwa-demo.html?branch=lotus"&gt;
+  PWA 데모 시작
+&lt;/a&gt;</code></pre>
+
+  </div>
+</body>
+</html>

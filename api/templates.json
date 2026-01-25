@@ -1,0 +1,118 @@
+{
+  "version": "1.0.0",
+  "studio": "OrbitPrompt",
+  "description": "PD Studio - Broadcast Template Distribution",
+  "baseUrl": "https://dtslib1979.github.io/OrbitPrompt",
+  "lastUpdated": "2026-01-25",
+  "templates": [
+    {
+      "id": "math-tutor",
+      "name": "Math Tutor",
+      "nameKo": "수학 과외",
+      "format": "Khan Academy",
+      "version": "1.0.0",
+      "url": "/prompts/broadcast/math-tutor.html",
+      "thumbnail": "/assets/thumbnails/math-tutor.png",
+      "description": "Step-by-step math tutoring with chalkboard style",
+      "descriptionKo": "단계별 수학 과외 칠판 스타일",
+      "panels": 7,
+      "tags": ["education", "math", "tutorial"],
+      "customizable": {
+        "colors": true,
+        "logo": true,
+        "font": false
+      }
+    },
+    {
+      "id": "music-curation",
+      "name": "Music Curation",
+      "nameKo": "음악 큐레이션",
+      "format": "NPR Tiny Desk",
+      "version": "1.0.0",
+      "url": "/prompts/broadcast/music-curation.html",
+      "thumbnail": "/assets/thumbnails/music-curation.png",
+      "description": "Music analysis and curation broadcast",
+      "descriptionKo": "음악 분석 및 큐레이션 방송",
+      "panels": 7,
+      "tags": ["music", "curation", "analysis"],
+      "customizable": {
+        "colors": true,
+        "logo": true,
+        "font": false
+      }
+    },
+    {
+      "id": "memorial-tribute",
+      "name": "Memorial Tribute",
+      "nameKo": "추모 영상",
+      "format": "Ken Burns",
+      "version": "1.0.0",
+      "url": "/prompts/broadcast/memorial-tribute.html",
+      "thumbnail": "/assets/thumbnails/memorial-tribute.png",
+      "description": "Documentary-style memorial video",
+      "descriptionKo": "다큐멘터리 스타일 추모 영상",
+      "panels": 7,
+      "tags": ["memorial", "documentary", "tribute"],
+      "customizable": {
+        "colors": true,
+        "logo": false,
+        "font": true
+      }
+    },
+    {
+      "id": "pwa-demo",
+      "name": "PWA Demo",
+      "nameKo": "PWA 데모",
+      "format": "Apple Keynote",
+      "version": "1.0.0",
+      "url": "/prompts/broadcast/pwa-demo.html",
+      "thumbnail": "/assets/thumbnails/pwa-demo.png",
+      "description": "App demo and installation guide presentation",
+      "descriptionKo": "앱 데모 및 설치 가이드 프레젠테이션",
+      "panels": 7,
+      "tags": ["app", "demo", "presentation", "pwa"],
+      "customizable": {
+        "colors": true,
+        "logo": true,
+        "font": false
+      }
+    }
+  ],
+  "branches": {
+    "registered": [
+      "koosy",
+      "gohsy",
+      "artrew",
+      "papafly",
+      "lotus",
+      "tango-magenta"
+    ],
+    "howToRegister": "Contact HQ at dtslib-branch repo"
+  },
+  "customization": {
+    "endpoint": "/api/customize.js",
+    "documentation": "/docs/branch-guide.html",
+    "variables": [
+      {
+        "name": "--brand-primary",
+        "description": "Primary brand color",
+        "default": "#58a6ff"
+      },
+      {
+        "name": "--brand-accent",
+        "description": "Accent color",
+        "default": "#a371f7"
+      },
+      {
+        "name": "--brand-bg",
+        "description": "Background color",
+        "default": "#0d1117"
+      },
+      {
+        "name": "--brand-logo",
+        "description": "Logo URL",
+        "default": null
+      }
+    ]
+  }
+}
