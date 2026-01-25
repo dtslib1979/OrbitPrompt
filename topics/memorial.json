@@ -1,0 +1,64 @@
+{
+  "category": "memorial-tribute",
+  "categoryName": "추모 영상",
+  "categoryNameEn": "Memorial Tribute",
+  "version": "1.0.0",
+  "note": "이 카테고리는 자동 추천하지 않음. 필요 시 수동 선택.",
+  "templates": [
+    {
+      "id": "parent-tribute",
+      "title": "부모님 추모",
+      "titleEn": "Parent Tribute",
+      "type": "family",
+      "outline": {
+        "intro": "늘 곁에 계신 줄 알았습니다",
+        "main": "함께한 순간들, 가르침, 사랑",
+        "outro": "영원히 기억하겠습니다"
+      }
+    },
+    {
+      "id": "grandparent-tribute",
+      "title": "조부모님 추모",
+      "titleEn": "Grandparent Tribute",
+      "type": "family",
+      "outline": {
+        "intro": "할머니/할아버지의 품",
+        "main": "지혜, 따뜻함, 추억",
+        "outro": "그 사랑 잊지 않겠습니다"
+      }
+    },
+    {
+      "id": "friend-tribute",
+      "title": "친구 추모",
+      "titleEn": "Friend Tribute",
+      "type": "friend",
+      "outline": {
+        "intro": "함께 웃던 시절",
+        "main": "우정, 추억, 약속",
+        "outro": "다시 만날 때까지"
+      }
+    },
+    {
+      "id": "mentor-tribute",
+      "title": "스승 추모",
+      "titleEn": "Mentor Tribute",
+      "type": "mentor",
+      "outline": {
+        "intro": "삶의 방향을 알려주신 분",
+        "main": "가르침, 영향, 감사",
+        "outro": "그 가르침 이어가겠습니다"
+      }
+    },
+    {
+      "id": "pet-tribute",
+      "title": "반려동물 추모",
+      "titleEn": "Pet Tribute",
+      "type": "pet",
+      "outline": {
+        "intro": "우리 가족이었던 너",
+        "main": "함께한 시간, 행복, 치유",
+        "outro": "무지개 다리 건너 기다려"
+      }
+    }
+  ]
+}

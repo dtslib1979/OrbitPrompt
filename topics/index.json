@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0",
+  "description": "OrbitPrompt Topics Database",
+  "lastUpdated": "2026-01-25",
+  "categories": [
+    {
+      "id": "math-tutor",
+      "file": "math.json",
+      "name": "수학 과외",
+      "nameEn": "Math Tutor",
+      "count": 8,
+      "autoSuggest": true
+    },
+    {
+      "id": "music-curation",
+      "file": "music.json",
+      "name": "음악 큐레이션",
+      "nameEn": "Music Curation",
+      "count": 8,
+      "autoSuggest": true
+    },
+    {
+      "id": "memorial-tribute",
+      "file": "memorial.json",
+      "name": "추모 영상",
+      "nameEn": "Memorial Tribute",
+      "count": 5,
+      "autoSuggest": false
+    },
+    {
+      "id": "pwa-demo",
+      "file": "pwa-demo.json",
+      "name": "PWA 데모",
+      "nameEn": "PWA Demo",
+      "count": 6,
+      "autoSuggest": true
+    }
+  ],
+  "stats": {
+    "totalTopics": 27,
+    "autoSuggestTopics": 22
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "category": "pwa-demo",
+  "categoryName": "PWA 데모",
+  "categoryNameEn": "PWA Demo",
+  "version": "1.0.0",
+  "topics": [
+    {
+      "id": "orbitprompt-demo",
+      "title": "OrbitPrompt 소개",
+      "titleEn": "OrbitPrompt Introduction",
+      "appType": "productivity",
+      "keywords": ["PWA", "방송", "칠판"],
+      "outline": {
+        "impact": "말하면 방송이 된다",
+        "problem": "영상 편집, OBS 설정, PPT 제작",
+        "solution": "웹페이지 = 방송 세트"
+      }
+    },
+    {
+      "id": "todo-app-demo",
+      "title": "투두 앱 데모",
+      "titleEn": "Todo App Demo",
+      "appType": "productivity",
+      "keywords": ["할일", "생산성", "체크리스트"],
+      "outline": {
+        "impact": "미루기 제로",
+        "problem": "할 일이 흩어져 있다",
+        "solution": "한 곳에서 관리"
+      }
+    },
+    {
+      "id": "recipe-app-demo",
+      "title": "레시피 앱 데모",
+      "titleEn": "Recipe App Demo",
+      "appType": "lifestyle",
+      "keywords": ["요리", "레시피", "식단"],
+      "outline": {
+        "impact": "오늘 뭐 먹지?",
+        "problem": "매번 검색, 광고 범벅",
+        "solution": "내 레시피 라이브러리"
+      }
+    },
+    {
+      "id": "workout-app-demo",
+      "title": "운동 앱 데모",
+      "titleEn": "Workout App Demo",
+      "appType": "health",
+      "keywords": ["운동", "루틴", "건강"],
+      "outline": {
+        "impact": "꾸준함이 실력이다",
+        "problem": "운동 기록이 안 남음",
+        "solution": "일일 루틴 + 기록"
+      }
+    },
+    {
+      "id": "budget-app-demo",
+      "title": "가계부 앱 데모",
+      "titleEn": "Budget App Demo",
+      "appType": "finance",
+      "keywords": ["가계부", "지출", "절약"],
+      "outline": {
+        "impact": "돈이 어디로 갔지?",
+        "problem": "지출 파악이 안 됨",
+        "solution": "원터치 기록 + 리포트"
+      }
+    },
+    {
+      "id": "language-app-demo",
+      "title": "언어 학습 앱 데모",
+      "titleEn": "Language App Demo",
+      "appType": "education",
+      "keywords": ["언어", "학습", "단어"],
+      "outline": {
+        "impact": "하루 5분으로 외국어",
+        "problem": "학원 갈 시간이 없음",
+        "solution": "출퇴근 시간 활용"
+      }
+    }
+  ]
+}

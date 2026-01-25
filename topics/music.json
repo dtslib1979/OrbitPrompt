@@ -1,0 +1,120 @@
+{
+  "category": "music-curation",
+  "categoryName": "음악 큐레이션",
+  "categoryNameEn": "Music Curation",
+  "version": "1.0.0",
+  "topics": [
+    {
+      "id": "beethoven-moonlight",
+      "title": "베토벤 - 월광 소나타",
+      "titleEn": "Beethoven - Moonlight Sonata",
+      "composer": "Ludwig van Beethoven",
+      "era": "Classical/Romantic",
+      "difficulty": 2,
+      "keywords": ["베토벤", "피아노", "소나타", "낭만"],
+      "outline": {
+        "intro": "달빛 아래 연인에게 바친 곡",
+        "main": "Piano Sonata No.14 in C# minor",
+        "outro": "다음엔 열정 소나타 해봅시다"
+      }
+    },
+    {
+      "id": "beatles-yesterday",
+      "title": "비틀즈 - Yesterday",
+      "titleEn": "The Beatles - Yesterday",
+      "composer": "Lennon-McCartney",
+      "era": "1960s Rock",
+      "difficulty": 1,
+      "keywords": ["비틀즈", "팝", "발라드"],
+      "outline": {
+        "intro": "폴 매카트니가 꿈에서 만든 멜로디",
+        "main": "현악 4중주 + 어쿠스틱 기타",
+        "outro": "다음엔 Let It Be 해봅시다"
+      }
+    },
+    {
+      "id": "chopin-nocturne",
+      "title": "쇼팽 - 녹턴 Op.9 No.2",
+      "titleEn": "Chopin - Nocturne Op.9 No.2",
+      "composer": "Frédéric Chopin",
+      "era": "Romantic",
+      "difficulty": 2,
+      "keywords": ["쇼팽", "녹턴", "피아노", "낭만주의"],
+      "outline": {
+        "intro": "밤의 시인 쇼팽",
+        "main": "E♭ Major, 서정적 선율",
+        "outro": "다음엔 발라드 해봅시다"
+      }
+    },
+    {
+      "id": "bach-cello-suite",
+      "title": "바흐 - 무반주 첼로 모음곡",
+      "titleEn": "Bach - Cello Suite No.1",
+      "composer": "Johann Sebastian Bach",
+      "era": "Baroque",
+      "difficulty": 3,
+      "keywords": ["바흐", "첼로", "바로크", "무반주"],
+      "outline": {
+        "intro": "첼로 하나로 완성되는 우주",
+        "main": "Prelude in G Major, BWV 1007",
+        "outro": "다음엔 골드베르크 변주곡 해봅시다"
+      }
+    },
+    {
+      "id": "debussy-clair-de-lune",
+      "title": "드뷔시 - 달빛",
+      "titleEn": "Debussy - Clair de Lune",
+      "composer": "Claude Debussy",
+      "era": "Impressionism",
+      "difficulty": 2,
+      "keywords": ["드뷔시", "인상주의", "피아노"],
+      "outline": {
+        "intro": "소리로 그린 인상파 그림",
+        "main": "Suite Bergamasque 3악장",
+        "outro": "다음엔 아라베스크 해봅시다"
+      }
+    },
+    {
+      "id": "tchaikovsky-swan-lake",
+      "title": "차이콥스키 - 백조의 호수",
+      "titleEn": "Tchaikovsky - Swan Lake",
+      "composer": "Pyotr Ilyich Tchaikovsky",
+      "era": "Romantic",
+      "difficulty": 2,
+      "keywords": ["차이콥스키", "발레", "오케스트라"],
+      "outline": {
+        "intro": "발레 음악의 정점",
+        "main": "Scene (Act II) - 백조 테마",
+        "outro": "다음엔 호두까기 인형 해봅시다"
+      }
+    },
+    {
+      "id": "queen-bohemian",
+      "title": "퀸 - Bohemian Rhapsody",
+      "titleEn": "Queen - Bohemian Rhapsody",
+      "composer": "Freddie Mercury",
+      "era": "1970s Rock",
+      "difficulty": 3,
+      "keywords": ["퀸", "록", "오페라", "프레디"],
+      "outline": {
+        "intro": "6분짜리 록 오페라",
+        "main": "발라드 → 오페라 → 하드록 → 발라드",
+        "outro": "다음엔 We Are The Champions 해봅시다"
+      }
+    },
+    {
+      "id": "vivaldi-four-seasons",
+      "title": "비발디 - 사계",
+      "titleEn": "Vivaldi - Four Seasons",
+      "composer": "Antonio Vivaldi",
+      "era": "Baroque",
+      "difficulty": 1,
+      "keywords": ["비발디", "바로크", "바이올린", "협주곡"],
+      "outline": {
+        "intro": "음악으로 그린 계절",
+        "main": "Spring - Allegro",
+        "outro": "다음엔 여름 해봅시다"
+      }
+    }
+  ]
+}
