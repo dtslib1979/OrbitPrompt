@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrbitPrompt — Archive</title>
+    
+    <!-- Icons for home screen add -->
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/orbitprompt-logo.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#0071e3">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="OrbitPrompt">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000;
+            --secondary: #86868b;
+            --accent: #0071e3;
+            --bg: #fbfbfd;
+            --card: #fff;
+            --border: rgba(0,0,0,0.08);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.07);
+            --radius: 10px;
+            --transition: cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Loading State */
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s var(--transition);
+        }
+
+        .loader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .orbit-animation {
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+
+        .orbit-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            animation: rotate 2s linear infinite;
+        }
+
+        .orbit-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            top: -3px;
+            left: calc(50% - 3px);
+        }
+
+        @keyframes rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(251, 251, 253, 0.85);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            transition: all 0.3s var(--transition);
+        }
+
+        nav.scrolled {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.125rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--accent), #0051d5);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .github-link {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.4rem 0.875rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 100px;
+            text-decoration: none;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .github-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .github-link:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .copy-button {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.4rem 0.875rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 100px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .copy-button:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.3s var(--transition);
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error {
+            background: #ff3b30;
+        }
+
+        .toast.success {
+            background: #34c759;
+        }
+
+        /* Hero Section - Compact */
+        .hero {
+            margin-top: 60px;
+            padding: 2rem 1.5rem 1.5rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            font-size: 0.9375rem;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Search & Stats Bar */
+        .control-bar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem 1.5rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.1);
+        }
+
+        .search-icon {
+            color: var(--secondary);
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        #searchInput {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 0.875rem;
+            background: transparent;
+            color: var(--primary);
+        }
+
+        .stats-inline {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-inline {
+            display: flex;
+            align-items: baseline;
+            gap: 0.375rem;
+            white-space: nowrap;
+        }
+
+        .stat-number {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8125rem;
+            color: var(--secondary);
+        }
+
+        /* List Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem 3rem;
+        }
+
+        .list-header {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .prompt-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+        }
+
+        /* Compact Bar Items */
+        .prompt-bar {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 1rem;
+            align-items: center;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.875rem 1rem;
+            transition: all 0.15s var(--transition);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            min-height: 48px;
+        }
+
+        .prompt-bar:hover {
+            background: var(--bg);
+            border-color: var(--accent);
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .bar-title {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .bar-title-text {
+            flex-shrink: 0;
+        }
+
+        .bar-description {
+            color: var(--secondary);
+            font-size: 0.8125rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .bar-complexity {
+            padding: 0.25rem 0.5rem;
+            background: linear-gradient(135deg, #ff6b6b, #ff8787);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            justify-self: center;
+            white-space: nowrap;
+        }
+
+        .bar-mode {
+            padding: 0.25rem 0.625rem;
+            background: var(--bg);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--secondary);
+            font-weight: 500;
+            justify-self: center;
+            white-space: nowrap;
+        }
+
+        .bar-date {
+            font-size: 0.75rem;
+            color: var(--secondary);
+            justify-self: end;
+            white-space: nowrap;
+        }
+
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            gap: 0.25rem;
+            background: var(--bg);
+            padding: 0.25rem;
+            border-radius: 6px;
+        }
+
+        .view-btn {
+            padding: 0.375rem 0.75rem;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: var(--card);
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.2;
+        }
+
+        .empty-message {
+            font-size: 1rem;
+            color: var(--secondary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--secondary);
+            font-size: 0.8125rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .control-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .stats-inline {
+                justify-content: center;
+            }
+
+            .list-header {
+                display: none;
+            }
+
+            .prompt-bar {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .bar-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+
+            .bar-complexity,
+            .bar-mode,
+            .bar-date {
+                justify-self: start;
+                display: inline-block;
+                margin-right: 0.5rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero {
+                padding: 1.5rem 1rem 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-inline {
+                gap: 1rem;
+            }
+
+            .stat-inline {
+                flex-direction: column;
+                align-items: center;
+                gap: 0;
+            }
+        }
+
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #f5f5f7;
+                --secondary: #86868b;
+                --accent: #2997ff;
+                --bg: #000;
+                --card: #1d1d1f;
+                --border: rgba(255,255,255,0.08);
+            }
+
+            nav {
+                background: rgba(0, 0, 0, 0.85);
+            }
+
+            .github-link {
+                background: var(--card);
+                border: 1px solid var(--border);
+            }
+
+            .copy-button {
+                background: var(--card);
+                border: 1px solid var(--border);
+                color: var(--primary);
+            }
+
+            .toast {
+                background: var(--card);
+                color: var(--primary);
+                border: 1px solid var(--border);
+            }
+
+            .toast.success {
+                background: #1e4620;
+                color: #34c759;
+                border-color: #34c759;
+            }
+
+            .toast.error {
+                background: #4a1f1f;
+                color: #ff3b30;
+                border-color: #ff3b30;
+            }
+
+            .prompt-bar:hover {
+                background: rgba(255,255,255,0.03);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="orbit-animation">
+            <div class="orbit-ring">
+                <div class="orbit-dot"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">OP</div>
+                <span>OrbitPrompt</span>
+            </div>
+            <div class="nav-buttons">
+                <button id="copyButton" class="copy-button" aria-label="홈페이지 주소 복사">
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                    </svg>
+                    복사
+                </button>
+                <a href="https://github.com/dtslib1979/OrbitPrompt" class="github-link">
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>OrbitPrompt Archive</h1>
+        <p class="hero-description">Engineered prompts for precision AI interactions</p>
+    </section>
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+        <div class="search-box">
+            <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="7" cy="7" r="5"/>
+                <path d="m11 11 3 3"/>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Search prompts...">
+        </div>
+        
+        <div class="stats-inline">
+            <div class="stat-inline">
+                <span class="stat-number" id="totalCount">0</span>
+                <span class="stat-label">prompts</span>
+            </div>
+            <div class="stat-inline">
+                <span class="stat-number" id="complexityAvg">L2</span>
+                <span class="stat-label">complexity</span>
+            </div>
+            <div class="stat-inline">
+                <span class="stat-number" id="filteredCount">0</span>
+                <span class="stat-label">shown</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="list-header">
+            <span>Name / Description</span>
+            <span style="text-align: center;">Complexity</span>
+            <span style="text-align: center;">Mode</span>
+            <span style="text-align: right;">Modified</span>
+        </div>
+        <div class="prompt-list" id="promptList"></div>
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">🔍</div>
+            <p class="empty-message">No prompts found matching your search</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 OrbitPrompt · Engineered by PARKSY</p>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <script>
+        // Data parsing functions
+        function parsePromptFile(filename) {
+            const base = filename.replace('.html', '');
+            
+            // Handle AIVA format
+            if (base.toLowerCase().includes('aiva')) {
+                return {
+                    title: base.toUpperCase(),
+                    complexity: 'L3',
+                    mode: 'MATCH',
+                    description: 'AIVA prompt matching system',
+                    date: '2025-12-02'
+                };
+            }
+            
+            // Handle DxPxLxCxE format
+            const pattern = /D(\d+)xP(\d+)xL(\d+)xC(\d+)xE(\d+)/i;
+            const match = base.match(pattern);
+            
+            if (match) {
+                const [, d, p, l, c, e] = match;
+                return {
+                    title: `D${d}P${p}L${l}C${c}E${e}`,
+                    complexity: `L${l}`,
+                    mode: getModeFromCode(c),
+                    description: `Depth ${d} · Phase ${p} · Evidence ${e}`,
+                    date: '2025-12-02'
+                };
+            }
+            
+            // Default format
+            return {
+                title: base,
+                complexity: 'L1',
+                mode: 'GENERAL',
+                description: 'Custom prompt template',
+                date: '2025-12-02'
+            };
+        }
+
+        function getModeFromCode(code) {
+            const modes = {
+                '1': 'ENGINEERING',
+                '2': 'ARCHITECTURE',
+                '3': 'CRITICAL',
+                '4': 'EVIDENCE',
+                '5': 'SHAMAN'
+            };
+            return modes[code] || 'GENERAL';
+        }
+
+        // Create bar HTML
+        function createBar(prompt) {
+            return `
+                <a href="prompts/${prompt.filename}" class="prompt-bar" target="_blank">
+                    <div class="bar-title">
+                        <span class="bar-title-text">${prompt.title}</span>
+                        <span class="bar-description">— ${prompt.description}</span>
+                    </div>
+                    <span class="bar-complexity">${prompt.complexity}</span>
+                    <span class="bar-mode">${prompt.mode}</span>
+                    <span class="bar-date">${prompt.date}</span>
+                </a>
+            `;
+        }
+
+        // Main app logic
+        let allPrompts = [];
+        let filteredPrompts = [];
+
+        async function loadPrompts() {
+            try {
+                const response = await fetch('prompts/index.json');
+                const files = await response.json();
+                
+                allPrompts = files.map(filename => ({
+                    filename,
+                    ...parsePromptFile(filename)
+                }));
+
+                // Sort by complexity then title
+                allPrompts.sort((a, b) => {
+                    const complexA = parseInt(a.complexity.replace('L', ''));
+                    const complexB = parseInt(b.complexity.replace('L', ''));
+                    if (complexA !== complexB) return complexB - complexA;
+                    return a.title.localeCompare(b.title);
+                });
+
+                filteredPrompts = [...allPrompts];
+                updateStats();
+                renderPrompts(filteredPrompts);
+                
+                // Hide loader
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('fade-out');
+                }, 300);
+            } catch (error) {
+                console.error('Error loading prompts:', error);
+                document.getElementById('loader').classList.add('fade-out');
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalCount').textContent = allPrompts.length;
+            document.getElementById('filteredCount').textContent = filteredPrompts.length;
+            
+            // Calculate average complexity
+            if (allPrompts.length > 0) {
+                const complexities = allPrompts.map(p => parseInt(p.complexity.replace('L', '')));
+                const avg = Math.round(complexities.reduce((a, b) => a + b, 0) / complexities.length);
+                document.getElementById('complexityAvg').textContent = `L${avg}`;
+            }
+        }
+
+        function renderPrompts(prompts) {
+            const list = document.getElementById('promptList');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (prompts.length === 0) {
+                list.style.display = 'none';
+                emptyState.style.display = 'block';
+            } else {
+                list.style.display = 'flex';
+                emptyState.style.display = 'none';
+                list.innerHTML = prompts.map(createBar).join('');
+            }
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            filteredPrompts = allPrompts.filter(prompt => 
+                prompt.title.toLowerCase().includes(query) ||
+                prompt.description.toLowerCase().includes(query) ||
+                prompt.mode.toLowerCase().includes(query) ||
+                prompt.complexity.toLowerCase().includes(query)
+            );
+            updateStats();
+            renderPrompts(filteredPrompts);
+        });
+
+        // Scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 10) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            
+            // Small delay to ensure CSS transition triggers properly
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // Hide after 1.8 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 1800);
+        }
+
+        // Copy URL functionality
+        async function copyToClipboard(text) {
+            // Try modern clipboard API first
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                } catch (err) {
+                    console.warn('Clipboard API failed, trying fallback:', err);
+                }
+            }
+            
+            // Fallback: textarea + execCommand (deprecated but needed for legacy browser support)
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '0';
+            document.body.appendChild(textarea);
+            
+            try {
+                textarea.select();
+                textarea.setSelectionRange(0, textarea.value.length);
+                const success = document.execCommand('copy');
+                document.body.removeChild(textarea);
+                return success;
+            } catch (err) {
+                document.body.removeChild(textarea);
+                console.error('Fallback copy failed:', err);
+                return false;
+            }
+        }
+
+        // Copy button event handler
+        document.getElementById('copyButton').addEventListener('click', async function() {
+            const button = this;
+            const urlToCopy = button.getAttribute('data-url') || window.location.href;
+            
+            const success = await copyToClipboard(urlToCopy);
+            
+            if (success) {
+                showToast('주소가 복사되었습니다', 'success');
+            } else {
+                showToast('복사에 실패했습니다', 'error');
+            }
+        });
+
+        // Initialize
+        loadPrompts();
+    </script>
+</body>
+</html>
