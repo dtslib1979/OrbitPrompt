@@ -251,6 +251,23 @@ function go(dir) { save(); goTo(current + dir); }
 function goTo(i) { save(); current = Math.max(0, Math.min(pages.length - 1, i)); render(); }
 
 render();
+
+// 스튜디오 연동 초기화
+async function initStudioConnection() {
+  try {
+    await AssetLoader.init();
+    const timing = AssetLoader.getDesignTokens('timing');
+    if (timing) {
+      document.documentElement.style.setProperty('--beat', timing.beat + 'ms');
+      document.documentElement.style.setProperty('--half-beat', timing.halfBeat + 'ms');
+    }
+    console.log('스튜디오 연결:', AssetLoader.getStatus());
+  } catch (e) {
+    console.warn('스튜디오 연동 실패 (오프라인 모드):', e.message);
+  }
+}
+initStudioConnection();
 </script>
+<script src="../../scripts/asset-loader.js"></script>
 </body>
 </html>
