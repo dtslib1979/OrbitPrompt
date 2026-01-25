@@ -419,6 +419,49 @@
     html.en-mode .bilingual .ko::after { content: ' /'; }
     html.en-mode .bilingual .en { font-size: 1em; color: var(--text); margin-left: 0; }
     html.en-mode .bilingual .en::before { content: ''; }
+
+    /* Topic Suggestion */
+    .topic-suggestion {
+      margin-top: 12px;
+    }
+
+    .suggestion-btn {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--accent-glow);
+      border: 1px dashed var(--accent);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .suggestion-btn:hover {
+      background: rgba(88, 166, 255, 0.25);
+      border-style: solid;
+    }
+
+    .suggestion-icon {
+      font-size: 1.25rem;
+    }
+
+    .suggestion-text {
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .suggestion-topic {
+      color: var(--accent);
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body>
@@ -482,6 +525,16 @@
           class="topic-input"
           placeholder="근의 공식 / Beatles 분석 / etc..."
         >
+        <div class="topic-suggestion" id="topicSuggestion">
+          <button class="suggestion-btn" id="suggestionBtn" style="display:none;">
+            <span class="suggestion-icon">💡</span>
+            <span class="suggestion-text bilingual">
+              <span lang="ko" class="ko">오늘의 추천:</span>
+              <span lang="en" class="en">Today's pick:</span>
+            </span>
+            <span class="suggestion-topic" id="suggestionTopic"></span>
+          </button>
+        </div>
       </div>
 
       <button class="launch-btn" id="launchBtn">
@@ -580,6 +633,7 @@
   </div>
 
   <script src="scripts/asset-loader.js"></script>
+  <script src="scripts/topics-loader.js"></script>
   <script>
     // === Language Toggle ===
     let currentLang = localStorage.getItem('orbitprompt_lang') || 'ko';
@@ -591,6 +645,13 @@
       document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === lang);
       });
+      // Update suggestion text if available
+      if (typeof currentSuggestion !== 'undefined' && currentSuggestion) {
+        const title = lang === 'en' && currentSuggestion.titleEn
+          ? currentSuggestion.titleEn
+          : currentSuggestion.title;
+        document.getElementById('suggestionTopic').textContent = title;
+      }
     }
 
     // Initialize language on load
@@ -643,14 +704,56 @@
 
     // === Board Selector ===
     let selectedBoard = 'math-tutor';
+    let currentSuggestion = null;
 
     document.querySelectorAll('.board-option').forEach(option => {
       option.addEventListener('click', () => {
         document.querySelectorAll('.board-option').forEach(o => o.classList.remove('selected'));
         option.classList.add('selected');
         selectedBoard = option.dataset.board;
+        loadTopicSuggestion(selectedBoard);
       });
     });
+
+    // === Topic Suggestion ===
+    async function loadTopicSuggestion(categoryId) {
+      const suggestionBtn = document.getElementById('suggestionBtn');
+      const suggestionTopic = document.getElementById('suggestionTopic');
+
+      try {
+        await TopicsLoader.init();
+        const topic = await TopicsLoader.getTodaysTopic(categoryId);
+
+        if (topic) {
+          currentSuggestion = topic;
+          const lang = currentLang || 'ko';
+          const title = lang === 'en' && topic.titleEn ? topic.titleEn : topic.title;
+          suggestionTopic.textContent = title;
+          suggestionBtn.style.display = 'flex';
+        } else {
+          suggestionBtn.style.display = 'none';
+          currentSuggestion = null;
+        }
+      } catch (e) {
+        console.warn('Topic suggestion failed:', e);
+        suggestionBtn.style.display = 'none';
+        currentSuggestion = null;
+      }
+    }
+
+    // Click suggestion to auto-fill
+    document.getElementById('suggestionBtn').addEventListener('click', () => {
+      if (currentSuggestion) {
+        const lang = currentLang || 'ko';
+        const title = lang === 'en' && currentSuggestion.titleEn
+          ? currentSuggestion.titleEn
+          : currentSuggestion.title;
+        document.getElementById('topicInput').value = title;
+      }
+    });
+
+    // Load initial suggestion
+    loadTopicSuggestion(selectedBoard);
 
     // === Launch Button ===
     document.getElementById('launchBtn').addEventListener('click', () => {
