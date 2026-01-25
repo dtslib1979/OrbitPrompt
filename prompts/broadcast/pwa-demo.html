@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PWA/APK Demo Studio</title>
+<title>PWA/APK Demo Studio | PWA 데모 스튜디오</title>
+<meta name="description" content="Apple Keynote style PWA/APK demo chalkboard. Apple 키노트 스타일 PWA 데모 칠판.">
+<meta name="description" lang="en" content="Apple Keynote style PWA/APK demo presentation for screen recording broadcasts.">
 <style>
 :root {
   --bg: #000;
@@ -145,6 +147,25 @@ textarea {
 .nav-btn.next { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; }
 .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
+/* Bilingual Support */
+.bilingual { display: block; }
+.bilingual .ko { display: block; }
+.bilingual .en { display: block; font-size: 0.85em; color: var(--dim); margin-top: 0.2em; }
+[lang="en"] { font-style: normal; }
+
+.lang-toggle {
+  position: fixed; top: 1rem; right: 1rem; z-index: 100;
+  display: flex; gap: 4px; background: var(--panel); padding: 4px; border-radius: 6px;
+}
+.lang-btn {
+  padding: 0.4rem 0.8rem; border: none; border-radius: 4px;
+  font-size: 0.75rem; cursor: pointer; background: transparent; color: var(--dim);
+}
+.lang-btn.active { background: var(--accent); color: #000; }
+
+html.en-mode .bilingual .ko { font-size: 0.85em; color: var(--dim); }
+html.en-mode .bilingual .en { font-size: 1em; color: var(--text); }
+
 @media (max-width: 600px) {
   .features { grid-template-columns: 1fr; }
   .slide-headline { font-size: 1.5rem; }
@@ -152,27 +173,47 @@ textarea {
 </style>
 </head>
 <body>
+<div class="lang-toggle">
+  <button class="lang-btn active" data-lang="ko" onclick="setLang('ko')">한국어</button>
+  <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+</div>
+
 <div class="app">
   <div class="progress" id="progress"></div>
   <div class="tabs" id="tabs"></div>
   <div id="panels"></div>
   <div class="nav">
-    <button class="nav-btn prev" id="prevBtn" onclick="go(-1)">← 이전</button>
-    <button class="nav-btn next" id="nextBtn" onclick="go(1)">다음 →</button>
+    <button class="nav-btn prev" id="prevBtn" onclick="go(-1)">
+      <span class="bilingual"><span lang="ko" class="ko">← 이전</span><span lang="en" class="en">← Prev</span></span>
+    </button>
+    <button class="nav-btn next" id="nextBtn" onclick="go(1)">
+      <span class="bilingual"><span lang="ko" class="ko">다음 →</span><span lang="en" class="en">Next →</span></span>
+    </button>
   </div>
 </div>
 <script>
 const pages = [
-  { num: 1, label: '임팩트', title: '오늘 소개할 것', type: 'impact' },
-  { num: 2, label: '문제', title: '기존엔 이랬습니다', type: 'problem' },
-  { num: 3, label: '솔루션', title: '이게 해결합니다', type: 'solution' },
-  { num: 4, label: '데모', title: '라이브 데모', type: 'demo' },
-  { num: 5, label: '설치', title: '설치 3스텝', type: 'install' },
-  { num: 6, label: 'OMT', title: 'One More Thing', type: 'omt' },
-  { num: 7, label: '링크', title: '지금 바로 설치', type: 'download' }
+  { num: 1, label: '임팩트', labelEn: 'Impact', title: '오늘 소개할 것', titleEn: "Today's Intro", type: 'impact' },
+  { num: 2, label: '문제', labelEn: 'Problem', title: '기존엔 이랬습니다', titleEn: 'The Problem Before', type: 'problem' },
+  { num: 3, label: '솔루션', labelEn: 'Solution', title: '이게 해결합니다', titleEn: 'Here\'s The Solution', type: 'solution' },
+  { num: 4, label: '데모', labelEn: 'Demo', title: '라이브 데모', titleEn: 'Live Demo', type: 'demo' },
+  { num: 5, label: '설치', labelEn: 'Install', title: '설치 3스텝', titleEn: '3-Step Install', type: 'install' },
+  { num: 6, label: 'OMT', labelEn: 'OMT', title: 'One More Thing', titleEn: 'One More Thing', type: 'omt' },
+  { num: 7, label: '링크', labelEn: 'Link', title: '지금 바로 설치', titleEn: 'Install Now', type: 'download' }
 ];
 
 let current = 0;
+let currentLang = localStorage.getItem('orbitprompt_lang') || 'ko';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('orbitprompt_lang', lang);
+  document.documentElement.classList.toggle('en-mode', lang === 'en');
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
+  render();
+}
+document.documentElement.classList.toggle('en-mode', currentLang === 'en');
+document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === currentLang));
 
 function renderPanel(p, i) {
   const saved = localStorage.getItem('pwa_'+i) || '';
@@ -226,20 +267,28 @@ function render() {
 
   document.getElementById('tabs').innerHTML = pages.map((p, i) =>
     `<button class="tab ${i === current ? 'active' : ''}" onclick="goTo(${i})">
-      <span class="num">${p.num}</span>${p.label}
+      <span class="num">${p.num}</span>
+      <span class="bilingual"><span lang="ko" class="ko">${p.label}</span><span lang="en" class="en">${p.labelEn}</span></span>
     </button>`
   ).join('');
 
   document.getElementById('panels').innerHTML = pages.map((p, i) => `
     <div class="panel ${i === current ? 'active' : ''}">
       <div class="slide">
+        <div class="slide-title bilingual" style="margin-bottom:1rem;">
+          <span lang="ko" class="ko" style="font-size:0.9rem;color:var(--dim);">${p.title}</span>
+          <span lang="en" class="en" style="font-size:0.9rem;color:var(--dim);">${p.titleEn}</span>
+        </div>
         ${renderPanel(p, i)}
       </div>
     </div>
   `).join('');
 
   document.getElementById('prevBtn').disabled = current === 0;
-  document.getElementById('nextBtn').textContent = current === pages.length - 1 ? '완료 ✓' : '다음 →';
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.innerHTML = current === pages.length - 1
+    ? `<span class="bilingual"><span lang="ko" class="ko">완료 ✓</span><span lang="en" class="en">Done ✓</span></span>`
+    : `<span class="bilingual"><span lang="ko" class="ko">다음 →</span><span lang="en" class="en">Next →</span></span>`;
 }
 
 function save() {

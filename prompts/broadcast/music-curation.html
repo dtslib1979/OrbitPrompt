@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Music Curation Studio</title>
+<title>Music Curation Studio | 음악 큐레이션 스튜디오</title>
+<meta name="description" content="NPR Tiny Desk style music curation chalkboard. NPR 타이니 데스크 스타일 음악 큐레이션 칠판.">
+<meta name="description" lang="en" content="NPR Tiny Desk style music curation chalkboard for screen recording broadcasts.">
 <style>
 :root {
   --bg: #0a0508;
@@ -123,30 +125,69 @@ textarea {
 .nav-btn.prev { background: #222; color: #fff; }
 .nav-btn.next { background: var(--accent); color: #fff; }
 .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Bilingual Support */
+.bilingual { display: block; }
+.bilingual .ko { display: block; }
+.bilingual .en { display: block; font-size: 0.85em; color: var(--dim); margin-top: 0.2em; }
+[lang="en"] { font-style: normal; }
+
+.lang-toggle {
+  position: fixed; top: 1rem; right: 1rem; z-index: 100;
+  display: flex; gap: 4px; background: var(--panel); padding: 4px; border-radius: 6px;
+}
+.lang-btn {
+  padding: 0.4rem 0.8rem; border: none; border-radius: 4px;
+  font-size: 0.75rem; cursor: pointer; background: transparent; color: var(--dim);
+}
+.lang-btn.active { background: var(--accent); color: #fff; }
+
+html.en-mode .bilingual .ko { font-size: 0.85em; color: var(--dim); }
+html.en-mode .bilingual .en { font-size: 1em; color: var(--text); }
 </style>
 </head>
 <body>
+<div class="lang-toggle">
+  <button class="lang-btn active" data-lang="ko" onclick="setLang('ko')">한국어</button>
+  <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+</div>
+
 <div class="app">
   <div class="progress" id="progress"></div>
   <div class="tabs" id="tabs"></div>
   <div id="panels"></div>
   <div class="nav">
-    <button class="nav-btn prev" id="prevBtn" onclick="go(-1)">← 이전</button>
-    <button class="nav-btn next" id="nextBtn" onclick="go(1)">다음 →</button>
+    <button class="nav-btn prev" id="prevBtn" onclick="go(-1)">
+      <span class="bilingual"><span lang="ko" class="ko">← 이전</span><span lang="en" class="en">← Prev</span></span>
+    </button>
+    <button class="nav-btn next" id="nextBtn" onclick="go(1)">
+      <span class="bilingual"><span lang="ko" class="ko">다음 →</span><span lang="en" class="en">Next →</span></span>
+    </button>
   </div>
 </div>
 <script>
 const pages = [
-  { num: 1, label: '곡 소개', title: '오늘의 곡', sub: '제목 / 작곡가 / 시대', type: 'intro' },
-  { num: 2, label: '배경', title: '작곡 배경', sub: '이 곡은 왜 태어났는가', type: 'text' },
-  { num: 3, label: '감상', title: '구간별 감상 포인트', sub: '1절 / 2절 / 클라이맥스', type: 'sections' },
-  { num: 4, label: '분석', title: '화성 · 구조 분석', sub: '악보 / 코드 / 조성', type: 'text' },
-  { num: 5, label: '비교', title: '추천 연주 버전', sub: '같은 곡, 다른 해석', type: 'tracks' },
-  { num: 6, label: '큐레이션', title: '관련곡 3선', sub: '이 곡이 좋았다면...', type: 'tracks' },
-  { num: 7, label: '예고', title: '다음 에피소드', sub: '다음 주 감상 예고', type: 'next' }
+  { num: 1, label: '곡 소개', labelEn: 'Intro', title: '오늘의 곡', titleEn: "Today's Piece", sub: '제목 / 작곡가 / 시대', subEn: 'Title / Composer / Era', type: 'intro' },
+  { num: 2, label: '배경', labelEn: 'Context', title: '작곡 배경', titleEn: 'Composition Background', sub: '이 곡은 왜 태어났는가', subEn: 'Why was this piece born?', type: 'text' },
+  { num: 3, label: '감상', labelEn: 'Listen', title: '구간별 감상 포인트', titleEn: 'Listening Guide', sub: '1절 / 2절 / 클라이맥스', subEn: 'Verse 1 / Verse 2 / Climax', type: 'sections' },
+  { num: 4, label: '분석', labelEn: 'Analysis', title: '화성 · 구조 분석', titleEn: 'Harmony & Structure', sub: '악보 / 코드 / 조성', subEn: 'Score / Chords / Key', type: 'text' },
+  { num: 5, label: '비교', labelEn: 'Compare', title: '추천 연주 버전', titleEn: 'Recommended Versions', sub: '같은 곡, 다른 해석', subEn: 'Same piece, different interpretations', type: 'tracks' },
+  { num: 6, label: '큐레이션', labelEn: 'Curate', title: '관련곡 3선', titleEn: 'Related Picks (3)', sub: '이 곡이 좋았다면...', subEn: 'If you liked this...', type: 'tracks' },
+  { num: 7, label: '예고', labelEn: 'Next', title: '다음 에피소드', titleEn: 'Next Episode', sub: '다음 주 감상 예고', subEn: "Next week's preview", type: 'next' }
 ];
 
 let current = 0;
+let currentLang = localStorage.getItem('orbitprompt_lang') || 'ko';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('orbitprompt_lang', lang);
+  document.documentElement.classList.toggle('en-mode', lang === 'en');
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
+  render();
+}
+document.documentElement.classList.toggle('en-mode', currentLang === 'en');
+document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === currentLang));
 
 function renderPanel(p, i) {
   const saved = localStorage.getItem('music_'+i) || '';
@@ -191,22 +232,32 @@ function render() {
 
   document.getElementById('tabs').innerHTML = pages.map((p, i) =>
     `<button class="tab ${i === current ? 'active' : ''}" onclick="goTo(${i})">
-      <span class="num">${p.num}</span>${p.label}
+      <span class="num">${p.num}</span>
+      <span class="bilingual"><span lang="ko" class="ko">${p.label}</span><span lang="en" class="en">${p.labelEn}</span></span>
     </button>`
   ).join('');
 
   document.getElementById('panels').innerHTML = pages.map((p, i) => `
     <div class="panel ${i === current ? 'active' : ''}">
       <div class="studio">
-        <div class="studio-title">${p.title}</div>
-        <div class="studio-sub">${p.sub}</div>
+        <div class="studio-title bilingual">
+          <span lang="ko" class="ko">${p.title}</span>
+          <span lang="en" class="en">${p.titleEn}</span>
+        </div>
+        <div class="studio-sub bilingual">
+          <span lang="ko" class="ko">${p.sub}</span>
+          <span lang="en" class="en">${p.subEn}</span>
+        </div>
         ${renderPanel(p, i)}
       </div>
     </div>
   `).join('');
 
   document.getElementById('prevBtn').disabled = current === 0;
-  document.getElementById('nextBtn').textContent = current === pages.length - 1 ? '완료 ✓' : '다음 →';
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.innerHTML = current === pages.length - 1
+    ? `<span class="bilingual"><span lang="ko" class="ko">완료 ✓</span><span lang="en" class="en">Done ✓</span></span>`
+    : `<span class="bilingual"><span lang="ko" class="ko">다음 →</span><span lang="en" class="en">Next →</span></span>`;
 }
 
 function save() {
