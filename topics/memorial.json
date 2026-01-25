@@ -4,7 +4,7 @@
   "categoryNameEn": "Memorial Tribute",
   "version": "1.0.0",
   "note": "이 카테고리는 자동 추천하지 않음. 필요 시 수동 선택.",
-  "templates": [
+  "topics": [
     {
       "id": "parent-tribute",
       "title": "부모님 추모",
