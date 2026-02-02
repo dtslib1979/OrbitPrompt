@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Chalkboard Template Generator — OrbitPrompt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-card: #0a0a0a;
+      --bg-input: #111111;
+      --bg-elevated: #1a1a1a;
+      --text: #f0f0f0;
+      --text-secondary: rgba(255,255,255,0.7);
+      --text-muted: rgba(255,255,255,0.4);
+      --accent: #a855f7;
+      --accent-dim: rgba(168,85,247,0.15);
+      --accent-glow: rgba(168,85,247,0.3);
+      --gold: #d4af37;
+      --gold-dim: rgba(212,175,55,0.15);
+      --cyan: #22d3ee;
+      --border: rgba(255,255,255,0.08);
+      --font-ui: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .logo {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tagline {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* Steps */
+    .steps {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+    }
+    .step.active {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .step-num {
+      width: 20px;
+      height: 20px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.625rem;
+    }
+    .step.active .step-num {
+      background: var(--accent);
+      color: #000;
+    }
+
+    /* Sections */
+    .section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .section-body {
+      padding: 1.25rem;
+    }
+
+    /* Form Elements */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .form-label {
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .form-input, .form-select, .form-textarea {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      padding: 0.75rem;
+      transition: border-color 0.15s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .form-textarea {
+      min-height: 100px;
+      resize: vertical;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      line-height: 1.6;
+    }
+    .form-hint {
+      font-size: 0.5625rem;
+      color: var(--text-muted);
+    }
+
+    /* Chips */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .chip {
+      padding: 0.5rem 0.875rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chip:hover {
+      border-color: var(--accent);
+    }
+    .chip.selected {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .chip-icon {
+      margin-right: 0.375rem;
+    }
+
+    /* Range */
+    .range-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .range-input {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+    }
+    .range-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .range-value {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      color: var(--accent);
+      min-width: 24px;
+      text-align: center;
+    }
+
+    /* Toggles */
+    .toggles {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+    }
+    .toggle-label {
+      font-size: 0.8125rem;
+    }
+    .toggle-desc {
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      margin-top: 0.125rem;
+    }
+    .toggle-switch {
+      width: 44px;
+      height: 24px;
+      background: var(--border);
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-switch.active {
+      background: var(--accent);
+    }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle-switch.active::after {
+      transform: translateX(20px);
+    }
+
+    /* Output */
+    .output-section {
+      background: var(--bg-card);
+      border: 2px solid var(--gold);
+    }
+    .output-header {
+      background: var(--gold-dim);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--gold);
+    }
+    .output-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .output-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .output-body {
+      padding: 1.25rem;
+    }
+    .output-prompt {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.625rem 1rem;
+      border: none;
+      font-family: inherit;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-primary:hover { filter: brightness(1.1); }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .btn-gold {
+      background: var(--gold);
+      color: #000;
+    }
+    .btn-gold:hover { filter: brightness(1.1); }
+
+    .btn-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+    .btn-full {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    .footer-text {
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+    .footer-link {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 class="logo">Chalkboard Generator</h1>
+      <p class="tagline">방송용 칠판 템플릿 프롬프트 생성기</p>
+    </header>
+
+    <div class="steps">
+      <div class="step active"><span class="step-num">1</span> 포맷 선택</div>
+      <div class="step"><span class="step-num">2</span> 변수 설정</div>
+      <div class="step"><span class="step-num">3</span> 프롬프트 생성</div>
+      <div class="step"><span class="step-num">4</span> AI에 전송</div>
+    </div>
+
+    <!-- Step 1: Format -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">1. 방송 포맷</span>
+      </div>
+      <div class="section-body">
+        <div class="chips" id="formatChips">
+          <div class="chip selected" data-value="memorial" onclick="selectFormat(this)">
+            <span class="chip-icon">🕯️</span>추모 다큐
+          </div>
+          <div class="chip" data-value="interview" onclick="selectFormat(this)">
+            <span class="chip-icon">🎤</span>인터뷰
+          </div>
+          <div class="chip" data-value="tutorial" onclick="selectFormat(this)">
+            <span class="chip-icon">📐</span>튜토리얼
+          </div>
+          <div class="chip" data-value="music" onclick="selectFormat(this)">
+            <span class="chip-icon">🎵</span>음악 큐레이션
+          </div>
+          <div class="chip" data-value="news" onclick="selectFormat(this)">
+            <span class="chip-icon">📰</span>뉴스 브리핑
+          </div>
+          <div class="chip" data-value="product" onclick="selectFormat(this)">
+            <span class="chip-icon">📱</span>제품 데모
+          </div>
+          <div class="chip" data-value="custom" onclick="selectFormat(this)">
+            <span class="chip-icon">✨</span>커스텀
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Variables -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">2. 변수 설정</span>
+      </div>
+      <div class="section-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">섹션 수</label>
+            <div class="range-group">
+              <input type="range" class="range-input" id="sectionCount" min="3" max="10" value="5" oninput="updateRange(this)">
+              <span class="range-value" id="sectionCountValue">5</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ken Burns 지속시간 (초)</label>
+            <div class="range-group">
+              <input type="range" class="range-input" id="kbDuration" min="8" max="20" value="12" oninput="updateRange(this)">
+              <span class="range-value" id="kbDurationValue">12</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-top: 1rem;">
+          <div class="form-group">
+            <label class="form-label">색감 스타일</label>
+            <select class="form-select" id="colorStyle">
+              <option value="bw-to-color">흑백 → 컬러 전환</option>
+              <option value="warm">따뜻한 톤 유지</option>
+              <option value="cool">차가운 톤 유지</option>
+              <option value="sepia">세피아 빈티지</option>
+              <option value="vivid">선명한 컬러</option>
+              <option value="mixed">섹션별 혼합</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">타이포그래피</label>
+            <select class="form-select" id="typography">
+              <option value="serif-elegant">Serif 우아한 스타일</option>
+              <option value="sans-modern">Sans 모던 스타일</option>
+              <option value="mono-tech">Mono 테크 스타일</option>
+              <option value="mixed">혼합 스타일</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="toggles" style="margin-top: 1.5rem;">
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Film Grain 효과</div>
+              <div class="toggle-desc">영화적 질감의 노이즈 오버레이</div>
+            </div>
+            <div class="toggle-switch active" id="toggleGrain" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Vignette 효과</div>
+              <div class="toggle-desc">화면 가장자리 어둡게</div>
+            </div>
+            <div class="toggle-switch active" id="toggleVignette" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Setup Mode 포함</div>
+              <div class="toggle-desc">유저가 텍스트/이미지 입력하는 폼</div>
+            </div>
+            <div class="toggle-switch active" id="toggleSetup" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">터치/스와이프 네비게이션</div>
+              <div class="toggle-desc">모바일 퍼스트 조작</div>
+            </div>
+            <div class="toggle-switch active" id="toggleTouch" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">localStorage 저장</div>
+              <div class="toggle-desc">입력 데이터 브라우저에 저장</div>
+            </div>
+            <div class="toggle-switch active" id="toggleStorage" onclick="toggleSwitch(this)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Context -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">3. 추가 컨텍스트 (선택)</span>
+      </div>
+      <div class="section-body">
+        <div class="form-group">
+          <label class="form-label">참고할 스타일 / 레퍼런스</label>
+          <textarea class="form-textarea" id="reference" placeholder="예: Ken Burns 다큐멘터리, Oscar In Memoriam, Apple 키노트..."></textarea>
+          <span class="form-hint">YouTube 영상 분석 결과나 특정 스타일 설명을 붙여넣으세요</span>
+        </div>
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label">특별 요구사항</label>
+          <textarea class="form-textarea" id="requirements" placeholder="예: 마지막 화면에 원형 프로필 사진 표시, 인용문에 큰따옴표 장식..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generate Button -->
+    <div class="btn-row">
+      <button class="btn btn-primary btn-full" onclick="generatePrompt()">
+        🚀 프롬프트 생성
+      </button>
+    </div>
+
+    <!-- Output -->
+    <div class="section output-section" id="outputSection" style="display: none; margin-top: 1.5rem;">
+      <div class="output-header">
+        <span class="output-title">생성된 프롬프트</span>
+        <div class="output-actions">
+          <button class="btn btn-secondary" onclick="copyPrompt()">📋 복사</button>
+        </div>
+      </div>
+      <div class="output-body">
+        <div class="output-prompt" id="outputPrompt"></div>
+        <div class="btn-row">
+          <button class="btn btn-gold btn-full" onclick="openClaude()">
+            Claude에서 열기 →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p class="footer-text">
+        <a href="../index.html" class="footer-link">OrbitPrompt</a> — Prompt Engineering Engine
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // State
+    let state = {
+      format: 'memorial',
+      sectionCount: 5,
+      kbDuration: 12,
+      colorStyle: 'bw-to-color',
+      typography: 'serif-elegant',
+      filmGrain: true,
+      vignette: true,
+      setupMode: true,
+      touchNav: true,
+      localStorage: true,
+      reference: '',
+      requirements: ''
+    };
+
+    // Format descriptions
+    const formatDescriptions = {
+      memorial: {
+        name: '추모 다큐멘터리',
+        style: 'Ken Burns',
+        mood: '엄숙 → 투쟁 → 성취 → 인간미 → 안식',
+        example: '故 이해찬 추모 영상'
+      },
+      interview: {
+        name: '인터뷰',
+        style: 'Hot Ones / 유퀴즈',
+        mood: '호기심 → 탐구 → 깊이 → 감동',
+        example: '셀럽 인터뷰 포맷'
+      },
+      tutorial: {
+        name: '튜토리얼',
+        style: 'Khan Academy',
+        mood: '도입 → 개념 → 예시 → 연습 → 정리',
+        example: '수학/코딩 강의'
+      },
+      music: {
+        name: '음악 큐레이션',
+        style: 'NPR Tiny Desk',
+        mood: '소개 → 분석 → 감상 → 여운',
+        example: '앨범/아티스트 리뷰'
+      },
+      news: {
+        name: '뉴스 브리핑',
+        style: 'Morning Brew',
+        mood: '헤드라인 → 본문 → 분석 → 전망',
+        example: '5분 뉴스 요약'
+      },
+      product: {
+        name: '제품 데모',
+        style: 'Apple Keynote',
+        mood: '문제 → 해결책 → 기능 → 데모 → CTA',
+        example: 'PWA 설치 가이드'
+      },
+      custom: {
+        name: '커스텀',
+        style: '사용자 정의',
+        mood: '자유 구성',
+        example: '직접 지정'
+      }
+    };
+
+    // Event handlers
+    function selectFormat(el) {
+      document.querySelectorAll('#formatChips .chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      state.format = el.dataset.value;
+    }
+
+    function updateRange(el) {
+      const valueEl = document.getElementById(el.id + 'Value');
+      valueEl.textContent = el.value;
+      if (el.id === 'sectionCount') state.sectionCount = parseInt(el.value);
+      if (el.id === 'kbDuration') state.kbDuration = parseInt(el.value);
+    }
+
+    function toggleSwitch(el) {
+      el.classList.toggle('active');
+      const key = el.id.replace('toggle', '').toLowerCase();
+      if (key === 'grain') state.filmGrain = el.classList.contains('active');
+      if (key === 'vignette') state.vignette = el.classList.contains('active');
+      if (key === 'setup') state.setupMode = el.classList.contains('active');
+      if (key === 'touch') state.touchNav = el.classList.contains('active');
+      if (key === 'storage') state.localStorage = el.classList.contains('active');
+    }
+
+    function generatePrompt() {
+      // Collect state
+      state.colorStyle = document.getElementById('colorStyle').value;
+      state.typography = document.getElementById('typography').value;
+      state.reference = document.getElementById('reference').value;
+      state.requirements = document.getElementById('requirements').value;
+
+      const format = formatDescriptions[state.format];
+
+      const prompt = `# Chalkboard 방송용 칠판 템플릿 생성 요청
+
+## 목표
+Galaxy 화면 녹화 → YouTube 업로드를 위한 인터랙티브 PWA 페이지 생성.
+편집 없이 녹화 = 완성물이 되는 구조.
+
+## 포맷 정보
+- **타입:** ${format.name}
+- **참고 스타일:** ${format.style}
+- **감정 곡선:** ${format.mood}
+${state.reference ? `- **추가 레퍼런스:** ${state.reference}` : ''}
+
+## 기술 사양
+
+### 구조
+- **섹션 수:** ${state.sectionCount}개
+- **Setup Mode:** ${state.setupMode ? '포함 (유저가 텍스트/이미지 입력하는 폼)' : '미포함'}
+- **Broadcast Mode:** 풀스크린 프레젠테이션
+
+### 시각 효과
+- **Ken Burns 효과:** zoom-in, zoom-out, pan-left, pan-right, pan-up, diagonal
+- **Ken Burns 지속시간:** ${state.kbDuration}초
+- **색감 스타일:** ${state.colorStyle === 'bw-to-color' ? '흑백 → 컬러 점진적 전환' : state.colorStyle}
+- **Film Grain:** ${state.filmGrain ? '적용 (SVG 노이즈 오버레이)' : '미적용'}
+- **Vignette:** ${state.vignette ? '적용 (화면 가장자리 어둡게)' : '미적용'}
+
+### 타이포그래피
+- **스타일:** ${state.typography === 'serif-elegant' ? 'Noto Serif KR + Cormorant Garamond (우아한 세리프)' : state.typography === 'sans-modern' ? 'Inter (모던 산세리프)' : state.typography === 'mono-tech' ? 'JetBrains Mono (테크 스타일)' : '혼합'}
+- **인용문:** 왼쪽 골드 보더, 반투명 배경, backdrop-filter blur
+
+### 인터랙션
+- **터치/스와이프:** ${state.touchNav ? '지원 (좌 25% = 이전, 우 75% = 다음)' : '미지원'}
+- **키보드:** Arrow Left/Right, Space, Escape
+- **타임라인:** 하단 dot 인디케이터
+
+### 데이터 관리
+- **localStorage:** ${state.localStorage ? '저장/불러오기 지원' : '미지원'}
+- **샘플 데이터:** 포함 (데모용)
+
+${state.requirements ? `## 특별 요구사항
+${state.requirements}` : ''}
+
+## Setup Mode 필수 요소 (${state.setupMode ? '적용' : '생략'})
+${state.setupMode ? `
+1. 인물/주제 정보 입력 (이름, 직함, 기간 등)
+2. 각 섹션별 입력 폼:
+   - 섹션 제목
+   - 부제목
+   - 인용문/메인 텍스트
+   - 인용 출처
+   - 배경 이미지 URL
+   - 색감 필터 선택 (드롭다운)
+   - Ken Burns 효과 선택 (드롭다운)
+3. 이미지 미리보기
+4. 저장/샘플 불러오기/방송 시작 버튼
+` : '(생략됨)'}
+
+## 출력 형식
+- 단일 HTML 파일 (외부 의존성 없음)
+- 바닐라 JS/CSS만 사용
+- Google Fonts CDN 사용 가능
+- 모바일 퍼스트 반응형
+
+## 컬러 팔레트 제안
+\`\`\`css
+--bg: #000000;
+--text: #f5f5f5;
+--accent: #d4af37; /* 골드 */
+--text-muted: rgba(255,255,255,0.5);
+\`\`\`
+
+---
+
+위 사양에 맞춰 완전한 HTML 파일을 생성해주세요.
+`;
+
+      // Display output
+      document.getElementById('outputPrompt').textContent = prompt;
+      document.getElementById('outputSection').style.display = 'block';
+      document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+
+      // Update steps
+      document.querySelectorAll('.step').forEach((s, i) => {
+        s.classList.toggle('active', i <= 2);
+      });
+    }
+
+    function copyPrompt() {
+      const prompt = document.getElementById('outputPrompt').textContent;
+      navigator.clipboard.writeText(prompt).then(() => {
+        alert('프롬프트가 클립보드에 복사되었습니다!');
+      });
+    }
+
+    function openClaude() {
+      window.open('https://claude.ai/new', '_blank');
+    }
+  </script>
+</body>
+</html>
