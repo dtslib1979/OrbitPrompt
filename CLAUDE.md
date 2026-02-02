@@ -1,89 +1,148 @@
 # OrbitPrompt — Claude Code 세션 가이드
 
-## 정체성
+## 이 파일의 목적
 
-**OrbitPrompt = 프롬프트 엔진 + 방송용 칠판**
-
-2개 레인:
-- **Prompt Engine** — 생성 도구 (Chalkboard Generator, 멀티 쿼리, 역분석)
-- **Archive** — 생성된 칠판 모음 (참고/재사용)
-
-## 핵심 철학
-
-```
-프롬프트는 코드다.
-- 반복 가능해야 한다
-- 테스트 가능해야 한다
-- 버전 관리 가능해야 한다
-
-존재 = 생산
-- 웹페이지 열면 그게 방송
-- 화면 녹화 = 완성물
-- 편집 제로
-```
+Claude Code가 이 레포에서 작업할 때 **자동으로 읽는 인스트럭션**.
+유저가 자료를 던지면 → Claude가 알아서 적절한 작업 수행.
 
 ---
 
-## Chalkboard 템플릿 생성 워크플로우
+## 자동 트리거 (유저 입력 → Claude 행동)
 
-### 트리거
+### 트리거 1: YouTube 영상 분석 복붙
 
-유저가 **YouTube 영상 분석**을 복붙하면 → 새 Chalkboard 템플릿 생성
-
-분석 예시 (Gemini가 YouTube 영상 분석한 결과):
+**감지 패턴:**
 ```
-포맷: Ken Burns 다큐멘터리
-섹션: 5개 (도입→전개→절정→환기→결말)
-효과: 흑백→컬러 전환, Ken Burns 줌
-무드: somber → intense → triumphant → warm → peaceful
+포맷: ...
+섹션: ...
+효과: ...
+무드: ...
 ```
 
-### Claude가 하는 일
+**Claude 행동:**
+1. 분석 파싱 (포맷, 섹션, 효과, 무드 추출)
+2. `boards/새템플릿.html` 생성
+   - Setup Mode + Broadcast Mode 포함
+3. `prompts/chalkboard/index.html` Archive에 링크 추가
+4. `data/templates.json` 업데이트
+5. git commit & push
+6. 라이브 URL 제공
 
-1. **분석 파싱** — 포맷, 섹션 구조, 효과, 무드 추출
-2. **템플릿 생성** — `boards/새템플릿.html` 파일 생성
-   - Setup Mode: 유저가 텍스트/이미지 입력하는 폼
-   - Broadcast Mode: 화면 녹화용 프레젠테이션
-3. **templates.json 등록** — 새 템플릿 메타데이터 추가
-4. **GitHub 푸시** — 라이브 배포
-5. **URL 제공** — `https://dtslib1979.github.io/OrbitPrompt/boards/새템플릿.html`
+---
 
-### 유저가 하는 일
+### 트리거 2: PWA/앱 요구사항
 
-1. 템플릿 URL 열기
-2. Setup Mode에서 텍스트/이미지 입력
-3. [방송 시작] 버튼
-4. Galaxy 화면 녹화
-5. YouTube 업로드
+**감지 패턴:**
+- "~하는 앱 만들어줘"
+- "PWA로 ~"
+- 앱 기능 명세
 
-### 템플릿 구조 (필수)
+**Claude 행동:**
+1. 요구사항 파싱
+2. `prompts/apk/` 또는 별도 폴더에 PWA 생성
+3. 단일 HTML 파일 (인라인 CSS/JS)
+4. git commit & push
+5. 라이브 URL 제공
 
-```html
-<!-- Setup Mode -->
-<div class="setup">
-  - 인물/주제 정보 입력 폼
-  - 섹션별 제목/인용문/이미지 URL 입력
-  - 이미지 미리보기
-  - [저장] [샘플 불러오기] [방송 시작] 버튼
-</div>
+---
 
-<!-- Broadcast Mode -->
-<div class="broadcast">
-  - 풀스크린 프레젠테이션
-  - Ken Burns / 필터 효과
-  - 터치/스와이프/키보드 네비게이션
-  - 타임라인 인디케이터
-  - [EXIT] 버튼
-</div>
+### 트리거 3: Generator 개선 요청
+
+**감지 패턴:**
+- "Generator에 ~ 추가해"
+- "~ 옵션 넣어줘"
+
+**Claude 행동:**
+1. 해당 Generator 파일 수정
+2. UI/옵션 추가
+3. 프롬프트 생성 로직 업데이트
+4. git commit & push
+
+---
+
+### 트리거 4: 철학/문서 추가
+
+**감지 패턴:**
+- "백서에 ~ 추가"
+- "CLAUDE.md 업데이트"
+- "철학 정리"
+
+**Claude 행동:**
+1. `whitepaper.html` 또는 `CLAUDE.md` 수정
+2. git commit & push
+
+---
+
+### 트리거 5: 버그/개선
+
+**감지 패턴:**
+- "~ 안 돼"
+- "~ 고쳐줘"
+- 스크린샷 + 문제 설명
+
+**Claude 행동:**
+1. 문제 파악
+2. 해당 파일 수정
+3. git commit & push
+4. 수정 내용 설명
+
+---
+
+## 정체성
+
+**OrbitPrompt = 메타 프롬프트 생성기**
+
+```
+유저가 변수 선택 → Generator가 프롬프트 생성 → LLM이 코드/문서 생성
 ```
 
-### 이미지 가이드 (유저용)
+### 2개 레인
 
-| 소스 | 형식 |
-|------|------|
-| Unsplash | `https://images.unsplash.com/photo-xxx?w=1200` |
-| 로컬 | `../assets/images/파일명.jpg` |
-| 권장 크기 | 1200x800 이상 |
+| 레인 | 역할 | 내용 |
+|------|------|------|
+| **Prompt Engine** | 생성 | 4개 Generator (도구) |
+| **Archive** | 축적 | 생성된 결과물 모음 |
+
+### 4개 Generator
+
+| Generator | 입력 | 출력 |
+|-----------|------|------|
+| 🎬 Chalkboard | YouTube 영상 분석 | 방송용 PWA |
+| 📱 PWA | 앱 요구사항 | 설치형 PWA |
+| 📋 Instruction | 레포 목적 | CLAUDE.md |
+| 🧬 Dataset | 대화 로그 | 파인튜닝 JSONL |
+
+---
+
+## 핵심 철학
+
+### 1. 존재 = 생산
+```
+웹페이지 열면 그게 방송
+화면 녹화 = 완성물
+편집 제로
+```
+
+### 2. 프롬프트는 코드다
+```
+반복 가능
+테스트 가능
+버전 관리 가능
+```
+
+### 3. 불일치는 기능이다
+```
+LLM 출력의 일관성 없음 = 유저가 강제로 편집
+→ 수동적 소비자가 아닌 능동적 크리에이터
+AI 출력은 시작점. 마무리는 인간.
+```
+
+### 4. 제약이 설계를 결정한다
+```
+12시간 육체노동 → 편집 0분 워크플로우
+PC 없음 → 모바일 퍼스트
+핸드폰만 → 전체 생태계 모바일 퍼스트
+```
 
 ---
 
@@ -91,73 +150,114 @@
 
 ```
 OrbitPrompt/
-├── index.html              ← 2레인 랜딩
-├── whitepaper.html         ← 철학 백서
-├── 00_TRUTH/               ← 원본 데이터
-├── prompts/                ← Lane 1: Generator들
+├── index.html                    ← 메인 랜딩
+├── whitepaper.html               ← 철학 백서
+├── CLAUDE.md                     ← 이 파일
+│
+├── prompts/                      ← Lane 1: Generator들
 │   ├── chalkboard/
-│   │   └── template-generator.html  (방송 PWA)
+│   │   ├── index.html            ← 카테고리 게시판
+│   │   └── template-generator.html
 │   ├── apk/
-│   │   └── pwa-generator.html       (앱 PWA)
+│   │   ├── index.html
+│   │   └── pwa-generator.html
 │   ├── instruction/
-│   │   └── claude-md-generator.html (CLAUDE.md)
+│   │   ├── index.html
+│   │   └── claude-md-generator.html
 │   └── dataset/
-│       └── finetune-generator.html  (파인튜닝)
-├── boards/                 ← Lane 2: Archive (생성된 칠판)
-│   ├── memorial-tribute.html (Ken Burns)
-│   ├── math-tutor.html       (Khan Academy)
-│   ├── music-curation.html   (NPR Tiny Desk)
-│   └── pwa-demo.html         (Apple Keynote)
+│       ├── index.html
+│       └── finetune-generator.html
+│
+├── boards/                       ← Lane 2: Archive (생성된 칠판)
+│   ├── memorial-tribute.html
+│   ├── math-tutor.html
+│   ├── music-curation.html
+│   └── pwa-demo.html
+│
 ├── data/
-│   └── templates.json      ← 칠판 메타데이터
-├── assets/
-└── CLAUDE.md
+│   └── templates.json
+└── assets/
 ```
 
-## 레인별 도구
+---
 
-### Lane 1: Prompt Engine (메타 프롬프트 생성기)
+## 작업 규칙
 
-4개의 Generator — 변수 선택 → 프롬프트 생성 → LLM이 코드/문서 생성
+### 반드시
+- [ ] 단일 HTML 파일 (인라인 CSS/JS)
+- [ ] 바닐라 JS만 (프레임워크 금지)
+- [ ] 모바일 퍼스트 반응형
+- [ ] Setup Mode + Broadcast Mode 분리 (칠판의 경우)
+- [ ] 작업 후 git commit & push
+- [ ] 라이브 URL 제공
 
-| Generator | 입력 | 출력 | 상태 |
-|-----------|------|------|------|
-| Chalkboard Generator | YouTube 영상 분석 | 방송용 PWA | ✅ |
-| PWA Generator | 앱 요구사항 | 설치형 PWA | ✅ |
-| Instruction Generator | 레포 목적 | CLAUDE.md | ✅ |
-| Dataset Generator | 대화 로그 | 파인튜닝 JSONL | ✅ |
+### 금지
+- 외부 프레임워크 (React, Vue 등)
+- CDN 의존성 (폰트 제외)
+- 하드코딩된 콘텐츠 (샘플 제외)
+- 설명 없는 작업
 
-### Lane 2: Archive (생성된 칠판)
+### 커밋 메시지 형식
+```
+[카테고리] 작업 내용
 
-이전에 생성된 Chalkboard 템플릿. 참고하거나 재사용.
+상세 설명 (있으면)
 
-| 템플릿 | 원본 포맷 | 상태 |
-|--------|----------|------|
-| Memorial Tribute | Ken Burns 다큐 | ✅ 완성 |
-| Math Tutor | Khan Academy | ⬜ 껍데기 |
-| Music Curation | NPR Tiny Desk | ⬜ 껍데기 |
-| PWA Demo | Apple Keynote | ⬜ 껍데기 |
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+```
 
-*새 템플릿은 Chalkboard Generator로 생성 → 자동으로 Archive에 추가됨*
+---
+
+## 칠판 템플릿 구조 (Chalkboard)
+
+```html
+<!-- Setup Mode -->
+<div class="setup">
+  <!-- 입력 폼 -->
+  <input> 제목, 인용문, 이미지 URL
+  <button> 저장 / 샘플 불러오기 / 방송 시작
+</div>
+
+<!-- Broadcast Mode -->
+<div class="broadcast">
+  <!-- 풀스크린 프레젠테이션 -->
+  - Ken Burns 효과 (CSS animation)
+  - 필터 (grayscale, sepia 등)
+  - 터치/스와이프 네비게이션
+  - 타임라인 인디케이터
+  - EXIT 버튼
+</div>
+```
 
 ---
 
 ## 연관 레포
 
-- **one-man-os** — 1인 미디어 OS 프레임워크
-- **parksy-image** — 이미지 에셋
-- **parksy-audio** — 오디오 에셋
-- **parksy-logs** — 대화 저장/RAG
+| 레포 | 역할 | 연결점 |
+|------|------|--------|
+| one-man-os | 1인 미디어 OS | 상위 프레임워크 |
+| parksy-logs | 대화 저장/RAG | Dataset Generator 입력 |
+| parksy-image | 이미지 에셋 | 칠판 배경 |
+| parksy-audio | 오디오 에셋 | 칠판 BGM |
+| dtslib-apk-lab | APK 스토어 | PWA Generator 출력 |
 
-## 작업 규칙
+---
 
-### 반드시
-- 도구/템플릿 단위로 개발 (독립 HTML)
-- Setup Mode + Broadcast Mode 분리
-- templates.json에 새 템플릿 등록
-- 유저가 이미지/텍스트만 갈아끼우면 되도록
+## 라이브 URL
 
-### 금지
-- 불필요한 의존성
-- 외부 프레임워크 (바닐라 JS/CSS만)
-- 하드코딩된 콘텐츠 (데모용 샘플 제외)
+- **메인**: https://dtslib1979.github.io/OrbitPrompt/
+- **백서**: https://dtslib1979.github.io/OrbitPrompt/whitepaper.html
+- **Chalkboard**: https://dtslib1979.github.io/OrbitPrompt/prompts/chalkboard/
+- **PWA**: https://dtslib1979.github.io/OrbitPrompt/prompts/apk/
+- **Instruction**: https://dtslib1979.github.io/OrbitPrompt/prompts/instruction/
+- **Dataset**: https://dtslib1979.github.io/OrbitPrompt/prompts/dataset/
+
+---
+
+## 오너 컨텍스트
+
+- 12시간 육체노동 (식당)
+- PC 없음, 핸드폰이 유일한 개발 도구
+- Termux + Claude Code로 개발
+- YouTube 8개 채널 운영
+- 목표: 말만 하면 콘텐츠가 나오는 자동화
