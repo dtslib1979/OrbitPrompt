@@ -1,0 +1,121 @@
+{
+  "categories": [
+    {
+      "id": "education",
+      "name": "Education",
+      "nameKo": "교육",
+      "icon": "🎓",
+      "color": "#3b82f6"
+    },
+    {
+      "id": "entertainment",
+      "name": "Entertainment",
+      "nameKo": "엔터",
+      "icon": "🎵",
+      "color": "#ec4899"
+    },
+    {
+      "id": "documentary",
+      "name": "Documentary",
+      "nameKo": "다큐",
+      "icon": "🎬",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "tech",
+      "name": "Tech",
+      "nameKo": "테크",
+      "icon": "📱",
+      "color": "#10b981"
+    }
+  ],
+  "templates": [
+    {
+      "id": "math-tutor",
+      "category": "education",
+      "name": "Math Tutor",
+      "nameKo": "수학 과외",
+      "format": "Khan Academy",
+      "icon": "📐",
+      "description": "칠판 + 손글씨 스타일 수학 강의",
+      "file": "boards/math-tutor.html",
+      "variables": ["topic", "level", "duration"],
+      "example": "근의 공식 / 미분의 정의"
+    },
+    {
+      "id": "music-curation",
+      "category": "entertainment",
+      "name": "Music Curation",
+      "nameKo": "음악 큐레이션",
+      "format": "NPR Tiny Desk",
+      "icon": "🎵",
+      "description": "앨범/아티스트 분석 및 감상",
+      "file": "boards/music-curation.html",
+      "variables": ["artist", "album", "era"],
+      "example": "Beatles 분석 / 90년대 K-pop"
+    },
+    {
+      "id": "memorial-tribute",
+      "category": "documentary",
+      "name": "Memorial Tribute",
+      "nameKo": "추모 다큐",
+      "format": "Ken Burns",
+      "icon": "🕯️",
+      "description": "인물 추모 다큐멘터리 스타일",
+      "file": "boards/memorial-tribute.html",
+      "variables": ["name", "title", "years", "sections"],
+      "example": "故 이해찬 전 국무총리"
+    },
+    {
+      "id": "pwa-demo",
+      "category": "tech",
+      "name": "PWA Demo",
+      "nameKo": "앱 데모",
+      "format": "Apple Keynote",
+      "icon": "📱",
+      "description": "앱/서비스 시연 및 설치 가이드",
+      "file": "boards/pwa-demo.html",
+      "variables": ["appName", "features", "installUrl"],
+      "example": "Parksy Capture 설치 가이드"
+    },
+    {
+      "id": "interview",
+      "category": "entertainment",
+      "name": "Interview",
+      "nameKo": "인터뷰",
+      "format": "Hot Ones",
+      "icon": "🎤",
+      "description": "1:1 인터뷰 포맷",
+      "file": "boards/interview.html",
+      "variables": ["guest", "topic", "questions"],
+      "example": "Coming Soon",
+      "status": "coming-soon"
+    },
+    {
+      "id": "news-brief",
+      "category": "documentary",
+      "name": "News Brief",
+      "nameKo": "뉴스 브리핑",
+      "format": "Morning Brew",
+      "icon": "📰",
+      "description": "빠른 뉴스 요약 포맷",
+      "file": "boards/news-brief.html",
+      "variables": ["headlines", "date"],
+      "example": "Coming Soon",
+      "status": "coming-soon"
+    },
+    {
+      "id": "code-review",
+      "category": "tech",
+      "name": "Code Review",
+      "nameKo": "코드 리뷰",
+      "format": "Fireship",
+      "icon": "💻",
+      "description": "빠른 코드 설명 포맷",
+      "file": "boards/code-review.html",
+      "variables": ["repo", "language", "concept"],
+      "example": "Coming Soon",
+      "status": "coming-soon"
+    }
+  ]
+}

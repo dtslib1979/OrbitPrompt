@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PWA/APK Demo Studio | PWA 데모 스튜디오</title>
+<meta name="description" content="Apple Keynote style PWA/APK demo chalkboard. Apple 키노트 스타일 PWA 데모 칠판.">
+<meta name="description" lang="en" content="Apple Keynote style PWA/APK demo presentation for screen recording broadcasts.">
+<style>
+:root {
+  --bg: #000;
+  --panel: #111;
+  --accent: #0af;
+  --accent2: #0f6;
+  --accent-soft: rgba(0,170,255,0.1);
+  --text: #f0f4f8;
+  --dim: #668;
+  --border: #1a2030;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.app { max-width: 960px; margin: 0 auto; padding: 1rem; }
+
+.progress { display: flex; gap: 2px; margin-bottom: 1.5rem; }
+.progress-dot { flex: 1; height: 4px; background: #222; border-radius: 2px; transition: 0.3s; }
+.progress-dot.active { background: var(--accent); }
+.progress-dot.done { background: #046; }
+
+.tabs { display: flex; gap: 0; margin-bottom: 1rem; overflow-x: auto; }
+.tab {
+  flex: 1; padding: 0.7rem 0.3rem; text-align: center;
+  background: #0a0a0a; border: none; color: var(--dim);
+  font-size: 0.7rem; cursor: pointer; border-right: 1px solid #1a1a1a;
+}
+.tab:last-child { border-right: none; }
+.tab.active { background: var(--accent); color: #000; font-weight: 600; }
+.tab .num { display: block; font-size: 1rem; font-weight: 700; }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* Keynote slide */
+.slide {
+  background: linear-gradient(180deg, #0a0e14, #000);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  min-height: 450px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.slide::before {
+  content: ''; position: absolute;
+  top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(circle at 30% 30%, rgba(0,170,255,0.05), transparent 50%);
+}
+
+.slide-headline {
+  font-size: 2rem; font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 0.8rem; position: relative;
+}
+.slide-sub {
+  font-size: 1rem; color: var(--dim); margin-bottom: 2rem; position: relative;
+}
+
+/* Phone mockup */
+.phone-mock {
+  width: 200px; height: 360px; margin: 0 auto 1.5rem;
+  background: #0a0a0a; border: 2px solid #333;
+  border-radius: 24px; padding: 8px; position: relative;
+}
+.phone-screen {
+  width: 100%; height: 100%; background: #111;
+  border-radius: 18px; display: flex;
+  align-items: center; justify-content: center;
+  color: var(--dim); font-size: 0.8rem;
+}
+
+/* Steps */
+.steps {
+  width: 100%; max-width: 500px; text-align: left;
+  position: relative;
+}
+.step {
+  display: flex; align-items: flex-start; gap: 1rem;
+  padding: 1rem; background: rgba(10,14,20,0.8);
+  border: 1px solid var(--border); border-radius: 10px;
+  margin-bottom: 0.8rem;
+}
+.step-num {
+  min-width: 28px; height: 28px; background: var(--accent);
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-weight: 700; color: #000; font-size: 0.9rem;
+}
+.step-text { font-size: 0.95rem; color: var(--text); }
+
+/* Feature card */
+.features {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;
+  width: 100%; max-width: 500px; position: relative;
+}
+.feature {
+  background: rgba(10,14,20,0.8); border: 1px solid var(--border);
+  border-radius: 10px; padding: 1rem; text-align: left;
+}
+.feature-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.feature-name { font-size: 0.9rem; font-weight: 600; color: var(--accent); }
+
+/* One more thing */
+.one-more {
+  font-size: 1.8rem; font-weight: 300; color: var(--dim);
+  font-style: italic; position: relative;
+}
+
+textarea {
+  width: 100%; max-width: 500px; background: rgba(10,14,20,0.8);
+  border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-family: inherit; font-size: 1rem;
+  line-height: 1.8; padding: 1rem; resize: vertical; min-height: 120px;
+  position: relative;
+}
+
+/* QR placeholder */
+.qr-area {
+  width: 150px; height: 150px; margin: 1rem auto;
+  background: #fff; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: #000; font-size: 0.7rem; font-weight: 600;
+}
+
+.nav { display: flex; gap: 1rem; margin-top: 1.5rem; }
+.nav-btn {
+  flex: 1; padding: 1rem; border: none; border-radius: 8px;
+  font-size: 1rem; font-weight: 600; cursor: pointer;
+}
+.nav-btn.prev { background: #222; color: #fff; }
+.nav-btn.next { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Bilingual Support */
+.bilingual { display: block; }
+.bilingual .ko { display: block; }
+.bilingual .en { display: block; font-size: 0.85em; color: var(--dim); margin-top: 0.2em; }
+[lang="en"] { font-style: normal; }
+
+.lang-toggle {
+  position: fixed; top: 1rem; right: 1rem; z-index: 100;
+  display: flex; gap: 4px; background: var(--panel); padding: 4px; border-radius: 6px;
+}
+.lang-btn {
+  padding: 0.4rem 0.8rem; border: none; border-radius: 4px;
+  font-size: 0.75rem; cursor: pointer; background: transparent; color: var(--dim);
+}
+.lang-btn.active { background: var(--accent); color: #000; }
+
+html.en-mode .bilingual .ko { font-size: 0.85em; color: var(--dim); }
+html.en-mode .bilingual .en { font-size: 1em; color: var(--text); }
+
+@media (max-width: 600px) {
+  .features { grid-template-columns: 1fr; }
+  .slide-headline { font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+<div class="lang-toggle">
+  <button class="lang-btn active" data-lang="ko" onclick="setLang('ko')">한국어</button>
+  <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="app">
+  <div class="progress" id="progress"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="panels"></div>
+  <div class="nav">
+    <button class="nav-btn prev" id="prevBtn" onclick="go(-1)">
+      <span class="bilingual"><span lang="ko" class="ko">← 이전</span><span lang="en" class="en">← Prev</span></span>
+    </button>
+    <button class="nav-btn next" id="nextBtn" onclick="go(1)">
+      <span class="bilingual"><span lang="ko" class="ko">다음 →</span><span lang="en" class="en">Next →</span></span>
+    </button>
+  </div>
+</div>
+<script>
+const pages = [
+  { num: 1, label: '임팩트', labelEn: 'Impact', title: '오늘 소개할 것', titleEn: "Today's Intro", type: 'impact' },
+  { num: 2, label: '문제', labelEn: 'Problem', title: '기존엔 이랬습니다', titleEn: 'The Problem Before', type: 'problem' },
+  { num: 3, label: '솔루션', labelEn: 'Solution', title: '이게 해결합니다', titleEn: 'Here\'s The Solution', type: 'solution' },
+  { num: 4, label: '데모', labelEn: 'Demo', title: '라이브 데모', titleEn: 'Live Demo', type: 'demo' },
+  { num: 5, label: '설치', labelEn: 'Install', title: '설치 3스텝', titleEn: '3-Step Install', type: 'install' },
+  { num: 6, label: 'OMT', labelEn: 'OMT', title: 'One More Thing', titleEn: 'One More Thing', type: 'omt' },
+  { num: 7, label: '링크', labelEn: 'Link', title: '지금 바로 설치', titleEn: 'Install Now', type: 'download' }
+];
+
+let current = 0;
+let currentLang = localStorage.getItem('orbitprompt_lang') || 'ko';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('orbitprompt_lang', lang);
+  document.documentElement.classList.toggle('en-mode', lang === 'en');
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
+  render();
+}
+document.documentElement.classList.toggle('en-mode', currentLang === 'en');
+document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === currentLang));
+
+function renderPanel(p, i) {
+  const saved = localStorage.getItem('pwa_'+i) || '';
+  if (p.type === 'impact') {
+    return `
+      <div class="slide-headline">앱 이름</div>
+      <div class="slide-sub">한 줄 임팩트 문구</div>
+      <textarea placeholder="앱 이름:\n한 줄 소개:\n\n예) OrbitPrompt\n말하면 프롬프트가 된다." id="input${i}">${saved}</textarea>
+    `;
+  } else if (p.type === 'problem') {
+    return `
+      <div class="slide-headline" style="font-size:1.3rem;background:linear-gradient(135deg,#f55,#fa0);-webkit-background-clip:text;">기존의 문제</div>
+      <textarea placeholder="기존에는 이런 불편함이 있었습니다:\n\n1. \n2. \n3. " id="input${i}">${saved}</textarea>
+    `;
+  } else if (p.type === 'solution') {
+    return `
+      <div class="phone-mock"><div class="phone-screen">앱 화면 미리보기</div></div>
+      <textarea placeholder="이 앱이 해결하는 것:\n\n✓ \n✓ \n✓ " id="input${i}">${saved}</textarea>
+    `;
+  } else if (p.type === 'demo') {
+    return `
+      <div class="phone-mock" style="width:240px;height:420px;"><div class="phone-screen">라이브 데모 영역<br>(화면 녹화 시 실제 앱 시연)</div></div>
+      <textarea placeholder="데모 시나리오:\n\n1. 앱을 열면...\n2. 이 버튼을 누르면...\n3. 결과는..." id="input${i}">${saved}</textarea>
+    `;
+  } else if (p.type === 'install') {
+    return `
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text">링크 접속</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">"홈 화면에 추가" 터치</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">완료!</div></div>
+      </div>
+      <textarea placeholder="설치 상세 설명:\n\n브라우저 주소창에...\n공유 버튼 → 홈 화면에 추가..." id="input${i}">${saved}</textarea>
+    `;
+  } else if (p.type === 'omt') {
+    return `
+      <div class="one-more">One more thing...</div>
+      <textarea placeholder="숨겨진 기능 / 놀라운 포인트:\n\n사실 이 앱은... 오프라인에서도 됩니다.\n또는: 다른 앱과 연동하면..." id="input${i}">${saved}</textarea>
+    `;
+  } else if (p.type === 'download') {
+    return `
+      <div class="qr-area">QR CODE</div>
+      <textarea placeholder="설치 링크:\nhttps://username.github.io/app-name/\n\n또는 APK 다운로드 링크:" id="input${i}">${saved}</textarea>
+    `;
+  }
+}
+
+function render() {
+  document.getElementById('progress').innerHTML = pages.map((_, i) =>
+    `<div class="progress-dot ${i < current ? 'done' : i === current ? 'active' : ''}"></div>`
+  ).join('');
+
+  document.getElementById('tabs').innerHTML = pages.map((p, i) =>
+    `<button class="tab ${i === current ? 'active' : ''}" onclick="goTo(${i})">
+      <span class="num">${p.num}</span>
+      <span class="bilingual"><span lang="ko" class="ko">${p.label}</span><span lang="en" class="en">${p.labelEn}</span></span>
+    </button>`
+  ).join('');
+
+  document.getElementById('panels').innerHTML = pages.map((p, i) => `
+    <div class="panel ${i === current ? 'active' : ''}">
+      <div class="slide">
+        <div class="slide-title bilingual" style="margin-bottom:1rem;">
+          <span lang="ko" class="ko" style="font-size:0.9rem;color:var(--dim);">${p.title}</span>
+          <span lang="en" class="en" style="font-size:0.9rem;color:var(--dim);">${p.titleEn}</span>
+        </div>
+        ${renderPanel(p, i)}
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('prevBtn').disabled = current === 0;
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.innerHTML = current === pages.length - 1
+    ? `<span class="bilingual"><span lang="ko" class="ko">완료 ✓</span><span lang="en" class="en">Done ✓</span></span>`
+    : `<span class="bilingual"><span lang="ko" class="ko">다음 →</span><span lang="en" class="en">Next →</span></span>`;
+}
+
+function save() {
+  const input = document.getElementById('input' + current);
+  if (input) localStorage.setItem('pwa_' + current, input.value);
+}
+
+function go(dir) { save(); goTo(current + dir); }
+function goTo(i) { save(); current = Math.max(0, Math.min(pages.length - 1, i)); render(); }
+
+render();
+
+// 스튜디오 연동 초기화
+async function initStudioConnection() {
+  try {
+    await AssetLoader.init();
+    const timing = AssetLoader.getDesignTokens('timing');
+    if (timing) {
+      document.documentElement.style.setProperty('--beat', timing.beat + 'ms');
+      document.documentElement.style.setProperty('--half-beat', timing.halfBeat + 'ms');
+    }
+    console.log('스튜디오 연결:', AssetLoader.getStatus());
+  } catch (e) {
+    console.warn('스튜디오 연동 실패 (오프라인 모드):', e.message);
+  }
+}
+initStudioConnection();
+
+// Branch customization support
+const branchScript = document.createElement('script');
+branchScript.src = '../../api/customize.js';
+document.head.appendChild(branchScript);
+</script>
+<script src="../../scripts/asset-loader.js"></script>
+</body>
+</html>

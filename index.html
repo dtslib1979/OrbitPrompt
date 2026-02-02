@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0a0a0a">
-  <title>OrbitPrompt — Prompt Engine</title>
+  <title>OrbitPrompt</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,9 +22,10 @@
       --ink-dim: rgba(255,255,255,0.15);
       --purple: #a855f7;
       --purple-dim: rgba(168,85,247,0.15);
-      --purple-glow: rgba(168,85,247,0.4);
       --cyan: #22d3ee;
       --cyan-dim: rgba(34,211,238,0.15);
+      --gold: #d4af37;
+      --gold-dim: rgba(212,175,55,0.15);
       --border: rgba(255,255,255,0.06);
       --f-display: 'Inter', -apple-system, sans-serif;
       --f-mono: 'JetBrains Mono', monospace;
@@ -37,7 +38,7 @@
       background: var(--bg-void);
       color: var(--ink-primary);
       min-height: 100vh;
-      padding: 2rem;
+      padding: 1.5rem;
     }
 
     .grain {
@@ -50,21 +51,21 @@
     }
 
     .container {
-      max-width: 720px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
     /* Header */
     header {
       text-align: center;
-      padding: 3rem 0;
+      padding: 2rem 0 1.5rem;
       border-bottom: 1px solid var(--border);
       margin-bottom: 2rem;
     }
 
     .logo {
       font-family: var(--f-mono);
-      font-size: clamp(2rem, 8vw, 3rem);
+      font-size: clamp(1.75rem, 7vw, 2.5rem);
       font-weight: 600;
       letter-spacing: -0.02em;
       background: linear-gradient(135deg, var(--purple), var(--cyan));
@@ -75,146 +76,148 @@
 
     .tagline {
       font-family: var(--f-serif);
-      font-size: 1.125rem;
+      font-size: 1rem;
       font-style: italic;
       color: var(--ink-muted);
-      margin-top: 0.5rem;
+      margin-top: 0.25rem;
     }
 
-    .desc {
-      font-size: 0.875rem;
-      color: var(--ink-secondary);
-      line-height: 1.7;
-      margin-top: 1.5rem;
-      max-width: 480px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* Section */
-    .section-title {
-      font-family: var(--f-mono);
-      font-size: 0.625rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--ink-muted);
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .section-title::before {
-      content: '';
-      width: 20px;
-      height: 1px;
-      background: var(--purple);
-    }
-
-    /* Tools Grid */
-    .tools {
+    /* Lanes */
+    .lanes {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2.5rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 640px) {
+      .lanes { grid-template-columns: 1fr; }
     }
 
-    .tool-card {
+    .lane {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      padding: 1.5rem;
-      text-decoration: none;
-      color: var(--ink-primary);
-      transition: all 0.2s;
-      display: block;
-    }
-    .tool-card:hover {
-      border-color: var(--purple);
-      background: var(--bg-elevated);
-      transform: translateY(-2px);
+      padding: 1.25rem;
     }
 
-    .tool-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
-    .tool-name {
-      font-size: 1rem;
+    .lane-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .lane-icon { font-size: 1.25rem; }
+    .lane-title {
+      font-family: var(--f-mono);
+      font-size: 0.875rem;
       font-weight: 600;
-      margin-bottom: 0.25rem;
     }
-    .tool-desc {
-      font-size: 0.75rem;
-      color: var(--ink-muted);
-      line-height: 1.5;
-    }
-    .tool-tag {
+    .lane-tag {
       font-family: var(--f-mono);
       font-size: 0.5rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--purple);
-      margin-top: 0.75rem;
-      display: inline-block;
+      padding: 0.2rem 0.4rem;
+      margin-left: auto;
     }
 
-    /* Concept Box */
-    .concept {
+    .lane--engine .lane-tag { background: var(--purple-dim); color: var(--purple); }
+    .lane--board .lane-tag { background: var(--gold-dim); color: var(--gold); }
+
+    .lane-desc {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    /* Items */
+    .item-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
       background: var(--bg-surface);
-      border-left: 3px solid var(--purple);
-      padding: 1.5rem;
-      margin-bottom: 2.5rem;
+      border: 1px solid transparent;
+      text-decoration: none;
+      color: var(--ink-primary);
+      transition: all 0.15s;
     }
-    .concept h3 {
-      font-family: var(--f-mono);
-      font-size: 0.6875rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--purple);
-      margin-bottom: 0.75rem;
+    .item:hover {
+      border-color: var(--purple);
+      background: var(--bg-elevated);
     }
-    .concept p {
-      font-size: 0.875rem;
-      color: var(--ink-secondary);
-      line-height: 1.7;
+    .item.disabled {
+      opacity: 0.4;
+      pointer-events: none;
     }
 
-    /* Archive Link */
-    .archive-link {
-      display: block;
-      text-align: center;
-      padding: 1rem;
-      background: var(--purple-dim);
-      border: 1px dashed var(--purple);
-      color: var(--ink-primary);
-      text-decoration: none;
-      font-family: var(--f-mono);
+    .item-icon { font-size: 1.125rem; }
+    .item-text { flex: 1; }
+    .item-name {
       font-size: 0.8125rem;
-      margin-bottom: 2.5rem;
-      transition: all 0.2s;
+      font-weight: 500;
     }
-    .archive-link:hover {
-      background: rgba(168,85,247,0.25);
-      border-style: solid;
+    .item-meta {
+      font-size: 0.625rem;
+      color: var(--ink-muted);
+    }
+    .item-arrow {
+      font-size: 0.75rem;
+      color: var(--ink-dim);
+    }
+
+    /* Boards */
+    .lane--board .item:hover { border-color: var(--gold); }
+
+    /* Categories */
+    .category-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .cat-tab {
+      font-family: var(--f-mono);
+      font-size: 0.5625rem;
+      padding: 0.25rem 0.5rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--ink-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .cat-tab:hover, .cat-tab.active {
+      border-color: var(--gold);
+      color: var(--gold);
     }
 
     /* Footer */
     footer {
       text-align: center;
-      padding-top: 2rem;
+      padding-top: 1.5rem;
       border-top: 1px solid var(--border);
     }
 
     .footer-links {
       display: flex;
       justify-content: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
     }
     .footer-link {
       font-family: var(--f-mono);
-      font-size: 0.625rem;
+      font-size: 0.5625rem;
       color: var(--ink-muted);
       text-decoration: none;
-      padding: 0.5rem 0.75rem;
+      padding: 0.4rem 0.6rem;
       border: 1px solid var(--border);
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
     .footer-link:hover {
       border-color: var(--purple);
@@ -227,28 +230,6 @@
       letter-spacing: 0.1em;
       color: var(--ink-dim);
     }
-
-    /* Related */
-    .related {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-    }
-    .related-chip {
-      font-family: var(--f-mono);
-      font-size: 0.625rem;
-      color: var(--ink-muted);
-      padding: 0.4rem 0.75rem;
-      border: 1px solid var(--border);
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-    .related-chip:hover {
-      border-color: var(--cyan);
-      color: var(--cyan);
-    }
   </style>
 </head>
 <body>
@@ -257,70 +238,130 @@
   <div class="container">
     <header>
       <h1 class="logo">OrbitPrompt</h1>
-      <p class="tagline">Prompt Engineering Engine</p>
-      <p class="desc">
-        멀티 쿼리 생성, 프롬프트 역분석, 사고 프레임워크.
-        LLM과의 대화를 구조화하는 엔진.
-      </p>
+      <p class="tagline">Prompt Engine + Broadcast Boards</p>
     </header>
 
-    <p class="section-title">Tools</p>
-    <div class="tools">
-      <a href="prompts/engine/Gitgub-publishing.html" class="tool-card">
-        <div class="tool-icon">🔄</div>
-        <div class="tool-name">Multi-Query Gen</div>
-        <div class="tool-desc">하나의 의도를 여러 각도의 프롬프트로 변환</div>
-        <span class="tool-tag">Generator</span>
-      </a>
-
-      <div class="tool-card" style="opacity:0.5; pointer-events:none;">
-        <div class="tool-icon">🔍</div>
-        <div class="tool-name">Reverse Engineering</div>
-        <div class="tool-desc">결과물에서 원본 프롬프트 추론</div>
-        <span class="tool-tag">Coming Soon</span>
+    <div class="lanes">
+      <!-- Lane 1: Prompt Engine -->
+      <div class="lane lane--engine">
+        <div class="lane-header">
+          <span class="lane-icon">🧠</span>
+          <span class="lane-title">Prompt Engine</span>
+          <span class="lane-tag">사고 도구</span>
+        </div>
+        <p class="lane-desc">멀티 쿼리 생성, 역분석, 사고 프레임워크. 프롬프트를 설계하는 엔진.</p>
+        <div class="item-list">
+          <a href="prompts/engine/Gitgub-publishing.html" class="item">
+            <span class="item-icon">🔄</span>
+            <div class="item-text">
+              <div class="item-name">Multi-Query Gen</div>
+              <div class="item-meta">하나의 의도 → 여러 프롬프트</div>
+            </div>
+            <span class="item-arrow">→</span>
+          </a>
+          <div class="item disabled">
+            <span class="item-icon">🔍</span>
+            <div class="item-text">
+              <div class="item-name">Reverse Engineering</div>
+              <div class="item-meta">Coming Soon</div>
+            </div>
+          </div>
+          <div class="item disabled">
+            <span class="item-icon">📐</span>
+            <div class="item-text">
+              <div class="item-name">Frameworks</div>
+              <div class="item-meta">Coming Soon</div>
+            </div>
+          </div>
+          <a href="archive.html" class="item">
+            <span class="item-icon">📦</span>
+            <div class="item-text">
+              <div class="item-name">Archive</div>
+              <div class="item-meta">저장된 프롬프트 모음</div>
+            </div>
+            <span class="item-arrow">→</span>
+          </a>
+        </div>
       </div>
 
-      <div class="tool-card" style="opacity:0.5; pointer-events:none;">
-        <div class="tool-icon">🧠</div>
-        <div class="tool-name">Frameworks</div>
-        <div class="tool-desc">CRISPE, Chain-of-Thought 등 사고 구조</div>
-        <span class="tool-tag">Coming Soon</span>
+      <!-- Lane 2: Chalkboard -->
+      <div class="lane lane--board">
+        <div class="lane-header">
+          <span class="lane-icon">📺</span>
+          <span class="lane-title">Chalkboard</span>
+          <span class="lane-tag">방송 도구</span>
+        </div>
+        <p class="lane-desc">방송용 칠판 PWA. Galaxy 녹화 → YouTube 업로드. 편집 제로.</p>
+        <div class="category-tabs" id="categoryTabs"></div>
+        <div class="item-list" id="boardList"></div>
       </div>
-
-      <div class="tool-card" style="opacity:0.5; pointer-events:none;">
-        <div class="tool-icon">📚</div>
-        <div class="tool-name">Prompt Library</div>
-        <div class="tool-desc">검증된 프롬프트 템플릿 모음</div>
-        <span class="tool-tag">Coming Soon</span>
-      </div>
-    </div>
-
-    <a href="archive.html" class="archive-link">
-      📦 프롬프트 아카이브 보기
-    </a>
-
-    <div class="concept">
-      <h3>Core Concept</h3>
-      <p>
-        프롬프트는 코드다. 반복 가능하고, 테스트 가능하고, 버전 관리 가능해야 한다.
-        OrbitPrompt는 프롬프트를 "작성"하는 게 아니라 "설계"하는 도구다.
-      </p>
-    </div>
-
-    <p class="section-title">Related</p>
-    <div class="related">
-      <a href="https://dtslib1979.github.io/chalkboard/" class="related-chip" target="_blank">Chalkboard</a>
-      <a href="https://dtslib1979.github.io/one-man-os/" class="related-chip" target="_blank">One Man OS</a>
-      <a href="https://dtslib1979.github.io/parksy-logs/" class="related-chip" target="_blank">parksy-logs</a>
     </div>
 
     <footer>
       <div class="footer-links">
         <a href="https://github.com/dtslib1979/OrbitPrompt" class="footer-link" target="_blank">GitHub</a>
         <a href="00_TRUTH/" class="footer-link">00_TRUTH</a>
+        <a href="https://dtslib1979.github.io/one-man-os/" class="footer-link" target="_blank">One Man OS</a>
       </div>
       <p class="footer-credit">DTSLIB Franchise</p>
     </footer>
   </div>
+
+  <script>
+    let templatesData = null;
+    let currentCategory = 'all';
+
+    async function loadData() {
+      try {
+        const res = await fetch('data/templates.json');
+        templatesData = await res.json();
+        renderCategories();
+        renderBoards();
+      } catch (e) {
+        document.getElementById('boardList').innerHTML = '<div class="item disabled"><span class="item-icon">⚠️</span><div class="item-text"><div class="item-name">템플릿 로드 실패</div></div></div>';
+      }
+    }
+
+    function renderCategories() {
+      const tabs = document.getElementById('categoryTabs');
+      let html = '<button class="cat-tab active" data-cat="all">All</button>';
+      templatesData.categories.forEach(cat => {
+        html += `<button class="cat-tab" data-cat="${cat.id}">${cat.icon} ${cat.nameKo}</button>`;
+      });
+      tabs.innerHTML = html;
+
+      tabs.querySelectorAll('.cat-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabs.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentCategory = btn.dataset.cat;
+          renderBoards();
+        });
+      });
+    }
+
+    function renderBoards() {
+      const list = document.getElementById('boardList');
+      const filtered = currentCategory === 'all'
+        ? templatesData.templates
+        : templatesData.templates.filter(t => t.category === currentCategory);
+
+      list.innerHTML = filtered.map(t => {
+        const isDisabled = t.status === 'coming-soon';
+        return `
+          <a href="${isDisabled ? '#' : t.file}" class="item ${isDisabled ? 'disabled' : ''}">
+            <span class="item-icon">${t.icon}</span>
+            <div class="item-text">
+              <div class="item-name">${t.nameKo}</div>
+              <div class="item-meta">${t.format}</div>
+            </div>
+            ${isDisabled ? '' : '<span class="item-arrow">→</span>'}
+          </a>
+        `;
+      }).join('');
+    }
+
+    loadData();
+  </script>
 </body>
 </html>
