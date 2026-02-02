@@ -313,6 +313,28 @@
       max-height: 400px;
       overflow-y: auto;
     }
+    .philosophy-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(168, 85, 247, 0.08);
+      border-left: 3px solid var(--accent);
+    }
+    .philosophy-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .philosophy-note p {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .philosophy-note strong {
+      color: var(--accent);
+    }
 
     /* Buttons */
     .btn {
@@ -546,6 +568,11 @@
       </div>
       <div class="output-body">
         <div class="output-prompt" id="outputPrompt"></div>
+        <div class="philosophy-note">
+          <span class="philosophy-icon">💡</span>
+          <p>이 프롬프트로 AI가 생성한 코드는 <strong>시작점</strong>입니다.<br>
+          직접 수정하면서 당신만의 칠판을 만드세요.</p>
+        </div>
         <div class="btn-row">
           <button class="btn btn-gold btn-full" onclick="openClaude()">
             Claude에서 열기 →
