@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>백서 — OrbitPrompt</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-void: #050505;
+      --bg-primary: #0a0a0a;
+      --bg-surface: #0f0f0f;
+      --bg-card: #141414;
+      --bg-elevated: #1a1a1a;
+      --ink-primary: #f0f0f0;
+      --ink-secondary: rgba(255,255,255,0.7);
+      --ink-muted: rgba(255,255,255,0.4);
+      --ink-dim: rgba(255,255,255,0.15);
+      --purple: #a855f7;
+      --purple-dim: rgba(168,85,247,0.15);
+      --cyan: #22d3ee;
+      --gold: #d4af37;
+      --gold-dim: rgba(212,175,55,0.15);
+      --border: rgba(255,255,255,0.06);
+      --f-display: 'Inter', -apple-system, sans-serif;
+      --f-mono: 'JetBrains Mono', monospace;
+      --f-serif: 'Cormorant Garamond', Georgia, serif;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--f-display);
+      background: var(--bg-void);
+      color: var(--ink-primary);
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Hero */
+    .hero {
+      padding: 4rem 1.5rem 3rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-label {
+      font-family: var(--f-mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 1rem;
+    }
+    .hero-title {
+      font-family: var(--f-serif);
+      font-size: clamp(2rem, 8vw, 3.5rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .hero-subtitle {
+      font-family: var(--f-serif);
+      font-size: 1.125rem;
+      font-style: italic;
+      color: var(--ink-muted);
+    }
+
+    /* Container */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Section */
+    .section {
+      padding: 3rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .section:last-of-type {
+      border-bottom: none;
+    }
+
+    .section-number {
+      font-family: var(--f-mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .section-title {
+      font-family: var(--f-mono);
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Manifesto Block */
+    .manifesto {
+      background: var(--bg-card);
+      border-left: 3px solid var(--purple);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .manifesto p {
+      font-family: var(--f-serif);
+      font-size: 1.25rem;
+      font-style: italic;
+      color: var(--ink-secondary);
+      margin-bottom: 0.75rem;
+    }
+    .manifesto p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Prose */
+    .prose {
+      color: var(--ink-secondary);
+      font-size: 0.9375rem;
+    }
+    .prose p {
+      margin-bottom: 1rem;
+    }
+    .prose strong {
+      color: var(--ink-primary);
+      font-weight: 600;
+    }
+    .prose em {
+      font-family: var(--f-serif);
+      font-style: italic;
+      color: var(--purple);
+    }
+
+    /* Comparison Table */
+    .comparison {
+      margin: 1.5rem 0;
+      overflow-x: auto;
+    }
+    .comparison table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+    .comparison th {
+      font-family: var(--f-mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: left;
+      padding: 0.75rem;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      color: var(--ink-muted);
+    }
+    .comparison td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink-secondary);
+    }
+    .comparison tr:last-child td {
+      border-bottom: none;
+    }
+    .comparison .old {
+      color: var(--ink-muted);
+      text-decoration: line-through;
+    }
+    .comparison .new {
+      color: var(--gold);
+    }
+
+    /* Principle Card */
+    .principle {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin: 1rem 0;
+    }
+    .principle-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .principle-icon {
+      font-size: 1.5rem;
+    }
+    .principle-title {
+      font-family: var(--f-mono);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    .principle-body {
+      font-size: 0.8125rem;
+      color: var(--ink-secondary);
+      line-height: 1.6;
+    }
+
+    /* Code Block */
+    .code-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      margin: 1rem 0;
+      font-family: var(--f-mono);
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      overflow-x: auto;
+    }
+    .code-block .comment { color: var(--ink-dim); }
+    .code-block .keyword { color: var(--purple); }
+    .code-block .string { color: var(--gold); }
+
+    /* Highlight Box */
+    .highlight {
+      background: var(--gold-dim);
+      border-left: 3px solid var(--gold);
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .highlight-title {
+      font-family: var(--f-mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .highlight-body {
+      font-size: 0.875rem;
+      color: var(--ink-secondary);
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem 1.5rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+    .footer-back {
+      font-family: var(--f-mono);
+      font-size: 0.6875rem;
+      color: var(--ink-muted);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border);
+      transition: all 0.15s;
+    }
+    .footer-back:hover {
+      border-color: var(--purple);
+      color: var(--purple);
+    }
+    .footer-credit {
+      font-family: var(--f-mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      color: var(--ink-dim);
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="grain"></div>
+
+  <header class="hero">
+    <p class="hero-label">OrbitPrompt Whitepaper</p>
+    <h1 class="hero-title">백서</h1>
+    <p class="hero-subtitle">우리의 철학과 원칙</p>
+  </header>
+
+  <main class="container">
+
+    <!-- Section 01: Core Philosophy -->
+    <section class="section">
+      <p class="section-number">01</p>
+      <h2 class="section-title">존재 = 생산</h2>
+
+      <div class="manifesto">
+        <p>웹페이지를 여는 순간, 그것이 방송이다.</p>
+        <p>화면 녹화를 누르는 순간, 그것이 완성물이다.</p>
+        <p>편집은 없다. 지금 이 순간이 콘텐츠다.</p>
+      </div>
+
+      <div class="comparison">
+        <table>
+          <tr>
+            <th>기존 사고</th>
+            <th>우리의 방식</th>
+          </tr>
+          <tr>
+            <td class="old">"영상 찍어야지"</td>
+            <td class="new">웹페이지 열면 그게 방송</td>
+          </tr>
+          <tr>
+            <td class="old">"편집해야지"</td>
+            <td class="new">화면 녹화 = 완성물</td>
+          </tr>
+          <tr>
+            <td class="old">"잘해야지"</td>
+            <td class="new">계속 올리면 내가 바뀜</td>
+          </tr>
+          <tr>
+            <td class="old">"언젠가 시작해야지"</td>
+            <td class="new">오늘 하나가 기본값</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="prose">
+        <p>코칭이나 동기부여가 아니다. <strong>존재 방식 자체를 재설계</strong>하는 것이다. 도구 + 구조 + 동선 + 습관으로 바꿔주는 시스템.</p>
+      </div>
+    </section>
+
+    <!-- Section 02: Prompt as Code -->
+    <section class="section">
+      <p class="section-number">02</p>
+      <h2 class="section-title">프롬프트는 코드다</h2>
+
+      <div class="code-block">
+<span class="comment">// 프롬프트의 3가지 조건</span>
+<span class="keyword">const</span> prompt = {
+  <span class="string">repeatable</span>: <span class="keyword">true</span>,    <span class="comment">// 반복 가능해야 한다</span>
+  <span class="string">testable</span>: <span class="keyword">true</span>,      <span class="comment">// 테스트 가능해야 한다</span>
+  <span class="string">versioned</span>: <span class="keyword">true</span>      <span class="comment">// 버전 관리 가능해야 한다</span>
+};
+      </div>
+
+      <div class="prose">
+        <p>프롬프트는 일회성 질문이 아니다. <strong>재사용 가능한 도구</strong>다. 좋은 프롬프트는 누가 써도 비슷한 결과를 낸다. 그래서 코드처럼 다룬다.</p>
+        <p>Git으로 버전 관리하고, 변수를 분리하고, 테스트하고, 개선한다. <em>프롬프트 엔지니어링</em>이 아니라 <em>프롬프트 프로그래밍</em>이다.</p>
+      </div>
+    </section>
+
+    <!-- Section 03: Inconsistency as Feature -->
+    <section class="section">
+      <p class="section-number">03</p>
+      <h2 class="section-title">불일치는 기능이다</h2>
+
+      <div class="principle">
+        <div class="principle-header">
+          <span class="principle-icon">🎲</span>
+          <span class="principle-title">LLM의 일관성 없음 = 유일한 장점</span>
+        </div>
+        <div class="principle-body">
+          같은 프롬프트에 다른 결과가 나온다. 버그가 아니라 기능이다. 유저는 AI 출력을 그대로 쓸 수 없다. 강제로 편집하게 된다. 수동적 소비자가 아니라 <strong>능동적 크리에이터</strong>가 된다.
+        </div>
+      </div>
+
+      <div class="highlight">
+        <p class="highlight-title">핵심 원칙</p>
+        <p class="highlight-body">AI가 생성한 코드는 <strong>시작점</strong>이다. 직접 수정하면서 당신만의 것을 만들어라.</p>
+      </div>
+
+      <div class="prose">
+        <p>완벽한 AI 출력을 기대하지 마라. 그건 함정이다. AI는 초안을 만들어주는 도구일 뿐. 마무리는 항상 인간의 몫이다. 이 불완전함이 창작을 강제한다.</p>
+      </div>
+    </section>
+
+    <!-- Section 04: Constraint-Driven Design -->
+    <section class="section">
+      <p class="section-number">04</p>
+      <h2 class="section-title">제약이 설계를 결정한다</h2>
+
+      <div class="comparison">
+        <table>
+          <tr>
+            <th>현실 제약</th>
+            <th>설계 결정</th>
+          </tr>
+          <tr>
+            <td>12시간 육체노동</td>
+            <td class="new">편집 0분 워크플로우</td>
+          </tr>
+          <tr>
+            <td>PC 없음</td>
+            <td class="new">Termux 모바일 퍼스트</td>
+          </tr>
+          <tr>
+            <td>핸드폰밖에 못 씀</td>
+            <td class="new">전체 생태계 모바일 퍼스트</td>
+          </tr>
+          <tr>
+            <td>체력 소진 후 작업</td>
+            <td class="new">말만 하면 되는 자동화</td>
+          </tr>
+          <tr>
+            <td>혼자서 다 해야 함</td>
+            <td class="new">브랜치 프랜차이즈 (분산)</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="prose">
+        <p>제약 조건을 불평하지 않는다. <strong>제약이 최고의 설계 도구</strong>다. PC가 없어서 모바일 퍼스트가 됐다. 시간이 없어서 편집 제로가 됐다. 이 제약들이 우리만의 해자가 됐다.</p>
+      </div>
+    </section>
+
+    <!-- Section 05: Chalkboard System -->
+    <section class="section">
+      <p class="section-number">05</p>
+      <h2 class="section-title">칠판 시스템</h2>
+
+      <div class="prose">
+        <p><strong>칠판 = 방송용 인터랙티브 배경</strong></p>
+        <p>PPT 대신, OBS 대신, 프리미어 대신. 웹페이지 하나가 전부다.</p>
+      </div>
+
+      <div class="code-block">
+Galaxy 화면 녹화
+      ↓
+PWA 페이지 (칠판)
+      ↓
+녹화 = 완성물
+      ↓
+YouTube 업로드
+      </div>
+
+      <div class="principle">
+        <div class="principle-header">
+          <span class="principle-icon">📺</span>
+          <span class="principle-title">MBC 선거방송급 그래픽</span>
+        </div>
+        <div class="principle-body">
+          실시간 인터랙티브 그래픽. 1인 + Galaxy 1대로 구현. 전문 장비 없이, 편집 없이, 방송국 수준의 비주얼.
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>칠판은 두 가지 모드로 작동한다:</p>
+        <p><strong>Setup Mode</strong> — 텍스트, 이미지, 설정을 입력하는 폼.<br>
+        <strong>Broadcast Mode</strong> — 녹화용 풀스크린 프레젠테이션.</p>
+        <p>한 번 세팅하면 반복 사용. 콘텐츠만 갈아끼우면 새 영상.</p>
+      </div>
+    </section>
+
+    <!-- Section 06: The Pipeline -->
+    <section class="section">
+      <p class="section-number">06</p>
+      <h2 class="section-title">파이프라인</h2>
+
+      <div class="code-block">
+[분석]  YouTube 영상 분석 (Gemini)
+   ↓
+[생성]  프롬프트 생성기로 변수 선택
+   ↓
+[제작]  LLM이 칠판 HTML 생성
+   ↓
+[수정]  유저가 커스터마이징
+   ↓
+[녹화]  Galaxy 화면 녹화
+   ↓
+[배포]  YouTube 업로드
+      </div>
+
+      <div class="highlight">
+        <p class="highlight-title">워크플로우 원칙</p>
+        <p class="highlight-body">사람이 하는 건 <strong>"말하기"</strong>와 <strong>"녹화 버튼 누르기"</strong> 두 가지뿐.</p>
+      </div>
+    </section>
+
+    <!-- Section 07: Two Lanes -->
+    <section class="section">
+      <p class="section-number">07</p>
+      <h2 class="section-title">2개의 레인</h2>
+
+      <div class="principle">
+        <div class="principle-header">
+          <span class="principle-icon">🧠</span>
+          <span class="principle-title">Lane 1: Prompt Engine</span>
+        </div>
+        <div class="principle-body">
+          <strong>사고 도구.</strong> 멀티 쿼리 생성, 역분석, 프레임워크. 프롬프트를 설계하고 개선하는 엔진. 생각을 구조화한다.
+        </div>
+      </div>
+
+      <div class="principle">
+        <div class="principle-header">
+          <span class="principle-icon">📺</span>
+          <span class="principle-title">Lane 2: Chalkboard</span>
+        </div>
+        <div class="principle-body">
+          <strong>생산 도구.</strong> 방송용 칠판 PWA. 웹페이지 열고 녹화하면 끝. 생각을 콘텐츠로 바꾼다.
+        </div>
+      </div>
+
+      <div class="prose">
+        <p><em>Prompt Engine</em>으로 생각하고, <em>Chalkboard</em>로 생산한다. 이 두 레인이 OrbitPrompt의 전부다.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <a href="index.html" class="footer-back">← OrbitPrompt로 돌아가기</a>
+    <p class="footer-credit">DTSLIB Franchise</p>
+  </footer>
+</body>
+</html>
