@@ -31,6 +31,18 @@
   ],
   "templates": [
     {
+      "id": "tribute-cinema",
+      "category": "documentary",
+      "name": "Tribute Cinema",
+      "nameKo": "시네마틱 추모",
+      "format": "18분 다큐",
+      "icon": "🎬",
+      "description": "상용화급 추모 영상 - 9섹션, Ken Burns, 캐러셀",
+      "file": "boards/tribute-cinema.html",
+      "variables": ["name", "title", "years", "sections"],
+      "example": "18분 풀러닝타임 추모 다큐"
+    },
+    {
       "id": "math-tutor",
       "category": "education",
       "name": "Math Tutor",
