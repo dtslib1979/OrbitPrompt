@@ -5,8 +5,8 @@
 **OrbitPrompt = 프롬프트 엔진 + 방송용 칠판**
 
 2개 레인:
-- **Prompt Engine** — 사고 도구 (멀티 쿼리, 역분석, 프레임워크)
-- **Chalkboard** — 생산 도구 (방송용 칠판 PWA)
+- **Prompt Engine** — 생성 도구 (Chalkboard Generator, 멀티 쿼리, 역분석)
+- **Archive** — 생성된 칠판 모음 (참고/재사용)
 
 ## 핵심 철학
 
@@ -122,17 +122,18 @@ OrbitPrompt/
 | Frameworks | ⬜ | CRISPE, Chain-of-Thought 등 |
 | Prompt Library | ⬜ | 검증된 템플릿 모음 |
 
-### Lane 2: Chalkboard (생산 도구)
+### Lane 2: Archive (생성된 칠판)
 
-| 템플릿 | 포맷 | 상태 |
-|--------|------|------|
+이전에 생성된 Chalkboard 템플릿. 참고하거나 재사용.
+
+| 템플릿 | 원본 포맷 | 상태 |
+|--------|----------|------|
+| Memorial Tribute | Ken Burns 다큐 | ✅ 완성 |
 | Math Tutor | Khan Academy | ⬜ 껍데기 |
 | Music Curation | NPR Tiny Desk | ⬜ 껍데기 |
-| Memorial Tribute | Ken Burns | ✅ 완성 |
 | PWA Demo | Apple Keynote | ⬜ 껍데기 |
-| Interview | Hot Ones | ⬜ 미구현 |
-| News Brief | Morning Brew | ⬜ 미구현 |
-| Code Review | Fireship | ⬜ 미구현 |
+
+*새 템플릿은 Chalkboard Generator로 생성 → 자동으로 Archive에 추가됨*
 
 ---
 
