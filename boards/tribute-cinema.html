@@ -156,12 +156,14 @@
     }
 
     /* Image List */
-    .image-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .image-list { display: flex; flex-direction: column; gap: 0.75rem; }
 
-    .image-item { display: flex; gap: 0.5rem; align-items: center; }
-    .image-item input { flex: 1; }
+    .image-item { display: flex; flex-direction: column; gap: 0.5rem; }
 
-    .image-item button {
+    .image-input-row { display: flex; gap: 0.5rem; align-items: center; }
+    .image-input-row input { flex: 1; }
+
+    .image-input-row button {
       padding: 0.875rem 1rem;
       background: transparent;
       border: 1px solid var(--border);
@@ -172,7 +174,33 @@
       min-height: 44px;
     }
 
-    .image-item button:hover { border-color: #c44; color: #c44; }
+    .image-input-row button:hover { border-color: #c44; color: #c44; }
+
+    .image-preview {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--dark);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: none;
+    }
+
+    .image-preview.loaded { display: block; }
+
+    .image-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-preview-error {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      font-size: 0.6875rem;
+      color: var(--dim);
+    }
 
     .add-image-btn {
       width: 100%;
@@ -186,6 +214,23 @@
     }
 
     .add-image-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Auto-save indicator */
+    .autosave-indicator {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      font-size: 0.625rem;
+      color: var(--gold);
+      background: var(--surface);
+      padding: 0.375rem 0.625rem;
+      border: 1px solid var(--border);
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 100;
+    }
+
+    .autosave-indicator.show { opacity: 1; }
 
     /* Duration */
     .duration-grid {
@@ -321,11 +366,13 @@
   </style>
 </head>
 <body>
+  <div class="autosave-indicator" id="autosaveIndicator">저장됨 ✓</div>
+
   <div class="container">
     <header>
       <span class="tag">Chalkboard Generator</span>
       <h1>Tribute Cinema</h1>
-      <p class="subtitle">데이터 입력 → 방송용 HTML 코드 생성</p>
+      <p class="subtitle">데이터 입력 → 방송용 HTML 코드 생성 (자동 저장)</p>
     </header>
 
     <!-- Subject -->
@@ -337,20 +384,20 @@
       <div class="section-body">
         <div class="form-group">
           <label class="form-label">이름</label>
-          <input type="text" class="form-input" id="subjectName" placeholder="홍길동">
+          <input type="text" class="form-input" id="subjectName" placeholder="홍길동" oninput="autoSave()">
         </div>
         <div class="form-group">
           <label class="form-label">부제 / 직함</label>
-          <input type="text" class="form-input" id="subjectTitle" placeholder="시대를 앞서간 선구자">
+          <input type="text" class="form-input" id="subjectTitle" placeholder="시대를 앞서간 선구자" oninput="autoSave()">
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">출생</label>
-            <input type="text" class="form-input" id="birthYear" placeholder="1950">
+            <input type="text" class="form-input" id="birthYear" placeholder="1950" oninput="autoSave()">
           </div>
           <div class="form-group">
             <label class="form-label">사망</label>
-            <input type="text" class="form-input" id="deathYear" placeholder="2024">
+            <input type="text" class="form-input" id="deathYear" placeholder="2024" oninput="autoSave()">
           </div>
         </div>
       </div>
@@ -445,8 +492,16 @@
           document.querySelectorAll('[data-duration]').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           state.duration = parseInt(btn.dataset.duration);
+          autoSave();
         });
       });
+
+      // Load saved data or render initial images
+      const loaded = loadSavedData();
+      if (!loaded) {
+        // Render empty image inputs for each section
+        SECTIONS.forEach((_, idx) => renderImages(idx));
+      }
     }
 
     function createSectionForm(sec, idx) {
@@ -461,25 +516,20 @@
             ${!isSpecial ? `
               <div class="form-group">
                 <label class="form-label">섹션 제목</label>
-                <input type="text" class="form-input" id="heading${idx}" placeholder="${sec.heading || ''}" onchange="updateSection(${idx}, 'heading', this.value)">
+                <input type="text" class="form-input" id="heading${idx}" placeholder="${sec.heading || ''}" oninput="updateSection(${idx}, 'heading', this.value); autoSave();">
               </div>
               <div class="form-group">
                 <label class="form-label">인용문</label>
-                <textarea class="form-input" id="quote${idx}" placeholder="이 시기를 대표하는 말..." onchange="updateSection(${idx}, 'quote', this.value)"></textarea>
+                <textarea class="form-input" id="quote${idx}" placeholder="이 시기를 대표하는 말..." oninput="updateSection(${idx}, 'quote', this.value); autoSave();"></textarea>
               </div>
               <div class="form-group">
                 <label class="form-label">출처 (선택)</label>
-                <input type="text" class="form-input" id="attr${idx}" placeholder="— 누구의 말" onchange="updateSection(${idx}, 'attribution', this.value)">
+                <input type="text" class="form-input" id="attr${idx}" placeholder="— 누구의 말" oninput="updateSection(${idx}, 'attribution', this.value); autoSave();"></textarea>
               </div>
             ` : ''}
             <div class="form-group">
               <label class="form-label">이미지 URL</label>
-              <div class="image-list" id="images${idx}">
-                <div class="image-item">
-                  <input type="text" class="form-input" placeholder="https://..." onchange="updateImage(${idx}, 0, this.value)">
-                  <button onclick="removeImage(${idx}, 0)">✕</button>
-                </div>
-              </div>
+              <div class="image-list" id="images${idx}"></div>
               <button class="add-image-btn" onclick="addImage(${idx})">+ 이미지 추가</button>
             </div>
           </div>
@@ -497,17 +547,21 @@
 
     function updateImage(idx, imgIdx, value) {
       state.sections[idx].images[imgIdx] = value;
+      updateImagePreview(idx, imgIdx, value);
+      autoSave();
     }
 
     function addImage(idx) {
       state.sections[idx].images.push('');
       renderImages(idx);
+      autoSave();
     }
 
     function removeImage(idx, imgIdx) {
       if (state.sections[idx].images.length > 1) {
         state.sections[idx].images.splice(imgIdx, 1);
         renderImages(idx);
+        autoSave();
       }
     }
 
@@ -515,10 +569,81 @@
       const list = document.getElementById(`images${idx}`);
       list.innerHTML = state.sections[idx].images.map((img, i) => `
         <div class="image-item">
-          <input type="text" class="form-input" value="${img}" placeholder="https://..." onchange="updateImage(${idx}, ${i}, this.value)">
-          <button onclick="removeImage(${idx}, ${i})">✕</button>
+          <div class="image-input-row">
+            <input type="text" class="form-input" id="imgInput${idx}_${i}" value="${img}" placeholder="https://..." oninput="updateImage(${idx}, ${i}, this.value)">
+            <button onclick="removeImage(${idx}, ${i})">✕</button>
+          </div>
+          <div class="image-preview ${img ? 'loaded' : ''}" id="imgPreview${idx}_${i}">
+            ${img ? `<img src="${img}" onerror="this.parentElement.innerHTML='<div class=\\'image-preview-error\\'>이미지 로드 실패</div>'" alt="미리보기">` : ''}
+          </div>
         </div>
       `).join('');
+    }
+
+    function updateImagePreview(idx, imgIdx, url) {
+      const preview = document.getElementById(`imgPreview${idx}_${imgIdx}`);
+      if (!preview) return;
+
+      if (url && url.startsWith('http')) {
+        preview.classList.add('loaded');
+        preview.innerHTML = `<img src="${url}" onerror="this.parentElement.innerHTML='<div class=\\'image-preview-error\\'>이미지 로드 실패</div>'" alt="미리보기">`;
+      } else {
+        preview.classList.remove('loaded');
+        preview.innerHTML = '';
+      }
+    }
+
+    // Auto-save
+    let saveTimeout = null;
+    function autoSave() {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        collectData();
+        localStorage.setItem('tribute-cinema-state', JSON.stringify(state));
+        showSaveIndicator();
+      }, 500);
+    }
+
+    function showSaveIndicator() {
+      const indicator = document.getElementById('autosaveIndicator');
+      indicator.classList.add('show');
+      setTimeout(() => indicator.classList.remove('show'), 1500);
+    }
+
+    function loadSavedData() {
+      const saved = localStorage.getItem('tribute-cinema-state');
+      if (!saved) return false;
+
+      try {
+        const data = JSON.parse(saved);
+        state = { ...state, ...data };
+
+        // Restore subject info
+        document.getElementById('subjectName').value = state.subject.name || '';
+        document.getElementById('subjectTitle').value = state.subject.title || '';
+        document.getElementById('birthYear').value = state.subject.birth || '';
+        document.getElementById('deathYear').value = state.subject.death || '';
+
+        // Restore duration
+        document.querySelectorAll('[data-duration]').forEach(btn => {
+          btn.classList.toggle('active', parseInt(btn.dataset.duration) === state.duration);
+        });
+
+        // Restore sections
+        state.sections.forEach((sec, idx) => {
+          const h = document.getElementById(`heading${idx}`);
+          const q = document.getElementById(`quote${idx}`);
+          const a = document.getElementById(`attr${idx}`);
+          if (h) h.value = sec.heading || '';
+          if (q) q.value = sec.quote || '';
+          if (a) a.value = sec.attribution || '';
+          renderImages(idx);
+        });
+
+        return true;
+      } catch(e) {
+        return false;
+      }
     }
 
     function collectData() {
