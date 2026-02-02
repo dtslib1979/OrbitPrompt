@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parksy Capture 튜토리얼 | 15분 완성</title>
+<meta name="description" content="LLM 대화 무손실 캡처 앱 설치 및 활용 가이드">
+<style>
+:root {
+  --bg: #1A1508;
+  --panel: #0F0D05;
+  --gold: #D4AF37;
+  --gold-dark: #8B6914;
+  --green: #10b981;
+  --text: #F5F5DC;
+  --dim: rgba(245,245,220,0.5);
+  --border: rgba(212,175,55,0.25);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans KR', -apple-system, sans-serif;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--panel) 50%, var(--bg) 100%);
+  color: var(--text);
+  min-height: 100vh;
+}
+.app { max-width: 500px; margin: 0 auto; padding: 1rem; }
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+.header-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.header-title { font-size: 1.2rem; font-weight: 700; color: var(--gold); }
+.header-version { font-size: 0.75rem; color: var(--dim); }
+
+/* Progress */
+.progress { display: flex; gap: 2px; margin-bottom: 1rem; }
+.progress-dot { flex: 1; height: 4px; background: rgba(212,175,55,0.2); border-radius: 2px; transition: 0.3s; }
+.progress-dot.active { background: var(--gold); }
+.progress-dot.done { background: var(--green); }
+
+/* Timer */
+.timer {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--dim);
+  margin-bottom: 1rem;
+}
+.timer-current { color: var(--gold); font-weight: 700; font-size: 1.2rem; }
+
+/* Tabs */
+.tabs { display: flex; gap: 0; margin-bottom: 1rem; overflow-x: auto; }
+.tab {
+  flex: 1; min-width: 50px; padding: 0.6rem 0.2rem; text-align: center;
+  background: rgba(212,175,55,0.05); border: none; color: var(--dim);
+  font-size: 0.65rem; cursor: pointer; border-right: 1px solid var(--border);
+}
+.tab:last-child { border-right: none; }
+.tab.active { background: var(--gold); color: var(--bg); font-weight: 600; }
+.tab .time { display: block; font-size: 0.6rem; opacity: 0.7; }
+
+/* Panel */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* Slide */
+.slide {
+  background: rgba(212,175,55,0.05);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  min-height: 400px;
+}
+.slide-title {
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+.slide-sub {
+  font-size: 0.9rem;
+  color: var(--dim);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Steps */
+.steps { margin: 1rem 0; }
+.step {
+  display: flex; align-items: flex-start; gap: 0.8rem;
+  padding: 0.8rem; background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border); border-radius: 10px;
+  margin-bottom: 0.6rem;
+}
+.step-num {
+  min-width: 24px; height: 24px; background: var(--gold);
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-weight: 700; color: var(--bg); font-size: 0.8rem;
+}
+.step-text { font-size: 0.9rem; color: var(--text); }
+.step-text small { display: block; color: var(--dim); font-size: 0.75rem; margin-top: 0.2rem; }
+
+/* Features */
+.features { display: grid; grid-template-columns: 1fr; gap: 0.6rem; margin: 1rem 0; }
+.feature {
+  display: flex; align-items: center; gap: 0.8rem;
+  background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0.8rem;
+}
+.feature-icon { font-size: 1.3rem; }
+.feature-name { font-size: 0.9rem; font-weight: 600; color: var(--gold); }
+.feature-desc { font-size: 0.75rem; color: var(--dim); }
+
+/* Scenario */
+.scenario {
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.3);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+}
+.scenario-title { font-size: 0.9rem; font-weight: 600; color: var(--green); margin-bottom: 0.3rem; }
+.scenario-desc { font-size: 0.8rem; color: var(--text); }
+
+/* Caution */
+.caution {
+  background: rgba(139,0,0,0.1);
+  border: 1px solid rgba(139,0,0,0.3);
+  border-radius: 10px;
+  padding: 0.8rem;
+  margin: 1rem 0;
+}
+.caution-title { font-size: 0.8rem; font-weight: 600; color: #ff6b6b; margin-bottom: 0.3rem; }
+.caution-item { font-size: 0.75rem; color: var(--text); margin-bottom: 0.2rem; }
+
+/* Download */
+.download-btn {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  border: none;
+  border-radius: 12px;
+  color: var(--bg);
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  margin: 1rem 0;
+}
+
+/* Nav */
+.nav { display: flex; gap: 0.8rem; margin-top: 1rem; }
+.nav-btn {
+  flex: 1; padding: 0.8rem; border: none; border-radius: 10px;
+  font-size: 0.9rem; font-weight: 600; cursor: pointer;
+}
+.nav-btn.prev { background: rgba(212,175,55,0.2); color: var(--gold); }
+.nav-btn.next { background: var(--gold); color: var(--bg); }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Checklist */
+.checklist { margin: 1rem 0; }
+.check-item {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.6rem 0; border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.check-box {
+  width: 20px; height: 20px; border: 2px solid var(--gold);
+  border-radius: 4px; display: flex; align-items: center; justify-content: center;
+}
+.check-item.checked .check-box { background: var(--green); border-color: var(--green); }
+.check-item.checked .check-box::after { content: '✓'; color: #fff; font-size: 0.8rem; }
+.check-label { font-size: 0.85rem; }
+
+/* Quote */
+.quote {
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(212,175,55,0.1);
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+.quote-text { font-size: 1rem; font-weight: 600; color: var(--gold); line-height: 1.6; }
+.quote-author { font-size: 0.75rem; color: var(--dim); margin-top: 0.5rem; }
+
+@media (max-width: 400px) {
+  .slide { padding: 1rem; min-height: 350px; }
+  .slide-title { font-size: 1.2rem; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-icon">💾</div>
+    <div class="header-title">Parksy Capture</div>
+    <div class="header-version">v10.0.8 튜토리얼</div>
+  </div>
+
+  <div class="progress" id="progress"></div>
+
+  <div class="timer">
+    <span class="timer-current" id="currentTime">0:00</span> / 15:00
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <div id="panels"></div>
+
+  <div class="nav">
+    <button class="nav-btn prev" id="prevBtn" onclick="go(-1)">← 이전</button>
+    <button class="nav-btn next" id="nextBtn" onclick="go(1)">다음 →</button>
+  </div>
+</div>
+
+<script>
+const sections = [
+  {
+    id: 1,
+    name: '훅',
+    time: '0:30',
+    seconds: 30,
+    content: `
+      <div class="slide-title">LLM 대화, 복사하다 잘린 적 있죠?</div>
+      <div class="slide-sub">오늘은 그 문제를 완전히 해결합니다</div>
+      <div class="quote">
+        <div class="quote-text">
+          "복사 대신 공유하면<br>무손실 캡처됩니다"
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:1rem;">
+        <div style="font-size:3rem;margin-bottom:0.5rem;">💾</div>
+        <div style="font-size:1.2rem;color:var(--gold);font-weight:700;">Parksy Capture</div>
+        <div style="font-size:0.8rem;color:var(--dim);">LLM 대화 무손실 캡처 → GitHub 자동 아카이브</div>
+      </div>
+    `
+  },
+  {
+    id: 2,
+    name: '왜 필요한가',
+    time: '2:00',
+    seconds: 120,
+    content: `
+      <div class="slide-title">기존의 문제</div>
+      <div class="slide-sub">모바일에서 긴 대화를 복사하면...</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">❌</div>
+          <div class="step-text">
+            클립보드 메모리 제한
+            <small>긴 텍스트는 조용히 잘림</small>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">❌</div>
+          <div class="step-text">
+            경고 없이 데이터 유실
+            <small>"복사 완료" 떴는데 실제론 반쪽</small>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">❌</div>
+          <div class="step-text">
+            대화 맥락 손실
+            <small>나중에 이어하려면 처음부터 다시 설명</small>
+          </div>
+        </div>
+      </div>
+      <div class="quote">
+        <div class="quote-text">
+          대부분은 포기합니다.<br>
+          스크린샷 찍거나, 요약하거나, 그냥 버리거나.
+        </div>
+        <div class="quote-author">— 근데 우리는 포기 안 함</div>
+      </div>
+    `
+  },
+  {
+    id: 3,
+    name: '설치',
+    time: '3:00',
+    seconds: 180,
+    content: `
+      <div class="slide-title">설치 3분 컷</div>
+      <div class="slide-sub">APK 스토어에서 바로 다운로드</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            APK 다운로드
+            <small>dtslib-apk-lab.vercel.app → Parksy Capture</small>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            설치 (출처 불명 앱 허용)
+            <small>설정 → 보안 → 출처를 알 수 없는 앱 허용</small>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            첫 실행 → 온보딩 3페이지
+            <small>사용법 간단 설명, 넘기면 끝</small>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text">
+            저장소 권한 부여
+            <small>⚠️ 필수! 없으면 저장 안 됨</small>
+          </div>
+        </div>
+      </div>
+      <a href="https://dtslib-apk-lab.vercel.app/" target="_blank" class="download-btn">
+        📥 APK 스토어 바로가기
+      </a>
+    `
+  },
+  {
+    id: 4,
+    name: '기본 사용',
+    time: '4:00',
+    seconds: 240,
+    content: `
+      <div class="slide-title">핵심 사용법</div>
+      <div class="slide-sub">복사 대신 공유하면 끝</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            LLM 웹앱 열기
+            <small>ChatGPT, Claude, Gemini 등</small>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            대화 전체 선택 (Select All)
+            <small>Ctrl+A 또는 길게 눌러서 전체 선택</small>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            공유 버튼 탭
+            <small>복사 버튼 아님! 공유 버튼!</small>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text">
+            "Parksy Capture" 선택
+            <small>Share Intent로 전달 → 크기 제한 없음</small>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">✓</div>
+          <div class="step-text">
+            저장 완료!
+            <small>Downloads/parksy-logs/에 자동 저장</small>
+          </div>
+        </div>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">📥</div>
+          <div>
+            <div class="feature-name">무손실 캡처</div>
+            <div class="feature-desc">Share Intent는 클립보드 제한 없음</div>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📤</div>
+          <div>
+            <div class="feature-name">재업로드</div>
+            <div class="feature-desc">저장된 로그를 다른 앱으로 다시 공유</div>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">☁️</div>
+          <div>
+            <div class="feature-name">클라우드 백업</div>
+            <div class="feature-desc">GitHub 자동 동기화 (선택)</div>
+          </div>
+        </div>
+      </div>
+    `
+  },
+  {
+    id: 5,
+    name: '고급 활용',
+    time: '4:00',
+    seconds: 240,
+    content: `
+      <div class="slide-title">이렇게 활용하세요</div>
+      <div class="slide-sub">캡처 그 이후</div>
+      <div class="scenario">
+        <div class="scenario-title">🔄 대화 이어하기 (Re-upload)</div>
+        <div class="scenario-desc">
+          저장된 로그 열기 → 공유 버튼 → 다른 LLM 앱 선택<br>
+          → 붙여넣기 → 대화 이어서 진행
+        </div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">☁️ GitHub 자동 백업</div>
+        <div class="scenario-desc">
+          parksy-logs 레포에 자동 동기화<br>
+          API 키 설정 필요 (고급 사용자)
+        </div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">🧠 RAG / 파인튜닝 데이터셋</div>
+        <div class="scenario-desc">
+          축적된 로그 → 벡터DB 삽입 → RAG 검색<br>
+          또는 JSONL 변환 → LoRA 어댑터 학습
+        </div>
+      </div>
+      <div class="quote">
+        <div class="quote-text">
+          "LLM 대화를 소비하는 게 아니라<br>
+          수집하는 사람을 위한 도구"
+        </div>
+      </div>
+    `
+  },
+  {
+    id: 6,
+    name: '마무리',
+    time: '1:30',
+    seconds: 90,
+    content: `
+      <div class="slide-title">오늘 배운 것</div>
+      <div class="checklist" id="checklist">
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <span class="check-label">복사 대신 공유 = 무손실</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <span class="check-label">APK 스토어에서 다운로드</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <span class="check-label">저장소 권한 필수</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <span class="check-label">저장된 로그 재업로드 가능</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <span class="check-label">GitHub 백업으로 RAG/파인튜닝</span>
+        </div>
+      </div>
+      <div class="caution">
+        <div class="caution-title">⚠️ 주의사항</div>
+        <div class="caution-item">• 개인정보 포함 대화 GitHub 업로드 주의</div>
+        <div class="caution-item">• 저장 공간 주기적으로 정리</div>
+      </div>
+      <a href="https://dtslib-apk-lab.vercel.app/" target="_blank" class="download-btn">
+        💾 지금 바로 설치하기
+      </a>
+      <div style="text-align:center;margin-top:1rem;font-size:0.8rem;color:var(--dim);">
+        다음 영상: Parksy Pen (S Pen 레이저펜 판서)
+      </div>
+    `
+  }
+];
+
+let current = 0;
+let startTime = null;
+let timerInterval = null;
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function updateTimer() {
+  if (!startTime) return;
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  document.getElementById('currentTime').textContent = formatTime(elapsed);
+}
+
+function render() {
+  // Progress
+  document.getElementById('progress').innerHTML = sections.map((_, i) =>
+    `<div class="progress-dot ${i < current ? 'done' : i === current ? 'active' : ''}"></div>`
+  ).join('');
+
+  // Tabs
+  document.getElementById('tabs').innerHTML = sections.map((s, i) =>
+    `<button class="tab ${i === current ? 'active' : ''}" onclick="goTo(${i})">
+      ${s.name}
+      <span class="time">${s.time}</span>
+    </button>`
+  ).join('');
+
+  // Panels
+  document.getElementById('panels').innerHTML = sections.map((s, i) => `
+    <div class="panel ${i === current ? 'active' : ''}">
+      <div class="slide">${s.content}</div>
+    </div>
+  `).join('');
+
+  // Nav
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').innerHTML = current === sections.length - 1 ? '완료 ✓' : '다음 →';
+}
+
+function go(dir) { goTo(current + dir); }
+function goTo(i) {
+  current = Math.max(0, Math.min(sections.length - 1, i));
+  if (!startTime) {
+    startTime = Date.now();
+    timerInterval = setInterval(updateTimer, 1000);
+  }
+  render();
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+}
+
+render();
+</script>
+</body>
+</html>
