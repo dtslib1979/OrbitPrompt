@@ -1,204 +1,71 @@
 # OrbitPrompt — Claude Code 세션 가이드
 
-## 프로젝트 개요
+## 정체성
 
-**OrbitPrompt = 방송용 칠판 시스템**
+**OrbitPrompt = 프롬프트 엔지니어링 엔진**
 
-PWA 페이지를 칠판처럼 띄워놓고 Galaxy 화면 녹화 → YouTube 업로드.
-PPT 대신, OBS 대신, 편집 없이.
+LLM과의 대화를 구조화하는 도구.
+멀티 쿼리 생성, 프롬프트 역분석, 사고 프레임워크.
 
-## 핵심 철학: 존재 = 생산
+## 핵심 철학
 
-| 기존 사고 | Parksy OS |
-|-----------|-----------|
-| "영상 찍어야지" | 웹페이지 열면 그게 방송 |
-| "편집해야지" | 화면 녹화 = 완성물 |
-| "잘해야지" | 계속 올리면 내가 바뀜 |
-| "언젠가" | 오늘 하나가 기본값 |
+```
+프롬프트는 코드다.
+- 반복 가능해야 한다
+- 테스트 가능해야 한다
+- 버전 관리 가능해야 한다
 
-**핵심:** 코칭/동기부여가 아니라 **존재 방식 재설계**.
-도구 + 구조 + 동선 + 습관으로 바꿔주는 것.
+OrbitPrompt는 프롬프트를 "작성"하는 게 아니라 "설계"하는 도구다.
+```
 
 ## 폴더 구조
 
 ```
-orbitprompt/
-├── index.html              ← Mission Control (메인 대시보드)
+OrbitPrompt/
+├── index.html              ← 랜딩 (엔진 도구 목록)
 ├── prompts/
-│   ├── broadcast/          ← 방송용 칠판 템플릿
-│   │   ├── math-tutor.html       (Khan Academy 포맷)
-│   │   ├── music-curation.html   (NPR Tiny Desk 포맷)
-│   │   ├── memorial-tribute.html (Ken Burns 포맷)
-│   │   └── pwa-demo.html         (Apple Keynote 포맷)
-│   ├── engine/             ← 프롬프트 생성 엔진
-│   └── guide/              ← 설치/빌드 가이드
-├── topics/                 ← Topics DB (오늘의 주제)
-│   ├── index.json          (카테고리 인덱스)
-│   ├── math.json           (8개 수학 토픽)
-│   ├── music.json          (8개 음악 토픽)
-│   ├── memorial.json       (5개 추모 템플릿)
-│   └── pwa-demo.json       (6개 PWA 데모 토픽)
-├── api/                    ← Branch Distribution API
-│   ├── templates.json      (템플릿 카탈로그)
-│   └── customize.js        (브랜치 커스터마이징)
-├── docs/
-│   └── branch-guide.html   ← 브랜치 사용 가이드
-├── scripts/
-│   ├── asset-loader.js     ← 스튜디오 에셋 로더
-│   └── topics-loader.js    ← Topics DB 로더
+│   └── engine/             ← 프롬프트 생성 엔진
+│       └── Gitgub-publishing.html
+├── archive.html            ← 프롬프트 아카이브
+├── 00_TRUTH/               ← 원본 데이터
+├── assets/
 ├── config/
-│   └── sources.json        ← 스튜디오 연결 설정
-└── CLAUDE.md               ← 이 파일
+└── CLAUDE.md
 ```
 
-## 스튜디오 연동
+## 도구 목록
 
-OrbitPrompt는 3개 스튜디오에서 에셋을 가져와 조합하는 **조립 라인**.
-
-```
-parksy-image ──┐
-(시각: 배경, 썸네일) │
-               │     ┌──────────────────┐
-parksy-audio ──┼────→│   OrbitPrompt    │────→ YouTube
-(청각: BGM, 효과음)  │     │   (방송 제작)     │
-               │     └──────────────────┘
-tango-magenta ─┘
-(체감: 디자인 토큰)
-```
-
-### 연동 방식
-
-각 스튜디오가 `manifest.json` 제공 → OrbitPrompt가 fetch해서 사용.
-
-```javascript
-await AssetLoader.init();
-
-// 이미지 에셋
-const bg = AssetLoader.getAsset('image', 'backgrounds', 'chalkboard-dark');
-
-// 오디오 에셋
-const bgm = AssetLoader.getAsset('audio', 'bgm', 'chill-001');
-
-// 디자인 토큰
-const timing = AssetLoader.getDesignTokens('timing');
-// → { beat: 857, halfBeat: 428, ... }
-```
-
-### 스튜디오 manifest 위치
-
-| 스튜디오 | manifest URL |
-|----------|-------------|
-| parksy-image | `https://dtslib1979.github.io/parksy-image/assets/manifest.json` |
-| parksy-audio | `https://dtslib1979.github.io/parksy-audio/assets/manifest.json` |
-| tango-magenta | `https://dtslib1979.github.io/tango-magenta/api/content.json` |
-
-## 칠판 템플릿
-
-| 템플릿 | 포맷 참조 | 용도 |
-|--------|----------|------|
-| math-tutor | Khan Academy | 수학 과외 방송 |
-| memorial-tribute | Ken Burns 다큐 | 추모 영상 |
-| music-curation | NPR Tiny Desk | 음악 감상/큐레이션 |
-| pwa-demo | Apple Keynote | 앱 데모/설치 가이드 |
-
-## 완료된 작업 (2026-01-25)
-
-| 작업 | 상태 | 설명 |
+| 도구 | 상태 | 설명 |
 |------|------|------|
-| Mission Control | ✅ | index.html — Day 카운터 + 칠판 선택 + 주제 입력 |
-| Topics DB | ✅ | 4개 카테고리, 27개 토픽, 오늘의 추천 자동 표시 |
-| Branch Distribution | ✅ | API + customize.js + 브랜치 가이드 |
-| 이중언어 지원 | ✅ | KO/EN 토글, Bing 번역 호환 |
+| Multi-Query Gen | ✅ | 하나의 의도 → 여러 각도 프롬프트 |
+| Reverse Engineering | ⬜ | 결과물에서 원본 프롬프트 추론 |
+| Frameworks | ⬜ | CRISPE, Chain-of-Thought 등 |
+| Prompt Library | ⬜ | 검증된 템플릿 모음 |
 
-## TODO (다음 세션)
+## 분리된 레포
 
-| 순위 | 작업 | 상태 |
-|------|------|------|
-| 1 | 브라우저 테스트 (Mission Control 풀 플로우) | ⬜ |
-| 2 | Topics 콘텐츠 보강 (outline 구체화) | ⬜ |
-| 3 | Manifesto 페이지 (철학 온보딩) | ⬜ |
-| 4 | 실제 에셋 추가 (배경/BGM) | ⬜ |
-| 5 | 스튜디오 manifest 연동 | ⬜ |
-| 6 | E2E 테스트 (녹화 → YouTube) | ⬜ |
+방송용 칠판 기능은 **Chalkboard**로 분리됨:
 
-## Branch Distribution System
-
-OrbitPrompt = **PD Studio**. 템플릿을 만들어 브랜치(KOOSY, GOHSY 등)에 전달.
-
-### 사용법
-
-```javascript
-// URL 파라미터로 브랜치 지정
-https://orbitprompt.com/prompts/broadcast/math-tutor.html?branch=koosy
-
-// 또는 JS API
-OrbitCustomize.applyPreset('koosy');
-```
-
-### 등록된 브랜치
-
-| 브랜치 | 테마 컬러 |
-|--------|----------|
-| koosy | #ff6b6b (레드) |
-| gohsy | #4ecdc4 (민트) |
-| artrew | #ff6b6b (레드) |
-| papafly | #ffd93d (옐로우) |
-| lotus | #a371f7 (퍼플) |
-| tango-magenta | #ff00ff (마젠타) |
-
-## Topics DB
-
-날짜 기반 오늘의 주제 자동 선택. 같은 날 = 같은 토픽.
-
-```javascript
-await TopicsLoader.init();
-const topic = await TopicsLoader.getTodaysTopic('math-tutor');
-// → { id: 'quadratic-formula', title: '근의 공식', ... }
-```
-
-### 카테고리
-
-| ID | 토픽 수 | autoSuggest |
-|----|--------|-------------|
-| math-tutor | 8 | ✅ |
-| music-curation | 8 | ✅ |
-| memorial-tribute | 5 | ❌ (수동 선택) |
-| pwa-demo | 6 | ✅ |
-
-## Mission Control (완료)
-
-```
-┌─────────────────────────────────────────────────┐
-│  Day 1                                          │
-│  ○○○○○○● (7일 스트릭)                          │
-│                                                 │
-│  [📐 Math] [🎵 Music] [🎬 Memorial] [📱 PWA]   │
-│                                                 │
-│  오늘의 주제: [_______________]                 │
-│  💡 오늘의 추천: 근의 공식 ← 클릭하면 자동입력  │
-│                                                 │
-│        [ 🔴 REC 칠판 열기 ]                    │
-└─────────────────────────────────────────────────┘
-```
-
-**원칙:**
-- 마찰 제로: 버튼 하나로 시작
-- 고민 금지: 오늘의 주제가 이미 정해져 있음
-- 스트릭 가시화: "Day N" 표시
-
-## 아이디어 평가: 8.2/10
-
-| 강점 | 약점 |
+| 레포 | 역할 |
 |------|------|
-| 진입장벽 제로 | 발견성 (어떻게 찾아오나) |
-| 차별화 있음 | 수익 모델 없음 |
-| 기술 실현성 100% | 템플릿 제작 = 혼자 (병목) |
-| 제약 → 장점 전환 | |
-| 철학 레이어 있음 | |
+| OrbitPrompt | 프롬프트 엔진 (사고 도구) |
+| Chalkboard | 방송용 칠판 (생산 도구) |
 
-## 관련 레포
+- Chalkboard: https://github.com/dtslib1979/chalkboard
 
-- **parksy-image** — 이미지 에셋 공급
-- **parksy-audio** — 오디오 에셋 공급
-- **tango-magenta** — 디자인 토큰 공급
-- **dtslib-branch** — 프랜차이즈 HQ (브랜치들이 이 템플릿 사용)
+## 연관 레포
+
+- **chalkboard** — 방송용 칠판 시스템
+- **one-man-os** — 1인 미디어 OS
+- **parksy-logs** — 대화 저장/RAG
+
+## 작업 규칙
+
+### 반드시
+- 도구 단위로 개발 (독립 HTML)
+- 프롬프트 구조 문서화
+- archive.html에 결과물 축적
+
+### 금지
+- 방송/칠판 관련 기능 추가 (→ Chalkboard로)
+- 불필요한 의존성
