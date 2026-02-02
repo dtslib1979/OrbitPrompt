@@ -92,35 +92,40 @@
 ```
 OrbitPrompt/
 ├── index.html              ← 2레인 랜딩
-├── archive.html            ← 프롬프트 아카이브
+├── whitepaper.html         ← 철학 백서
 ├── 00_TRUTH/               ← 원본 데이터
-├── prompts/
-│   └── engine/             ← 프롬프트 생성 엔진
-│       └── Gitgub-publishing.html
-├── boards/                 ← 방송용 칠판 템플릿
+├── prompts/                ← Lane 1: Generator들
+│   ├── chalkboard/
+│   │   └── template-generator.html  (방송 PWA)
+│   ├── apk/
+│   │   └── pwa-generator.html       (앱 PWA)
+│   ├── instruction/
+│   │   └── claude-md-generator.html (CLAUDE.md)
+│   └── dataset/
+│       └── finetune-generator.html  (파인튜닝)
+├── boards/                 ← Lane 2: Archive (생성된 칠판)
+│   ├── memorial-tribute.html (Ken Burns)
 │   ├── math-tutor.html       (Khan Academy)
 │   ├── music-curation.html   (NPR Tiny Desk)
-│   ├── memorial-tribute.html (Ken Burns)
 │   └── pwa-demo.html         (Apple Keynote)
 ├── data/
-│   └── templates.json      ← 칠판 템플릿 데이터
-├── docs/
-│   └── workflow-memorial-documentary.md
+│   └── templates.json      ← 칠판 메타데이터
 ├── assets/
-├── config/
 └── CLAUDE.md
 ```
 
 ## 레인별 도구
 
-### Lane 1: Prompt Engine (사고 도구)
+### Lane 1: Prompt Engine (메타 프롬프트 생성기)
 
-| 도구 | 상태 | 설명 |
-|------|------|------|
-| Multi-Query Gen | ✅ | 하나의 의도 → 여러 각도 프롬프트 |
-| Reverse Engineering | ⬜ | 결과물에서 원본 프롬프트 추론 |
-| Frameworks | ⬜ | CRISPE, Chain-of-Thought 등 |
-| Prompt Library | ⬜ | 검증된 템플릿 모음 |
+4개의 Generator — 변수 선택 → 프롬프트 생성 → LLM이 코드/문서 생성
+
+| Generator | 입력 | 출력 | 상태 |
+|-----------|------|------|------|
+| Chalkboard Generator | YouTube 영상 분석 | 방송용 PWA | ✅ |
+| PWA Generator | 앱 요구사항 | 설치형 PWA | ✅ |
+| Instruction Generator | 레포 목적 | CLAUDE.md | ✅ |
+| Dataset Generator | 대화 로그 | 파인튜닝 JSONL | ✅ |
 
 ### Lane 2: Archive (생성된 칠판)
 
