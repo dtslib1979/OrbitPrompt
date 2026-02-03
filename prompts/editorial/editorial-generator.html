@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editorial Generator | OrbitPrompt</title>
+<style>
+:root {
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface-2: #1c1c1c;
+  --border: rgba(255,255,255,0.08);
+  --text: #f5f5f5;
+  --text-2: rgba(255,255,255,0.6);
+  --text-3: rgba(255,255,255,0.35);
+  --gold: #C9A962;
+  --gold-dim: rgba(201,169,98,0.12);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+.container { max-width: 600px; margin: 0 auto; padding: 24px 16px; }
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+.header-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  font-family: system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.header h1 {
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.header p {
+  font-size: 14px;
+  color: var(--text-2);
+  font-style: italic;
+}
+
+/* Form */
+.section {
+  margin-bottom: 28px;
+}
+.section-title {
+  font-family: system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--text-3);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.field {
+  margin-bottom: 16px;
+}
+.field label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.field textarea { min-height: 100px; resize: vertical; }
+.field small {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+/* Chips */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.chip:hover { border-color: var(--gold); color: var(--gold); }
+.chip.active {
+  background: var(--gold-dim);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Slides */
+.slides-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.slide-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+.slide-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.slide-num {
+  width: 24px;
+  height: 24px;
+  background: var(--gold-dim);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold);
+}
+.slide-title-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 4px 0;
+  color: var(--text);
+  font-size: 14px;
+}
+.slide-title-input:focus { outline: none; border-color: var(--gold); }
+.slide-remove {
+  background: none;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  font-size: 16px;
+}
+.slide-fields {
+  display: grid;
+  gap: 8px;
+}
+.slide-fields input, .slide-fields textarea {
+  width: 100%;
+  padding: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 13px;
+}
+.slide-fields textarea { min-height: 60px; }
+
+.add-slide-btn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  color: var(--text-3);
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 12px;
+}
+.add-slide-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* Generate Button */
+.generate-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--gold);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  margin-top: 24px;
+}
+.generate-btn:hover { filter: brightness(1.1); }
+
+/* Output */
+.output {
+  margin-top: 32px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  display: none;
+}
+.output.show { display: block; }
+.output-title {
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.output pre {
+  background: #000;
+  padding: 16px;
+  border-radius: 6px;
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.copy-btn {
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  color: var(--gold);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 32px 0;
+  margin-top: 40px;
+  border-top: 1px solid var(--border);
+}
+.footer a {
+  color: var(--text-3);
+  text-decoration: none;
+  font-size: 12px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <div class="header-badge">GENERATOR</div>
+    <h1>Luxury Editorial</h1>
+    <p>High-end visual storytelling template</p>
+  </header>
+
+  <!-- Style -->
+  <section class="section">
+    <div class="section-title">Style</div>
+    <div class="chips" id="styleChips">
+      <button class="chip active" data-value="minimal">Minimal</button>
+      <button class="chip" data-value="magazine">Magazine</button>
+      <button class="chip" data-value="gallery">Gallery</button>
+      <button class="chip" data-value="editorial">Editorial</button>
+    </div>
+  </section>
+
+  <!-- Mood -->
+  <section class="section">
+    <div class="section-title">Mood</div>
+    <div class="chips" id="moodChips">
+      <button class="chip active" data-value="elegant">Elegant</button>
+      <button class="chip" data-value="bold">Bold</button>
+      <button class="chip" data-value="serene">Serene</button>
+      <button class="chip" data-value="dramatic">Dramatic</button>
+    </div>
+  </section>
+
+  <!-- Typography -->
+  <section class="section">
+    <div class="section-title">Typography</div>
+    <div class="chips" id="typoChips">
+      <button class="chip active" data-value="serif">Serif (Classic)</button>
+      <button class="chip" data-value="sans">Sans (Modern)</button>
+      <button class="chip" data-value="display">Display (Bold)</button>
+    </div>
+  </section>
+
+  <!-- Basic Info -->
+  <section class="section">
+    <div class="section-title">Content</div>
+    <div class="field">
+      <label>Title</label>
+      <input type="text" id="title" placeholder="The Art of Living">
+    </div>
+    <div class="field">
+      <label>Subtitle / Tagline</label>
+      <input type="text" id="subtitle" placeholder="A visual journey through timeless elegance">
+    </div>
+    <div class="field">
+      <label>Author / Curator</label>
+      <input type="text" id="author" placeholder="Curated by GOHSY">
+    </div>
+  </section>
+
+  <!-- Slides -->
+  <section class="section">
+    <div class="section-title">Slides</div>
+    <div class="slides-list" id="slidesList">
+      <div class="slide-item" data-index="0">
+        <div class="slide-header">
+          <span class="slide-num">1</span>
+          <input type="text" class="slide-title-input" placeholder="Slide title" data-field="title">
+          <button class="slide-remove" onclick="removeSlide(0)">×</button>
+        </div>
+        <div class="slide-fields">
+          <input type="url" placeholder="Image URL (Unsplash, etc.)" data-field="image">
+          <textarea placeholder="Caption / Commentary" data-field="caption"></textarea>
+        </div>
+      </div>
+    </div>
+    <button class="add-slide-btn" onclick="addSlide()">+ Add Slide</button>
+  </section>
+
+  <!-- Overlay Options -->
+  <section class="section">
+    <div class="section-title">Overlay Options</div>
+    <div class="chips" id="overlayChips">
+      <button class="chip active" data-value="annotation">Annotation Area</button>
+      <button class="chip" data-value="quote">Quote Block</button>
+      <button class="chip" data-value="number">Slide Numbers</button>
+      <button class="chip" data-value="progress">Progress Bar</button>
+    </div>
+  </section>
+
+  <button class="generate-btn" onclick="generate()">Generate Prompt</button>
+
+  <!-- Output -->
+  <div class="output" id="output">
+    <div class="output-title">GENERATED PROMPT</div>
+    <pre id="promptText"></pre>
+    <button class="copy-btn" onclick="copyPrompt()">Copy to Clipboard</button>
+  </div>
+
+  <footer class="footer">
+    <a href="../">← Back to Generators</a>
+  </footer>
+</div>
+
+<script>
+// Chip selection
+document.querySelectorAll('.chips').forEach(group => {
+  group.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      // For overlay, allow multiple selection
+      if (group.id === 'overlayChips') {
+        chip.classList.toggle('active');
+      } else {
+        group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      }
+    });
+  });
+});
+
+// Slides
+let slideCount = 1;
+
+function addSlide() {
+  const list = document.getElementById('slidesList');
+  const index = slideCount++;
+  const item = document.createElement('div');
+  item.className = 'slide-item';
+  item.dataset.index = index;
+  item.innerHTML = `
+    <div class="slide-header">
+      <span class="slide-num">${index + 1}</span>
+      <input type="text" class="slide-title-input" placeholder="Slide title" data-field="title">
+      <button class="slide-remove" onclick="removeSlide(${index})">×</button>
+    </div>
+    <div class="slide-fields">
+      <input type="url" placeholder="Image URL (Unsplash, etc.)" data-field="image">
+      <textarea placeholder="Caption / Commentary" data-field="caption"></textarea>
+    </div>
+  `;
+  list.appendChild(item);
+}
+
+function removeSlide(index) {
+  const item = document.querySelector(`.slide-item[data-index="${index}"]`);
+  if (item && document.querySelectorAll('.slide-item').length > 1) {
+    item.remove();
+    updateSlideNumbers();
+  }
+}
+
+function updateSlideNumbers() {
+  document.querySelectorAll('.slide-item').forEach((item, i) => {
+    item.querySelector('.slide-num').textContent = i + 1;
+  });
+}
+
+function getActiveChips(groupId) {
+  return Array.from(document.querySelectorAll(`#${groupId} .chip.active`))
+    .map(c => c.dataset.value);
+}
+
+function getSlides() {
+  return Array.from(document.querySelectorAll('.slide-item')).map(item => ({
+    title: item.querySelector('[data-field="title"]').value,
+    image: item.querySelector('[data-field="image"]').value,
+    caption: item.querySelector('[data-field="caption"]').value
+  }));
+}
+
+function generate() {
+  const style = getActiveChips('styleChips')[0];
+  const mood = getActiveChips('moodChips')[0];
+  const typo = getActiveChips('typoChips')[0];
+  const overlays = getActiveChips('overlayChips');
+  const title = document.getElementById('title').value || 'Untitled';
+  const subtitle = document.getElementById('subtitle').value || '';
+  const author = document.getElementById('author').value || '';
+  const slides = getSlides();
+
+  const prompt = `Create a Luxury Editorial Board PWA with the following specifications:
+
+## Style & Mood
+- Visual Style: ${style}
+- Mood: ${mood}
+- Typography: ${typo === 'serif' ? 'Classic Serif (Georgia, Times)' : typo === 'sans' ? 'Modern Sans (Helvetica, Inter)' : 'Bold Display (Playfair, Didot)'}
+
+## Content
+- Title: "${title}"
+${subtitle ? `- Subtitle: "${subtitle}"` : ''}
+${author ? `- Author: "${author}"` : ''}
+
+## Slides (${slides.length} total)
+${slides.map((s, i) => `
+### Slide ${i + 1}${s.title ? `: ${s.title}` : ''}
+${s.image ? `- Image: ${s.image}` : '- Image: [Placeholder - full bleed luxury image]'}
+${s.caption ? `- Caption: "${s.caption}"` : '- Caption: [Empty - for live annotation]'}
+`).join('')}
+
+## Overlay Features
+${overlays.map(o => `- ${o === 'annotation' ? 'Annotation area for S Pen markup' : o === 'quote' ? 'Quote block overlay' : o === 'number' ? 'Slide numbers' : 'Progress bar'}`).join('\n')}
+
+## Technical Requirements
+- Single HTML file with inline CSS/JS
+- Setup Mode: Form to input/edit slides
+- Broadcast Mode: Fullscreen presentation
+- Touch/swipe navigation
+- Smooth Ken Burns effect on images
+- Elegant transitions between slides
+- Mobile-first responsive design
+- Dark background (#0a0a0a)
+- Gold accent (#C9A962)
+
+## Broadcast Flow
+1. Open page → Setup Mode (input content)
+2. Click "Start Broadcast" → Fullscreen presentation
+3. Swipe/tap to navigate slides
+4. Annotation overlay visible for S Pen markup
+5. ESC or tap corner → Exit to Setup Mode
+
+Please generate the complete HTML file.`;
+
+  document.getElementById('promptText').textContent = prompt;
+  document.getElementById('output').classList.add('show');
+}
+
+function copyPrompt() {
+  const text = document.getElementById('promptText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+  });
+}
+</script>
+</body>
+</html>
