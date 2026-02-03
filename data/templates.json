@@ -27,6 +27,13 @@
       "nameKo": "테크",
       "icon": "📱",
       "color": "#10b981"
+    },
+    {
+      "id": "lifestyle",
+      "name": "Lifestyle",
+      "nameKo": "라이프",
+      "icon": "✨",
+      "color": "#C9A962"
     }
   ],
   "templates": [
@@ -89,6 +96,18 @@
       "file": "boards/pwa-demo.html",
       "variables": ["appName", "features", "installUrl"],
       "example": "Parksy Capture 설치 가이드"
+    },
+    {
+      "id": "luxury-editorial",
+      "category": "lifestyle",
+      "name": "Luxury Editorial",
+      "nameKo": "럭셔리 에디토리얼",
+      "format": "Magazine Lookbook",
+      "icon": "✨",
+      "description": "하이엔드 비주얼 스토리텔링 룩북",
+      "file": "boards/luxury-editorial.html",
+      "variables": ["title", "subtitle", "slides"],
+      "example": "The Art of Living"
     },
     {
       "id": "interview",
