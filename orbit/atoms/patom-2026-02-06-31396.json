@@ -1,0 +1,9 @@
+{
+  "id": "patom-2026-02-06-31396",
+  "timestamp": "2026-02-06T20:12:29+09:00",
+  "intent": "learn",
+  "inputs": {
+    "text": "Dual-Lane 시스템 완성 - 박씨캡처에서 저장하면 University와 Orbit 양쪽에 자동 컴파일되는 구조 확정"
+  },
+  "source_event": "insight-2026-02-06-201229.json"
+}
