@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Prompt Atom Schema v1",
+  "description": "Orbit Prompt Engine - 최소 프롬프트 단위. 대화가 발생하면 즉시 이 형태로 컴파일됨.",
+  "type": "object",
+  "required": ["id", "timestamp", "type", "intent", "target", "routing"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^patom-\\d{4}-\\d{2}-\\d{2}-\\d{3}$",
+      "description": "Prompt Atom ID (patom-YYYY-MM-DD-NNN)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "생성 시각 (ISO 8601)"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "repo-janitor",
+        "broadcast-packager",
+        "branch-onboarding",
+        "web-deploy",
+        "asset-forge",
+        "automation-lab"
+      ],
+      "description": "Prompt Type (6종)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^v\\d+$",
+      "default": "v1",
+      "description": "템플릿 버전"
+    },
+    "intent": {
+      "type": "string",
+      "enum": ["generate", "refactor", "audit", "plan", "publish", "fix", "merge", "delete"],
+      "description": "뭘 하려는지"
+    },
+    "target": {
+      "type": "string",
+      "description": "대상 (repo / domain / youtube / pdf / pwa / apk / logo 등)"
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "must": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "필수 조건"
+        },
+        "must_not": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "금지 조건"
+        }
+      }
+    },
+    "tone": {
+      "type": "string",
+      "enum": ["parksy", "formal", "casual", "english", "concise", "sarcastic"],
+      "description": "출력 톤"
+    },
+    "inputs": {
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" },
+        "links": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "files": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "description": "사용자가 준 재료"
+    },
+    "output_format": {
+      "type": "string",
+      "enum": ["code", "list", "template", "readme", "json", "markdown", "script"],
+      "description": "출력 형식"
+    },
+    "done_criteria": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "완료 기준 체크리스트"
+    },
+    "variables": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "템플릿 변수 슬롯 (재사용용)"
+    },
+    "routing": {
+      "type": "object",
+      "required": ["destination"],
+      "properties": {
+        "destination": {
+          "type": "string",
+          "enum": ["university", "broadcast", "lab", "credential"],
+          "description": "결과물 저장 위치"
+        },
+        "notify": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "알림 대상 (branch/guild)"
+        }
+      }
+    },
+    "source_conversation": {
+      "type": "string",
+      "description": "원본 대화 파일 경로 (raw/)"
+    }
+  }
+}
