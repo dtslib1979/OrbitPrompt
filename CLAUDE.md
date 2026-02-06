@@ -235,7 +235,7 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 
 | 레포 | 역할 | 연결점 |
 |------|------|--------|
-| one-man-os | 1인 미디어 OS | 상위 프레임워크 |
+| phoneparis/products/ai-second-phone/os | 1인 미디어 OS | 상위 프레임워크 (구 one-man-os) |
 | parksy-logs | 대화 저장/RAG | Dataset Generator 입력 |
 | parksy-image | 이미지 에셋 | 칠판 배경 |
 | parksy-audio | 오디오 에셋 | 칠판 BGM |
