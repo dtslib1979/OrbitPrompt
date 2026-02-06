@@ -1,0 +1,9 @@
+{
+  "id": "patom-2026-02-06-29754",
+  "timestamp": "2026-02-06T20:10:00+09:00",
+  "intent": "publish",
+  "inputs": {
+    "text": "PAT 토큰 갱신 후 Dual-Lane Compiler 최종 검증"
+  },
+  "source_event": "test-2026-02-06-token.json"
+}
