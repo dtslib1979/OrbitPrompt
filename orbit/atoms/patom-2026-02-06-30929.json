@@ -1,0 +1,9 @@
+{
+  "id": "patom-2026-02-06-30929",
+  "timestamp": "2026-02-06T20:15:00+09:00",
+  "intent": "learn",
+  "inputs": {
+    "text": "Gemini 영상 편집 워크플로 = Orbit Prompt 프로세스. 입력(유튜브 링크 + PD 역할 가정) → Gemini 처리(서사 분석, 감정 톤"
+  },
+  "source_event": "insight-2026-02-06-gemini-orbit.json"
+}
