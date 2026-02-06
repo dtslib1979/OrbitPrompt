@@ -1,0 +1,9 @@
+{
+  "id": "patom-2026-02-06-2683",
+  "timestamp": "2026-02-06T20:09:27+09:00",
+  "intent": "learn",
+  "inputs": {
+    "text": "/insight 스킬 테스트 - Claude Code에서 인사이트 자동 저장 기능 작동 확인"
+  },
+  "source_event": "insight-2026-02-06-200927.json"
+}
