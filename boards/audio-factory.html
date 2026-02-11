@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audio Factory | 음원 공장</title>
+<style>
+:root {
+  --bg: #05080d;
+  --panel: #0a1020;
+  --accent: #00d4ff;
+  --accent2: #ff6b35;
+  --glow: rgba(0,212,255,0.15);
+  --glow2: rgba(255,107,53,0.12);
+  --text: #e8eef5;
+  --dim: #4a6080;
+  --success: #00ff88;
+  --border: #152035;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scanline effect */
+body::after {
+  content: '';
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    transparent, transparent 2px,
+    rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none; z-index: 999;
+}
+
+.app { max-width: 480px; margin: 0 auto; padding: 0.8rem; }
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 1.5rem 0 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+.header-brand {
+  font-size: 0.6rem;
+  letter-spacing: 6px;
+  color: var(--dim);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.header-title {
+  font-size: 2rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+}
+.header-sub {
+  font-size: 0.75rem;
+  color: var(--dim);
+  margin-top: 0.4rem;
+}
+
+/* Pipeline visualization */
+.pipeline {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+.pipeline-title {
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.pipe-step {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 0;
+  position: relative;
+  opacity: 0;
+  animation: fadeSlide 0.5s ease forwards;
+}
+.pipe-step:nth-child(2) { animation-delay: 0.3s; }
+.pipe-step:nth-child(3) { animation-delay: 0.6s; }
+.pipe-step:nth-child(4) { animation-delay: 0.9s; }
+.pipe-step:nth-child(5) { animation-delay: 1.2s; }
+.pipe-step:nth-child(6) { animation-delay: 1.5s; }
+.pipe-step:nth-child(7) { animation-delay: 1.8s; }
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.pipe-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.pipe-icon.done {
+  background: rgba(0,255,136,0.1);
+  border: 1px solid rgba(0,255,136,0.3);
+}
+.pipe-icon.active {
+  background: var(--glow);
+  border: 1px solid var(--accent);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,255,0.3); }
+  50% { box-shadow: 0 0 15px 5px rgba(0,212,255,0.15); }
+}
+
+.pipe-info { flex: 1; }
+.pipe-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.pipe-detail {
+  font-size: 0.6rem;
+  color: var(--dim);
+  margin-top: 2px;
+}
+.pipe-status {
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+.pipe-status.pass { color: var(--success); }
+.pipe-status.run { color: var(--accent); }
+
+.pipe-line {
+  position: absolute;
+  left: 17px; top: 42px;
+  width: 2px; height: calc(100% - 20px);
+  background: var(--border);
+}
+.pipe-line.done { background: rgba(0,255,136,0.2); }
+
+/* Stats grid */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+.stat {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--accent);
+  line-height: 1;
+}
+.stat-value.orange { color: var(--accent2); }
+.stat-value.green { color: var(--success); }
+.stat-label {
+  font-size: 0.55rem;
+  color: var(--dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 0.3rem;
+}
+
+/* Three Layer shield */
+.shield {
+  background: linear-gradient(135deg, var(--panel), #0d1525);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+.shield-title {
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  color: var(--accent2);
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+.layer {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.layer:last-child { border-bottom: none; }
+.layer-num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--glow2);
+  border: 1px solid var(--accent2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 900; color: var(--accent2);
+  flex-shrink: 0;
+}
+.layer-text {
+  font-size: 0.7rem;
+  color: var(--text);
+}
+.layer-tag {
+  font-size: 0.55rem;
+  color: var(--success);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Now playing */
+.now-playing {
+  background: linear-gradient(135deg, #0a0515, #150a20);
+  border: 1px solid #2a1540;
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-bottom: 0.8rem;
+  position: relative;
+  overflow: hidden;
+}
+.now-playing::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.np-label {
+  font-size: 0.5rem;
+  letter-spacing: 4px;
+  color: var(--dim);
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+.np-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.np-composer {
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-top: 0.2rem;
+}
+.np-meta {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+.np-meta-item {
+  font-size: 0.6rem;
+  color: var(--dim);
+}
+.np-meta-item span { color: var(--text); }
+
+/* Waveform */
+.waveform {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 40px;
+  margin-top: 0.8rem;
+}
+.wave-bar {
+  width: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  opacity: 0.6;
+  animation: waveAnim 1.5s ease-in-out infinite;
+}
+.wave-bar:nth-child(odd) { animation-duration: 1.2s; }
+.wave-bar:nth-child(3n) { animation-duration: 1.8s; }
+.wave-bar:nth-child(5n) { background: var(--accent2); }
+@keyframes waveAnim {
+  0%, 100% { height: 8px; }
+  50% { height: var(--h); }
+}
+
+/* Quote */
+.quote {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border-top: 1px solid var(--border);
+}
+.quote-text {
+  font-size: 0.9rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--dim);
+  line-height: 1.6;
+}
+.quote-text em {
+  color: var(--accent);
+  font-style: normal;
+  font-weight: 600;
+}
+.quote-attr {
+  font-size: 0.55rem;
+  letter-spacing: 3px;
+  color: #333;
+  text-transform: uppercase;
+  margin-top: 0.8rem;
+}
+
+/* Live indicator */
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.55rem;
+  letter-spacing: 2px;
+  color: #ff3355;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+.live-dot {
+  width: 6px; height: 6px;
+  background: #ff3355;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 0.8rem 0;
+  font-size: 0.5rem;
+  letter-spacing: 4px;
+  color: #1a2535;
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-brand">DTSLIB Publishing</div>
+    <div class="live"><span class="live-dot"></span> Production Active</div>
+    <div class="header-title">Audio Factory</div>
+    <div class="header-sub">Piano Minimal Pipeline — Public Domain to Release</div>
+  </div>
+
+  <!-- Now Playing -->
+  <div class="now-playing">
+    <div class="np-label">Now Rendering</div>
+    <div class="np-title">Nocturne Op.9 No.1</div>
+    <div class="np-composer">Frederic Chopin (1810-1849) — Public Domain</div>
+    <div class="np-meta">
+      <div class="np-meta-item">Engine <span>FluidSynth</span></div>
+      <div class="np-meta-item">SF2 <span>TOH4 Piano</span></div>
+      <div class="np-meta-item">Output <span>48kHz WAV</span></div>
+    </div>
+    <div class="waveform" id="waveform"></div>
+  </div>
+
+  <!-- Pipeline -->
+  <div class="pipeline">
+    <div class="pipeline-title">Production Pipeline</div>
+
+    <div class="pipe-step">
+      <div class="pipe-icon done">&#9835;</div>
+      <div class="pipe-info">
+        <div class="pipe-label">MIDI Source</div>
+        <div class="pipe-detail">Public Domain Score Transcription</div>
+      </div>
+      <div class="pipe-status pass">CLEAN</div>
+      <div class="pipe-line done"></div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-icon done">&#9881;</div>
+      <div class="pipe-info">
+        <div class="pipe-label">Pre-Processor</div>
+        <div class="pipe-detail">CC Strip + Velocity + Timing Regen</div>
+      </div>
+      <div class="pipe-status pass">PASS</div>
+      <div class="pipe-line done"></div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-icon done">&#9836;</div>
+      <div class="pipe-info">
+        <div class="pipe-label">Humanize</div>
+        <div class="pipe-detail">vel ±8 / time ±20ms / phrase gap</div>
+      </div>
+      <div class="pipe-status pass">PASS</div>
+      <div class="pipe-line done"></div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-icon done">&#9834;</div>
+      <div class="pipe-info">
+        <div class="pipe-label">Piano Render</div>
+        <div class="pipe-detail">SF2 Piano — Stage 0 (Cost: &#8361;0)</div>
+      </div>
+      <div class="pipe-status pass">48MB</div>
+      <div class="pipe-line done"></div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-icon done">&#9898;</div>
+      <div class="pipe-info">
+        <div class="pipe-label">Master</div>
+        <div class="pipe-detail">-14 LUFS / AAC 256kbps</div>
+      </div>
+      <div class="pipe-status pass">8MB</div>
+      <div class="pipe-line done"></div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-icon active">&#9654;</div>
+      <div class="pipe-info">
+        <div class="pipe-label">Release</div>
+        <div class="pipe-detail">releases/bgm/ — Human ear check</div>
+      </div>
+      <div class="pipe-status run">READY</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Layers Secured</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value orange">0</div>
+      <div class="stat-label">Copyright Risk</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value green">&#8361;0</div>
+      <div class="stat-label">Instrument Cost</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">1</div>
+      <div class="stat-label">Tracks Complete</div>
+    </div>
+  </div>
+
+  <!-- Three Layer Shield -->
+  <div class="shield">
+    <div class="shield-title">Three-Layer Defense</div>
+    <div class="layer">
+      <div class="layer-num">1</div>
+      <div class="layer-text">Composition — Public Domain</div>
+      <div class="layer-tag">CLEAN</div>
+    </div>
+    <div class="layer">
+      <div class="layer-num">2</div>
+      <div class="layer-text">Performance — Pre-Processor</div>
+      <div class="layer-tag">CLEAN</div>
+    </div>
+    <div class="layer">
+      <div class="layer-num">3</div>
+      <div class="layer-text">Recording — Independent Render</div>
+      <div class="layer-tag">CLEAN</div>
+    </div>
+  </div>
+
+  <!-- Quote -->
+  <div class="quote">
+    <div class="quote-text">
+      "Orchestra is <em>production</em>.<br>
+      Piano is <em>memory</em>."
+    </div>
+    <div class="quote-attr">Built Between Shifts</div>
+  </div>
+
+  <div class="footer">DTSLIB1979 — 28 Books. Zero Gatekeepers.</div>
+
+</div>
+
+<script>
+// Generate waveform bars
+const wf = document.getElementById('waveform');
+for (let i = 0; i < 40; i++) {
+  const bar = document.createElement('div');
+  bar.className = 'wave-bar';
+  const h = 10 + Math.random() * 28;
+  bar.style.setProperty('--h', h + 'px');
+  bar.style.animationDelay = (Math.random() * 2) + 's';
+  wf.appendChild(bar);
+}
+</script>
+</body>
+</html>
