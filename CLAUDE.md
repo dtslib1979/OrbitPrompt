@@ -231,14 +231,42 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 
 ---
 
-## 연관 레포
+## 4-레포 수렴 구조 (2026-02-19 확정)
+
+> OrbitPrompt는 PWA 공장. 여기서 만든 칠판/화면이 각 레포로 흘러간다.
+
+```
+OrbitPrompt              gohsy-production        parksy-audio           parksy.kr
+(PWA 공장)               (물성 스튜디오)           (오디오 엔진)           (방송국)
+━━━━━━━━━━              ━━━━━━━━━━━━━           ━━━━━━━━━━━━          ━━━━━━━━━━
+Chalkboard Generator    SOUND BOOTH             BGM 파이프라인          뮤지션 박씨 채널
+boards/ PWA 생성        MV88+ 보컬 녹음          3-Layer 믹싱           YouTube 송출
+Setup+Broadcast Mode    render.html 재생         PD 클래식 반주          시청자 접점
+        │                      │                       │                    ↑
+        ├── 추모 칠판 ──→ render.html                   │                    │
+        ├── 카라오케 화면 ──→ 보컬 녹음 + 반주 ←─────────┘                    │
+        └── 방송 칠판 ─────────────────── 완성 콘텐츠 ──→ YouTube 송출 ──────┘
+```
+
+### OrbitPrompt의 역할
+
+| 생산물 | 소비자 | boards/ 경로 |
+|--------|--------|-------------|
+| 추모 칠판 PWA | gohsy-production (render.html) | `boards/memorial-tribute.html` |
+| 카라오케 가사 화면 | gohsy-production (카라오케 플러그인) | `boards/karaoke-*.html` (예정) |
+| 교육 칠판 | parksy.kr (방송 콘텐츠) | `boards/math-tutor.html` 등 |
+| 음악 큐레이션 | parksy.kr (뮤지션 박씨) | `boards/music-curation.html` |
+
+### 연관 레포
 
 | 레포 | 역할 | 연결점 |
 |------|------|--------|
+| `dtslib1979/gohsy-production` | 물성 스튜디오 (녹음/녹화) | 추모 칠판 + 카라오케 화면 소비자 |
+| `dtslib1979/parksy-audio` | 오디오 엔진 | 칠판 BGM + 카라오케 반주 |
+| `dtslib1979/parksy.kr` | 방송국 (뮤지션 박씨) | 완성 콘텐츠 송출 |
 | phoneparis/products/ai-second-phone/os | 1인 미디어 OS | 상위 프레임워크 (구 one-man-os) |
 | parksy-logs | 대화 저장/RAG | Dataset Generator 입력 |
 | parksy-image | 이미지 에셋 | 칠판 배경 |
-| parksy-audio | 오디오 에셋 | 칠판 BGM |
 | dtslib-apk-lab | APK 스토어 | PWA Generator 출력 |
 
 ---
