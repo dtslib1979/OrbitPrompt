@@ -1,0 +1,117 @@
+{
+  "$schema": "FAB Manifest — OrbitPrompt ↔ dtslib-papyrus 공정 연동",
+  "version": "1.0.0",
+  "dashboard": {
+    "repo": "dtslib1979/dtslib-papyrus",
+    "registry": "registry.json",
+    "runner": "fab-run.sh"
+  },
+  "routes": {
+    "RT-α": {
+      "name": "콘텐츠 생산",
+      "desc": "칠판/방송 템플릿 → boards/ 출력",
+      "generators": ["chalkboard", "editorial"],
+      "output_repos": ["dtslib1979/OrbitPrompt", "dtslib1979/parksy.kr"]
+    },
+    "RT-β": {
+      "name": "앱 제조",
+      "desc": "PWA 생성 → APK 스토어 출하",
+      "generators": ["pwa"],
+      "output_repos": ["dtslib1979/dtslib-apk-lab"],
+      "phl_tokens": ["PHL-Expansion"]
+    },
+    "RT-γ": {
+      "name": "보안 라인",
+      "desc": "보안 강화 / OWASP 검증",
+      "generators": [],
+      "output_repos": [],
+      "phl_tokens": ["PHL-Hardening"]
+    },
+    "RT-δ": {
+      "name": "검증 라인",
+      "desc": "역방향 검증 / 일관성 체크",
+      "generators": [],
+      "output_repos": [],
+      "phl_tokens": ["PHL-Reverse"]
+    },
+    "RT-ε": {
+      "name": "데이터 가공",
+      "desc": "대화 로그 → 파인튜닝 데이터셋",
+      "generators": ["dataset"],
+      "output_repos": ["dtslib1979/parksy-logs"]
+    },
+    "RT-ζ": {
+      "name": "오디오 엔진",
+      "desc": "BGM 파이프라인 / 3-Layer 믹싱",
+      "generators": [],
+      "output_repos": ["dtslib1979/parksy-audio"]
+    },
+    "RT-η": {
+      "name": "물성 스튜디오",
+      "desc": "녹음/녹화/렌더 공정",
+      "generators": [],
+      "output_repos": ["dtslib1979/gohsy-production"]
+    },
+    "RT-θ": {
+      "name": "인프라/설정",
+      "desc": "CLAUDE.md / 설정 / 프로토콜 배포",
+      "generators": ["instruction", "route"],
+      "output_repos": ["*"],
+      "phl_tokens": []
+    }
+  },
+  "generators": {
+    "chalkboard": {
+      "file": "prompts/chalkboard/template-generator.html",
+      "route": "RT-α",
+      "output_dir": "boards/",
+      "output_format": "html"
+    },
+    "pwa": {
+      "file": "prompts/apk/pwa-generator.html",
+      "route": "RT-β",
+      "output_dir": "external",
+      "output_format": "html"
+    },
+    "instruction": {
+      "file": "prompts/instruction/claude-md-generator.html",
+      "route": "RT-θ",
+      "output_dir": "*/CLAUDE.md",
+      "output_format": "md"
+    },
+    "dataset": {
+      "file": "prompts/dataset/finetune-generator.html",
+      "route": "RT-ε",
+      "output_dir": "external",
+      "output_format": "jsonl"
+    },
+    "identity": {
+      "file": "prompts/identity/identity-engine.html",
+      "route": null,
+      "output_dir": null,
+      "output_format": "json"
+    },
+    "editorial": {
+      "file": "prompts/editorial/editorial-generator.html",
+      "route": "RT-α",
+      "output_dir": "boards/",
+      "output_format": "html"
+    },
+    "route": {
+      "file": "prompts/route/route-generator.html",
+      "route": "RT-θ",
+      "output_dir": "external",
+      "output_format": "json"
+    }
+  },
+  "cross_repo_map": {
+    "OrbitPrompt": "설계 사무소 — 마스크 설계",
+    "dtslib-papyrus": "본사 대시보드 — FAB 관제",
+    "gohsy-production": "물성 스튜디오 — 녹음/녹화",
+    "parksy-audio": "오디오 엔진 — BGM/믹싱",
+    "parksy.kr": "방송국 — YouTube 송출",
+    "parksy-logs": "데이터 창고 — 대화/RAG",
+    "parksy-image": "이미지 에셋 — 칠판 배경",
+    "dtslib-apk-lab": "APK 스토어 — PWA 출하"
+  }
+}
