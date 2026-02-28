@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Route Generator — OrbitPrompt</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-void: #050505;
+      --bg-primary: #0a0a0a;
+      --bg-surface: #0f0f0f;
+      --bg-card: #141414;
+      --bg-input: #1a1a1a;
+      --text-primary: #f0f0f0;
+      --text-secondary: rgba(255,255,255,0.7);
+      --text-muted: rgba(255,255,255,0.4);
+      --accent: #22d3ee;
+      --accent-dim: rgba(34,211,238,0.15);
+      --purple: #a855f7;
+      --purple-dim: rgba(168,85,247,0.15);
+      --gold: #d4af37;
+      --gold-dim: rgba(212,175,55,0.15);
+      --red: #ef4444;
+      --red-dim: rgba(239,68,68,0.15);
+      --green: #22c55e;
+      --green-dim: rgba(34,197,94,0.15);
+      --border: rgba(255,255,255,0.08);
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-void);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 1.5rem;
+      line-height: 1.6;
+    }
+    .container { max-width: 640px; margin: 0 auto; }
+
+    header {
+      text-align: center;
+      padding: 1.5rem 0 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 0.25rem 0.5rem;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+    }
+    h1 { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .subtitle { font-size: 0.8125rem; color: var(--text-muted); }
+
+    .section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.375rem;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.8125rem;
+      margin-bottom: 1rem;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    textarea { resize: vertical; min-height: 80px; font-family: var(--font-mono); font-size: 0.75rem; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* Route Selector */
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 480px) { .route-grid { grid-template-columns: repeat(2, 1fr); } }
+    .route-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.75rem 0.5rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .route-chip:hover { border-color: var(--accent); }
+    .route-chip.active {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .route-chip.active .route-label { color: var(--accent); }
+    .route-greek {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .route-label {
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* OP List */
+    .op-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .op-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+    }
+    .op-num {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      font-weight: 600;
+      color: var(--accent);
+      width: 2rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .op-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      padding: 0.25rem 0;
+      color: var(--text-primary);
+      font-size: 0.8125rem;
+      margin-bottom: 0;
+    }
+    .op-input:focus { outline: none; border-color: var(--accent); }
+    .op-remove {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.25rem;
+    }
+    .op-remove:hover { color: var(--red); }
+    .add-op-btn {
+      width: 100%;
+      padding: 0.625rem;
+      background: transparent;
+      border: 1px dashed var(--border);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    .add-op-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Toggles */
+    .toggles { display: flex; flex-direction: column; gap: 0.75rem; }
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+    }
+    .toggle-label { font-size: 0.8125rem; }
+    .toggle-desc { font-size: 0.625rem; color: var(--text-muted); }
+    .toggle-switch {
+      width: 44px;
+      height: 24px;
+      background: var(--border);
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-switch.active { background: var(--accent); }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle-switch.active::after { transform: translateX(20px); }
+
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.25rem;
+      border: none;
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      width: 100%;
+    }
+    .btn-primary:hover { filter: brightness(1.1); }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Output */
+    .output-section {
+      background: var(--bg-card);
+      border: 2px solid var(--accent);
+      display: none;
+      margin-top: 1.5rem;
+    }
+    .output-header {
+      background: var(--accent-dim);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--accent);
+    }
+    .output-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .output-body { padding: 1.25rem; }
+    .output-prompt {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .philosophy-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--accent-dim);
+      border-left: 3px solid var(--accent);
+    }
+    .philosophy-icon { font-size: 1.25rem; }
+    .philosophy-note p { font-size: 0.8125rem; line-height: 1.6; color: var(--text-secondary); }
+    .philosophy-note strong { color: var(--accent); }
+    .btn-row { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .btn-full { flex: 1; }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0 1rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    .footer-link {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .footer-link:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="tag">Prompt Engine</span>
+      <h1>Route Generator</h1>
+      <p class="subtitle">FAB 라우트 정의 → 본사 대시보드 연동</p>
+    </header>
+
+    <!-- Route ID -->
+    <div class="section">
+      <p class="section-title">라우트 선택</p>
+      <div class="route-grid" id="routeGrid">
+        <div class="route-chip active" data-route="RT-α">
+          <span class="route-greek">α</span>
+          <span class="route-label">콘텐츠 생산</span>
+        </div>
+        <div class="route-chip" data-route="RT-β">
+          <span class="route-greek">β</span>
+          <span class="route-label">앱 제조</span>
+        </div>
+        <div class="route-chip" data-route="RT-γ">
+          <span class="route-greek">γ</span>
+          <span class="route-label">보안 라인</span>
+        </div>
+        <div class="route-chip" data-route="RT-δ">
+          <span class="route-greek">δ</span>
+          <span class="route-label">검증 라인</span>
+        </div>
+        <div class="route-chip" data-route="RT-ε">
+          <span class="route-greek">ε</span>
+          <span class="route-label">데이터 가공</span>
+        </div>
+        <div class="route-chip" data-route="RT-ζ">
+          <span class="route-greek">ζ</span>
+          <span class="route-label">오디오 엔진</span>
+        </div>
+        <div class="route-chip" data-route="RT-η">
+          <span class="route-greek">η</span>
+          <span class="route-label">물성 스튜디오</span>
+        </div>
+        <div class="route-chip" data-route="RT-θ">
+          <span class="route-greek">θ</span>
+          <span class="route-label">인프라/설정</span>
+        </div>
+      </div>
+      <label>커스텀 라우트 ID (새로 만들 경우)</label>
+      <input type="text" id="customRoute" placeholder="예: RT-ι (새 라우트)">
+    </div>
+
+    <!-- Target Repo -->
+    <div class="section">
+      <p class="section-title">대상 레포</p>
+      <div class="grid-2">
+        <div>
+          <label>레포 이름</label>
+          <input type="text" id="repoName" placeholder="dtslib1979/my-repo">
+        </div>
+        <div>
+          <label>주 목적</label>
+          <select id="repoPurpose">
+            <option value="production">생산 (콘텐츠/앱)</option>
+            <option value="engine">엔진 (처리/변환)</option>
+            <option value="storage">저장 (데이터/에셋)</option>
+            <option value="delivery">송출 (배포/방송)</option>
+            <option value="infra">인프라 (설정/관리)</option>
+          </select>
+        </div>
+      </div>
+      <label>라우트 설명 (한 줄)</label>
+      <input type="text" id="routeDesc" placeholder="이 라우트가 하는 일">
+    </div>
+
+    <!-- Operations -->
+    <div class="section">
+      <p class="section-title">공정 단계 (OP)</p>
+      <div class="op-list" id="opList">
+        <div class="op-item" data-index="0">
+          <span class="op-num">OP-1</span>
+          <input type="text" class="op-input" placeholder="공정 단계 설명" data-field="desc">
+          <button class="op-remove" onclick="removeOp(0)">x</button>
+        </div>
+        <div class="op-item" data-index="1">
+          <span class="op-num">OP-2</span>
+          <input type="text" class="op-input" placeholder="공정 단계 설명" data-field="desc">
+          <button class="op-remove" onclick="removeOp(1)">x</button>
+        </div>
+        <div class="op-item" data-index="2">
+          <span class="op-num">OP-3</span>
+          <input type="text" class="op-input" placeholder="공정 단계 설명" data-field="desc">
+          <button class="op-remove" onclick="removeOp(2)">x</button>
+        </div>
+      </div>
+      <button class="add-op-btn" onclick="addOp()">+ OP 추가</button>
+    </div>
+
+    <!-- Options -->
+    <div class="section">
+      <p class="section-title">라우트 옵션</p>
+      <div class="toggles">
+        <div class="toggle-row">
+          <div>
+            <span class="toggle-label">ER (Error Recovery)</span>
+            <div class="toggle-desc">실패 시 자동 복구 스크립트 포함</div>
+          </div>
+          <div class="toggle-switch active" data-key="er"></div>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <span class="toggle-label">registry.json 등록</span>
+            <div class="toggle-desc">본사 대시보드 레지스트리에 자동 등록</div>
+          </div>
+          <div class="toggle-switch active" data-key="registry"></div>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <span class="toggle-label">PHL 토큰 연결</span>
+            <div class="toggle-desc">PHL 토큰으로 이 라우트를 호출 가능</div>
+          </div>
+          <div class="toggle-switch" data-key="phl"></div>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <span class="toggle-label">크로스레포 출력</span>
+            <div class="toggle-desc">다른 레포로 결과물 전달</div>
+          </div>
+          <div class="toggle-switch" data-key="crossRepo"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cross-repo target -->
+    <div class="section" id="crossRepoSection" style="display: none;">
+      <p class="section-title">크로스레포 대상</p>
+      <label>출력 대상 레포</label>
+      <input type="text" id="outputRepo" placeholder="dtslib1979/target-repo">
+      <label>출력 경로</label>
+      <input type="text" id="outputPath" placeholder="boards/ 또는 data/">
+    </div>
+
+    <!-- PHL Token -->
+    <div class="section" id="phlSection" style="display: none;">
+      <p class="section-title">PHL 토큰 연결</p>
+      <div class="grid-2">
+        <div>
+          <label>토큰 이름</label>
+          <input type="text" id="phlToken" placeholder="PHL-NewToken">
+        </div>
+        <div>
+          <label>토큰 Intent</label>
+          <input type="text" id="phlIntent" placeholder="이 토큰이 하는 일">
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Context -->
+    <div class="section">
+      <p class="section-title">추가 컨텍스트</p>
+      <label>특별 요구사항</label>
+      <textarea id="requirements" placeholder="예: 이 라우트는 RT-α 완료 후에만 실행. 의존성 있음."></textarea>
+    </div>
+
+    <!-- Generate -->
+    <button class="btn btn-primary" onclick="generatePrompt()">라우트 정의 프롬프트 생성</button>
+
+    <!-- Output -->
+    <div class="section output-section" id="outputSection">
+      <div class="output-header">
+        <span class="output-title">생성된 프롬프트</span>
+        <button class="btn btn-secondary" onclick="copyPrompt()">복사</button>
+      </div>
+      <div class="output-body">
+        <div class="output-prompt" id="outputPrompt"></div>
+        <div class="philosophy-note">
+          <span class="philosophy-icon">🏭</span>
+          <p>이 프롬프트로 생성된 라우트 설정은 <strong>dtslib-papyrus</strong> 본사 대시보드의<br>
+          <strong>registry.json</strong>과 <strong>fab-run.sh</strong>에 반영됩니다.</p>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary btn-full" onclick="openClaude()">Claude에서 열기 →</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <a href="../../index.html" class="footer-link">← OrbitPrompt</a>
+    </footer>
+  </div>
+
+  <script>
+    const ROUTES = {
+      'RT-α': { name: '콘텐츠 생산', desc: '칠판/방송 템플릿 생성' },
+      'RT-β': { name: '앱 제조', desc: 'PWA 생성 → APK 출하' },
+      'RT-γ': { name: '보안 라인', desc: '보안 강화 / OWASP 검증' },
+      'RT-δ': { name: '검증 라인', desc: '역방향 검증 / 일관성 체크' },
+      'RT-ε': { name: '데이터 가공', desc: '대화 로그 → 파인튜닝 데이터셋' },
+      'RT-ζ': { name: '오디오 엔진', desc: 'BGM 파이프라인 / 3-Layer 믹싱' },
+      'RT-η': { name: '물성 스튜디오', desc: '녹음/녹화/렌더 공정' },
+      'RT-θ': { name: '인프라/설정', desc: 'CLAUDE.md / 프로토콜 배포' }
+    };
+
+    let state = {
+      route: 'RT-α',
+      customRoute: '',
+      repoName: '',
+      repoPurpose: 'production',
+      routeDesc: '',
+      ops: ['', '', ''],
+      er: true,
+      registry: true,
+      phl: false,
+      crossRepo: false,
+      outputRepo: '',
+      outputPath: '',
+      phlToken: '',
+      phlIntent: '',
+      requirements: ''
+    };
+
+    let opCount = 3;
+
+    // Route selection
+    document.querySelectorAll('.route-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.route-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        state.route = chip.dataset.route;
+      });
+    });
+
+    // Toggle switches
+    document.querySelectorAll('.toggle-switch').forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        toggle.classList.toggle('active');
+        const key = toggle.dataset.key;
+        state[key] = toggle.classList.contains('active');
+
+        if (key === 'crossRepo') {
+          document.getElementById('crossRepoSection').style.display = state.crossRepo ? 'block' : 'none';
+        }
+        if (key === 'phl') {
+          document.getElementById('phlSection').style.display = state.phl ? 'block' : 'none';
+        }
+      });
+    });
+
+    // Input bindings
+    document.getElementById('customRoute').addEventListener('input', e => state.customRoute = e.target.value);
+    document.getElementById('repoName').addEventListener('input', e => state.repoName = e.target.value);
+    document.getElementById('repoPurpose').addEventListener('change', e => state.repoPurpose = e.target.value);
+    document.getElementById('routeDesc').addEventListener('input', e => state.routeDesc = e.target.value);
+    document.getElementById('outputRepo').addEventListener('input', e => state.outputRepo = e.target.value);
+    document.getElementById('outputPath').addEventListener('input', e => state.outputPath = e.target.value);
+    document.getElementById('phlToken').addEventListener('input', e => state.phlToken = e.target.value);
+    document.getElementById('phlIntent').addEventListener('input', e => state.phlIntent = e.target.value);
+    document.getElementById('requirements').addEventListener('input', e => state.requirements = e.target.value);
+
+    // OP management
+    function addOp() {
+      const list = document.getElementById('opList');
+      const index = opCount++;
+      const item = document.createElement('div');
+      item.className = 'op-item';
+      item.dataset.index = index;
+      item.innerHTML = `
+        <span class="op-num">OP-${index + 1}</span>
+        <input type="text" class="op-input" placeholder="공정 단계 설명" data-field="desc">
+        <button class="op-remove" onclick="removeOp(${index})">x</button>
+      `;
+      list.appendChild(item);
+    }
+
+    function removeOp(index) {
+      const item = document.querySelector(`.op-item[data-index="${index}"]`);
+      if (item && document.querySelectorAll('.op-item').length > 1) {
+        item.remove();
+        updateOpNumbers();
+      }
+    }
+
+    function updateOpNumbers() {
+      document.querySelectorAll('.op-item').forEach((item, i) => {
+        item.querySelector('.op-num').textContent = `OP-${i + 1}`;
+      });
+    }
+
+    function getOps() {
+      return Array.from(document.querySelectorAll('.op-item .op-input'))
+        .map(input => input.value)
+        .filter(v => v.trim());
+    }
+
+    const purposeLabels = {
+      production: '생산 (콘텐츠/앱 출력)',
+      engine: '엔진 (처리/변환)',
+      storage: '저장 (데이터/에셋)',
+      delivery: '송출 (배포/방송)',
+      infra: '인프라 (설정/관리)'
+    };
+
+    function generatePrompt() {
+      const routeId = state.customRoute || state.route;
+      const routeInfo = ROUTES[state.route] || { name: '커스텀', desc: '' };
+      const ops = getOps();
+
+      const features = [];
+      if (state.er) features.push('ER (Error Recovery) 자동 복구');
+      if (state.registry) features.push('registry.json 자동 등록');
+      if (state.phl) features.push(`PHL 토큰 연결 (${state.phlToken || 'TBD'})`);
+      if (state.crossRepo) features.push(`크로스레포 출력 → ${state.outputRepo || 'TBD'}`);
+
+      const prompt = `# FAB 라우트 정의 요청
+
+## 라우트 정보
+- **라우트 ID**: ${routeId}
+- **라우트명**: ${routeInfo.name}
+- **설명**: ${state.routeDesc || routeInfo.desc}
+- **대상 레포**: ${state.repoName || '(미정)'}
+- **레포 목적**: ${purposeLabels[state.repoPurpose]}
+
+## 공정 단계 (Operations)
+${ops.length > 0 ? ops.map((op, i) => `### OP-${i + 1}: ${op}
+- **입력**: [이전 단계 출력 또는 원자재]
+- **처리**: [이 단계에서 수행하는 작업]
+- **출력**: [다음 단계로 전달되는 결과물]
+- **검증**: [통과 조건]
+- **ER**: ${state.er ? '[실패 시 복구 명령]' : '없음'}
+`).join('\n') : '(공정 단계를 정의해주세요)'}
+
+## 라우트 옵션
+${features.map(f => '- ' + f).join('\n')}
+
+${state.phl ? `## PHL 토큰 연결
+- **토큰명**: ${state.phlToken || '(미정)'}
+- **Intent**: ${state.phlIntent || '(미정)'}
+- **호출 시**: 이 라우트의 전체 공정을 순차 실행
+` : ''}
+${state.crossRepo ? `## 크로스레포 출력
+- **대상 레포**: ${state.outputRepo || '(미정)'}
+- **출력 경로**: ${state.outputPath || '(미정)'}
+- **전달 방식**: 명시적 스크립트 (인터페이스 우회 금지)
+` : ''}
+${state.requirements ? `## 특별 요구사항
+${state.requirements}
+` : ''}
+## 출력 요구사항
+
+### 1. registry.json 엔트리
+\`\`\`json
+{
+  "${routeId}": {
+    "name": "${routeInfo.name}",
+    "repo": "${state.repoName || 'TBD'}",
+    "ops": [${ops.map(op => `"${op}"`).join(', ')}],
+    "er_enabled": ${state.er},
+    "status": "active"
+  }
+}
+\`\`\`
+
+### 2. fab-run.sh 라우트 핸들러
+- \`fab-run.sh --route=${routeId}\` 로 전체 공정 실행
+- \`fab-run.sh --route=${routeId} --op=N\` 로 특정 OP만 실행
+${state.er ? `- \`fab-run.sh --route=${routeId} --er\` 로 ER 실행` : ''}
+
+### 3. 라우트 정의 문서
+- \`routes/${routeId}.md\` 마크다운 정의서
+- 공정 흐름도 (ASCII)
+- OP별 입출력 명세
+
+## 매트릭스 아키텍처 준수
+- **가로축 (ERP)**: registry.json = 원장. 이 라우트의 모든 거래는 기록.
+- **세로축 (FAB)**: 공정 순서 엄수. OP 순서 변경 시 BOM 확인 필수.
+- **커밋 = 전표**: 각 OP 완료 시 커밋. squash 금지.`;
+
+      document.getElementById('outputPrompt').textContent = prompt;
+      document.getElementById('outputSection').style.display = 'block';
+      document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyPrompt() {
+      navigator.clipboard.writeText(document.getElementById('outputPrompt').textContent);
+    }
+
+    function openClaude() {
+      const text = encodeURIComponent(document.getElementById('outputPrompt').textContent);
+      window.open(`https://claude.ai/new?q=${text}`, '_blank');
+    }
+  </script>
+</body>
+</html>

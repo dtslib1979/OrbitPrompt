@@ -119,7 +119,26 @@ app-meta.json      = 제품 사양서
 state.json         = 공정 현황판
 *.youtube.json     = 출하 전표
 *-SOURCES.md       = 원자재 입고 대장
+fab-manifest.json  = 공정 연동 매니페스트 (OrbitPrompt ↔ dtslib-papyrus)
 ```
+
+### FAB 라우트 연동 (dtslib-papyrus)
+
+OrbitPrompt의 Generator들은 본사 대시보드(dtslib-papyrus)의 FAB 라우트에 매핑된다.
+
+| 라우트 | 공정명 | 연결된 Generator | PHL 토큰 |
+|--------|--------|-----------------|----------|
+| RT-α | 콘텐츠 생산 | Chalkboard, Editorial | — |
+| RT-β | 앱 제조 | PWA | PHL-Expansion |
+| RT-γ | 보안 라인 | — | PHL-Hardening |
+| RT-δ | 검증 라인 | — | PHL-Reverse |
+| RT-ε | 데이터 가공 | Dataset | — |
+| RT-ζ | 오디오 엔진 | — | — |
+| RT-η | 물성 스튜디오 | — | — |
+| RT-θ | 인프라/설정 | Instruction, Route | — |
+
+**연동 매니페스트**: `/data/fab-manifest.json`
+**PHL ↔ FAB 매핑**: `/PHL_INDEX.json`의 `route` 필드
 
 ### Claude 자동 체크
 
@@ -242,9 +261,26 @@ Claude Code가 이 레포에서 작업할 때 **자동으로 읽는 인스트럭
 
 ---
 
+### 트리거 7: FAB 라우트 정의
+
+**감지 패턴:**
+- "라우트 만들어"
+- "RT-* 추가"
+- "공정 정의"
+- 레포 + 공정 설명
+
+**Claude 행동:**
+1. Route Generator (`prompts/route/route-generator.html`) 활용
+2. 라우트 ID, OP 단계, ER 설정 정의
+3. `data/fab-manifest.json` 업데이트
+4. 필요 시 `PHL_INDEX.json`에 토큰-라우트 매핑 추가
+5. git commit & push
+
+---
+
 ## 정체성
 
-**OrbitPrompt = 메타 프롬프트 생성기**
+**OrbitPrompt = 메타 프롬프트 생성기 + 공정 설계 사무소**
 
 ```
 유저가 변수 선택 → Generator가 프롬프트 생성 → LLM이 코드/문서 생성
@@ -254,19 +290,20 @@ Claude Code가 이 레포에서 작업할 때 **자동으로 읽는 인스트럭
 
 | 레인 | 역할 | 내용 |
 |------|------|------|
-| **Prompt Engine** | 생성 | 6개 Generator (도구) |
+| **Prompt Engine** | 생성 | 7개 Generator (도구) |
 | **Archive** | 축적 | 생성된 결과물 모음 |
 
-### 6개 Generator
+### 7개 Generator
 
-| Generator | 입력 | 출력 |
-|-----------|------|------|
-| 🎬 Chalkboard | YouTube 영상 분석 | 방송용 PWA |
-| 📱 PWA | 앱 요구사항 | 설치형 PWA |
-| 📋 Instruction | 레포 목적 | CLAUDE.md |
-| 🧬 Dataset | 대화 로그 | 파인튜닝 JSONL |
-| 🪞 Identity | 대화 로그 + 7축 | 자기 모델 JSON |
-| ✨ Editorial | 럭셔리 룩북 | 스토리텔링 PWA |
+| Generator | 입력 | 출력 | FAB 라우트 |
+|-----------|------|------|-----------|
+| 🎬 Chalkboard | YouTube 영상 분석 | 방송용 PWA | RT-α |
+| 📱 PWA | 앱 요구사항 | 설치형 PWA | RT-β |
+| 📋 Instruction | 레포 목적 | CLAUDE.md | RT-θ |
+| 🧬 Dataset | 대화 로그 | 파인튜닝 JSONL | RT-ε |
+| 🪞 Identity | 대화 로그 + 7축 | 자기 모델 JSON | — |
+| ✨ Editorial | 럭셔리 룩북 | 스토리텔링 PWA | RT-α |
+| 🏭 Route | 레포 목적 + 공정 | FAB 라우트 정의 | RT-θ |
 
 ---
 
@@ -309,8 +346,10 @@ OrbitPrompt/
 ├── index.html                    ← 메인 랜딩
 ├── whitepaper.html               ← 철학 백서
 ├── CLAUDE.md                     ← 이 파일
+├── PHL_SPEC.md                   ← PHL 최상위 규칙 (SSOT)
+├── PHL_INDEX.json                ← 토큰 → 정의 매핑 + FAB 라우트
 │
-├── prompts/                      ← Lane 1: Generator들
+├── prompts/                      ← Lane 1: Generator들 (7개)
 │   ├── chalkboard/
 │   │   ├── index.html            ← 카테고리 게시판
 │   │   └── template-generator.html
@@ -323,9 +362,20 @@ OrbitPrompt/
 │   ├── dataset/
 │   │   ├── index.html
 │   │   └── finetune-generator.html
-│   └── identity/
-│       ├── index.html               ← 자기 모델링 엔진 포탈
-│       └── identity-engine.html     ← 7축 파싱 프롬프트 생성기
+│   ├── identity/
+│   │   ├── index.html               ← 자기 모델링 엔진 포탈
+│   │   └── identity-engine.html     ← 7축 파싱 프롬프트 생성기
+│   ├── editorial/
+│   │   ├── index.html
+│   │   └── editorial-generator.html
+│   └── route/                       ← NEW: FAB 공정 설계
+│       ├── index.html
+│       └── route-generator.html     ← 라우트 정의 프롬프트 생성기
+│
+├── phl/                          ← PHL 프로토콜 정의
+│   ├── tokens/                   ← 토큰 정의 파일
+│   ├── contracts/                ← 공통 계약
+│   └── playbooks/                ← 실행 플레이북
 │
 ├── boards/                       ← Lane 2: Archive (생성된 칠판)
 │   ├── memorial-tribute.html
@@ -334,7 +384,10 @@ OrbitPrompt/
 │   └── pwa-demo.html
 │
 ├── data/
-│   └── templates.json
+│   ├── templates.json            ← Archive 템플릿 목록
+│   └── fab-manifest.json         ← FAB 라우트 연동 매니페스트
+│
+├── docs/                         ← 분석/문서
 └── assets/
 ```
 

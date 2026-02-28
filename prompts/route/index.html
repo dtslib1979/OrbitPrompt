@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Route Generator — OrbitPrompt</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-void: #050505;
+      --bg-card: #141414;
+      --bg-input: #1a1a1a;
+      --text-primary: #f0f0f0;
+      --text-secondary: rgba(255,255,255,0.7);
+      --text-muted: rgba(255,255,255,0.4);
+      --accent: #22d3ee;
+      --accent-dim: rgba(34,211,238,0.15);
+      --border: rgba(255,255,255,0.08);
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-void);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    .container { max-width: 640px; margin: 0 auto; }
+    header {
+      text-align: center;
+      padding: 1.5rem 0 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 0.25rem 0.5rem;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+    }
+    h1 { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .subtitle { font-size: 0.8125rem; color: var(--text-muted); }
+    .nav-links { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; }
+    .nav-link {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid var(--border);
+    }
+    .nav-link:hover { border-color: var(--accent); color: var(--accent); }
+    .desc {
+      text-align: center;
+      padding: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .desc p { font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.7; }
+    .desc strong { color: var(--accent); }
+    footer {
+      text-align: center;
+      padding: 2rem 0 1rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    .footer-link {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .footer-link:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="tag">Prompt Engine</span>
+      <h1>Route Generator</h1>
+      <p class="subtitle">FAB 라우트 정의 → 본사 대시보드 연동</p>
+    </header>
+    <div class="desc">
+      <p>레포 목적과 공정 단계를 선택하면<br>
+      <strong>dtslib-papyrus</strong> 본사 대시보드에 등록할<br>
+      FAB 라우트 정의 프롬프트를 생성합니다.</p>
+    </div>
+    <div class="nav-links">
+      <a href="route-generator.html" class="nav-link">Generator 열기 →</a>
+      <a href="../../index.html" class="nav-link">← OrbitPrompt</a>
+    </div>
+    <footer>
+      <a href="../../index.html" class="footer-link">← OrbitPrompt</a>
+    </footer>
+  </div>
+</body>
+</html>
