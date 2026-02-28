@@ -1,25 +1,32 @@
 {
   "$schema": "PHL Token Index — 토큰 → 정의 파일 매핑",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "spec": "/PHL_SPEC.md",
+  "fab_manifest": "/data/fab-manifest.json",
   "tokens": {
     "PHL-Expansion": {
       "file": "/phl/tokens/PHL-Expansion.md",
       "intent": "모듈 확장/보강/견고화",
       "aliases": ["확장", "보강", "튼튼하게", "expansion", "expand"],
-      "category": "engineering"
+      "category": "engineering",
+      "route": "RT-β",
+      "er_cmd": "fab-run.sh --er --token=PHL-Expansion"
     },
     "PHL-Hardening": {
       "file": "/phl/tokens/PHL-Hardening.md",
       "intent": "보안/안정성 강화",
       "aliases": ["보안", "하드닝", "hardening", "secure"],
-      "category": "security"
+      "category": "security",
+      "route": "RT-γ",
+      "er_cmd": "fab-run.sh --er --token=PHL-Hardening"
     },
     "PHL-Reverse": {
       "file": "/phl/tokens/PHL-Reverse.md",
       "intent": "역방향 검증/역로깅",
       "aliases": ["역검증", "리버스", "reverse", "역추적"],
-      "category": "validation"
+      "category": "validation",
+      "route": "RT-δ",
+      "er_cmd": "fab-run.sh --er --token=PHL-Reverse"
     }
   },
   "contracts": {
