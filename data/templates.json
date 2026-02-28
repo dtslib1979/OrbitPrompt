@@ -147,6 +147,18 @@
       "variables": ["repo", "language", "concept"],
       "example": "Coming Soon",
       "status": "coming-soon"
+    },
+    {
+      "id": "identity-model",
+      "category": "tech",
+      "name": "Identity Model",
+      "nameKo": "자기 모델",
+      "format": "7-Axis Framework",
+      "icon": "🪞",
+      "description": "대화 로그에서 자기 모델 추출 — 7축 철학적 파싱 엔진",
+      "file": "prompts/identity/identity-engine.html",
+      "variables": ["conversation_log", "axes", "previous_model"],
+      "example": "대화 로그 → Meta/Reverse/Modular/Language/Zoom/Spiral/Quantum 분석"
     }
   ]
 }

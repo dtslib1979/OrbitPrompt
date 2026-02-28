@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Identity Engine — OrbitPrompt</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-void: #050505;
+      --bg-primary: #0a0a0a;
+      --bg-surface: #0f0f0f;
+      --bg-card: #141414;
+      --bg-input: #1a1a1a;
+      --text-primary: #f0f0f0;
+      --text-secondary: rgba(255,255,255,0.7);
+      --text-muted: rgba(255,255,255,0.4);
+      --accent: #a855f7;
+      --accent-dim: rgba(168,85,247,0.15);
+      --gold: #d4af37;
+      --gold-dim: rgba(212,175,55,0.15);
+      --cyan: #22d3ee;
+      --cyan-dim: rgba(34,211,238,0.15);
+      --border: rgba(255,255,255,0.08);
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-void);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 1.5rem;
+      line-height: 1.6;
+    }
+    .container { max-width: 640px; margin: 0 auto; }
+
+    header {
+      text-align: center;
+      padding: 1.5rem 0 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 0.25rem 0.5rem;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+    }
+    h1 {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.375rem;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.8125rem;
+      margin-bottom: 1rem;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    textarea { resize: vertical; min-height: 160px; font-family: var(--font-mono); font-size: 0.75rem; }
+
+    /* 7-Axis Grid */
+    .axes-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .axis-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      transition: border-color 0.15s;
+    }
+    .axis-row.active { border-color: var(--accent); }
+    .axis-icon { font-size: 1.125rem; width: 1.5rem; text-align: center; flex-shrink: 0; }
+    .axis-info { flex: 1; min-width: 0; }
+    .axis-name {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .axis-desc { font-size: 0.625rem; color: var(--text-muted); }
+    .axis-controls { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+
+    /* Depth Selector */
+    .depth-select {
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      padding: 0.25rem 0.375rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      width: auto;
+      margin-bottom: 0;
+    }
+    .depth-select:focus { border-color: var(--accent); }
+
+    /* Toggle */
+    .toggle-switch {
+      width: 36px;
+      height: 20px;
+      background: var(--border);
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .toggle-switch.active { background: var(--accent); }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle-switch.active::after { transform: translateX(16px); }
+
+    /* Spiral Section */
+    .spiral-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: var(--cyan-dim);
+      border-left: 3px solid var(--cyan);
+      margin-bottom: 1rem;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+    .spiral-note-icon { font-size: 1rem; }
+
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.25rem;
+      border: none;
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      width: 100%;
+    }
+    .btn-primary:hover { filter: brightness(1.15); }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Output */
+    .output-section {
+      background: var(--bg-card);
+      border: 2px solid var(--accent);
+      display: none;
+      margin-top: 1.5rem;
+    }
+    .output-header {
+      background: var(--accent-dim);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--accent);
+    }
+    .output-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .output-body { padding: 1.25rem; }
+    .output-prompt {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .philosophy-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--accent-dim);
+      border-left: 3px solid var(--accent);
+    }
+    .philosophy-icon { font-size: 1.25rem; }
+    .philosophy-note p { font-size: 0.8125rem; line-height: 1.6; color: var(--text-secondary); }
+    .philosophy-note strong { color: var(--accent); }
+    .btn-row { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .btn-full { flex: 1; }
+
+    /* Schema Preview */
+    .schema-preview {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 0.75rem;
+      margin-top: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0 1rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    .footer-link {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .footer-link:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="tag">Prompt Engine</span>
+      <h1>Identity Engine</h1>
+      <p class="subtitle">대화 로그 → 7축 파싱 → 자기 모델 추출</p>
+    </header>
+
+    <!-- 7-Axis Configuration -->
+    <div class="section">
+      <p class="section-title">7-Axis Framework</p>
+      <div class="axes-grid" id="axesGrid">
+        <div class="axis-row active" data-axis="meta">
+          <span class="axis-icon">🪞</span>
+          <div class="axis-info">
+            <div class="axis-name">Meta</div>
+            <div class="axis-desc">생각하는 방식 자체를 추출. 메타인지 순간 감지.</div>
+          </div>
+          <div class="axis-controls">
+            <select class="depth-select" data-axis="meta">
+              <option value="surface">표면</option>
+              <option value="deep" selected>심층</option>
+              <option value="exhaustive">전수</option>
+            </select>
+            <div class="toggle-switch active" data-axis="meta"></div>
+          </div>
+        </div>
+        <div class="axis-row active" data-axis="reverse">
+          <span class="axis-icon">🔄</span>
+          <div class="axis-info">
+            <div class="axis-name">Reverse</div>
+            <div class="axis-desc">결론에서 전제를 역추적. 숨겨진 가정 발굴.</div>
+          </div>
+          <div class="axis-controls">
+            <select class="depth-select" data-axis="reverse">
+              <option value="surface">표면</option>
+              <option value="deep" selected>심층</option>
+              <option value="exhaustive">전수</option>
+            </select>
+            <div class="toggle-switch active" data-axis="reverse"></div>
+          </div>
+        </div>
+        <div class="axis-row active" data-axis="modular">
+          <span class="axis-icon">🧩</span>
+          <div class="axis-info">
+            <div class="axis-name">Modular</div>
+            <div class="axis-desc">반복 사고 패턴을 모듈로 분리. 재사용 가능한 사고 단위.</div>
+          </div>
+          <div class="axis-controls">
+            <select class="depth-select" data-axis="modular">
+              <option value="surface">표면</option>
+              <option value="deep" selected>심층</option>
+              <option value="exhaustive">전수</option>
+            </select>
+            <div class="toggle-switch active" data-axis="modular"></div>
+          </div>
+        </div>
+        <div class="axis-row active" data-axis="language">
+          <span class="axis-icon">🗣️</span>
+          <div class="axis-info">
+            <div class="axis-name">Language</div>
+            <div class="axis-desc">비유, 언어 구조, 표현 습관 포착. 고유 어조 추출.</div>
+          </div>
+          <div class="axis-controls">
+            <select class="depth-select" data-axis="language">
+              <option value="surface">표면</option>
+              <option value="deep" selected>심층</option>
+              <option value="exhaustive">전수</option>
+            </select>
+            <div class="toggle-switch active" data-axis="language"></div>
+          </div>
+        </div>
+        <div class="axis-row active" data-axis="zoom">
+          <span class="axis-icon">🔬</span>
+          <div class="axis-info">
+            <div class="axis-name">Zoom</div>
+            <div class="axis-desc">미시↔거시 스케일 전환 감지. 추상화 레벨 변동.</div>
+          </div>
+          <div class="axis-controls">
+            <select class="depth-select" data-axis="zoom">
+              <option value="surface">표면</option>
+              <option value="deep" selected>심층</option>
+              <option value="exhaustive">전수</option>
+            </select>
+            <div class="toggle-switch active" data-axis="zoom"></div>
+          </div>
+        </div>
+        <div class="axis-row active" data-axis="spiral">
+          <span class="axis-icon">🌀</span>
+          <div class="axis-info">
+            <div class="axis-name">Spiral</div>
+            <div class="axis-desc">이전 대화와 비교. 성장 궤적 추적. 반복 속 진화.</div>
+          </div>
+          <div class="axis-controls">
+            <select class="depth-select" data-axis="spiral">
+              <option value="surface">표면</option>
+              <option value="deep" selected>심층</option>
+              <option value="exhaustive">전수</option>
+            </select>
+            <div class="toggle-switch active" data-axis="spiral"></div>
+          </div>
+        </div>
+        <div class="axis-row active" data-axis="quantum">
+          <span class="axis-icon">⚡</span>
+          <div class="axis-info">
+            <div class="axis-name">Quantum</div>
+            <div class="axis-desc">차원 전환 순간 감지. 패러다임 시프트, 비약적 도약.</div>
+          </div>
+          <div class="axis-controls">
+            <select class="depth-select" data-axis="quantum">
+              <option value="surface">표면</option>
+              <option value="deep" selected>심층</option>
+              <option value="exhaustive">전수</option>
+            </select>
+            <div class="toggle-switch active" data-axis="quantum"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Source Conversation Log -->
+    <div class="section">
+      <p class="section-title">원재료 — 대화 로그</p>
+      <label>대화 로그 붙여넣기</label>
+      <textarea id="sourceLog" placeholder="Human: 이 구조가 맞는 이유를 설명하면...
+Assistant: 네, 이 구조는...
+Human: 아 그게 아니고, 진짜 의도는...
+
+대화 전체를 붙여넣으세요. 길수록 정밀한 모델이 추출됩니다."></textarea>
+      <label>대화 컨텍스트 (선택)</label>
+      <input type="text" id="context" placeholder="예: Claude Code 세션, 레포 아키텍처 논의, 철학 정리">
+    </div>
+
+    <!-- Previous Model (Spiral) -->
+    <div class="section">
+      <p class="section-title">Spiral — 이전 자기 모델 (선택)</p>
+      <div class="spiral-note">
+        <span class="spiral-note-icon">🌀</span>
+        <span>이전에 추출한 자기 모델 JSON을 붙여넣으면 Spiral 축이 성장 궤적을 비교합니다. 첫 실행이면 비워두세요.</span>
+      </div>
+      <textarea id="previousModel" style="min-height: 100px;" placeholder='이전 identity-model JSON을 붙여넣기 (선택)'></textarea>
+    </div>
+
+    <!-- Output Options -->
+    <div class="section">
+      <p class="section-title">출력 설정</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <label>출력 형식</label>
+          <select id="outputFormat">
+            <option value="json">JSON (자기 모델)</option>
+            <option value="json+narrative">JSON + 서사 요약</option>
+            <option value="narrative">서사 전용 (읽기용)</option>
+          </select>
+        </div>
+        <div>
+          <label>추출 대상</label>
+          <select id="extractTarget">
+            <option value="full">전체 정체성</option>
+            <option value="thinker">사고자 (Thinker)</option>
+            <option value="builder">구축자 (Builder)</option>
+            <option value="philosopher">철학자 (Philosopher)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generate -->
+    <button class="btn btn-primary" onclick="generatePrompt()">자기 모델 추출 프롬프트 생성</button>
+
+    <!-- Output -->
+    <div class="section output-section" id="outputSection">
+      <div class="output-header">
+        <span class="output-title">생성된 프롬프트</span>
+        <button class="btn btn-secondary" onclick="copyPrompt()">복사</button>
+      </div>
+      <div class="output-body">
+        <div class="output-prompt" id="outputPrompt"></div>
+
+        <div class="philosophy-note">
+          <span class="philosophy-icon">🪞</span>
+          <p>이 프롬프트는 대화 로그에서 <strong>"나"를 추출</strong>합니다.<br>
+          LLM을 파인튜닝하는 게 아니라 <strong>"나"를 파인튜닝</strong>하는 겁니다.<br>
+          매 실행마다 해상도가 올라갑니다.</p>
+        </div>
+
+        <details style="margin-top: 1rem;">
+          <summary style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text-muted); cursor: pointer;">
+            출력 스키마 미리보기
+          </summary>
+          <div class="schema-preview" id="schemaPreview"></div>
+        </details>
+
+        <div class="btn-row">
+          <button class="btn btn-primary btn-full" onclick="openClaude()">Claude에서 열기 →</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <a href="../../index.html" class="footer-link">← OrbitPrompt</a>
+    </footer>
+  </div>
+
+  <script>
+    const AXES = {
+      meta: {
+        name: 'Meta',
+        icon: '🪞',
+        question: '이 대화에서 화자가 자기 사고 과정 자체를 인식하거나 언급하는 순간은?',
+        deep: '메타인지가 발동한 정확한 지점, 자기 참조적 발언, "이걸 왜 이렇게 생각하지?"류의 순간을 전부 추출하라.',
+        exhaustive: '모든 메타인지적 발화를 시간순으로 나열하고, 각각의 트리거(무엇이 메타인지를 유발했는지)까지 분석하라.'
+      },
+      reverse: {
+        name: 'Reverse',
+        icon: '🔄',
+        question: '결론이나 주장에서 역추적하면 어떤 숨겨진 전제/가정이 드러나는가?',
+        deep: '화자가 명시하지 않은 전제들을 발굴하라. "이 결론이 성립하려면 X를 당연시해야 한다"를 전부 찾아라.',
+        exhaustive: '모든 주장-전제 쌍을 역추적하고, 전제들 사이의 의존 관계와 모순도 분석하라.'
+      },
+      modular: {
+        name: 'Modular',
+        icon: '🧩',
+        question: '반복적으로 등장하는 사고 패턴이나 논증 구조는?',
+        deep: '같은 논증 틀, 같은 비교 방식, 같은 결론 도출 패턴이 반복되는 것을 모듈로 분리하라.',
+        exhaustive: '모든 반복 패턴을 명명하고, 각 패턴의 출현 빈도, 변형, 진화 과정을 기록하라.'
+      },
+      language: {
+        name: 'Language',
+        icon: '🗣️',
+        question: '화자 고유의 비유, 언어 구조, 표현 습관은?',
+        deep: '고유 비유 체계(공장, 소설, 반도체 등), 말투 패턴, 코드스위칭, 감정 표현 방식을 추출하라.',
+        exhaustive: '모든 비유를 분류하고, 비유 간 체계 관계(상위/하위 비유), 비유의 진화, 새로 등장한 표현을 전수 조사하라.'
+      },
+      zoom: {
+        name: 'Zoom',
+        icon: '🔬',
+        question: '미시적 디테일과 거시적 비전 사이를 전환하는 패턴은?',
+        deep: '구체적 코드/파일에서 갑자기 철학/비전으로 점프하거나 그 역방향 전환을 감지하라. 전환 트리거도 분석.',
+        exhaustive: '모든 스케일 전환 지점을 시간순 나열하고, 전환 패턴(상향/하향/왕복)과 전환 빈도를 정량 분석하라.'
+      },
+      spiral: {
+        name: 'Spiral',
+        icon: '🌀',
+        question: '이전 대화/모델 대비 어떤 성장, 심화, 변화가 있는가?',
+        deep: '같은 주제를 다시 다루면서 더 깊어진 부분, 이전에 없던 관점, 수정된 생각을 비교 추출하라.',
+        exhaustive: '이전 모델의 모든 항목과 1:1 대조하고, 성장/퇴행/정체를 항목별로 판정하라. 새로 출현한 축도 기록.'
+      },
+      quantum: {
+        name: 'Quantum',
+        icon: '⚡',
+        question: '사고의 차원이 바뀌는 순간 — 패러다임 시프트, 비약적 도약은?',
+        deep: '기존 프레임 안에서 해결하다가 갑자기 프레임 자체를 바꾸는 순간을 찾아라. "아 그게 아니라..."류의 전환.',
+        exhaustive: '모든 패러다임 전환을 시간순 나열하고, 전환 전후의 프레임을 비교하며, 전환을 촉발한 계기를 분석하라.'
+      }
+    };
+
+    let state = {
+      axes: {
+        meta: { enabled: true, depth: 'deep' },
+        reverse: { enabled: true, depth: 'deep' },
+        modular: { enabled: true, depth: 'deep' },
+        language: { enabled: true, depth: 'deep' },
+        zoom: { enabled: true, depth: 'deep' },
+        spiral: { enabled: true, depth: 'deep' },
+        quantum: { enabled: true, depth: 'deep' }
+      },
+      sourceLog: '',
+      context: '',
+      previousModel: '',
+      outputFormat: 'json',
+      extractTarget: 'full'
+    };
+
+    // Toggle switches
+    document.querySelectorAll('.toggle-switch').forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const axis = toggle.dataset.axis;
+        toggle.classList.toggle('active');
+        state.axes[axis].enabled = toggle.classList.contains('active');
+        toggle.closest('.axis-row').classList.toggle('active', state.axes[axis].enabled);
+      });
+    });
+
+    // Depth selectors
+    document.querySelectorAll('.depth-select').forEach(select => {
+      select.addEventListener('change', e => {
+        state.axes[e.target.dataset.axis].depth = e.target.value;
+      });
+    });
+
+    // Input bindings
+    document.getElementById('sourceLog').addEventListener('input', e => state.sourceLog = e.target.value);
+    document.getElementById('context').addEventListener('input', e => state.context = e.target.value);
+    document.getElementById('previousModel').addEventListener('input', e => state.previousModel = e.target.value);
+    document.getElementById('outputFormat').addEventListener('change', e => state.outputFormat = e.target.value);
+    document.getElementById('extractTarget').addEventListener('change', e => state.extractTarget = e.target.value);
+
+    const depthLabels = { surface: '표면 스캔', deep: '심층 분석', exhaustive: '전수 조사' };
+    const targetLabels = { full: '전체 정체성', thinker: '사고자 관점', builder: '구축자 관점', philosopher: '철학자 관점' };
+    const formatLabels = {
+      json: 'identity-model JSON 스키마',
+      'json+narrative': 'JSON + 한국어 서사 요약',
+      narrative: '한국어 서사 형식 (읽기용)'
+    };
+
+    function generatePrompt() {
+      const enabledAxes = Object.entries(state.axes).filter(([, v]) => v.enabled);
+
+      if (!state.sourceLog.trim()) {
+        alert('대화 로그를 붙여넣어 주세요.');
+        return;
+      }
+
+      if (enabledAxes.length === 0) {
+        alert('최소 1개 축을 활성화해 주세요.');
+        return;
+      }
+
+      const hasPrevious = state.previousModel.trim().length > 0;
+
+      let axisInstructions = enabledAxes.map(([key, cfg]) => {
+        const ax = AXES[key];
+        let instruction = `### ${ax.icon} ${ax.name} 축\n`;
+        instruction += `**질문**: ${ax.question}\n`;
+        if (cfg.depth === 'deep') instruction += `**심층 지시**: ${ax.deep}\n`;
+        if (cfg.depth === 'exhaustive') instruction += `**전수 지시**: ${ax.exhaustive}\n`;
+        return instruction;
+      }).join('\n');
+
+      let outputInstruction = '';
+      if (state.outputFormat === 'json' || state.outputFormat === 'json+narrative') {
+        outputInstruction = `## 출력 형식: identity-model JSON
+
+다음 스키마에 맞춰 JSON을 출력하라:
+
+\`\`\`json
+{
+  "schema": "identity-model",
+  "version": "1.0",
+  "extracted": "${new Date().toISOString().split('T')[0]}",
+  "extract_target": "${state.extractTarget}",
+  "axes": {
+${enabledAxes.map(([key]) => `    "${key}": {
+      "score": 0,
+      "patterns": ["발견된 사고 패턴"],
+      "evidence": ["대화에서 직접 인용 (원문 그대로)"],
+      "insight": "이 축에서 발견한 핵심 통찰 1~3문장"
+    }`).join(',\n')}
+  },
+  "identity": {
+    "core_beliefs": ["핵심 신념/가치관"],
+    "thinking_patterns": ["반복되는 사고 방식"],
+    "recurring_metaphors": ["자주 쓰는 비유 체계"],
+    "contradictions": ["내적 모순이나 긴장"],
+    "blind_spots": ["보지 못하는 것, 회피하는 것"],
+    "growth_delta": ${hasPrevious ? '"이전 모델 대비 변화 요약"' : 'null'}
+  }
+}
+\`\`\`
+
+- score: 0~10 (해당 축의 활동 강도)
+- evidence: 반드시 대화 원문에서 직접 인용
+- patterns: 추상화된 패턴 이름`;
+      }
+
+      if (state.outputFormat === 'json+narrative') {
+        outputInstruction += `
+
+JSON 출력 후, 다음 형식의 한국어 서사 요약을 추가하라:
+
+---
+
+## 서사 요약
+
+각 축에서 발견한 것을 자연어로 정리. "이 사람은 ~하는 사고를 한다. 특히 ~할 때 ~한 패턴이 나타난다." 형태.`;
+      }
+
+      if (state.outputFormat === 'narrative') {
+        outputInstruction = `## 출력 형식: 서사 (한국어)
+
+구조화된 JSON 대신, 다음 형태의 자연어 분석을 출력하라:
+
+### 이 사람의 사고 지도
+
+활성화된 각 축별로 1~3 문단씩, 발견한 패턴과 원문 인용을 포함하여 서술.
+마지막에 "정체성 스냅샷" — 핵심 신념, 사고 습관, 고유 비유 체계를 요약.`;
+      }
+
+      const prompt = `# 자기 모델 추출 (Identity Extraction)
+
+> 이 프롬프트는 대화 로그에서 화자의 정체성을 추출하는 엔진이다.
+> LLM을 파인튜닝하는 것이 아니라, "나"를 파인튜닝하는 것이다.
+
+## 추출 대상
+- **관점**: ${targetLabels[state.extractTarget]}
+- **활성 축**: ${enabledAxes.length}/7
+- **출력**: ${formatLabels[state.outputFormat]}
+${state.context ? `- **대화 컨텍스트**: ${state.context}` : ''}
+
+---
+
+## 7-Axis 분석 프레임워크
+
+아래 활성화된 축으로 대화 로그를 분석하라. 각 축은 독립적 렌즈다.
+
+${axisInstructions}
+${hasPrevious ? `---
+
+## Spiral 비교용 — 이전 자기 모델
+
+아래는 이전에 추출한 자기 모델이다. Spiral 축 분석 시 이것과 비교하라.
+
+\`\`\`json
+${state.previousModel}
+\`\`\`
+` : ''}
+---
+
+${outputInstruction}
+
+---
+
+## 분석 원칙
+
+1. **증거 기반**: 모든 패턴/통찰에 대화 원문 인용 필수. 추측 금지.
+2. **화자 구분**: Human의 발화만 분석. Assistant 발화는 맥락으로만 참고.
+3. **정직한 점수**: score는 실제 활동 강도 반영. 증거 없으면 0.
+4. **모순 환영**: 내적 모순을 발견하면 숨기지 말고 contradictions에 기록.
+5. **날것 보존**: 화자의 비속어, 감정 표현, 코드스위칭 그대로 인용.
+
+---
+
+## 대화 로그 (원재료)
+
+\`\`\`
+${state.sourceLog}
+\`\`\``;
+
+      document.getElementById('outputPrompt').textContent = prompt;
+      document.getElementById('outputSection').style.display = 'block';
+
+      // Schema preview
+      const schemaExample = JSON.stringify({
+        schema: 'identity-model',
+        version: '1.0',
+        extracted: new Date().toISOString().split('T')[0],
+        extract_target: state.extractTarget,
+        axes: Object.fromEntries(enabledAxes.map(([key]) => [key, {
+          score: '0~10',
+          patterns: ['...'],
+          evidence: ['원문 인용'],
+          insight: '...'
+        }])),
+        identity: {
+          core_beliefs: ['...'],
+          thinking_patterns: ['...'],
+          recurring_metaphors: ['...'],
+          contradictions: ['...'],
+          blind_spots: ['...'],
+          growth_delta: hasPrevious ? '이전 대비 변화' : null
+        }
+      }, null, 2);
+      document.getElementById('schemaPreview').textContent = schemaExample;
+    }
+
+    function copyPrompt() {
+      navigator.clipboard.writeText(document.getElementById('outputPrompt').textContent);
+    }
+
+    function openClaude() {
+      const text = encodeURIComponent(document.getElementById('outputPrompt').textContent);
+      window.open(`https://claude.ai/new?q=${text}`, '_blank');
+    }
+  </script>
+</body>
+</html>
