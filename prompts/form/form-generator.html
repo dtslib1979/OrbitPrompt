@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<title>Form Generator — OrbitPrompt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050505;
+  --bg-card: #0f0f0f;
+  --bg-input: #141414;
+  --bg-elevated: #1a1a1a;
+  --text: #f0f0f0;
+  --text-2: rgba(255,255,255,0.7);
+  --text-3: rgba(255,255,255,0.4);
+  --text-dim: rgba(255,255,255,0.15);
+  --accent: #10b981;
+  --accent-dim: rgba(16,185,129,0.12);
+  --accent-glow: rgba(16,185,129,0.25);
+  --gold: #d4af37;
+  --gold-dim: rgba(212,175,55,0.12);
+  --border: rgba(255,255,255,0.08);
+  --f-sans: 'Inter', -apple-system, sans-serif;
+  --f-mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--f-sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 1.5rem;
+  line-height: 1.6;
+}
+.container { max-width: 680px; margin: 0 auto; }
+
+/* Header */
+header {
+  text-align: center;
+  padding: 1.5rem 0 2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+.tag {
+  font-family: var(--f-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 0.25rem 0.5rem;
+  display: inline-block;
+  margin-bottom: 0.75rem;
+}
+h1 {
+  font-family: var(--f-mono);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.subtitle {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+}
+
+/* Steps */
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  font-family: var(--f-mono);
+  font-size: 0.5625rem;
+  color: var(--text-3);
+}
+.step.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.step-num {
+  width: 18px;
+  height: 18px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.5625rem;
+}
+.step.active .step-num {
+  background: var(--accent);
+  color: #000;
+}
+
+/* Section */
+.section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+}
+.section-header {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.section-title {
+  font-family: var(--f-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.section-body {
+  padding: 1rem;
+}
+
+/* Chips */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.chip {
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  font-family: var(--f-mono);
+  font-size: 0.6875rem;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.chip:hover {
+  border-color: var(--accent);
+}
+.chip.selected {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.chip-icon {
+  margin-right: 0.25rem;
+}
+
+/* Multi-select chips (languages) */
+.chip-multi.selected {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Form elements */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 480px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+.form-label {
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.form-select, .form-textarea {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  padding: 0.625rem 0.75rem;
+}
+.form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.form-textarea {
+  min-height: 80px;
+  resize: vertical;
+  font-family: var(--f-mono);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+.form-hint {
+  font-size: 0.5625rem;
+  color: var(--text-3);
+}
+
+/* Toggles */
+.toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0.75rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+}
+.toggle-info { flex: 1; }
+.toggle-label { font-size: 0.8125rem; }
+.toggle-desc {
+  font-size: 0.5625rem;
+  color: var(--text-3);
+  margin-top: 0.125rem;
+}
+.toggle-switch {
+  width: 40px;
+  height: 22px;
+  background: var(--border);
+  border-radius: 11px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  margin-left: 0.75rem;
+}
+.toggle-switch.active {
+  background: var(--accent);
+}
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.toggle-switch.active::after {
+  transform: translateX(18px);
+}
+
+/* Preview */
+.preview-box {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  font-family: var(--f-mono);
+  font-size: 0.6875rem;
+  line-height: 1.7;
+  color: var(--text-2);
+}
+.preview-title {
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 0.5rem;
+}
+.preview-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.25rem 1rem;
+  padding: 0.375rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.preview-row:last-child { border-bottom: none; }
+.preview-cell {
+  display: flex;
+  flex-direction: column;
+}
+.preview-lang {
+  font-size: 0.5rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+/* Buttons */
+.btn {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  font-family: inherit;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  font-weight: 600;
+}
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.btn-gold {
+  background: var(--gold);
+  color: #000;
+  font-weight: 600;
+}
+.btn-gold:hover { filter: brightness(1.1); }
+
+/* Output */
+.output-section {
+  background: var(--bg-card);
+  border: 2px solid var(--gold);
+  display: none;
+  margin-top: 1.5rem;
+}
+.output-header {
+  background: var(--gold-dim);
+  padding: 0.875rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--gold);
+}
+.output-title {
+  font-family: var(--f-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.output-body { padding: 1rem; }
+.output-prompt {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  font-family: var(--f-mono);
+  font-size: 0.6875rem;
+  line-height: 1.7;
+  color: var(--text-2);
+  white-space: pre-wrap;
+  max-height: 450px;
+  overflow-y: auto;
+}
+.philosophy-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 0.875rem;
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+}
+.philosophy-icon { font-size: 1.125rem; flex-shrink: 0; }
+.philosophy-note p {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+.philosophy-note strong { color: var(--accent); }
+.btn-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.btn-full { flex: 1; padding: 0.875rem; }
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 2rem 0 1rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+.footer-link {
+  font-family: var(--f-mono);
+  font-size: 0.625rem;
+  color: var(--text-3);
+  text-decoration: none;
+}
+.footer-link:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <span class="tag">Prompt Engine</span>
+    <h1>Form Generator</h1>
+    <p class="subtitle">서식 선택 × 언어 선택 → 다국어 인터랙티브 서식 프롬프트</p>
+  </header>
+
+  <div class="steps">
+    <div class="step active"><span class="step-num">1</span> 서식 선택</div>
+    <div class="step"><span class="step-num">2</span> 언어 선택</div>
+    <div class="step"><span class="step-num">3</span> 옵션 설정</div>
+    <div class="step"><span class="step-num">4</span> 프롬프트 생성</div>
+  </div>
+
+  <!-- Step 1: Form Type -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">1. 서식 종류</span>
+    </div>
+    <div class="section-body">
+      <div class="chips" id="formTypeChips">
+        <div class="chip selected" data-value="prescription" onclick="selectFormType(this)">
+          <span class="chip-icon">💊</span>처방전
+        </div>
+        <div class="chip" data-value="swift-mt103" onclick="selectFormType(this)">
+          <span class="chip-icon">🏦</span>SWIFT MT103
+        </div>
+        <div class="chip" data-value="contract" onclick="selectFormType(this)">
+          <span class="chip-icon">📜</span>계약서
+        </div>
+        <div class="chip" data-value="diagnosis" onclick="selectFormType(this)">
+          <span class="chip-icon">🩺</span>진단서
+        </div>
+        <div class="chip" data-value="resume" onclick="selectFormType(this)">
+          <span class="chip-icon">📄</span>이력서
+        </div>
+        <div class="chip" data-value="invoice" onclick="selectFormType(this)">
+          <span class="chip-icon">🧾</span>인보이스
+        </div>
+        <div class="chip" data-value="government" onclick="selectFormType(this)">
+          <span class="chip-icon">🏛️</span>관공서 서식
+        </div>
+        <div class="chip" data-value="customs" onclick="selectFormType(this)">
+          <span class="chip-icon">📦</span>세관 신고서
+        </div>
+        <div class="chip" data-value="immigration" onclick="selectFormType(this)">
+          <span class="chip-icon">✈️</span>출입국 카드
+        </div>
+        <div class="chip" data-value="custom" onclick="selectFormType(this)">
+          <span class="chip-icon">✏️</span>커스텀
+        </div>
+      </div>
+      <div id="customFormType" style="display:none; margin-top: 0.75rem;">
+        <div class="form-group">
+          <label class="form-label">서식명</label>
+          <input type="text" class="form-select" id="customFormName" placeholder="예: 부동산 매매 계약서, 운전면허 신청서...">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Languages -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">2. 언어 선택 (다중 선택)</span>
+    </div>
+    <div class="section-body">
+      <div class="chips" id="langChips">
+        <div class="chip chip-multi selected" data-value="en" onclick="toggleLang(this)">
+          <span class="chip-icon">🇬🇧</span>English
+        </div>
+        <div class="chip chip-multi selected" data-value="ko" onclick="toggleLang(this)">
+          <span class="chip-icon">🇰🇷</span>한국어
+        </div>
+        <div class="chip chip-multi" data-value="ja" onclick="toggleLang(this)">
+          <span class="chip-icon">🇯🇵</span>日本語
+        </div>
+        <div class="chip chip-multi" data-value="zh" onclick="toggleLang(this)">
+          <span class="chip-icon">🇨🇳</span>中文
+        </div>
+        <div class="chip chip-multi" data-value="es" onclick="toggleLang(this)">
+          <span class="chip-icon">🇪🇸</span>Español
+        </div>
+        <div class="chip chip-multi" data-value="fr" onclick="toggleLang(this)">
+          <span class="chip-icon">🇫🇷</span>Français
+        </div>
+        <div class="chip chip-multi" data-value="de" onclick="toggleLang(this)">
+          <span class="chip-icon">🇩🇪</span>Deutsch
+        </div>
+        <div class="chip chip-multi" data-value="ar" onclick="toggleLang(this)">
+          <span class="chip-icon">🇸🇦</span>العربية
+        </div>
+      </div>
+      <p class="form-hint" style="margin-top: 0.5rem;">최소 2개 언어 선택. 같은 서식을 선택한 언어로 버티컬 비교합니다.</p>
+    </div>
+  </div>
+
+  <!-- Step 3: Options -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">3. 표시 옵션</span>
+    </div>
+    <div class="section-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">표시 모드</label>
+          <select class="form-select" id="displayMode">
+            <option value="toggle">토글 (한 언어씩 전환)</option>
+            <option value="vertical">버티컬 (세로 비교)</option>
+            <option value="both" selected>Both (토글 + 버티컬)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">난이도 표시</label>
+          <select class="form-select" id="difficultyLevel">
+            <option value="beginner">초급 (핵심 용어 하이라이트)</option>
+            <option value="intermediate" selected>중급 (전문 용어 포함)</option>
+            <option value="advanced">고급 (법률/전문 원문)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toggles" style="margin-top: 1rem;">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">인터랙티브 빈칸</div>
+            <div class="toggle-desc">직접 입력하면서 연습하는 필드</div>
+          </div>
+          <div class="toggle-switch active" data-key="fillable" onclick="toggleSwitch(this)"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">용어 해설 툴팁</div>
+            <div class="toggle-desc">전문 용어 터치 시 뜻 표시</div>
+          </div>
+          <div class="toggle-switch active" data-key="glossary" onclick="toggleSwitch(this)"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">발음 가이드</div>
+            <div class="toggle-desc">일본어/중국어 읽기 보조 (후리가나/병음)</div>
+          </div>
+          <div class="toggle-switch active" data-key="pronunciation" onclick="toggleSwitch(this)"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">티스토리 호환 모드</div>
+            <div class="toggle-desc">고급 JS 제거, 티스토리/블로그 삽입용</div>
+          </div>
+          <div class="toggle-switch" data-key="tistory" onclick="toggleSwitch(this)"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">샘플 데이터 포함</div>
+            <div class="toggle-desc">실제 예시 데이터로 채운 상태</div>
+          </div>
+          <div class="toggle-switch active" data-key="sampleData" onclick="toggleSwitch(this)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: Context -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">4. 추가 설정 (선택)</span>
+    </div>
+    <div class="section-body">
+      <div class="form-group">
+        <label class="form-label">특정 분야/컨텍스트</label>
+        <textarea class="form-textarea" id="context" placeholder="예: 정형외과 진단서, 소프트웨어 개발 계약서, 식품 수출 인보이스..."></textarea>
+        <span class="form-hint">구체적 분야를 명시하면 해당 분야 전문 용어가 포함됩니다</span>
+      </div>
+      <div class="form-group" style="margin-top: 0.75rem;">
+        <label class="form-label">추가 요구사항</label>
+        <textarea class="form-textarea" id="requirements" placeholder="예: 색상 테마를 따뜻한 톤으로, 폰트 크기 크게, 인쇄 버튼 추가..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">미리보기</span>
+    </div>
+    <div class="section-body">
+      <div class="preview-box" id="previewBox">
+        <div class="preview-title">선택된 서식 × 언어 매트릭스</div>
+        <div id="previewContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generate -->
+  <button class="btn btn-primary" onclick="generatePrompt()">프롬프트 생성</button>
+
+  <!-- Output -->
+  <div class="section output-section" id="outputSection">
+    <div class="output-header">
+      <span class="output-title">생성된 프롬프트</span>
+      <button class="btn btn-secondary" onclick="copyPrompt()">복사</button>
+    </div>
+    <div class="output-body">
+      <div class="output-prompt" id="outputPrompt"></div>
+      <div class="philosophy-note">
+        <span class="philosophy-icon">💡</span>
+        <p>이 프롬프트를 ChatGPT / Claude에 붙여넣으면 <strong>인터랙티브 다국어 서식 페이지</strong>가 생성됩니다.<br>
+        티스토리, 블로그, GitHub Pages에 올려서 어학 학습 자료로 활용하세요.</p>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-gold btn-full" onclick="openClaude()">Claude에서 열기 →</button>
+        <button class="btn btn-secondary btn-full" onclick="copyPrompt()">클립보드 복사</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <a href="../../index.html" class="footer-link">← OrbitPrompt</a>
+  </footer>
+</div>
+
+<script>
+// State
+const state = {
+  formType: 'prescription',
+  customFormName: '',
+  languages: ['en', 'ko'],
+  displayMode: 'both',
+  difficulty: 'intermediate',
+  fillable: true,
+  glossary: true,
+  pronunciation: true,
+  tistory: false,
+  sampleData: true,
+  context: '',
+  requirements: ''
+};
+
+// Form type definitions
+const formTypes = {
+  'prescription': {
+    name: '처방전',
+    nameEn: 'Medical Prescription',
+    fields: ['환자명/Patient Name', '생년월일/Date of Birth', '진단명/Diagnosis', '약품명/Medication', '용법·용량/Dosage', '투약 기간/Duration', '의사명/Physician', '의료기관/Medical Institution', '면허번호/License No.', '처방일/Date of Issue']
+  },
+  'swift-mt103': {
+    name: 'SWIFT MT103 (송금 전문)',
+    nameEn: 'SWIFT MT103 Wire Transfer',
+    fields: ['거래 참조번호/:20 Transaction Reference', '결제일·금액/:32A Value Date/Amount', '통화/:32A Currency', '송금 의뢰인/:50K Ordering Customer', '송금 은행/:52A Sender Bank', '수취 은행/:57A Beneficiary Bank', '수취인/:59 Beneficiary', '송금 목적/:70 Remittance Info', '수수료 부담/:71A Charges (OUR/SHA/BEN)', '규제 보고/:72 Regulatory Reporting']
+  },
+  'contract': {
+    name: '계약서',
+    nameEn: 'Contract',
+    fields: ['계약 당사자/Parties', '계약 목적/Purpose', '계약 기간/Term', '대금/Consideration', '이행 조건/Performance Terms', '위약 조항/Penalty Clause', '불가항력/Force Majeure', '준거법/Governing Law', '관할 법원/Jurisdiction', '서명일/Date of Execution']
+  },
+  'diagnosis': {
+    name: '진단서',
+    nameEn: 'Medical Certificate',
+    fields: ['환자 성명/Patient Name', '주민등록번호/ID Number', '진단명/Diagnosis', '질병 코드/ICD Code', '소견/Clinical Findings', '향후 치료 의견/Treatment Plan', '용도/Purpose', '발급일/Date of Issue', '의료기관명/Hospital Name', '담당의사/Attending Physician']
+  },
+  'resume': {
+    name: '이력서',
+    nameEn: 'Resume / CV',
+    fields: ['성명/Full Name', '연락처/Contact', '학력/Education', '경력 사항/Work Experience', '자격증/Certifications', '기술 스택/Skills', '자기소개/Personal Statement', '희망 직종/Desired Position', '희망 연봉/Expected Salary', '참고인/References']
+  },
+  'invoice': {
+    name: '인보이스',
+    nameEn: 'Commercial Invoice',
+    fields: ['인보이스 번호/Invoice No.', '발행일/Date of Issue', '공급자/Seller', '구매자/Buyer', '품명/Description of Goods', '수량/Quantity', '단가/Unit Price', '총액/Total Amount', '결제 조건/Payment Terms', '인코텀즈/Incoterms']
+  },
+  'government': {
+    name: '관공서 서식',
+    nameEn: 'Government Form',
+    fields: ['신청인/Applicant', '주민등록번호/ID Number', '주소/Address', '신청 사유/Purpose', '구비 서류/Required Documents', '수수료/Fee', '처리 기간/Processing Time', '접수일/Date Received', '담당 부서/Department', '처리 결과/Result']
+  },
+  'customs': {
+    name: '세관 신고서',
+    nameEn: 'Customs Declaration',
+    fields: ['신고인/Declarant', '입출항일/Date of Arrival', '운송 수단/Means of Transport', '적하목록/Manifest', '품명·수량/Goods & Quantity', '신고 가격/Declared Value', '원산지/Country of Origin', 'HS 코드/HS Code', '관세율/Duty Rate', '검사 여부/Inspection']
+  },
+  'immigration': {
+    name: '출입국 카드',
+    nameEn: 'Arrival/Departure Card',
+    fields: ['성명/Full Name', '국적/Nationality', '여권 번호/Passport No.', '생년월일/Date of Birth', '성별/Sex', '항공편/Flight No.', '체류 목적/Purpose of Visit', '체류 주소/Address in Country', '체류 기간/Duration of Stay', '서명/Signature']
+  },
+  'custom': {
+    name: '커스텀',
+    nameEn: 'Custom Form',
+    fields: []
+  }
+};
+
+// Language labels
+const langLabels = {
+  en: { name: 'English', flag: '🇬🇧' },
+  ko: { name: '한국어', flag: '🇰🇷' },
+  ja: { name: '日本語', flag: '🇯🇵' },
+  zh: { name: '中文', flag: '🇨🇳' },
+  es: { name: 'Español', flag: '🇪🇸' },
+  fr: { name: 'Français', flag: '🇫🇷' },
+  de: { name: 'Deutsch', flag: '🇩🇪' },
+  ar: { name: 'العربية', flag: '🇸🇦' }
+};
+
+// Event handlers
+function selectFormType(el) {
+  document.querySelectorAll('#formTypeChips .chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.formType = el.dataset.value;
+
+  const customEl = document.getElementById('customFormType');
+  customEl.style.display = state.formType === 'custom' ? 'block' : 'none';
+
+  updatePreview();
+}
+
+function toggleLang(el) {
+  el.classList.toggle('selected');
+  const lang = el.dataset.value;
+  if (el.classList.contains('selected')) {
+    if (!state.languages.includes(lang)) state.languages.push(lang);
+  } else {
+    state.languages = state.languages.filter(l => l !== lang);
+  }
+  updatePreview();
+}
+
+function toggleSwitch(el) {
+  el.classList.toggle('active');
+  state[el.dataset.key] = el.classList.contains('active');
+}
+
+function updatePreview() {
+  const form = formTypes[state.formType];
+  const preview = document.getElementById('previewContent');
+
+  if (state.languages.length < 2) {
+    preview.innerHTML = '<div style="color: var(--text-3); text-align: center; padding: 1rem;">언어를 2개 이상 선택하세요</div>';
+    return;
+  }
+
+  const fields = form.fields.slice(0, 4);
+  let html = '';
+
+  fields.forEach(field => {
+    const parts = field.split('/');
+    html += '<div class="preview-row">';
+    state.languages.forEach(lang => {
+      const label = lang === 'ko' ? parts[0] : (lang === 'en' ? parts[1] : langLabels[lang].name);
+      html += `<div class="preview-cell">
+        <span class="preview-lang">${langLabels[lang].flag} ${lang.toUpperCase()}</span>
+        <span>${label}</span>
+      </div>`;
+    });
+    html += '</div>';
+  });
+
+  if (form.fields.length > 4) {
+    html += `<div style="text-align: center; color: var(--text-3); font-size: 0.5625rem; padding-top: 0.5rem;">... 외 ${form.fields.length - 4}개 필드</div>`;
+  }
+
+  preview.innerHTML = html;
+}
+
+function generatePrompt() {
+  state.displayMode = document.getElementById('displayMode').value;
+  state.difficulty = document.getElementById('difficultyLevel').value;
+  state.context = document.getElementById('context').value;
+  state.requirements = document.getElementById('requirements').value;
+  if (state.formType === 'custom') {
+    state.customFormName = document.getElementById('customFormName').value;
+  }
+
+  const form = formTypes[state.formType];
+  const formName = state.formType === 'custom' ? (state.customFormName || '사용자 정의 서식') : form.name;
+  const formNameEn = state.formType === 'custom' ? (state.customFormName || 'Custom Form') : form.nameEn;
+  const selectedLangs = state.languages.map(l => `${langLabels[l].flag} ${langLabels[l].name} (${l})`).join(', ');
+
+  const diffDesc = {
+    beginner: '초급 — 핵심 용어만 하이라이트, 쉬운 설명 병기',
+    intermediate: '중급 — 실무 전문 용어 포함, 약어 해설',
+    advanced: '고급 — 법률/의료/금융 원문 수준, 각주 포함'
+  };
+
+  const displayDesc = {
+    toggle: '토글 모드 — 상단 언어 탭으로 전체 서식을 해당 언어로 전환',
+    vertical: '버티컬 모드 — 각 필드마다 모든 언어를 세로로 나란히 표시',
+    both: '듀얼 모드 — 토글(전체 전환) + 버티컬(세로 비교) 둘 다 지원, 상단 모드 스위치로 전환'
+  };
+
+  let fieldsSection = '';
+  if (form.fields.length > 0) {
+    fieldsSection = `
+## 서식 필드 목록
+이 서식에 포함되어야 할 필드:
+${form.fields.map((f, i) => `${i + 1}. ${f}`).join('\n')}
+
+위 필드를 선택된 모든 언어(${state.languages.join(', ')})로 정확하게 번역하여 표시할 것.`;
+  }
+
+  const prompt = `# 다국어 인터랙티브 서식 페이지 생성 요청
+
+## 목적
+어학 학습용 인터랙티브 서식 페이지. 하나의 서식을 여러 언어로 보여주어 같은 맥락의 전문 용어를 한눈에 비교 학습할 수 있게 한다.
+
+## 서식 정보
+- **서식 종류:** ${formName} (${formNameEn})
+- **대상 언어:** ${selectedLangs}
+- **난이도:** ${diffDesc[state.difficulty]}
+${state.context ? `- **분야/컨텍스트:** ${state.context}` : ''}
+${fieldsSection}
+
+## 표시 방식
+- **모드:** ${displayDesc[state.displayMode]}
+${state.displayMode === 'toggle' || state.displayMode === 'both' ? `
+### 토글 모드 상세
+- 상단에 언어 탭 버튼 (${state.languages.map(l => langLabels[l].flag + ' ' + l.toUpperCase()).join(' | ')})
+- 탭 클릭 시 서식 전체가 해당 언어로 전환
+- 현재 선택 언어 탭 하이라이트
+- 부드러운 전환 애니메이션 (fade)` : ''}
+${state.displayMode === 'vertical' || state.displayMode === 'both' ? `
+### 버티컬 모드 상세
+- 각 필드(행)마다 선택된 모든 언어를 세로로 나열
+- 필드명 옆에 언어 코드 표시 (EN, KR, JP 등)
+- 같은 필드의 다국어 표현이 한눈에 보이는 구조
+- 그리드 또는 테이블 형태로 정렬` : ''}
+
+## 기능 옵션
+${state.fillable ? `- **인터랙티브 빈칸:** 각 필드에 직접 입력 가능한 input 제공. 연습용.` : '- 인터랙티브 빈칸: 미적용 (읽기 전용)'}
+${state.glossary ? `- **용어 해설 툴팁:** 전문 용어에 밑줄 표시, 터치/호버 시 뜻과 사용 맥락 팝업` : '- 용어 해설 툴팁: 미적용'}
+${state.pronunciation ? `- **발음 가이드:** 일본어는 후리가나(ruby), 중국어는 병음(pinyin), 아랍어는 음역 표시` : '- 발음 가이드: 미적용'}
+${state.sampleData ? `- **샘플 데이터:** 현실적인 예시 데이터로 빈칸을 미리 채운 상태 제공 (편집 가능)` : '- 샘플 데이터: 미포함 (빈 서식)'}
+
+## 기술 사양
+- **단일 HTML 파일** (인라인 CSS/JS, 외부 의존성 없음)
+- **바닐라 JS/CSS만** (프레임워크 금지)
+- **모바일 퍼스트 반응형** (핸드폰에서 학습)
+- **Google Fonts CDN 허용** (Noto Sans KR, Noto Sans JP 등 다국어 폰트)
+${state.tistory ? `
+## 티스토리/블로그 호환 모드
+- Service Worker, localStorage 미사용
+- document.write, eval 미사용
+- 최소한의 JS만 (DOM 조작 수준)
+- 티스토리 HTML 모드에 붙여넣기 가능한 구조
+- script 태그는 body 끝에 배치` : ''}
+
+## 디자인
+- 다크 모드 배경 (#0a0a0a)
+- 에메랄드 그린 액센트 (#10b981)
+- 언어별 색상 구분 (각 언어 탭에 고유 색상)
+- 서식 영역은 실제 서류 느낌 (약간 밝은 배경, 테두리)
+- 필드 레이블과 입력 영역 명확히 구분
+- 터치 친화적 (최소 44px 터치 타겟)
+
+## 컬러 팔레트 제안
+\`\`\`css
+--bg: #0a0a0a;
+--form-bg: #1a1a1a;
+--field-bg: #242424;
+--text: #f0f0f0;
+--accent: #10b981;
+--lang-en: #3b82f6;
+--lang-ko: #ef4444;
+--lang-ja: #f59e0b;
+--lang-zh: #ec4899;
+--lang-es: #f97316;
+--lang-fr: #6366f1;
+--lang-de: #8b5cf6;
+--lang-ar: #14b8a6;
+\`\`\`
+
+${state.requirements ? `## 추가 요구사항
+${state.requirements}` : ''}
+
+---
+
+위 사양에 맞춰 완전한 HTML 파일을 생성해주세요.
+서식의 각 필드를 선택된 모든 언어로 정확하게 번역하고,
+전문 용어는 해당 언어의 실무에서 실제로 사용되는 표현으로 작성해주세요.
+`;
+
+  document.getElementById('outputPrompt').textContent = prompt;
+  document.getElementById('outputSection').style.display = 'block';
+  document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+
+  document.querySelectorAll('.step').forEach((s, i) => {
+    s.classList.toggle('active', i <= 3);
+  });
+}
+
+function copyPrompt() {
+  const text = document.getElementById('outputPrompt').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = '복사됨!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function openClaude() {
+  window.open('https://claude.ai/new', '_blank');
+}
+
+// Init
+updatePreview();
+</script>
+</body>
+</html>
