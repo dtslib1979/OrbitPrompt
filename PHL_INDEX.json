@@ -1,0 +1,36 @@
+{
+  "$schema": "PHL Token Index — 토큰 → 정의 파일 매핑",
+  "version": "1.0.0",
+  "spec": "/PHL_SPEC.md",
+  "tokens": {
+    "PHL-Expansion": {
+      "file": "/phl/tokens/PHL-Expansion.md",
+      "intent": "모듈 확장/보강/견고화",
+      "aliases": ["확장", "보강", "튼튼하게", "expansion", "expand"],
+      "category": "engineering"
+    },
+    "PHL-Hardening": {
+      "file": "/phl/tokens/PHL-Hardening.md",
+      "intent": "보안/안정성 강화",
+      "aliases": ["보안", "하드닝", "hardening", "secure"],
+      "category": "security"
+    },
+    "PHL-Reverse": {
+      "file": "/phl/tokens/PHL-Reverse.md",
+      "intent": "역방향 검증/역로깅",
+      "aliases": ["역검증", "리버스", "reverse", "역추적"],
+      "category": "validation"
+    }
+  },
+  "contracts": {
+    "error-handling": "/phl/contracts/error-handling.md",
+    "logging": "/phl/contracts/logging.md",
+    "testing": "/phl/contracts/testing.md",
+    "security": "/phl/contracts/security.md",
+    "commit": "/phl/contracts/commit.md"
+  },
+  "playbooks": {
+    "phl-execution": "/phl/playbooks/phl-execution.md",
+    "new-token": "/phl/playbooks/new-token.md"
+  }
+}
