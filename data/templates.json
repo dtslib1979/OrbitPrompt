@@ -159,6 +159,18 @@
       "file": "prompts/identity/identity-engine.html",
       "variables": ["conversation_log", "axes", "previous_model"],
       "example": "대화 로그 → Meta/Reverse/Modular/Language/Zoom/Spiral/Quantum 분석"
+    },
+    {
+      "id": "form-multilingual",
+      "category": "education",
+      "name": "Multilingual Form",
+      "nameKo": "다국어 서식",
+      "format": "Form × Language Matrix",
+      "icon": "📝",
+      "description": "서식(처방전/계약서/SWIFT 등) × 다국어 인터랙티브 어학 학습 페이지",
+      "file": "prompts/form/form-generator.html",
+      "variables": ["formType", "languages", "displayMode", "difficulty"],
+      "example": "처방전 EN/KR/JP 버티컬 비교"
     }
   ]
 }
