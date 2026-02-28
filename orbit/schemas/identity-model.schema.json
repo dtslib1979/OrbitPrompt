@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Identity Model Schema v1",
+  "description": "대화 로그에서 추출한 자기 모델. 7축 철학적 프레임워크로 파싱된 정체성 스냅샷.",
+  "type": "object",
+  "required": ["schema", "version", "extracted", "axes", "identity"],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "identity-model",
+      "description": "스키마 식별자"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "default": "1.0",
+      "description": "모델 버전"
+    },
+    "extracted": {
+      "type": "string",
+      "format": "date",
+      "description": "추출 일자 (YYYY-MM-DD)"
+    },
+    "extract_target": {
+      "type": "string",
+      "enum": ["full", "thinker", "builder", "philosopher"],
+      "default": "full",
+      "description": "추출 관점"
+    },
+    "source_hash": {
+      "type": "string",
+      "description": "원본 대화 로그의 해시 (추적용)"
+    },
+    "source_context": {
+      "type": "string",
+      "description": "대화 컨텍스트 (예: Claude Code 세션, 철학 논의)"
+    },
+    "previous_model_ref": {
+      "type": "string",
+      "description": "Spiral 비교에 사용된 이전 모델 파일 경로"
+    },
+    "axes": {
+      "type": "object",
+      "description": "7축 분석 결과",
+      "properties": {
+        "meta": { "$ref": "#/$defs/axisResult" },
+        "reverse": { "$ref": "#/$defs/axisResult" },
+        "modular": { "$ref": "#/$defs/axisResult" },
+        "language": { "$ref": "#/$defs/axisResult" },
+        "zoom": { "$ref": "#/$defs/axisResult" },
+        "spiral": { "$ref": "#/$defs/axisResult" },
+        "quantum": { "$ref": "#/$defs/axisResult" }
+      },
+      "additionalProperties": false
+    },
+    "identity": {
+      "type": "object",
+      "description": "추출된 정체성 스냅샷",
+      "required": ["core_beliefs", "thinking_patterns"],
+      "properties": {
+        "core_beliefs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "핵심 신념/가치관"
+        },
+        "thinking_patterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "반복되는 사고 방식"
+        },
+        "recurring_metaphors": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "자주 쓰는 비유 체계"
+        },
+        "contradictions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "내적 모순이나 긴장"
+        },
+        "blind_spots": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "보지 못하는 것, 회피하는 것"
+        },
+        "growth_delta": {
+          "type": ["string", "null"],
+          "description": "이전 모델 대비 변화 요약 (Spiral). 첫 추출이면 null."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "axisResult": {
+      "type": "object",
+      "required": ["score", "patterns", "evidence", "insight"],
+      "properties": {
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "해당 축의 활동 강도 (0: 미감지, 10: 매우 강함)"
+        },
+        "patterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "발견된 사고 패턴 (추상화된 이름)"
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "대화 원문에서 직접 인용"
+        },
+        "insight": {
+          "type": "string",
+          "description": "이 축에서 발견한 핵심 통찰 (1~3문장)"
+        }
+      }
+    }
+  }
+}
