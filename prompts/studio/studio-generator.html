@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Tool Generator | OrbitPrompt</title>
+<style>
+:root {
+  --bg: #000; --surface: #1C1C1E; --surface2: #2C2C2E;
+  --accent: #0A84FF; --accent-dim: rgba(10,132,255,0.15);
+  --text: #F5F5F7; --text2: rgba(245,245,247,0.6); --text3: rgba(245,245,247,0.35);
+  --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.2);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 1rem; }
+.app { max-width: 640px; margin: 0 auto; }
+h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.3rem; }
+.sub { font-size: 0.85rem; color: var(--text2); margin-bottom: 1.5rem; }
+.badge { display: inline-block; padding: 3px 8px; background: var(--accent-dim); border: 1px solid var(--accent); font-size: 10px; color: var(--accent); letter-spacing: 0.05em; margin-bottom: 1rem; border-radius: 4px; }
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-size: 0.8rem; color: var(--text2); margin-bottom: 0.3rem; }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 0.7rem; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); font-size: 0.95rem;
+}
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+.field textarea { min-height: 80px; resize: vertical; font-family: inherit; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.btn { width: 100%; padding: 0.9rem; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 1rem; }
+.btn:hover { filter: brightness(1.1); }
+.output { margin-top: 1.5rem; }
+.output-title { font-size: 0.8rem; color: var(--text3); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
+.output-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; position: relative; }
+.output-box pre { font-family: 'Courier New', monospace; font-size: 0.8rem; line-height: 1.6; white-space: pre-wrap; word-break: break-all; color: var(--text2); max-height: 400px; overflow-y: auto; }
+.copy-btn { position: absolute; top: 8px; right: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 4px 10px; color: var(--text2); font-size: 11px; cursor: pointer; }
+.copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+.sep { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="badge">STUDIO GENERATOR</div>
+  <h1>Studio Tool Scaffold</h1>
+  <p class="sub">cloud-appstore 브라우저 도구 스캐폴드 생성</p>
+
+  <div class="field">
+    <label>Tool Name (영문)</label>
+    <input type="text" id="toolName" placeholder="my-tool">
+  </div>
+  <div class="field">
+    <label>Display Name</label>
+    <input type="text" id="displayName" placeholder="My Tool">
+  </div>
+  <div class="field">
+    <label>Description (한글)</label>
+    <input type="text" id="desc" placeholder="도구 설명">
+  </div>
+  <div class="row">
+    <div class="field">
+      <label>Category</label>
+      <select id="category">
+        <option value="video">영상</option>
+        <option value="audio">오디오</option>
+        <option value="image">이미지</option>
+        <option value="util">유틸</option>
+        <option value="game">게임</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Type</label>
+      <select id="type">
+        <option value="webapp">webapp</option>
+        <option value="pwa">pwa</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label>Icon (emoji)</label>
+    <input type="text" id="icon" placeholder="🔧" maxlength="4">
+  </div>
+
+  <button class="btn" onclick="generate()">Generate Scaffold</button>
+
+  <div class="output" id="outputSection" style="display:none">
+    <hr class="sep">
+    <div class="output-title">index.html</div>
+    <div class="output-box">
+      <button class="copy-btn" onclick="copyText('htmlOutput')">Copy</button>
+      <pre id="htmlOutput"></pre>
+    </div>
+    <hr class="sep">
+    <div class="output-title">apps.json entry</div>
+    <div class="output-box">
+      <button class="copy-btn" onclick="copyText('jsonOutput')">Copy</button>
+      <pre id="jsonOutput"></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+function generate() {
+  const name = document.getElementById('toolName').value.trim() || 'my-tool';
+  const display = document.getElementById('displayName').value.trim() || 'My Tool';
+  const desc = document.getElementById('desc').value.trim() || '도구 설명';
+  const cat = document.getElementById('category').value;
+  const type = document.getElementById('type').value;
+  const icon = document.getElementById('icon').value.trim() || '🔧';
+
+  const html = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${display} | DTSLIB Studio</title>
+<style>
+:root { --bg: #000; --card: #1C1C1E; --accent: #0A84FF; --text: #F5F5F7; --dim: rgba(245,245,247,0.6); --border: rgba(255,255,255,0.08); }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 1rem; padding-top: calc(60px + env(safe-area-inset-top)); }
+.app { max-width: 600px; margin: 0 auto; }
+h1 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+p { color: var(--dim); font-size: 0.9rem; margin-bottom: 1.5rem; }
+.card { background: var(--card); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>${icon} ${display}</h1>
+  <p>${desc}</p>
+  <div class="card">
+    <!-- 도구 UI -->
+  </div>
+</div>
+<script src="../shared/js/nav.js"><\/script>
+</body>
+</html>`;
+
+  const jsonEntry = JSON.stringify({
+    id: name, name: display, desc: desc,
+    icon: icon, version: "1.0", category: cat, type: type
+  }, null, 2);
+
+  document.getElementById('htmlOutput').textContent = html;
+  document.getElementById('jsonOutput').textContent = jsonEntry;
+  document.getElementById('outputSection').style.display = 'block';
+}
+
+function copyText(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById(id).parentElement.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+</script>
+</body>
+</html>
