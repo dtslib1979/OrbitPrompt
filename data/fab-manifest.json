@@ -10,54 +10,104 @@
     "RT-α": {
       "name": "콘텐츠 생산",
       "desc": "칠판/방송 템플릿 → boards/ 출력",
-      "generators": ["chalkboard", "editorial"],
-      "output_repos": ["dtslib1979/OrbitPrompt", "dtslib1979/parksy.kr"]
+      "generators": [
+        "chalkboard",
+        "editorial"
+      ],
+      "output_repos": [
+        "dtslib1979/OrbitPrompt",
+        "dtslib1979/parksy.kr"
+      ],
+      "studio_tools": [
+        "lecture-shorts",
+        "auto-shorts",
+        "math-tutor",
+        "music-curation"
+      ]
     },
     "RT-β": {
       "name": "앱 제조",
       "desc": "PWA 생성 → APK 스토어 출하",
-      "generators": ["pwa"],
-      "output_repos": ["dtslib1979/dtslib-apk-lab"],
-      "phl_tokens": ["PHL-Expansion"]
+      "generators": [
+        "pwa"
+      ],
+      "output_repos": [
+        "dtslib1979/dtslib-apk-lab"
+      ],
+      "phl_tokens": [
+        "PHL-Expansion"
+      ],
+      "studio_tools": []
     },
     "RT-γ": {
       "name": "보안 라인",
       "desc": "보안 강화 / OWASP 검증",
       "generators": [],
       "output_repos": [],
-      "phl_tokens": ["PHL-Hardening"]
+      "phl_tokens": [
+        "PHL-Hardening"
+      ],
+      "studio_tools": []
     },
     "RT-δ": {
       "name": "검증 라인",
       "desc": "역방향 검증 / 일관성 체크",
       "generators": [],
       "output_repos": [],
-      "phl_tokens": ["PHL-Reverse"]
+      "phl_tokens": [
+        "PHL-Reverse"
+      ],
+      "studio_tools": []
     },
     "RT-ε": {
       "name": "데이터 가공",
       "desc": "대화 로그 → 파인튜닝 데이터셋",
-      "generators": ["dataset"],
-      "output_repos": ["dtslib1979/parksy-logs"]
+      "generators": [
+        "dataset"
+      ],
+      "output_repos": [
+        "dtslib1979/parksy-logs"
+      ],
+      "studio_tools": []
     },
     "RT-ζ": {
       "name": "오디오 엔진",
       "desc": "BGM 파이프라인 / 3-Layer 믹싱",
       "generators": [],
-      "output_repos": ["dtslib1979/parksy-audio"]
+      "output_repos": [
+        "dtslib1979/parksy-audio"
+      ],
+      "studio_tools": [
+        "audio-studio"
+      ]
     },
     "RT-η": {
       "name": "물성 스튜디오",
       "desc": "녹음/녹화/렌더 공정",
       "generators": [],
-      "output_repos": ["dtslib1979/gohsy-production"]
+      "output_repos": [
+        "dtslib1979/gohsy-production"
+      ],
+      "studio_tools": [
+        "slim-lens",
+        "image-pack",
+        "clip-shorts",
+        "memorial-tribute",
+        "luxury-editorial"
+      ]
     },
     "RT-θ": {
       "name": "인프라/설정",
       "desc": "CLAUDE.md / 설정 / 프로토콜 배포",
-      "generators": ["instruction", "route"],
-      "output_repos": ["*"],
-      "phl_tokens": []
+      "generators": [
+        "instruction",
+        "route"
+      ],
+      "output_repos": [
+        "*"
+      ],
+      "phl_tokens": [],
+      "studio_tools": []
     }
   },
   "generators": {
@@ -102,6 +152,13 @@
       "route": "RT-θ",
       "output_dir": "external",
       "output_format": "json"
+    },
+    "studio": {
+      "file": "prompts/studio/studio-generator.html",
+      "route": "RT-α",
+      "output_dir": "external",
+      "output_format": "html",
+      "target_repo": "dtslib1979/dtslib-cloud-appstore"
     }
   },
   "cross_repo_map": {
@@ -112,6 +169,7 @@
     "parksy.kr": "방송국 — YouTube 송출",
     "parksy-logs": "데이터 창고 — 대화/RAG",
     "parksy-image": "이미지 에셋 — 칠판 배경",
-    "dtslib-apk-lab": "APK 스토어 — PWA 출하"
+    "dtslib-apk-lab": "APK 스토어 — PWA 출하",
+    "dtslib-cloud-appstore": "브라우저 스튜디오 — FFmpeg/이미지/오디오/방송소재 제작"
   }
 }
