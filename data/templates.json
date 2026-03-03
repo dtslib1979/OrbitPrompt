@@ -46,7 +46,12 @@
       "icon": "🎬",
       "description": "상용화급 추모 영상 - 9섹션, Ken Burns, 캐러셀",
       "file": "boards/tribute-cinema.html",
-      "variables": ["name", "title", "years", "sections"],
+      "variables": [
+        "name",
+        "title",
+        "years",
+        "sections"
+      ],
       "example": "18분 풀러닝타임 추모 다큐"
     },
     {
@@ -58,7 +63,11 @@
       "icon": "📐",
       "description": "칠판 + 손글씨 스타일 수학 강의",
       "file": "boards/math-tutor.html",
-      "variables": ["topic", "level", "duration"],
+      "variables": [
+        "topic",
+        "level",
+        "duration"
+      ],
       "example": "근의 공식 / 미분의 정의"
     },
     {
@@ -70,7 +79,11 @@
       "icon": "🎵",
       "description": "앨범/아티스트 분석 및 감상",
       "file": "boards/music-curation.html",
-      "variables": ["artist", "album", "era"],
+      "variables": [
+        "artist",
+        "album",
+        "era"
+      ],
       "example": "Beatles 분석 / 90년대 K-pop"
     },
     {
@@ -82,7 +95,12 @@
       "icon": "🕯️",
       "description": "인물 추모 다큐멘터리 스타일",
       "file": "boards/memorial-tribute.html",
-      "variables": ["name", "title", "years", "sections"],
+      "variables": [
+        "name",
+        "title",
+        "years",
+        "sections"
+      ],
       "example": "故 이해찬 전 국무총리"
     },
     {
@@ -94,7 +112,11 @@
       "icon": "📱",
       "description": "앱/서비스 시연 및 설치 가이드",
       "file": "boards/pwa-demo.html",
-      "variables": ["appName", "features", "installUrl"],
+      "variables": [
+        "appName",
+        "features",
+        "installUrl"
+      ],
       "example": "Parksy Capture 설치 가이드"
     },
     {
@@ -106,7 +128,11 @@
       "icon": "✨",
       "description": "하이엔드 비주얼 스토리텔링 룩북",
       "file": "boards/luxury-editorial.html",
-      "variables": ["title", "subtitle", "slides"],
+      "variables": [
+        "title",
+        "subtitle",
+        "slides"
+      ],
       "example": "The Art of Living"
     },
     {
@@ -118,7 +144,11 @@
       "icon": "🎤",
       "description": "1:1 인터뷰 포맷",
       "file": "boards/interview.html",
-      "variables": ["guest", "topic", "questions"],
+      "variables": [
+        "guest",
+        "topic",
+        "questions"
+      ],
       "example": "Coming Soon",
       "status": "coming-soon"
     },
@@ -131,7 +161,10 @@
       "icon": "📰",
       "description": "빠른 뉴스 요약 포맷",
       "file": "boards/news-brief.html",
-      "variables": ["headlines", "date"],
+      "variables": [
+        "headlines",
+        "date"
+      ],
       "example": "Coming Soon",
       "status": "coming-soon"
     },
@@ -144,7 +177,11 @@
       "icon": "💻",
       "description": "빠른 코드 설명 포맷",
       "file": "boards/code-review.html",
-      "variables": ["repo", "language", "concept"],
+      "variables": [
+        "repo",
+        "language",
+        "concept"
+      ],
       "example": "Coming Soon",
       "status": "coming-soon"
     },
@@ -157,7 +194,11 @@
       "icon": "🪞",
       "description": "대화 로그에서 자기 모델 추출 — 7축 철학적 파싱 엔진",
       "file": "prompts/identity/identity-engine.html",
-      "variables": ["conversation_log", "axes", "previous_model"],
+      "variables": [
+        "conversation_log",
+        "axes",
+        "previous_model"
+      ],
       "example": "대화 로그 → Meta/Reverse/Modular/Language/Zoom/Spiral/Quantum 분석"
     },
     {
@@ -169,8 +210,23 @@
       "icon": "📝",
       "description": "서식(처방전/계약서/SWIFT 등) × 다국어 인터랙티브 어학 학습 페이지",
       "file": "prompts/form/form-generator.html",
-      "variables": ["formType", "languages", "displayMode", "difficulty"],
+      "variables": [
+        "formType",
+        "languages",
+        "displayMode",
+        "difficulty"
+      ],
       "example": "처방전 EN/KR/JP 버티컬 비교"
+    },
+    {
+      "id": "studio-tool",
+      "category": "tech",
+      "name": "Studio Tool",
+      "nameKo": "스튜디오 도구",
+      "format": "Browser Tool Scaffold",
+      "icon": "🔧",
+      "description": "cloud-appstore 브라우저 도구 스캐폴드 생성",
+      "file": "prompts/studio/studio-generator.html"
     }
   ]
 }
