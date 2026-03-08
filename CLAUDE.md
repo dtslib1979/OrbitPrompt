@@ -501,3 +501,15 @@ Setup+Broadcast Mode    render.html 재생         PD 클래식 반주          
 - Termux + Claude Code로 개발
 - YouTube 8개 채널 운영
 - 목표: 말만 하면 콘텐츠가 나오는 자동화
+---
+
+## Browser Runtime
+
+> Parksy OS 2+2 매트릭스 — 이 레포 전담 브라우저
+
+| 항목 | 값 |
+|------|-----|
+| **브라우저** | Google Chrome |
+| **이유** | AI 멀티쿼리 엔진 — 기술 로직 강의 |
+| **URL** | https://github.com/dtslib1979/OrbitPrompt |
+
