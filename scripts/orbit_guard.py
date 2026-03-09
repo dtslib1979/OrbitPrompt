@@ -10,6 +10,7 @@ ROOT_WHITELIST = {
     "index.html",
     "manifest.webmanifest",
     "README.md",
+    "CLAUDE.md",
     ".gitignore",
     ".nojekyll",
     "assets",
@@ -17,6 +18,11 @@ ROOT_WHITELIST = {
     "scripts",
     "prompts",
     ".github",
+    # 콘텐츠 파일
+    "whitepaper.html",
+    "archive.html",
+    "PHL_INDEX.json",
+    "PHL_SPEC.md",
 }
 
 # ❌ Service Worker 금지 (캐시 문제 방지)
