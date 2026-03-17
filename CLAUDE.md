@@ -563,3 +563,33 @@ Setup+Broadcast Mode    render.html 재생         PD 클래식 반주          
 - 관련 스크립트: `C:\Temp\tistory_auto_v2.py`
 
 ---
+
+---
+
+## 출판 엔진 철학 (2026-03-17)
+
+> **OrbitPrompt = 디지털 출판 엔진. 대화를 출판물로 변환하는 공장.**
+
+### 역할 분리
+
+```
+eae-univ    → 종이 (물성) — 마스터테이블, KDP POD
+OrbitPrompt → 디지털 — PWA, EPUB, 프롬프트
+```
+
+### 핵심 명제
+
+대화 = 원고다. 따로 글 쓸 필요 없다.
+
+```
+ParksyLog (대화 로그)
+    → Lane A: eae-univ courses/ + publish/
+    → Lane B: OrbitPrompt prompts/publisher/drafts/
+동시 생성. 1 소스 → 2 출판물.
+```
+
+### 재귀 선언
+
+출판 도구를 만드는 과정이 그 도구의 첫 번째 출판물이다.
+이 레포의 git log = 메타프로그래밍 교재 원고.
+
