@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Publisher — OrbitPrompt</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-card: #0a0a0a;
+      --bg-input: #111111;
+      --bg-elevated: #1a1a1a;
+      --text: #f0f0f0;
+      --text-secondary: rgba(255,255,255,0.7);
+      --text-muted: rgba(255,255,255,0.4);
+      --accent: #a855f7;
+      --accent-dim: rgba(168,85,247,0.15);
+      --gold: #d4af37;
+      --border: rgba(255,255,255,0.08);
+      --font-ui: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.5rem;
+      line-height: 1.6;
+    }
+    .container { max-width: 640px; margin: 0 auto; }
+
+    header {
+      text-align: center;
+      padding: 1.5rem 0 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 0.25rem 0.5rem;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+    }
+    h1 {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      text-decoration: none;
+      display: block;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      background: var(--bg-elevated);
+    }
+    .card-tag {
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .card-title {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.375rem;
+    }
+    .card-desc {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .card-meta {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.4rem;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .info-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--accent);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .info-block p {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .info-block p + p { margin-top: 0.5rem; }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0 1rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    .footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    .footer-nav a {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .footer-nav a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="tag">Publisher</div>
+      <h1>KDP EPUB/POD 출판 Generator</h1>
+      <p class="subtitle">Amazon KDP 호환 EPUB 3.0 전자책 생성 도구</p>
+    </header>
+
+    <div class="info-block">
+      <p>책 메타데이터 입력 → 챕터 편집 → EPUB 3.0 파일 다운로드 → KDP 업로드.</p>
+      <p>출판사 등록이 있으면 출판사명을 사용. ISBN이 없으면 KDP가 무료로 발급한다.</p>
+    </div>
+
+    <div class="section-label">Generator</div>
+
+    <a class="card" href="kdp-publisher.html">
+      <div class="card-tag">KDP · EPUB 3.0</div>
+      <div class="card-title">KDP Publisher Generator</div>
+      <div class="card-desc">
+        책 메타데이터(제목, 저자, ISBN, 설명 등)를 입력하고 챕터를 작성하면
+        Amazon KDP 업로드 가능한 EPUB 3.0 파일을 생성한다.
+        KDP 업로드 가이드 포함.
+      </div>
+      <div class="card-meta">
+        <span class="badge">EPUB 3.0</span>
+        <span class="badge">KDP 호환</span>
+        <span class="badge">JSZip</span>
+        <span class="badge">단일 HTML</span>
+      </div>
+    </a>
+
+    <footer>
+      <div class="footer-nav">
+        <a href="../../index.html">← OrbitPrompt</a>
+        <a href="../apk/">PWA Generator</a>
+        <a href="../editorial/">Editorial</a>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

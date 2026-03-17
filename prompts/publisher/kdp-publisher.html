@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>KDP Publisher Generator — OrbitPrompt</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-card: #0a0a0a;
+      --bg-input: #111111;
+      --bg-elevated: #1a1a1a;
+      --text: #f0f0f0;
+      --text-secondary: rgba(255,255,255,0.7);
+      --text-muted: rgba(255,255,255,0.4);
+      --accent: #a855f7;
+      --accent-dim: rgba(168,85,247,0.15);
+      --gold: #d4af37;
+      --border: rgba(255,255,255,0.08);
+      --font-ui: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --red: #ef4444;
+      --green: #22c55e;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.5rem;
+      line-height: 1.6;
+    }
+    .container { max-width: 680px; margin: 0 auto; }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 1.5rem 0 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 0.25rem 0.5rem;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+    }
+    h1 {
+      font-family: var(--font-mono);
+      font-size: 1.375rem;
+      font-weight: 600;
+      margin-bottom: 0.375rem;
+    }
+    .subtitle {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    /* Step indicator */
+    .steps {
+      display: flex;
+      gap: 0;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .step-btn {
+      flex: 1;
+      background: var(--bg-card);
+      border: none;
+      border-right: 1px solid var(--border);
+      padding: 0.75rem 0.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: background 0.2s, color 0.2s;
+      text-align: center;
+    }
+    .step-btn:last-child { border-right: none; }
+    .step-btn.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+    .step-btn .step-num {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    /* Section */
+    .section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Form */
+    .field { margin-bottom: 0.875rem; }
+    .field:last-child { margin-bottom: 0; }
+    label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.375rem;
+    }
+    label .opt {
+      color: rgba(255,255,255,0.25);
+      font-size: 0.5rem;
+      letter-spacing: 0.05em;
+      text-transform: none;
+    }
+    input[type="text"],
+    input[type="url"],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      padding: 0.625rem 0.75rem;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+      border-radius: 0;
+    }
+    input[type="text"]:focus,
+    input[type="url"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+    }
+    textarea { resize: vertical; min-height: 5rem; }
+    select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.4)' stroke-width='1.5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      padding-right: 2rem;
+    }
+    .hint {
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Row layout */
+    .row { display: flex; gap: 0.75rem; }
+    .row .field { flex: 1; }
+
+    /* Chapter list */
+    .chapter-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .chapter-item {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .chapter-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.625rem 0.75rem;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+    .chapter-num {
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .chapter-title-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 0.875rem;
+      padding: 0;
+      outline: none;
+    }
+    .chapter-title-input::placeholder { color: var(--text-muted); }
+    .del-btn {
+      background: none;
+      border: 1px solid rgba(239,68,68,0.2);
+      color: rgba(239,68,68,0.6);
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .del-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+    .chapter-body-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      padding: 0.75rem;
+      outline: none;
+      resize: vertical;
+      min-height: 8rem;
+      line-height: 1.6;
+    }
+    .chapter-body-input::placeholder { color: var(--text-muted); }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.625rem 1rem;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .btn:hover {
+      background: var(--bg-elevated);
+      color: var(--text);
+    }
+    .btn-primary {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .btn-primary:hover {
+      background: rgba(168,85,247,0.25);
+    }
+    .btn-gold {
+      background: rgba(212,175,55,0.1);
+      border-color: rgba(212,175,55,0.4);
+      color: var(--gold);
+    }
+    .btn-gold:hover {
+      background: rgba(212,175,55,0.2);
+    }
+    .btn-add {
+      width: 100%;
+      border-style: dashed;
+      text-align: center;
+      margin-top: 0.75rem;
+    }
+    .btn-add:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Step panels */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    /* Nav row */
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+    }
+
+    /* Status */
+    .status-msg {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.05em;
+      padding: 0.5rem 0.75rem;
+      margin-top: 0.75rem;
+      display: none;
+    }
+    .status-msg.show { display: block; }
+    .status-msg.ok {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: var(--green);
+    }
+    .status-msg.err {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: var(--red);
+    }
+
+    /* Summary card */
+    .summary {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .summary-row {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.375rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: baseline;
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-key {
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      min-width: 80px;
+    }
+    .summary-val {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      flex: 1;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      max-width: 500px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.125rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.25rem;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-body { padding: 1.25rem; }
+    .guide-step {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      align-items: flex-start;
+    }
+    .guide-step:last-child { margin-bottom: 0; }
+    .guide-num {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 0.25rem 0.5rem;
+      white-space: nowrap;
+      margin-top: 0.125rem;
+    }
+    .guide-text {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .guide-text strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+    .guide-note {
+      font-family: var(--font-mono);
+      font-size: 0.5625rem;
+      letter-spacing: 0.05em;
+      color: var(--gold);
+      background: rgba(212,175,55,0.08);
+      border: 1px solid rgba(212,175,55,0.2);
+      padding: 0.625rem 0.75rem;
+      margin-top: 1rem;
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0 1rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    .footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    .footer-nav a {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .footer-nav a:hover { color: var(--accent); }
+
+    @media (max-width: 480px) {
+      body { padding: 1rem; }
+      .row { flex-direction: column; gap: 0; }
+      .nav-row { flex-direction: column; gap: 0.5rem; align-items: stretch; }
+      .nav-row .btn { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="tag">KDP Publisher</div>
+      <h1>KDP Publisher Generator</h1>
+      <p class="subtitle">EPUB 3.0 전자책 생성 — Amazon KDP 호환</p>
+    </header>
+
+    <!-- Step indicator -->
+    <div class="steps">
+      <button class="step-btn active" onclick="goStep(1)">
+        <span class="step-num">1</span>메타데이터
+      </button>
+      <button class="step-btn" onclick="goStep(2)">
+        <span class="step-num">2</span>챕터 편집
+      </button>
+      <button class="step-btn" onclick="goStep(3)">
+        <span class="step-num">3</span>생성 / 다운로드
+      </button>
+    </div>
+
+    <!-- Step 1: Metadata -->
+    <div class="step-panel active" id="step1">
+      <div class="section">
+        <div class="section-title">책 정보</div>
+
+        <div class="field">
+          <label>제목 <span style="color:var(--red)">*</span></label>
+          <input type="text" id="f-title" placeholder="책 제목을 입력하세요">
+        </div>
+        <div class="field">
+          <label>부제목 <span class="opt">(선택)</span></label>
+          <input type="text" id="f-subtitle" placeholder="부제목 (있으면)">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>저자 <span style="color:var(--red)">*</span></label>
+            <input type="text" id="f-author" placeholder="저자 이름">
+          </div>
+          <div class="field">
+            <label>언어 <span style="color:var(--red)">*</span></label>
+            <select id="f-lang">
+              <option value="ko">한국어 (ko)</option>
+              <option value="en">영어 (en)</option>
+              <option value="ja">일본어 (ja)</option>
+              <option value="zh">중국어 (zh)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>출판사명 <span class="opt">(선택)</span></label>
+          <input type="text" id="f-publisher" placeholder="출판사 등록번호가 있는 경우 입력">
+          <p class="hint">출판사 등록번호가 있는 경우만 사용. 없으면 비워두세요.</p>
+        </div>
+        <div class="field">
+          <label>ISBN <span class="opt">(선택)</span></label>
+          <input type="text" id="f-isbn" placeholder="979-11-XXXXXXX-X — 없으면 KDP가 무료 발급">
+          <p class="hint">자체 ISBN이 없으면 비워두면 됩니다. KDP가 무료로 발급합니다.</p>
+        </div>
+        <div class="field">
+          <label>표지 이미지 URL <span class="opt">(선택)</span></label>
+          <input type="url" id="f-cover" placeholder="https://...">
+          <p class="hint">외부 URL 또는 Base64 data URI. 비우면 표지 파일 없이 생성.</p>
+        </div>
+        <div class="field">
+          <label>책 설명 <span style="color:var(--red)">*</span></label>
+          <textarea id="f-desc" placeholder="책 소개 (KDP 상품 설명에 사용됩니다)"></textarea>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <span></span>
+        <button class="btn btn-primary" onclick="goStep(2)">다음: 챕터 편집 →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Chapters -->
+    <div class="step-panel" id="step2">
+      <div class="section">
+        <div class="section-title">챕터 편집</div>
+        <div class="chapter-list" id="chapter-list"></div>
+        <button class="btn btn-add" onclick="addChapter()">+ 챕터 추가</button>
+      </div>
+      <div class="nav-row">
+        <button class="btn" onclick="goStep(1)">← 메타데이터</button>
+        <button class="btn btn-primary" onclick="goStep(3)">다음: 생성 →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Generate -->
+    <div class="step-panel" id="step3">
+      <div class="section">
+        <div class="section-title">요약 확인</div>
+        <div class="summary" id="summary-block"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">EPUB 생성</div>
+        <p style="font-size:0.8125rem;color:var(--text-secondary);margin-bottom:1rem;">
+          JSZip으로 EPUB 3.0 구조를 패키징합니다. KDP 업로드 가능한 .epub 파일이 생성됩니다.
+        </p>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="generateEpub()">EPUB 다운로드</button>
+          <button class="btn btn-gold" onclick="openGuide()">KDP 업로드 가이드</button>
+        </div>
+        <div class="status-msg" id="status-msg"></div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn" onclick="goStep(2)">← 챕터 편집</button>
+        <span></span>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-nav">
+        <a href="index.html">← Publisher</a>
+        <a href="../../index.html">OrbitPrompt</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- KDP Guide Modal -->
+  <div class="modal-overlay" id="guide-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">KDP 업로드 가이드</span>
+        <button class="modal-close" onclick="closeGuide()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="guide-step">
+          <span class="guide-num">STEP 1</span>
+          <div class="guide-text"><strong>kdp.amazon.com</strong> 접속 → Amazon 계정으로 로그인</div>
+        </div>
+        <div class="guide-step">
+          <span class="guide-num">STEP 2</span>
+          <div class="guide-text">대시보드에서 <strong>"+ eBook 추가"</strong> 클릭</div>
+        </div>
+        <div class="guide-step">
+          <span class="guide-num">STEP 3</span>
+          <div class="guide-text">
+            <strong>책 세부 정보</strong> 탭 — 이 Generator에서 입력한 메타데이터(제목, 저자, 설명, 언어 등) 그대로 입력
+          </div>
+        </div>
+        <div class="guide-step">
+          <span class="guide-num">STEP 4</span>
+          <div class="guide-text">
+            <strong>콘텐츠 업로드</strong> → 방금 다운로드한 <strong>.epub 파일</strong> 업로드.<br>
+            표지 이미지도 별도로 업로드 가능 (2,560×1,600px 권장).
+          </div>
+        </div>
+        <div class="guide-step">
+          <span class="guide-num">STEP 5</span>
+          <div class="guide-text">
+            <strong>ISBN:</strong> 자체 ISBN이 있으면 입력.<br>
+            없으면 "무료 KDP ISBN 발급" 선택 → KDP가 자동 발급.
+          </div>
+        </div>
+        <div class="guide-step">
+          <span class="guide-num">STEP 6</span>
+          <div class="guide-text">
+            <strong>가격 설정</strong> — 로열티 70% 조건: $2.99 ~ $9.99 범위.<br>
+            $2.99 미만 또는 $9.99 초과 시 로열티 35%로 낮아짐.
+          </div>
+        </div>
+        <div class="guide-step">
+          <span class="guide-num">STEP 7</span>
+          <div class="guide-text">
+            <strong>출판 제출</strong> → 보통 24~72시간 내 승인.<br>
+            승인 후 Amazon에서 판매 시작.
+          </div>
+        </div>
+        <div class="guide-note">
+          KDP Select 등록 시 독점 90일 약정 → Kindle Unlimited 수익 + 프리모션 혜택.<br>
+          다른 플랫폼(리디, 교보)과 동시 판매 원하면 KDP Select 미등록.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ── State ───────────────────────────────────────────────
+      var chapters = [];
+      var chapterCounter = 0;
+      var currentStep = 1;
+
+      // ── Step navigation ─────────────────────────────────────
+      window.goStep = function(n) {
+        if (n === 2 && currentStep === 1) {
+          if (!validateMeta()) return;
+        }
+        if (n === 3) {
+          if (currentStep === 1 && !validateMeta()) return;
+          if (!validateChapters()) return;
+          buildSummary();
+        }
+        currentStep = n;
+        document.querySelectorAll('.step-panel').forEach(function(p, i) {
+          p.classList.toggle('active', i + 1 === n);
+        });
+        document.querySelectorAll('.step-btn').forEach(function(b, i) {
+          b.classList.toggle('active', i + 1 === n);
+        });
+        window.scrollTo(0, 0);
+      };
+
+      // ── Validation ──────────────────────────────────────────
+      function validateMeta() {
+        var title = v('f-title');
+        var author = v('f-author');
+        var desc = v('f-desc');
+        if (!title) { alert('제목을 입력하세요.'); return false; }
+        if (!author) { alert('저자를 입력하세요.'); return false; }
+        if (!desc) { alert('책 설명을 입력하세요.'); return false; }
+        return true;
+      }
+
+      function validateChapters() {
+        if (chapters.length === 0) { alert('챕터를 최소 1개 추가하세요.'); return false; }
+        for (var i = 0; i < chapters.length; i++) {
+          var t = chapTitle(chapters[i].id);
+          if (!t) { alert((i + 1) + '번 챕터 제목을 입력하세요.'); return false; }
+        }
+        return true;
+      }
+
+      // ── Chapter management ──────────────────────────────────
+      window.addChapter = function() {
+        chapterCounter++;
+        var id = 'ch-' + chapterCounter;
+        chapters.push({ id: id });
+        renderChapterList();
+      };
+
+      window.removeChapter = function(id) {
+        if (chapters.length <= 1) { alert('최소 1개의 챕터가 필요합니다.'); return; }
+        chapters = chapters.filter(function(c) { return c.id !== id; });
+        renderChapterList();
+      };
+
+      function renderChapterList() {
+        var list = document.getElementById('chapter-list');
+        list.innerHTML = '';
+        chapters.forEach(function(c, idx) {
+          var item = document.createElement('div');
+          item.className = 'chapter-item';
+          item.id = 'item-' + c.id;
+          item.innerHTML =
+            '<div class="chapter-header">' +
+              '<span class="chapter-num">CH. ' + pad(idx + 1) + '</span>' +
+              '<input type="text" class="chapter-title-input" id="ctitle-' + c.id + '"' +
+                ' placeholder="챕터 제목">' +
+              '<button class="del-btn" onclick="removeChapter(\'' + c.id + '\')">삭제</button>' +
+            '</div>' +
+            '<textarea class="chapter-body-input" id="cbody-' + c.id + '"' +
+              ' placeholder="챕터 내용을 입력하세요. HTML 태그 사용 가능 (<p>, <h2>, <br> 등)"></textarea>';
+          list.appendChild(item);
+        });
+      }
+
+      // ── Summary ─────────────────────────────────────────────
+      function buildSummary() {
+        var rows = [
+          ['제목', v('f-title') + (v('f-subtitle') ? ' — ' + v('f-subtitle') : '')],
+          ['저자', v('f-author')],
+          ['언어', v('f-lang')],
+          ['출판사', v('f-publisher') || '(미입력)'],
+          ['ISBN', v('f-isbn') || '(KDP 자동 발급)'],
+          ['챕터 수', chapters.length + '개'],
+          ['설명', v('f-desc').slice(0, 80) + (v('f-desc').length > 80 ? '…' : '')]
+        ];
+        var html = rows.map(function(r) {
+          return '<div class="summary-row"><span class="summary-key">' + r[0] +
+            '</span><span class="summary-val">' + esc(r[1]) + '</span></div>';
+        }).join('');
+        document.getElementById('summary-block').innerHTML = html;
+      }
+
+      // ── EPUB Generation ─────────────────────────────────────
+      window.generateEpub = function() {
+        if (!validateMeta() || !validateChapters()) return;
+
+        var title    = v('f-title');
+        var subtitle = v('f-subtitle');
+        var author   = v('f-author');
+        var publisher = v('f-publisher') || '';
+        var isbn     = v('f-isbn') || ('urn:uuid:' + genUUID());
+        var lang     = v('f-lang');
+        var desc     = v('f-desc');
+        var coverUrl = v('f-cover');
+        var today    = new Date().toISOString().slice(0, 10);
+        var modifiedDT = new Date().toISOString().slice(0, 19) + 'Z';
+        var fullTitle = subtitle ? title + ': ' + subtitle : title;
+
+        // Collect chapter data
+        var chapterData = chapters.map(function(c, idx) {
+          return {
+            id:    'ch' + pad3(idx + 1),
+            href:  'chapter_' + pad3(idx + 1) + '.xhtml',
+            title: chapTitle(c.id) || ('Chapter ' + (idx + 1)),
+            body:  chapBody(c.id)
+          };
+        });
+
+        // Build ZIP
+        var zip = new JSZip();
+
+        // mimetype — must be first, no compression
+        zip.file('mimetype', 'application/epub+zip', { compression: 'STORE' });
+
+        // META-INF/container.xml
+        zip.file('META-INF/container.xml',
+          '<?xml version="1.0" encoding="UTF-8"?>\n' +
+          '<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">\n' +
+          '  <rootfiles>\n' +
+          '    <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>\n' +
+          '  </rootfiles>\n' +
+          '</container>');
+
+        // OEBPS/style.css
+        zip.file('OEBPS/style.css',
+          'body {\n' +
+          '  font-family: Georgia, "Nanum Myeongjo", "Batang", serif;\n' +
+          '  font-size: 1em;\n' +
+          '  line-height: 1.7;\n' +
+          '  margin: 5% 8%;\n' +
+          '  color: #1a1a1a;\n' +
+          '}\n' +
+          'h1 {\n' +
+          '  font-size: 1.5em;\n' +
+          '  font-weight: 700;\n' +
+          '  margin-bottom: 1em;\n' +
+          '  line-height: 1.3;\n' +
+          '}\n' +
+          'h2 {\n' +
+          '  font-size: 1.2em;\n' +
+          '  font-weight: 600;\n' +
+          '  margin: 1.5em 0 0.75em;\n' +
+          '}\n' +
+          'p {\n' +
+          '  margin-bottom: 0.8em;\n' +
+          '  text-indent: 1.5em;\n' +
+          '}\n' +
+          'p.noindent {\n' +
+          '  text-indent: 0;\n' +
+          '}\n' +
+          'hr {\n' +
+          '  border: none;\n' +
+          '  border-top: 1px solid #ccc;\n' +
+          '  margin: 2em auto;\n' +
+          '  width: 50%;\n' +
+          '}\n');
+
+        // OEBPS/content.opf
+        var manifestItems = [
+          '    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>',
+          '    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>',
+          '    <item id="css" href="style.css" media-type="text/css"/>'
+        ];
+        var spineItems = [];
+        chapterData.forEach(function(ch) {
+          manifestItems.push(
+            '    <item id="' + ch.id + '" href="' + ch.href + '" media-type="application/xhtml+xml"/>'
+          );
+          spineItems.push('    <itemref idref="' + ch.id + '"/>');
+        });
+        if (coverUrl) {
+          manifestItems.unshift('    <item id="cover-image" href="' + esc(coverUrl) + '" media-type="image/jpeg" properties="cover-image"/>');
+        }
+
+        var publisherTag = publisher ? '    <dc:publisher>' + esc(publisher) + '</dc:publisher>\n' : '';
+        var coverMeta = coverUrl ? '    <meta name="cover" content="cover-image"/>\n' : '';
+
+        zip.file('OEBPS/content.opf',
+          '<?xml version="1.0" encoding="UTF-8"?>\n' +
+          '<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uid" xml:lang="' + lang + '">\n' +
+          '  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n' +
+          '    <dc:identifier id="uid">' + esc(isbn) + '</dc:identifier>\n' +
+          '    <dc:title>' + esc(fullTitle) + '</dc:title>\n' +
+          '    <dc:creator id="creator">' + esc(author) + '</dc:creator>\n' +
+          '    <meta refines="#creator" property="role" scheme="marc:relators">aut</meta>\n' +
+          publisherTag +
+          '    <dc:language>' + lang + '</dc:language>\n' +
+          '    <dc:date>' + today + '</dc:date>\n' +
+          '    <dc:description>' + esc(desc) + '</dc:description>\n' +
+          '    <meta property="dcterms:modified">' + modifiedDT + '</meta>\n' +
+          coverMeta +
+          '  </metadata>\n' +
+          '  <manifest>\n' +
+          manifestItems.join('\n') + '\n' +
+          '  </manifest>\n' +
+          '  <spine toc="ncx">\n' +
+          spineItems.join('\n') + '\n' +
+          '  </spine>\n' +
+          '</package>');
+
+        // OEBPS/nav.xhtml
+        var navItems = chapterData.map(function(ch) {
+          return '      <li><a href="' + ch.href + '">' + esc(ch.title) + '</a></li>';
+        }).join('\n');
+        zip.file('OEBPS/nav.xhtml',
+          '<?xml version="1.0" encoding="UTF-8"?>\n' +
+          '<!DOCTYPE html>\n' +
+          '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="' + lang + '">\n' +
+          '<head>\n' +
+          '  <meta charset="UTF-8"/>\n' +
+          '  <title>' + esc(fullTitle) + '</title>\n' +
+          '  <link rel="stylesheet" type="text/css" href="style.css"/>\n' +
+          '</head>\n' +
+          '<body>\n' +
+          '  <nav epub:type="toc" id="toc">\n' +
+          '    <h2>목차</h2>\n' +
+          '    <ol>\n' +
+          navItems + '\n' +
+          '    </ol>\n' +
+          '  </nav>\n' +
+          '</body>\n' +
+          '</html>');
+
+        // OEBPS/toc.ncx (EPUB2 호환)
+        var ncxNavPoints = chapterData.map(function(ch, idx) {
+          return (
+            '    <navPoint id="navpoint-' + (idx + 1) + '" playOrder="' + (idx + 1) + '">\n' +
+            '      <navLabel><text>' + esc(ch.title) + '</text></navLabel>\n' +
+            '      <content src="' + ch.href + '"/>\n' +
+            '    </navPoint>'
+          );
+        }).join('\n');
+        zip.file('OEBPS/toc.ncx',
+          '<?xml version="1.0" encoding="UTF-8"?>\n' +
+          '<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"\n' +
+          '  "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">\n' +
+          '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="' + lang + '">\n' +
+          '  <head>\n' +
+          '    <meta name="dtb:uid" content="' + esc(isbn) + '"/>\n' +
+          '    <meta name="dtb:depth" content="1"/>\n' +
+          '    <meta name="dtb:totalPageCount" content="0"/>\n' +
+          '    <meta name="dtb:maxPageNumber" content="0"/>\n' +
+          '  </head>\n' +
+          '  <docTitle><text>' + esc(fullTitle) + '</text></docTitle>\n' +
+          '  <navMap>\n' +
+          ncxNavPoints + '\n' +
+          '  </navMap>\n' +
+          '</ncx>');
+
+        // OEBPS/chapter_XXX.xhtml
+        chapterData.forEach(function(ch) {
+          var bodyContent = ch.body.trim();
+          // Wrap plain text lines in <p> if no block tags detected
+          if (bodyContent && !/<(p|h[1-6]|div|ul|ol|blockquote)/i.test(bodyContent)) {
+            bodyContent = bodyContent.split(/\n+/).filter(function(l) {
+              return l.trim();
+            }).map(function(l) {
+              return '<p>' + esc(l.trim()) + '</p>';
+            }).join('\n  ');
+          }
+          zip.file('OEBPS/' + ch.href,
+            '<?xml version="1.0" encoding="UTF-8"?>\n' +
+            '<!DOCTYPE html>\n' +
+            '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="' + lang + '">\n' +
+            '<head>\n' +
+            '  <meta charset="UTF-8"/>\n' +
+            '  <title>' + esc(ch.title) + '</title>\n' +
+            '  <link rel="stylesheet" type="text/css" href="style.css"/>\n' +
+            '</head>\n' +
+            '<body>\n' +
+            '  <h1>' + esc(ch.title) + '</h1>\n' +
+            '  ' + bodyContent + '\n' +
+            '</body>\n' +
+            '</html>');
+        });
+
+        // Generate and save
+        var slug = title.replace(/[^a-zA-Z0-9가-힣]/g, '-').replace(/-+/g, '-').slice(0, 40);
+        var filename = slug + '-' + today + '.epub';
+
+        zip.generateAsync({ type: 'blob', mimeType: 'application/epub+zip' })
+          .then(function(content) {
+            saveAs(content, filename);
+            showStatus('ok', 'EPUB 생성 완료: ' + filename);
+          })
+          .catch(function(err) {
+            showStatus('err', '생성 실패: ' + err.message);
+          });
+      };
+
+      // ── KDP Guide Modal ─────────────────────────────────────
+      window.openGuide = function() {
+        document.getElementById('guide-modal').classList.add('open');
+      };
+      window.closeGuide = function() {
+        document.getElementById('guide-modal').classList.remove('open');
+      };
+      document.getElementById('guide-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeGuide();
+      });
+
+      // ── Helpers ─────────────────────────────────────────────
+      function v(id) {
+        var el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+      }
+      function chapTitle(id) {
+        var el = document.getElementById('ctitle-' + id);
+        return el ? el.value.trim() : '';
+      }
+      function chapBody(id) {
+        var el = document.getElementById('cbody-' + id);
+        return el ? el.value : '';
+      }
+      function esc(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+      function pad(n) { return n < 10 ? '0' + n : String(n); }
+      function pad3(n) { return n < 10 ? '00' + n : n < 100 ? '0' + n : String(n); }
+      function genUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random() * 16 | 0;
+          var v = c === 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+      }
+      function showStatus(type, msg) {
+        var el = document.getElementById('status-msg');
+        el.textContent = msg;
+        el.className = 'status-msg show ' + type;
+      }
+
+      // ── Init ─────────────────────────────────────────────────
+      addChapter();
+    })();
+  </script>
+</body>
+</html>
