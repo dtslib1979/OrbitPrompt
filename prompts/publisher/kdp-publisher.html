@@ -461,11 +461,36 @@
     }
     .footer-nav a:hover { color: var(--accent); }
 
+    /* Repo source grid */
+    .source-intro { font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.6; }
+    .repo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.5rem; margin-bottom: 1rem; }
+    .repo-card {
+      background: var(--bg-input); border: 1px solid var(--border);
+      padding: 0.625rem 0.75rem; text-align: left; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      display: flex; flex-direction: column; gap: 0.2rem;
+    }
+    .repo-card:hover { border-color: var(--accent); background: var(--accent-dim); }
+    .repo-card.loading { opacity: 0.4; pointer-events: none; }
+    .repo-tier {
+      font-family: var(--font-mono); font-size: 0.5rem; letter-spacing: 0.1em;
+      color: var(--accent); background: var(--accent-dim);
+      padding: 0.1rem 0.375rem; display: inline-block; width: fit-content;
+    }
+    .repo-name { font-size: 0.75rem; font-weight: 500; color: var(--text); }
+    .repo-role { font-size: 0.625rem; color: var(--text-muted); }
+    .fetch-log {
+      font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.04em;
+      padding: 0.625rem 0.75rem; background: var(--bg-input); border: 1px solid var(--border);
+      color: var(--text-secondary); min-height: 2.25rem; line-height: 1.6;
+    }
+
     @media (max-width: 480px) {
       body { padding: 1rem; }
       .row { flex-direction: column; gap: 0; }
       .nav-row { flex-direction: column; gap: 0.5rem; align-items: stretch; }
       .nav-row .btn { text-align: center; }
+      .repo-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
     }
   </style>
 </head>
@@ -479,7 +504,10 @@
 
     <!-- Step indicator -->
     <div class="steps">
-      <button class="step-btn active" onclick="goStep(1)">
+      <button class="step-btn active" onclick="goStep(0)">
+        <span class="step-num">0</span>소스
+      </button>
+      <button class="step-btn" onclick="goStep(1)">
         <span class="step-num">1</span>메타데이터
       </button>
       <button class="step-btn" onclick="goStep(2)">
@@ -488,6 +516,23 @@
       <button class="step-btn" onclick="goStep(3)">
         <span class="step-num">3</span>생성 / 다운로드
       </button>
+    </div>
+
+    <!-- Step 0: Source -->
+    <div class="step-panel active" id="step0">
+      <div class="section">
+        <div class="section-title">소스 레포지토리</div>
+        <p class="source-intro">
+          28개 레포 중 하나를 선택하면 CLAUDE.md를 파싱하여 챕터로 자동 변환합니다.<br>
+          직접 입력하려면 "직접 입력 →"을 클릭하세요.
+        </p>
+        <div class="repo-grid" id="repo-grid"></div>
+        <div class="fetch-log" id="fetch-log">레포를 선택하면 파싱이 시작됩니다.</div>
+      </div>
+      <div class="nav-row">
+        <span></span>
+        <button class="btn btn-primary" onclick="goStep(1)">직접 입력 →</button>
+      </div>
     </div>
 
     <!-- Step 1: Metadata -->
@@ -540,7 +585,7 @@
       </div>
 
       <div class="nav-row">
-        <span></span>
+        <button class="btn" onclick="goStep(0)">← 소스 선택</button>
         <button class="btn btn-primary" onclick="goStep(2)">다음: 챕터 편집 →</button>
       </div>
     </div>
@@ -656,7 +701,109 @@
       // ── State ───────────────────────────────────────────────
       var chapters = [];
       var chapterCounter = 0;
-      var currentStep = 1;
+      var currentStep = 0;
+
+      // ── Repo Registry (28 repos) ─────────────────────────────
+      var REPOS = [
+        { id:'dtslib-papyrus',        name:'Papyrus HQ',       tier:1, role:'그룹 본사' },
+        { id:'dtslib-branch',         name:'Branch OS',        tier:2, role:'프랜차이즈' },
+        { id:'espiritu-tango',        name:'Espiritu Tango',   tier:2, role:'물성 HQ' },
+        { id:'gohsy-fashion',         name:'Gohsy Fashion',    tier:2, role:'커머스 HQ' },
+        { id:'eae-univ',              name:'EAE Univ',         tier:2, role:'사내대학' },
+        { id:'parksy.kr',             name:'parksy.kr',        tier:3, role:'메리트 방송' },
+        { id:'eae.kr',                name:'eae.kr',           tier:3, role:'교육방송' },
+        { id:'dtslib.kr',             name:'dtslib.kr',        tier:3, role:'경제방송' },
+        { id:'parksy-image',          name:'Parksy Image',     tier:3, role:'이미지 스튜디오' },
+        { id:'parksy-audio',          name:'Parksy Audio',     tier:3, role:'오디오 스튜디오' },
+        { id:'OrbitPrompt',           name:'OrbitPrompt',      tier:3, role:'프롬프트 엔진' },
+        { id:'hoyadang.com',          name:'Hoyadang',         tier:3, role:'빵집' },
+        { id:'gohsy-production',      name:'Gohsy Production', tier:3, role:'방송 스튜디오' },
+        { id:'phoneparis',            name:'Phoneparis',       tier:3, role:'모바일 유통' },
+        { id:'alexandria-sanctuary',  name:'Alexandria',       tier:3, role:'요양원' },
+        { id:'buddies.kr',            name:'buddies.kr',       tier:3, role:'소기업 인스톨' },
+        { id:'buckleychang.com',      name:'Buckley Chang',    tier:3, role:'컨설팅' },
+        { id:'koosy',                 name:'Koosy',            tier:4, role:'수학과외' },
+        { id:'gohsy',                 name:'Gohsy',            tier:4, role:'배우/PD' },
+        { id:'artrew',                name:'Artrew',           tier:4, role:'AI 미대생' },
+        { id:'papafly',               name:'Papafly',          tier:4, role:'K-도넛' },
+        { id:'justino',               name:'Justino',          tier:4, role:'쇼핑몰' },
+        { id:'namoneygoal',           name:'Namoneygoal',      tier:4, role:'부동산 길드' },
+        { id:'dtslib-apk-lab',        name:'APK Lab',          tier:5, role:'APK 스토어' },
+        { id:'dtslib-cloud-appstore', name:'Cloud Appstore',   tier:5, role:'PWA 스튜디오' },
+        { id:'termux-bridge',         name:'Termux Bridge',    tier:5, role:'도구 모음' },
+        { id:'dtslib-localpc',        name:'Local PC',         tier:5, role:'GPU 환경' },
+        { id:'parksy-logs',           name:'Parksy Logs',      tier:5, role:'로그/RAG' }
+      ];
+
+      function renderRepoGrid() {
+        var g = document.getElementById('repo-grid');
+        g.innerHTML = REPOS.map(function(r) {
+          return '<button class="repo-card" onclick="fetchRepo(\'' + r.id + '\')">' +
+            '<span class="repo-tier">T' + r.tier + '</span>' +
+            '<span class="repo-name">' + r.name + '</span>' +
+            '<span class="repo-role">' + r.role + '</span>' +
+            '</button>';
+        }).join('');
+      }
+
+      window.fetchRepo = function(repoId) {
+        var log = document.getElementById('fetch-log');
+        var cards = document.querySelectorAll('.repo-card');
+        cards.forEach(function(c) { c.classList.add('loading'); });
+        log.style.color = 'var(--text-secondary)';
+        log.textContent = repoId + ' CLAUDE.md 로딩 중...';
+        var url = 'https://raw.githubusercontent.com/dtslib1979/' + repoId + '/main/CLAUDE.md';
+        fetch(url)
+          .then(function(r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status + ' — private 레포이거나 CLAUDE.md 없음');
+            return r.text();
+          })
+          .then(function(md) {
+            cards.forEach(function(c) { c.classList.remove('loading'); });
+            var parsed = parseMd(md, repoId);
+            document.getElementById('f-title').value = parsed.title;
+            document.getElementById('f-desc').value = parsed.desc;
+            document.getElementById('f-author').value = document.getElementById('f-author').value || 'Parksy';
+            chapters = [];
+            chapterCounter = 0;
+            parsed.chapters.forEach(function(ch) {
+              chapterCounter++;
+              chapters.push({ id: 'ch-' + chapterCounter, preTitle: ch.title, preBody: ch.body });
+            });
+            renderChapterList();
+            log.style.color = 'var(--green)';
+            log.textContent = '✓ ' + repoId + ' 파싱 완료 — ' + parsed.chapters.length + '개 챕터. 메타데이터 확인 후 진행하세요.';
+            setTimeout(function() { goStep(1); }, 600);
+          })
+          .catch(function(e) {
+            cards.forEach(function(c) { c.classList.remove('loading'); });
+            log.style.color = 'var(--red)';
+            log.textContent = '✗ ' + repoId + ': ' + e.message;
+          });
+      };
+
+      function parseMd(md, repoId) {
+        var h1 = md.match(/^# (.+)/m);
+        var title = h1 ? h1[1].replace(/[`*_]/g, '').trim() : repoId;
+        var descMatch = md.match(/^> (.{10,300})/m);
+        var desc = descMatch ? descMatch[1].replace(/[*`_]/g, '').trim() : (repoId + ' — DTSLIB 생태계 28개 레포');
+        var parts = ('\n' + md).split(/\n(?=## )/);
+        var chs = [];
+        parts.forEach(function(p) {
+          var m = p.match(/^## (.+)\n([\s\S]{20,})/);
+          if (!m) return;
+          var chTitle = m[1].replace(/[`*_#]/g, '').replace(/\s+/g, ' ').trim();
+          var body = m[2].trim()
+            .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+            .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/`([^`\n]+)`/g, '<code>$1</code>')
+            .replace(/\n{3,}/g, '\n\n');
+          if (body.length > 30) chs.push({ title: chTitle, body: body });
+        });
+        if (chs.length === 0) chs = [{ title: 'Chapter 1', body: md.slice(0, 3000) }];
+        return { title: title, desc: desc, chapters: chs };
+      }
 
       // ── Step navigation ─────────────────────────────────────
       window.goStep = function(n) {
@@ -670,10 +817,10 @@
         }
         currentStep = n;
         document.querySelectorAll('.step-panel').forEach(function(p, i) {
-          p.classList.toggle('active', i + 1 === n);
+          p.classList.toggle('active', i === n);
         });
         document.querySelectorAll('.step-btn').forEach(function(b, i) {
-          b.classList.toggle('active', i + 1 === n);
+          b.classList.toggle('active', i === n);
         });
         window.scrollTo(0, 0);
       };
@@ -729,6 +876,8 @@
             '<textarea class="chapter-body-input" id="cbody-' + c.id + '"' +
               ' placeholder="챕터 내용을 입력하세요. HTML 태그 사용 가능 (<p>, <h2>, <br> 등)"></textarea>';
           list.appendChild(item);
+          if (c.preTitle) document.getElementById('ctitle-' + c.id).value = c.preTitle;
+          if (c.preBody) document.getElementById('cbody-' + c.id).value = c.preBody;
         });
       }
 
@@ -1005,6 +1154,7 @@
       }
 
       // ── Init ─────────────────────────────────────────────────
+      renderRepoGrid();
       addChapter();
     })();
   </script>
