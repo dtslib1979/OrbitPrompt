@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#050505">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <title>OrbitPrompt — Treasure Map</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #050505; font-family: system-ui, -apple-system, sans-serif; color: #f0f0f0; user-select: none; }
+
+    /* ── CANVAS ── */
+    #vp { position: fixed; inset: 0; overflow: hidden; cursor: grab; }
+    #vp.dragging { cursor: grabbing; }
+    #canvas { position: absolute; width: 0; height: 0; transform-origin: 0 0; will-change: transform; }
+
+    /* ── EDGES (SVG) ── */
+    #edges { position: absolute; overflow: visible; pointer-events: none; }
+
+    /* ── NODES ── */
+    .node { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-radius: 14px; cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; }
+    .node:hover { transform: scale(1.06); }
+    .node.hub {
+      width: 170px; height: 85px;
+      background: linear-gradient(135deg, #0d0018 0%, #1a0035 100%);
+      border: 2px solid #a855f7;
+      box-shadow: 0 0 22px rgba(168,85,247,0.4), 0 0 50px rgba(168,85,247,0.12);
+    }
+    .node.generator {
+      width: 152px; height: 72px;
+      background: #0a0a14;
+      border: 1px solid rgba(34,211,238,0.4);
+      box-shadow: 0 0 12px rgba(34,211,238,0.12);
+    }
+    .node.archive {
+      width: 140px; height: 64px;
+      background: #0f0a0a;
+      border: 1px solid rgba(212,175,55,0.35);
+      box-shadow: 0 0 10px rgba(212,175,55,0.1);
+    }
+    .node.stat {
+      width: 104px; height: 50px;
+      background: #0a0a0f;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .node.link {
+      width: 136px; height: 40px;
+      background: rgba(168,85,247,0.07);
+      border: 1px solid rgba(168,85,247,0.3);
+      text-decoration: none;
+    }
+    .node-label { font-size: 12px; font-weight: 700; line-height: 1.3; white-space: pre-line; }
+    .node.hub .node-label      { font-size: 13px; color: #c084fc; }
+    .node.generator .node-label { color: #67e8f9; }
+    .node.archive .node-label   { color: #d4af37; }
+    .node.stat .node-label      { font-size: 10px; color: rgba(255,255,255,0.5); }
+    .node.link .node-label      { font-size: 11px; color: #c084fc; }
+
+    /* ── PULSE ── */
+    .node.hub::before {
+      content: '';
+      position: absolute; inset: -7px; border-radius: 20px;
+      border: 1px solid rgba(168,85,247,0.3);
+      animation: pulse 3.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.35;transform:scale(1)} 50%{opacity:0.85;transform:scale(1.03)} }
+
+    /* ── EMOJI ICON ── */
+    .node-icon { font-size: 14px; margin-bottom: 2px; }
+
+    /* ── HUD ── */
+    #hud { position: fixed; top: 16px; left: 16px; z-index: 20; display: flex; flex-direction: column; gap: 4px; pointer-events: none; }
+    .hud-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid rgba(168,85,247,0.3); }
+    .hud-title { font-size: 18px; font-weight: 700; }
+    .hud-sub { font-size: 11px; color: rgba(255,255,255,0.4); }
+
+    /* ── FIT BUTTON ── */
+    #btn-fit { position: fixed; top: 16px; right: 16px; z-index: 20; padding: 7px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); background: rgba(10,10,15,0.85); backdrop-filter: blur(8px); color: rgba(255,255,255,0.6); font-size: 12px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+    #btn-fit:hover { background: rgba(168,85,247,0.15); color: #a855f7; border-color: rgba(168,85,247,0.4); }
+
+    /* ── INFO PANEL ── */
+    #info { position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; background: #0a0a0f; border-top: 1px solid rgba(255,255,255,0.07); padding: 20px 24px 28px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); max-height: 55vh; overflow-y: auto; }
+    #info.open { transform: translateY(0); }
+    #info-title { font-size: 15px; font-weight: 700; color: #c084fc; margin-bottom: 8px; }
+    #info-body { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.65; }
+    #info-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .tag { padding: 3px 9px; border-radius: 12px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; background: rgba(34,211,238,0.1); color: #67e8f9; border: 1px solid rgba(34,211,238,0.2); }
+    #info-link { display: inline-block; margin-top: 14px; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); text-decoration: none; }
+    #info-link:hover { background: rgba(168,85,247,0.25); }
+    #info-close { position: absolute; top: 14px; right: 18px; background: none; border: none; color: rgba(255,255,255,0.35); font-size: 20px; cursor: pointer; line-height: 1; }
+    #info-close:hover { color: #f0f0f0; }
+
+    /* ── HINT ── */
+    #hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 6px 16px; font-size: 11px; color: rgba(255,255,255,0.45); pointer-events: none; transition: opacity 0.5s; }
+    #hint.hidden { opacity: 0; }
+  </style>
+</head>
+<body>
+
+<!-- HUD -->
+<div id="hud">
+  <span class="hud-badge">KNOWLEDGE · PROMPT ENGINE</span>
+  <div class="hud-title">OrbitPrompt</div>
+  <div class="hud-sub">Meta Prompt Factory · PHL Protocol</div>
+</div>
+
+<!-- FIT -->
+<button id="btn-fit" title="Fit all nodes">⊡ Fit</button>
+
+<!-- VIEWPORT -->
+<div id="vp">
+  <div id="canvas">
+    <svg id="edges"></svg>
+  </div>
+</div>
+
+<!-- INFO PANEL -->
+<div id="info">
+  <button id="info-close">×</button>
+  <div id="info-title"></div>
+  <div id="info-body"></div>
+  <div id="info-tags"></div>
+  <a id="info-link" href="#" target="_blank" rel="noopener" style="display:none"></a>
+</div>
+
+<!-- HINT -->
+<div id="hint">Pinch to zoom · Drag to pan · Tap node to explore</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  MAP DATA
+// ═══════════════════════════════════════════════════
+const MAP = {
+  nodes: [
+    {
+      id: "hub", type: "hub", x: 0, y: 0,
+      icon: "🌌",
+      label: "OrbitPrompt",
+      title: "OrbitPrompt — Meta Prompt Factory",
+      body: "The central prompt generation engine of the DTSLIB ecosystem. Converts ideas, conversations and repo purposes into structured prompts, PWAs and PHL protocol definitions. Two lanes: Prompt Engine (tools) and Archive (outputs).",
+      tags: ["PROMPT-ENGINE", "PHL", "NO-FRAMEWORK", "VANILLA-JS"],
+      href: "https://dtslib1979.github.io/OrbitPrompt/"
+    },
+    // ── Generators (Lane 1) ──
+    {
+      id: "chalkboard", type: "generator", x: -280, y: -160,
+      icon: "🎬",
+      label: "Chalkboard\nGenerator",
+      title: "🎬 Chalkboard Generator",
+      body: "YouTube video analysis → Broadcast-ready PWA. Setup Mode + Broadcast Mode (Ken Burns, swipe nav, fullscreen). Output becomes YouTube recording source. Zero editing workflow.",
+      tags: ["BROADCAST", "PWA", "RT-α", "YOUTUBE"],
+      href: "https://dtslib1979.github.io/OrbitPrompt/prompts/chalkboard/"
+    },
+    {
+      id: "pwa", type: "generator", x: -280, y: -50,
+      icon: "📱",
+      label: "PWA\nGenerator",
+      title: "📱 PWA Generator",
+      body: "App requirements → Installable PWA. Single HTML file, inline CSS/JS, no framework. Mobile-first, offline-capable. Output goes to dtslib-apk-lab store.",
+      tags: ["PWA", "MOBILE-FIRST", "RT-β", "SINGLE-FILE"],
+      href: "https://dtslib1979.github.io/OrbitPrompt/prompts/apk/"
+    },
+    {
+      id: "instruction", type: "generator", x: -280, y: 60,
+      icon: "📋",
+      label: "Instruction\nGenerator",
+      title: "📋 Instruction Generator",
+      body: "Repo purpose + context → CLAUDE.md system prompt. Generates the AI operating manual for any repository in the ecosystem. PHL token: RT-θ.",
+      tags: ["CLAUDE-MD", "RT-θ", "PROMPT", "TEMPLATE"],
+      href: "https://dtslib1979.github.io/OrbitPrompt/prompts/instruction/"
+    },
+    {
+      id: "editorial", type: "generator", x: -280, y: 170,
+      icon: "✨",
+      label: "Editorial\nGenerator",
+      title: "✨ Editorial Generator",
+      body: "Luxury lookbook + storytelling PWA generator. High-end visual narrative. Outputs broadcast-ready editorial content for parksy.kr and related channels.",
+      tags: ["EDITORIAL", "LOOKBOOK", "RT-α", "STORYTELLING"],
+      href: "https://dtslib1979.github.io/OrbitPrompt/prompts/editorial/"
+    },
+    {
+      id: "dataset", type: "generator", x: 280, y: -160,
+      icon: "🧬",
+      label: "Dataset\nGenerator",
+      title: "🧬 Dataset Generator",
+      body: "Conversation logs → Fine-tuning JSONL. Processes parksy-logs (RAG archive) into structured training data. Powers the custom GPT model pipeline.",
+      tags: ["FINE-TUNE", "JSONL", "RT-ε", "PARKSY-LOGS"],
+      href: "https://dtslib1979.github.io/OrbitPrompt/prompts/dataset/"
+    },
+    {
+      id: "identity", type: "generator", x: 280, y: -50,
+      icon: "🪞",
+      label: "Identity\nGenerator",
+      title: "🪞 Identity Engine",
+      body: "Conversation log + 7-axis framework → Self-model JSON. The 7 axes: Meta, Reverse, Modular, Language, Zoom, Spiral, Quantum. Tracks personality growth across sessions.",
+      tags: ["SELF-MODEL", "7-AXIS", "IDENTITY", "SPIRAL"],
+      href: "https://dtslib1979.github.io/OrbitPrompt/prompts/identity/"
+    },
+    {
+      id: "route", type: "generator", x: 280, y: 60,
+      icon: "🏭",
+      label: "Route\nGenerator",
+      title: "🏭 Route Generator",
+      body: "Repo purpose + process description → FAB Route definition (RT-α through RT-θ). Maps the DTSLIB factory floor. Links repos to manufacturing process nodes. Outputs fab-manifest.json.",
+      tags: ["FAB", "RT-θ", "PROCESS", "MANIFEST"],
+      href: "https://dtslib1979.github.io/OrbitPrompt/prompts/route/"
+    },
+    // ── Archive (Lane 2) ──
+    {
+      id: "archive", type: "archive", x: 280, y: 170,
+      icon: "📦",
+      label: "Archive\n(Boards)",
+      title: "📦 Archive — Generated Boards",
+      body: "Lane 2: Collection of all PWAs generated by the engine. Memorial Tribute, Math Tutor, Music Curation, Demo boards. Each board is a deployable standalone HTML file.",
+      tags: ["ARCHIVE", "BOARDS", "OUTPUT", "STANDALONE"],
+      href: "https://dtslib1979.github.io/OrbitPrompt/prompts/chalkboard/"
+    },
+    // ── Supporting nodes ──
+    {
+      id: "phl", type: "stat", x: -120, y: 210,
+      icon: "⚙️",
+      label: "PHL Protocol",
+      title: "PHL — Protocol for Human Language",
+      body: "1-3 word tokens compressed with strict execution rules. Tokens: PHL-Expansion, PHL-Hardening, PHL-Reverse. Each token loads a spec file and runs a defined procedure.",
+      tags: ["PHL", "PROTOCOL", "TOKEN"]
+    },
+    {
+      id: "fab", type: "stat", x: 120, y: 210,
+      icon: "🔗",
+      label: "FAB Routes",
+      title: "FAB Route System (RT-α to RT-θ)",
+      body: "8 manufacturing routes mapping every generator to a process node. RT-α: content, RT-β: apps, RT-γ: security, RT-δ: validation, RT-ε: data, RT-θ: infra.",
+      tags: ["FAB", "ROUTES", "PROCESS"]
+    },
+    {
+      id: "whitepaper", type: "link", x: -160, y: 300,
+      label: "Whitepaper →",
+      href: "https://dtslib1979.github.io/OrbitPrompt/whitepaper.html",
+      title: "OrbitPrompt Philosophy Whitepaper",
+      body: "The philosophy behind the system: Existence = Production. Prompts are code. Constraints drive design.",
+      tags: ["PHILOSOPHY", "WHITEPAPER"]
+    },
+    {
+      id: "localpc", type: "link", x: 160, y: 300,
+      label: "DTSLIB Infra →",
+      href: "https://dtslib1979.github.io/dtslib-localpc/",
+      title: "DTSLIB Local PC — Infra Map",
+      body: "The infrastructure that runs everything. Home PC as 24/7 server. This map is generated by the same treasure-map template.",
+      tags: ["INFRA", "CROSS-REPO"]
+    }
+  ],
+  edges: [
+    // Hub → Generators
+    { from: "hub",        to: "chalkboard", color: "#a855f7" },
+    { from: "hub",        to: "pwa",        color: "#a855f7" },
+    { from: "hub",        to: "instruction",color: "#a855f7" },
+    { from: "hub",        to: "editorial",  color: "#a855f7" },
+    { from: "hub",        to: "dataset",    color: "#a855f7" },
+    { from: "hub",        to: "identity",   color: "#a855f7" },
+    { from: "hub",        to: "route",      color: "#a855f7" },
+    { from: "hub",        to: "archive",    color: "#d4af37" },
+    // Supporting
+    { from: "hub",        to: "phl",        color: "#22d3ee" },
+    { from: "hub",        to: "fab",        color: "#22d3ee" },
+    { from: "route",      to: "fab",        color: "rgba(34,211,238,0.4)" },
+    { from: "hub",        to: "whitepaper", color: "#d4af37" },
+    { from: "hub",        to: "localpc",    color: "rgba(168,85,247,0.4)" },
+    // Generators → Archive
+    { from: "chalkboard", to: "archive",    color: "rgba(34,211,238,0.3)" },
+    { from: "pwa",        to: "archive",    color: "rgba(34,211,238,0.3)" },
+    { from: "editorial",  to: "archive",    color: "rgba(34,211,238,0.3)" }
+  ]
+};
+
+// ═══════════════════════════════════════════════════
+//  ENGINE (shared template — identical to dtslib-localpc)
+// ═══════════════════════════════════════════════════
+
+const vp        = document.getElementById('vp');
+const canvas    = document.getElementById('canvas');
+const svgEl     = document.getElementById('edges');
+const info      = document.getElementById('info');
+const infoTitle = document.getElementById('info-title');
+const infoBody  = document.getElementById('info-body');
+const infoTags  = document.getElementById('info-tags');
+const infoLink  = document.getElementById('info-link');
+const hint      = document.getElementById('hint');
+
+let tx=0, ty=0, scale=1, dragging=false, lastX=0, lastY=0;
+
+function nodeSize(type) {
+  if (type==='hub')       return [170,85];
+  if (type==='generator') return [152,72];
+  if (type==='archive')   return [140,64];
+  if (type==='stat')      return [104,50];
+  if (type==='link')      return [136,40];
+  return [130,65];
+}
+
+function bezierPath(n1, n2, W1, H1, W2, H2) {
+  const x1=n1.x+W1/2, y1=n1.y+H1/2, x2=n2.x+W2/2, y2=n2.y+H2/2;
+  const cx=(x1+x2)/2, cy=(y1+y2)/2 - 45;
+  return `M${x1},${y1} Q${cx},${cy} ${x2},${y2}`;
+}
+
+// Build nodes
+MAP.nodes.forEach(n => {
+  const [W,H] = nodeSize(n.type);
+  const el = document.createElement(n.type==='link' ? 'a' : 'div');
+  el.className = `node ${n.type}`;
+  el.style.cssText = `left:${n.x-W/2}px;top:${n.y-H/2}px;width:${W}px;height:${H}px;`;
+  if (n.href && n.type==='link') { el.href=n.href; el.target='_blank'; el.rel='noopener'; }
+  el.innerHTML = (n.icon ? `<span class="node-icon">${n.icon}</span>` : '') +
+                 `<span class="node-label">${n.label}</span>`;
+  el.dataset.id = n.id;
+  el.addEventListener('click', e => {
+    if (dragging) { e.preventDefault(); return; }
+    if (n.type !== 'link') openInfo(n);
+  });
+  canvas.appendChild(el);
+  n._el = el;
+});
+
+// Build edges + dots
+const dots = [];
+MAP.edges.forEach(edge => {
+  const n1=MAP.nodes.find(n=>n.id===edge.from), n2=MAP.nodes.find(n=>n.id===edge.to);
+  if (!n1||!n2) return;
+  const [W1,H1]=nodeSize(n1.type), [W2,H2]=nodeSize(n2.type);
+  const d = bezierPath(n1,n2,W1,H1,W2,H2);
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d',d); path.setAttribute('fill','none');
+  path.setAttribute('stroke',edge.color); path.setAttribute('stroke-width','1.5');
+  path.setAttribute('stroke-opacity','0.4'); path.setAttribute('stroke-dasharray','5 7');
+  svgEl.appendChild(path);
+  const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  dot.setAttribute('r','3'); dot.setAttribute('fill',edge.color); dot.setAttribute('fill-opacity','0.8');
+  svgEl.appendChild(dot);
+  dots.push({ path, dot, t: Math.random(), speed: 0.001+Math.random()*0.001 });
+});
+
+(function animateDots() {
+  dots.forEach(d => {
+    d.t=(d.t+d.speed)%1;
+    try { const l=d.path.getTotalLength(),pt=d.path.getPointAtLength(d.t*l); d.dot.setAttribute('cx',pt.x); d.dot.setAttribute('cy',pt.y); } catch(e){}
+  });
+  requestAnimationFrame(animateDots);
+})();
+
+function setTransform() { canvas.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`; }
+
+function fitAll() {
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  MAP.nodes.forEach(n => { const [W,H]=nodeSize(n.type); minX=Math.min(minX,n.x-W/2); minY=Math.min(minY,n.y-H/2); maxX=Math.max(maxX,n.x+W/2); maxY=Math.max(maxY,n.y+H/2); });
+  const pad=60,vpW=vp.clientWidth,vpH=vp.clientHeight,mapW=maxX-minX,mapH=maxY-minY;
+  scale=Math.min((vpW-pad*2)/mapW,(vpH-pad*2)/mapH,1.1);
+  tx=vpW/2-(minX+mapW/2)*scale; ty=vpH/2-(minY+mapH/2)*scale;
+  setTransform();
+}
+fitAll(); window.addEventListener('resize',fitAll);
+document.getElementById('btn-fit').addEventListener('click',fitAll);
+
+// Mouse pan
+let dragStarted=false;
+vp.addEventListener('mousedown', e => { if(e.target.closest('.node'))return; dragStarted=true; dragging=false; lastX=e.clientX; lastY=e.clientY; vp.classList.add('dragging'); });
+window.addEventListener('mousemove', e => { if(!dragStarted)return; const dx=e.clientX-lastX,dy=e.clientY-lastY; if(Math.abs(dx)+Math.abs(dy)>3)dragging=true; tx+=dx; ty+=dy; lastX=e.clientX; lastY=e.clientY; setTransform(); });
+window.addEventListener('mouseup',()=>{ dragStarted=false; vp.classList.remove('dragging'); });
+
+// Wheel zoom
+vp.addEventListener('wheel', e => {
+  e.preventDefault();
+  const rect=vp.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  const f=e.deltaY<0?1.12:1/1.12, ns=Math.min(Math.max(scale*f,0.18),4);
+  tx=mx-(mx-tx)*(ns/scale); ty=my-(my-ty)*(ns/scale); scale=ns; setTransform();
+},{passive:false});
+
+// Touch
+const touches={};
+let pinchDist0=null,pinchScale0=null,pinchTx0,pinchTy0,pinchCx,pinchCy,lastTouchPos=null,touchMoved=false;
+vp.addEventListener('touchstart',e=>{ e.preventDefault(); touchMoved=false; Array.from(e.changedTouches).forEach(t=>touches[t.identifier]={x:t.clientX,y:t.clientY}); const ids=Object.keys(touches); if(ids.length===2){const a=touches[ids[0]],b=touches[ids[1]]; pinchDist0=Math.hypot(b.x-a.x,b.y-a.y); pinchScale0=scale; pinchTx0=tx; pinchTy0=ty; pinchCx=(a.x+b.x)/2; pinchCy=(a.y+b.y)/2;} },{passive:false});
+vp.addEventListener('touchmove',e=>{ e.preventDefault(); touchMoved=true; Array.from(e.changedTouches).forEach(t=>{ if(touches[t.identifier])touches[t.identifier]={x:t.clientX,y:t.clientY}; }); const ids=Object.keys(touches); if(ids.length===1){const t0=touches[ids[0]],prev=lastTouchPos||t0; tx+=t0.x-prev.x; ty+=t0.y-prev.y; lastTouchPos=t0; setTransform();} else if(ids.length===2){const a=touches[ids[0]],b=touches[ids[1]],dist=Math.hypot(b.x-a.x,b.y-a.y),ns=Math.min(Math.max(pinchScale0*(dist/pinchDist0),0.18),4); tx=pinchCx-(pinchCx-pinchTx0)*(ns/pinchScale0); ty=pinchCy-(pinchCy-pinchTy0)*(ns/pinchScale0); scale=ns; setTransform();} },{passive:false});
+vp.addEventListener('touchend',e=>{ Array.from(e.changedTouches).forEach(t=>delete touches[t.identifier]); if(Object.keys(touches).length===0){lastTouchPos=null; pinchDist0=null;} });
+
+// Info panel
+function openInfo(n) {
+  infoTitle.textContent = n.title || n.label.replace('\n',' ');
+  infoBody.textContent  = n.body  || '';
+  infoTags.innerHTML    = (n.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
+  if (n.href) { infoLink.href=n.href; infoLink.textContent='Open →'; infoLink.style.display='inline-block'; }
+  else infoLink.style.display='none';
+  info.classList.add('open');
+}
+document.getElementById('info-close').addEventListener('click',()=>info.classList.remove('open'));
+vp.addEventListener('click',e=>{ if(!e.target.closest('.node')&&!e.target.closest('#info'))info.classList.remove('open'); });
+
+// Hint
+setTimeout(()=>hint.classList.add('hidden'),4000);
+</script>
+</body>
+</html>
