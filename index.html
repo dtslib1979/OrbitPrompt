@@ -2,401 +2,777 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0a0a0a">
-  <title>OrbitPrompt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="OrbitPrompt — 칠판센터 · 출판사. 지식을 형식으로. 14개 Generator로 아이디어를 방송으로 바꾼다.">
+  <meta name="theme-color" content="#050505">
+  <title>OrbitPrompt — 칠판센터</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
   <style>
+    /* ── TOKENS ─────────────────────────────────────────── */
     :root {
-      --bg-void: #050505;
-      --bg-primary: #0a0a0a;
-      --bg-surface: #0f0f0f;
-      --bg-card: #141414;
-      --bg-elevated: #1a1a1a;
-      --ink-primary: #f0f0f0;
-      --ink-secondary: rgba(255,255,255,0.7);
-      --ink-muted: rgba(255,255,255,0.4);
-      --ink-dim: rgba(255,255,255,0.15);
-      --purple: #a855f7;
-      --purple-dim: rgba(168,85,247,0.15);
-      --cyan: #22d3ee;
-      --cyan-dim: rgba(34,211,238,0.15);
-      --gold: #d4af37;
-      --gold-dim: rgba(212,175,55,0.15);
-      --border: rgba(255,255,255,0.06);
-      --f-display: 'Inter', -apple-system, sans-serif;
-      --f-mono: 'JetBrains Mono', monospace;
-      --f-serif: 'Cormorant Garamond', Georgia, serif;
+      --bg:      #050505;
+      --bg1:     #0a0a0a;
+      --bg2:     #111111;
+      --bg3:     #181818;
+      --purple:  #a855f7;
+      --purple2: #c084fc;
+      --cyan:    #22d3ee;
+      --gold:    #d4af37;
+      --green:   #10b981;
+      --ink:     #f0f0f0;
+      --ink2:    rgba(240,240,240,.7);
+      --ink3:    rgba(240,240,240,.4);
+      --ink4:    rgba(240,240,240,.12);
+      --border:  rgba(255,255,255,.07);
+      --f-sans:  'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+      --f-mono:  'JetBrains Mono', monospace;
+      --r:       10px;
+      --r2:      6px;
     }
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: var(--f-display);
-      background: var(--bg-void);
-      color: var(--ink-primary);
+      font-family: var(--f-sans);
+      background: var(--bg);
+      color: var(--ink);
       min-height: 100vh;
-      padding: 1.5rem;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .grain {
+    /* ── GRAIN ───────────────────────────────────────────── */
+    body::before {
+      content: '';
       position: fixed;
       inset: 0;
       pointer-events: none;
-      z-index: 1000;
-      opacity: 0.03;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      z-index: 9999;
+      opacity: .025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
-    .container {
-      max-width: 900px;
+    /* ── NAV ─────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5,5,5,.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+    }
+
+    .nav-brand {
+      font-family: var(--f-mono);
+      font-size: 13px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      letter-spacing: .02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 12px;
+      color: var(--ink3);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--purple2); }
+
+    @media (max-width: 480px) {
+      .nav-links { gap: 12px; }
+      .nav-links li:nth-child(n+3) { display: none; }
+    }
+
+    /* ── HERO ────────────────────────────────────────────── */
+    .hero {
+      padding: 80px 20px 60px;
+      text-align: center;
+      max-width: 680px;
       margin: 0 auto;
     }
 
-    /* Header */
-    header {
-      text-align: center;
-      padding: 2rem 0 1.5rem;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 2rem;
+    .hero-label {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: .12em;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+      margin-bottom: 16px;
     }
 
-    .logo {
-      font-family: var(--f-mono);
-      font-size: clamp(1.75rem, 7vw, 2.5rem);
-      font-weight: 600;
-      letter-spacing: -0.02em;
+    .hero-title {
+      font-size: clamp(28px, 6vw, 44px);
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 16px;
+      letter-spacing: -.02em;
+    }
+
+    .hero-title .accent {
       background: linear-gradient(135deg, var(--purple), var(--cyan));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .tagline {
-      font-family: var(--f-serif);
-      font-size: 1rem;
-      font-style: italic;
-      color: var(--ink-muted);
-      margin-top: 0.25rem;
+    .hero-sub {
+      font-size: 15px;
+      color: var(--ink2);
+      line-height: 1.7;
+      margin-bottom: 32px;
     }
 
-    /* Lanes */
-    .lanes {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    @media (max-width: 640px) {
-      .lanes { grid-template-columns: 1fr; }
-    }
-
-    .lane {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      padding: 1.25rem;
-    }
-
-    .lane-header {
+    .hero-actions {
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .lane-icon { font-size: 1.25rem; }
-    .lane-title {
-      font-family: var(--f-mono);
-      font-size: 0.875rem;
-      font-weight: 600;
-    }
-    .lane-tag {
-      font-family: var(--f-mono);
-      font-size: 0.5rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.2rem 0.4rem;
-      margin-left: auto;
-    }
-
-    .lane--engine .lane-tag { background: var(--purple-dim); color: var(--purple); }
-    .lane--board .lane-tag { background: var(--gold-dim); color: var(--gold); }
-
-    .lane-desc {
-      font-size: 0.75rem;
-      color: var(--ink-muted);
-      line-height: 1.6;
-      margin-bottom: 1rem;
-    }
-
-    /* Items */
-    .item-list { display: flex; flex-direction: column; gap: 0.5rem; }
-
-    .item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem;
-      background: var(--bg-surface);
-      border: 1px solid transparent;
-      text-decoration: none;
-      color: var(--ink-primary);
-      transition: all 0.15s;
-    }
-    .item:hover {
-      border-color: var(--purple);
-      background: var(--bg-elevated);
-    }
-    .item.disabled {
-      opacity: 0.4;
-      pointer-events: none;
-    }
-
-    .item-icon { font-size: 1.125rem; }
-    .item-text { flex: 1; }
-    .item-name {
-      font-size: 0.8125rem;
-      font-weight: 500;
-    }
-    .item-meta {
-      font-size: 0.625rem;
-      color: var(--ink-muted);
-    }
-    .item-arrow {
-      font-size: 0.75rem;
-      color: var(--ink-dim);
-    }
-
-    /* Boards */
-    .lane--board .item:hover { border-color: var(--gold); }
-
-    /* Categories */
-    .category-tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
+      gap: 12px;
+      justify-content: center;
       flex-wrap: wrap;
     }
-    .cat-tab {
-      font-family: var(--f-mono);
-      font-size: 0.5625rem;
-      padding: 0.25rem 0.5rem;
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      color: var(--ink-muted);
-      cursor: pointer;
-      transition: all 0.15s;
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: var(--r2);
+      text-decoration: none;
+      transition: opacity .2s;
     }
-    .cat-tab:hover, .cat-tab.active {
-      border-color: var(--gold);
-      color: var(--gold);
+    .btn-primary:hover { opacity: .85; }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      color: var(--ink2);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: var(--r2);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-secondary:hover { border-color: var(--purple); color: var(--purple2); }
+
+    /* ── SECTION ─────────────────────────────────────────── */
+    .section {
+      padding: 60px 20px;
+      max-width: 960px;
+      margin: 0 auto;
     }
 
-    /* Footer */
-    footer {
-      text-align: center;
-      padding-top: 1.5rem;
+    .section-divider {
+      border: none;
       border-top: 1px solid var(--border);
+      margin: 0 20px;
+    }
+
+    .sec-label {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      letter-spacing: .1em;
+      color: var(--purple);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .sec-title {
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 8px;
+      letter-spacing: -.02em;
+    }
+
+    .sec-desc {
+      font-size: 14px;
+      color: var(--ink3);
+      margin-bottom: 32px;
+      line-height: 1.65;
+    }
+
+    /* ── STATS BAR ───────────────────────────────────────── */
+    .stats-bar {
+      display: flex;
+      gap: 0;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+    }
+
+    .stat-item {
+      flex: 1;
+      padding: 16px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+
+    .stat-number {
+      font-family: var(--f-mono);
+      font-size: 20px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 3px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--ink3);
+    }
+
+    /* ── GENERATORS GRID ─────────────────────────────────── */
+    .gen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .gen-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: border-color .2s, transform .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .gen-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--purple), var(--cyan));
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .gen-card:hover {
+      border-color: rgba(168,85,247,.3);
+      transform: translateY(-2px);
+    }
+    .gen-card:hover::before { opacity: 1; }
+    .gen-card.disabled { opacity: .4; pointer-events: none; }
+
+    .gen-icon { font-size: 24px; margin-bottom: 10px; }
+
+    .gen-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .gen-desc {
+      font-size: 11px;
+      color: var(--ink3);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .gen-files {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .gen-file-tag {
+      font-family: var(--f-mono);
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: rgba(168,85,247,.12);
+      color: var(--purple2);
+      border: 1px solid rgba(168,85,247,.15);
+    }
+
+    .gen-count {
+      font-family: var(--f-mono);
+      font-size: 9px;
+      color: var(--ink3);
+      margin-top: 6px;
+    }
+
+    /* ── PHL SECTION ─────────────────────────────────────── */
+    .phl-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 600px) { .phl-grid { grid-template-columns: 1fr; } }
+
+    .phl-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 20px;
+    }
+
+    .phl-token {
+      font-family: var(--f-mono);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--purple2);
+      margin-bottom: 8px;
+    }
+
+    .phl-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .phl-desc {
+      font-size: 12px;
+      color: var(--ink3);
+      line-height: 1.6;
+    }
+
+    .phl-spec-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--purple);
+      text-decoration: none;
+      margin-top: 12px;
+      padding: 5px 10px;
+      border: 1px solid rgba(168,85,247,.2);
+      border-radius: var(--r2);
+      transition: border-color .2s;
+    }
+    .phl-spec-link:hover { border-color: var(--purple); }
+
+    /* ── DUAL LANE ───────────────────────────────────────── */
+    .dual-lane {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 600px) { .dual-lane { grid-template-columns: 1fr; } }
+
+    .lane-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 20px;
+    }
+
+    .lane-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .lane-name {
+      font-family: var(--f-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 6px;
+    }
+
+    .lane-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .lane-desc {
+      font-size: 12px;
+      color: var(--ink3);
+      line-height: 1.6;
+    }
+
+    .lane-link {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--cyan);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(34,211,238,.2);
+      transition: border-color .2s;
+    }
+    .lane-link:hover { border-color: var(--cyan); }
+
+    /* ── PERPLEXITY SPACES ──────────────────────────────── */
+    .spaces-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .space-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      padding: 12px 14px;
+    }
+
+    .space-icon { font-size: 18px; margin-bottom: 6px; }
+
+    .space-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 3px;
+    }
+
+    .space-desc {
+      font-size: 10px;
+      color: var(--ink3);
+      line-height: 1.5;
+    }
+
+    /* ── EAE LINK ────────────────────────────────────────── */
+    .eae-link {
+      display: block;
+      background: linear-gradient(135deg, rgba(212,175,55,.08), rgba(16,185,129,.06));
+      border: 1px solid rgba(212,175,55,.2);
+      border-radius: var(--r);
+      padding: 24px 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .2s;
+      text-align: center;
+    }
+    .eae-link:hover { border-color: rgba(212,175,55,.4); }
+
+    .eae-link-label {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      letter-spacing: .1em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .eae-link-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .eae-link-desc {
+      font-size: 13px;
+      color: var(--ink3);
+    }
+
+    /* ── FOOTER ──────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 20px;
+      text-align: center;
+    }
+
+    .footer-brand {
+      font-family: var(--f-mono);
+      font-size: 13px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
     }
 
     .footer-links {
       display: flex;
+      gap: 20px;
       justify-content: center;
-      gap: 0.75rem;
-      margin-bottom: 0.75rem;
+      margin-bottom: 16px;
       flex-wrap: wrap;
     }
-    .footer-link {
-      font-family: var(--f-mono);
-      font-size: 0.5625rem;
-      color: var(--ink-muted);
-      text-decoration: none;
-      padding: 0.4rem 0.6rem;
-      border: 1px solid var(--border);
-      transition: all 0.15s;
-    }
-    .footer-link:hover {
-      border-color: var(--purple);
-      color: var(--purple);
-    }
 
-    .footer-credit {
-      font-family: var(--f-mono);
-      font-size: 0.5rem;
-      letter-spacing: 0.1em;
-      color: var(--ink-dim);
+    .footer-links a {
+      font-size: 12px;
+      color: var(--ink3);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--purple2); }
+
+    .footer-copy {
+      font-size: 11px;
+      color: var(--ink4);
     }
   </style>
 </head>
 <body>
-  <div class="grain"></div>
 
-  <div class="container">
-    <header>
-      <h1 class="logo">OrbitPrompt</h1>
-      <p class="tagline">Prompt Engine + Broadcast Boards</p>
-    </header>
+  <!-- ── NAV ─────────────────────────────────────────────── -->
+  <nav>
+    <a href="/" class="nav-brand">OrbitPrompt</a>
+    <ul class="nav-links">
+      <li><a href="#generators">Generators</a></li>
+      <li><a href="#phl">PHL</a></li>
+      <li><a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener">EAE-Univ</a></li>
+      <li><a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+  </nav>
 
-    <div class="lanes">
-      <!-- Lane 1: Prompt Engine -->
-      <div class="lane lane--engine">
-        <div class="lane-header">
-          <span class="lane-icon">🧠</span>
-          <span class="lane-title">Prompt Engine</span>
-          <span class="lane-tag">사고 도구</span>
-        </div>
-        <p class="lane-desc">메타 프롬프트 생성기. 변수 선택 → 프롬프트 생성 → LLM이 코드 생성.</p>
-        <div class="item-list">
-          <a href="prompts/chalkboard/" class="item" style="border-color: var(--gold);">
-            <span class="item-icon">🎬</span>
-            <div class="item-text">
-              <div class="item-name" style="color: var(--gold);">Chalkboard</div>
-              <div class="item-meta">YouTube 분석 → 방송용 PWA</div>
-            </div>
-            <span class="item-arrow">→</span>
-          </a>
-          <a href="prompts/apk/" class="item">
-            <span class="item-icon">📱</span>
-            <div class="item-text">
-              <div class="item-name">PWA</div>
-              <div class="item-meta">앱 요구사항 → 설치형 PWA</div>
-            </div>
-            <span class="item-arrow">→</span>
-          </a>
-          <a href="prompts/instruction/" class="item">
-            <span class="item-icon">📋</span>
-            <div class="item-text">
-              <div class="item-name">Instruction</div>
-              <div class="item-meta">레포 목적 → CLAUDE.md</div>
-            </div>
-            <span class="item-arrow">→</span>
-          </a>
-          <a href="prompts/dataset/" class="item">
-            <span class="item-icon">🧬</span>
-            <div class="item-text">
-              <div class="item-name">Dataset</div>
-              <div class="item-meta">대화 로그 → 파인튜닝 JSONL</div>
-            </div>
-            <span class="item-arrow">→</span>
-          </a>
-          <a href="prompts/identity/" class="item" style="border-color: var(--cyan);">
-            <span class="item-icon">🪞</span>
-            <div class="item-text">
-              <div class="item-name" style="color: var(--cyan);">Identity</div>
-              <div class="item-meta">대화 로그 → 7축 파싱 → 자기 모델 추출</div>
-            </div>
-            <span class="item-arrow">→</span>
-          </a>
-          <a href="prompts/editorial/" class="item">
-            <span class="item-icon">✨</span>
-            <div class="item-text">
-              <div class="item-name">Editorial</div>
-              <div class="item-meta">럭셔리 룩북 스토리텔링</div>
-            </div>
-            <span class="item-arrow">→</span>
-          </a>
-          <a href="prompts/route/" class="item" style="border-color: var(--cyan);">
-            <span class="item-icon">🏭</span>
-            <div class="item-text">
-              <div class="item-name" style="color: var(--cyan);">Route</div>
-              <div class="item-meta">FAB 라우트 정의 → 본사 대시보드 연동</div>
-            </div>
-            <span class="item-arrow">→</span>
-          </a>
-          <a href="prompts/form/" class="item" style="border-color: #10b981;">
-            <span class="item-icon">📝</span>
-            <div class="item-text">
-              <div class="item-name" style="color: #10b981;">Form</div>
-              <div class="item-meta">서식 × 다국어 → 인터랙티브 어학 학습</div>
-            </div>
-            <span class="item-arrow">→</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- Lane 2: Archive -->
-      <div class="lane lane--board">
-        <div class="lane-header">
-          <span class="lane-icon">📦</span>
-          <span class="lane-title">Archive</span>
-          <span class="lane-tag">생성된 칠판</span>
-        </div>
-        <p class="lane-desc">이전에 생성된 Chalkboard 템플릿. 참고하거나 재사용.</p>
-        <div class="category-tabs" id="categoryTabs"></div>
-        <div class="item-list" id="boardList"></div>
-      </div>
+  <!-- ── HERO ────────────────────────────────────────────── -->
+  <div class="hero">
+    <div class="hero-label">출판사 · 칠판센터 · Knowledge Publisher</div>
+    <h1 class="hero-title">
+      지식을 <span class="accent">형식으로</span>.<br>
+      아이디어를 방송으로.
+    </h1>
+    <p class="hero-sub">
+      14개 Generator로 대화를 칠판으로, 칠판을 방송으로 바꾼다.<br>
+      PHL 프로토콜 · Dual Lane · Perplexity Spaces
+    </p>
+    <div class="hero-actions">
+      <a href="#generators" class="btn-primary">Generator 열기</a>
+      <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener" class="btn-secondary">EAE-Univ →</a>
     </div>
-
-    <footer>
-      <div class="footer-links">
-        <a href="whitepaper.html" class="footer-link">백서</a>
-        <a href="map.html" class="footer-link">🗺 Treasure Map</a>
-        <a href="https://github.com/dtslib1979/OrbitPrompt" class="footer-link" target="_blank">GitHub</a>
-        <a href="https://phoneparis.com" class="footer-link" target="_blank">Phoneparis</a>
-      </div>
-      <p class="footer-credit">DTSLIB Franchise</p>
-    </footer>
   </div>
 
+  <!-- ── STATS BAR ─────────────────────────────────────────── -->
+  <div class="section" style="padding-top:0;padding-bottom:32px;">
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-number">14</div>
+        <div class="stat-label">Generator</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">46</div>
+        <div class="stat-label">PHL 테스트</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">8</div>
+        <div class="stat-label">Perplexity Spaces</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">3</div>
+        <div class="stat-label">PHL 토큰</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ── GENERATORS ───────────────────────────────────────── -->
+  <section class="section" id="generators">
+    <div class="sec-label">Generator Hub</div>
+    <h2 class="sec-title">14개 Generator</h2>
+    <p class="sec-desc">지식의 형태를 바꾸는 도구들. 클릭하면 해당 칠판으로 이동.</p>
+
+    <div class="gen-grid" id="gen-grid">
+      <!-- Rendered by JS -->
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── PHL PROTOCOL ──────────────────────────────────────── -->
+  <section class="section" id="phl">
+    <div class="sec-label">PHL Protocol</div>
+    <h2 class="sec-title">상태 전이 인터페이스</h2>
+    <p class="sec-desc">
+      PHL(Protocol for Human Language) — 짧은 토큰이 엄격한 규칙을 실행한다.
+      단축키가 아니라 상태 전이(state transition) 인터페이스다.
+    </p>
+
+    <div class="phl-grid">
+      <div class="phl-card">
+        <div class="phl-token">PHL-1</div>
+        <div class="phl-name">SPEC 로드 → 상태 점검</div>
+        <div class="phl-desc">PHL_SPEC.md + PHL_INDEX.json 로드. 현재 파일 구조/테스트/의존성 확인. 계획 보고 → 실행 → 검증 → 커밋 사이클.</div>
+      </div>
+      <div class="phl-card">
+        <div class="phl-token">PHL-2</div>
+        <div class="phl-name">Dual Compiler</div>
+        <div class="phl-desc">Lane A (University): 사건→지식 컴파일. Lane B (Orbit): 대화→프롬프트 컴파일. 두 레인 동시 실행.</div>
+      </div>
+      <div class="phl-card">
+        <div class="phl-token">PHL-3</div>
+        <div class="phl-name">표준 출력 형식</div>
+        <div class="phl-desc">Loaded Specs → Plan → Changes → Validation → Commit → Notes. 이 형식에서 벗어난 보고 없음.</div>
+        <a href="PHL_SPEC.md" class="phl-spec-link" target="_blank" rel="noopener">PHL_SPEC.md 읽기 →</a>
+      </div>
+      <div class="phl-card">
+        <div class="phl-token">46 Tests</div>
+        <div class="phl-name">FAB Contracts</div>
+        <div class="phl-desc">PHL_INDEX.json → contracts/ + playbooks/ + tokens/. 46개 테스트 케이스로 검증. BOM 확인 후 착공 원칙.</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── DUAL LANE ──────────────────────────────────────────── -->
+  <section class="section" id="lanes">
+    <div class="sec-label">Dual Lane Architecture</div>
+    <h2 class="sec-title">2개 컴파일러</h2>
+    <p class="sec-desc">사건과 대화를 동시에 지식과 프롬프트로 변환하는 이중 레인.</p>
+
+    <div class="dual-lane">
+      <div class="lane-card">
+        <div class="lane-icon">🎓</div>
+        <div class="lane-name">Lane A · University</div>
+        <div class="lane-title">Knowledge Compiler</div>
+        <div class="lane-desc">
+          사건 → Knowledge Atom.<br>
+          Context · Decision · Reason · Outcome · Route.<br>
+          5개 Design Type으로 즉시 분류.
+        </div>
+        <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener" class="lane-link">EAE University →</a>
+      </div>
+      <div class="lane-card">
+        <div class="lane-icon">🌀</div>
+        <div class="lane-name">Lane B · Orbit</div>
+        <div class="lane-title">Prompt Compiler</div>
+        <div class="lane-desc">
+          대화 → Prompt Atom.<br>
+          intent · target · constraints · tone · done_criteria.<br>
+          6개 Prompt Type (Repo-Janitor/Broadcast/Onboarding/Deploy/Asset/Automation).
+        </div>
+        <a href="orbit/" class="lane-link">Orbit Atoms →</a>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── PERPLEXITY SPACES ──────────────────────────────────── -->
+  <section class="section" id="spaces">
+    <div class="sec-label">Perplexity Spaces</div>
+    <h2 class="sec-title">8개 지식 공간</h2>
+    <p class="sec-desc">parksy-logs 기반 Perplexity Space. 각 공간은 특화된 검색/생성 컨텍스트를 가진다.</p>
+
+    <div class="spaces-grid" id="spaces-grid">
+      <!-- Rendered by JS -->
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── EAE LINK ───────────────────────────────────────────── -->
+  <section class="section" id="university">
+    <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener" class="eae-link">
+      <div class="eae-link-label">대학교 · 6대 스킬셋</div>
+      <div class="eae-link-title">EAE University →</div>
+      <div class="eae-link-desc">없는 걸 만드는 게 아니다. 있는 걸 해체하고 재조합한다.<br>EML · QSketch · MAL · PENON · PHL · Patchtech</div>
+    </a>
+  </section>
+
+  <!-- ── FOOTER ──────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-brand">OrbitPrompt</div>
+    <div class="footer-links">
+      <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener">EAE University</a>
+      <a href="prompts/broadcast/" target="_blank">Broadcast</a>
+      <a href="prompts/publisher/" target="_blank">Publisher</a>
+      <a href="PHL_SPEC.md" target="_blank" rel="noopener">PHL Spec</a>
+      <a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <p class="footer-copy">© 2026 OrbitPrompt · 지식을 형식으로. 아이디어를 방송으로.</p>
+  </footer>
+
+  <!-- ── SCRIPTS ─────────────────────────────────────────── -->
   <script>
-    let templatesData = null;
-    let currentCategory = 'all';
+  (() => {
+    // ── Generator definitions ──────────────────────────────
+    const GENERATORS = [
+      { id:'broadcast',  icon:'📡', name:'Broadcast',  desc:'방송용 칠판. 수학/추모/음악/튜토리얼 포맷.',  files:['math-tutor','memorial','music','parksy-capture','pwa-demo'], path:'prompts/broadcast/' },
+      { id:'publisher',  icon:'📚', name:'Publisher',  desc:'KDP/출판 Generator. 원고를 책으로.',         files:['kdp-publisher'], path:'prompts/publisher/' },
+      { id:'chalkboard', icon:'🖊️', name:'Chalkboard', desc:'범용 칠판 Generator. 모든 형식의 기반.',     files:[], path:'prompts/chalkboard/', disabled:true },
+      { id:'engine',     icon:'⚙️', name:'Engine',     desc:'GitHub 퍼블리싱 엔진. 레포→페이지.',         files:['github-publishing'], path:'prompts/engine/' },
+      { id:'guide',      icon:'📖', name:'Guide',      desc:'가이드/인스트럭션 Generator.',               files:['github-pages-build'], path:'prompts/guide/' },
+      { id:'dataset',    icon:'🗃️', name:'Dataset',    desc:'데이터셋 생성/정제 Generator.',              files:[], path:'prompts/dataset/', disabled:true },
+      { id:'editorial',  icon:'✏️', name:'Editorial',  desc:'편집/교열 Generator. 박씨 스타일 필터.',     files:[], path:'prompts/editorial/', disabled:true },
+      { id:'identity',   icon:'🪪', name:'Identity',   desc:'브랜딩/아이덴티티 Generator.',               files:[], path:'prompts/identity/', disabled:true },
+      { id:'instruction',icon:'📋', name:'Instruction',desc:'인스트럭션 패키지 Generator.',               files:[], path:'prompts/instruction/', disabled:true },
+      { id:'route',      icon:'🗺️', name:'Route',      desc:'라우팅/배포 경로 Generator.',                files:[], path:'prompts/route/', disabled:true },
+      { id:'studio',     icon:'🎨', name:'Studio',     desc:'비주얼/에셋 Generator.',                     files:[], path:'prompts/studio/', disabled:true },
+      { id:'apk',        icon:'📱', name:'APK',        desc:'APK 카드 Generator. 앱 설명 자동화.',         files:[], path:'prompts/apk/', disabled:true },
+      { id:'form',       icon:'📝', name:'Form',       desc:'폼/인풋 Generator.',                         files:[], path:'prompts/form/', disabled:true },
+      { id:'whitepaper', icon:'📄', name:'Whitepaper', desc:'백서/기술문서 Generator.',                   files:[], path:'whitepaper.html' },
+    ];
 
-    async function loadData() {
-      try {
-        const res = await fetch('data/templates.json');
-        templatesData = await res.json();
-        renderCategories();
-        renderBoards();
-      } catch (e) {
-        document.getElementById('boardList').innerHTML = '<div class="item disabled"><span class="item-icon">⚠️</span><div class="item-text"><div class="item-name">템플릿 로드 실패</div></div></div>';
-      }
-    }
+    // ── Perplexity spaces ──────────────────────────────────
+    const SPACES = [
+      { icon:'📊', name:'EAE Analytics',    desc:'6대 스킬셋 성과 분석' },
+      { icon:'🎙️', name:'Parksy Logs',      desc:'대화 로그 RAG 검색' },
+      { icon:'📡', name:'Broadcast Intel',  desc:'방송 콘텐츠 리서치' },
+      { icon:'🏭', name:'FAB Operations',   desc:'공정 최적화 인사이트' },
+      { icon:'💹', name:'Branch Finance',   desc:'세그먼트 P&L 분석' },
+      { icon:'🤖', name:'AI Pipeline',      desc:'음성/이미지 파이프라인' },
+      { icon:'🌐', name:'Knowledge Graph',  desc:'28레포 지식 그래프' },
+      { icon:'🎬', name:'YouTube Insights', desc:'채널 성과 분석' },
+    ];
 
-    function renderCategories() {
-      const tabs = document.getElementById('categoryTabs');
-      let html = '<button class="cat-tab active" data-cat="all">All</button>';
-      templatesData.categories.forEach(cat => {
-        html += `<button class="cat-tab" data-cat="${cat.id}">${cat.icon} ${cat.nameKo}</button>`;
-      });
-      tabs.innerHTML = html;
+    // ── Render generators ──────────────────────────────────
+    const genGrid = document.getElementById('gen-grid');
+    genGrid.innerHTML = GENERATORS.map(g => {
+      const disabled = g.disabled ? ' disabled' : '';
+      const href = g.disabled ? '' : ` href="${g.path}" ${g.path.endsWith('.html') ? '' : 'target="_blank" rel="noopener"'}`;
+      const tag = g.disabled ? 'div' : 'a';
+      const fileCount = g.files.length;
+      return `<${tag}${href} class="gen-card${disabled}">
+        <div class="gen-icon">${g.icon}</div>
+        <div class="gen-name">${g.name}</div>
+        <div class="gen-desc">${g.desc}</div>
+        ${fileCount > 0 ? `<div class="gen-count">${fileCount}개 칠판</div>` : ''}
+        ${g.disabled ? '<div class="gen-count">준비 중</div>' : ''}
+      </${tag}>`;
+    }).join('');
 
-      tabs.querySelectorAll('.cat-tab').forEach(btn => {
-        btn.addEventListener('click', () => {
-          tabs.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentCategory = btn.dataset.cat;
-          renderBoards();
-        });
-      });
-    }
-
-    function renderBoards() {
-      const list = document.getElementById('boardList');
-      const filtered = currentCategory === 'all'
-        ? templatesData.templates
-        : templatesData.templates.filter(t => t.category === currentCategory);
-
-      list.innerHTML = filtered.map(t => {
-        const isDisabled = t.status === 'coming-soon';
-        return `
-          <a href="${isDisabled ? '#' : t.file}" class="item ${isDisabled ? 'disabled' : ''}">
-            <span class="item-icon">${t.icon}</span>
-            <div class="item-text">
-              <div class="item-name">${t.nameKo}</div>
-              <div class="item-meta">${t.format}</div>
-            </div>
-            ${isDisabled ? '' : '<span class="item-arrow">→</span>'}
-          </a>
-        `;
-      }).join('');
-    }
-
-    loadData();
+    // ── Render perplexity spaces ───────────────────────────
+    const spacesGrid = document.getElementById('spaces-grid');
+    spacesGrid.innerHTML = SPACES.map(s => `
+      <div class="space-card">
+        <div class="space-icon">${s.icon}</div>
+        <div class="space-name">${s.name}</div>
+        <div class="space-desc">${s.desc}</div>
+      </div>
+    `).join('');
+  })();
   </script>
+
 </body>
 </html>
