@@ -291,7 +291,7 @@
       transform: translateY(-2px);
     }
     .gen-card:hover::before { opacity: 1; }
-    .gen-card.disabled { opacity: .4; pointer-events: none; }
+    .gen-card.disabled { opacity: .5; cursor: default; pointer-events: none; }
 
     .gen-icon { font-size: 24px; margin-bottom: 10px; }
 
@@ -331,6 +331,16 @@
       color: var(--ink3);
       margin-top: 6px;
     }
+
+    .gen-status {
+      font-family: var(--f-mono);
+      font-size: 9px;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+    .gen-tag-live     { color: #4ade80; }
+    .gen-tag-building { color: #facc15; }
+    .gen-tag-pending  { color: #6b7280; }
 
     /* ── PHL SECTION ─────────────────────────────────────── */
     .phl-grid {
@@ -716,24 +726,6 @@
   <!-- ── SCRIPTS ─────────────────────────────────────────── -->
   <script>
   (() => {
-    // ── Generator definitions ──────────────────────────────
-    const GENERATORS = [
-      { id:'broadcast',  icon:'📡', name:'Broadcast',  desc:'방송용 칠판. 수학/추모/음악/튜토리얼 포맷.',  files:['math-tutor','memorial','music','parksy-capture','pwa-demo'], path:'prompts/broadcast/' },
-      { id:'publisher',  icon:'📚', name:'Publisher',  desc:'KDP/출판 Generator. 원고를 책으로.',         files:['kdp-publisher'], path:'prompts/publisher/' },
-      { id:'chalkboard', icon:'🖊️', name:'Chalkboard', desc:'범용 칠판 Generator. 모든 형식의 기반.',     files:[], path:'prompts/chalkboard/', disabled:true },
-      { id:'engine',     icon:'⚙️', name:'Engine',     desc:'GitHub 퍼블리싱 엔진. 레포→페이지.',         files:['github-publishing'], path:'prompts/engine/' },
-      { id:'guide',      icon:'📖', name:'Guide',      desc:'가이드/인스트럭션 Generator.',               files:['github-pages-build'], path:'prompts/guide/' },
-      { id:'dataset',    icon:'🗃️', name:'Dataset',    desc:'데이터셋 생성/정제 Generator.',              files:[], path:'prompts/dataset/', disabled:true },
-      { id:'editorial',  icon:'✏️', name:'Editorial',  desc:'편집/교열 Generator. 박씨 스타일 필터.',     files:[], path:'prompts/editorial/', disabled:true },
-      { id:'identity',   icon:'🪪', name:'Identity',   desc:'브랜딩/아이덴티티 Generator.',               files:[], path:'prompts/identity/', disabled:true },
-      { id:'instruction',icon:'📋', name:'Instruction',desc:'인스트럭션 패키지 Generator.',               files:[], path:'prompts/instruction/', disabled:true },
-      { id:'route',      icon:'🗺️', name:'Route',      desc:'라우팅/배포 경로 Generator.',                files:[], path:'prompts/route/', disabled:true },
-      { id:'studio',     icon:'🎨', name:'Studio',     desc:'비주얼/에셋 Generator.',                     files:[], path:'prompts/studio/', disabled:true },
-      { id:'apk',        icon:'📱', name:'APK',        desc:'APK 카드 Generator. 앱 설명 자동화.',         files:[], path:'prompts/apk/', disabled:true },
-      { id:'form',       icon:'📝', name:'Form',       desc:'폼/인풋 Generator.',                         files:[], path:'prompts/form/', disabled:true },
-      { id:'whitepaper', icon:'📄', name:'Whitepaper', desc:'백서/기술문서 Generator.',                   files:[], path:'whitepaper.html' },
-    ];
-
     // ── Perplexity spaces ──────────────────────────────────
     const SPACES = [
       { icon:'📊', name:'EAE Analytics',    desc:'6대 스킬셋 성과 분석' },
@@ -746,21 +738,35 @@
       { icon:'🎬', name:'YouTube Insights', desc:'채널 성과 분석' },
     ];
 
-    // ── Render generators ──────────────────────────────────
-    const genGrid = document.getElementById('gen-grid');
-    genGrid.innerHTML = GENERATORS.map(g => {
-      const disabled = g.disabled ? ' disabled' : '';
-      const href = g.disabled ? '' : ` href="${g.path}" ${g.path.endsWith('.html') ? '' : 'target="_blank" rel="noopener"'}`;
-      const tag = g.disabled ? 'div' : 'a';
-      const fileCount = g.files.length;
-      return `<${tag}${href} class="gen-card${disabled}">
+    const STATUS_TAG = { live: '● live', building: '◐ building', pending: '○ 준비 중' };
+
+    function renderCard(g) {
+      const isLive = g.status === 'live';
+      const isBuilding = g.status === 'building';
+      const disabled = !isLive;
+      const href = isLive ? ` href="${g.path}" ${g.path.endsWith('.html') ? '' : 'target="_blank" rel="noopener"'}` : '';
+      const tag = isLive ? 'a' : 'div';
+      const fileCount = g.files ? g.files.length : 0;
+      const statusCls = isLive ? 'gen-tag-live' : isBuilding ? 'gen-tag-building' : 'gen-tag-pending';
+      return `<${tag}${href} class="gen-card${disabled ? ' disabled' : ''}">
         <div class="gen-icon">${g.icon}</div>
         <div class="gen-name">${g.name}</div>
         <div class="gen-desc">${g.desc}</div>
         ${fileCount > 0 ? `<div class="gen-count">${fileCount}개 칠판</div>` : ''}
-        ${g.disabled ? '<div class="gen-count">준비 중</div>' : ''}
+        <div class="gen-status ${statusCls}">${STATUS_TAG[g.status] || g.status}</div>
       </${tag}>`;
-    }).join('');
+    }
+
+    // ── Render generators from SSOT JSON ──────────────────
+    const genGrid = document.getElementById('gen-grid');
+    fetch('./data/generators.json')
+      .then(r => r.json())
+      .then(data => {
+        genGrid.innerHTML = data.generators.map(renderCard).join('');
+      })
+      .catch(() => {
+        genGrid.innerHTML = '<div style="color:#888;padding:24px;">generators.json 로드 실패</div>';
+      });
 
     // ── Render perplexity spaces ───────────────────────────
     const spacesGrid = document.getElementById('spaces-grid');
