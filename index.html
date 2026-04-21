@@ -101,7 +101,7 @@
 
     @media (max-width: 480px) {
       .nav-links { gap: 12px; }
-      .nav-links li:nth-child(n+3) { display: none; }
+      .nav-links li:nth-child(n+4) { display: none; }
     }
 
     /* ── HERO ────────────────────────────────────────────── */
@@ -600,6 +600,8 @@
     <ul class="nav-links">
       <li><a href="#generators">Generators</a></li>
       <li><a href="#phl">PHL</a></li>
+      <li><a href="whitepaper.html">Whitepaper</a></li>
+      <li><a href="links/">Links</a></li>
       <li><a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener">EAE-Univ</a></li>
       <li><a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" rel="noopener">GitHub</a></li>
     </ul>
@@ -752,10 +754,10 @@
     </div>
   </section>
 
-  <hr class="section-divider">
+  <hr class="section-divider" id="discord-divider" style="display:none;">
 
   <!-- ── DISCORD NOTICES ───────────────────────────────────── -->
-  <section class="section" id="discord-notices">
+  <section class="section" id="discord-notices" style="display:none;">
     <div class="sec-label">Discord · orbitprompt 채널</div>
     <h2 class="sec-title">최신 공지</h2>
     <p class="sec-desc">Discord #orbitprompt 채널 최신 메시지. 30분마다 자동 갱신.</p>
@@ -779,10 +781,12 @@
   <footer>
     <div class="footer-brand">OrbitPrompt</div>
     <div class="footer-links">
-      <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener">EAE University</a>
+      <a href="links/">Links</a>
+      <a href="whitepaper.html">Whitepaper</a>
       <a href="prompts/broadcast/" target="_blank">Broadcast</a>
       <a href="prompts/publisher/" target="_blank">Publisher</a>
       <a href="PHL_SPEC.md" target="_blank" rel="noopener">PHL Spec</a>
+      <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener">EAE-Univ</a>
       <a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" rel="noopener">GitHub</a>
     </div>
     <p class="footer-copy">© 2026 OrbitPrompt · 지식을 형식으로. 아이디어를 방송으로.</p>
@@ -859,17 +863,16 @@
     fetch('./data/latest-messages.json')
       .then(r => r.json())
       .then(msgs => {
-        if (!Array.isArray(msgs) || !msgs.length) {
-          discordContainer.innerHTML = '<div class="discord-loading">공지 없음</div>'; return;
-        }
+        const discordSection = document.getElementById('discord-notices');
+        if (!Array.isArray(msgs) || !msgs.length) return;
         const visible = msgs.filter(m => {
           const hasText = m.content && m.content.trim();
           const hasEmbed = m.embeds && m.embeds.length > 0 && (m.embeds[0].title || m.embeds[0].description);
           return hasText || hasEmbed;
         });
-        if (!visible.length) {
-          discordContainer.innerHTML = '<div class="discord-loading">채널 활성화 대기 중 — Discord #orbitprompt 채널에 첫 메시지를 올리면 여기 표시됩니다</div>'; return;
-        }
+        if (!visible.length) return;
+        discordSection.style.display = '';
+        document.getElementById('discord-divider').style.display = '';
         discordContainer.innerHTML = visible.slice(0, 5).map(m => {
           const author = m.author?.username || '알 수 없음';
           const embed = m.embeds?.[0];
