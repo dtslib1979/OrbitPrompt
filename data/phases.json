@@ -1,148 +1,189 @@
 {
-  "version": "1.0",
+  "version": "2.0",
   "updated": "2026-04-21",
-  "title": "OrbitPrompt — FAB 공정 파트 구조",
-  "motto": "원자재에서 방송까지. 대화를 공장으로.",
-  "coreInsight": {
-    "input":   "parksy-logs 대화 캡처 (원자재)",
-    "process": "OrbitPrompt 칠판센터 (공정)",
-    "output":  "28레포 × 7패키지 배포 (완제품)"
+  "source": "dtslib-papyrus/hq/config/channel-repo-map.json",
+  "title": "15채널 × 레포 × YouTube 매핑 — OrbitPrompt 파트 구조",
+  "motto": "레포가 채널이고, 채널이 출판사다.",
+  "summary": {
+    "total_channels": 15,
+    "total_accounts": 4,
+    "total_repos": 28,
+    "orbitprompt_channel": "@philosopher-parksy",
+    "orbitprompt_account": "a"
   },
   "parts": [
     {
-      "id": "part-0",
-      "number": 0,
-      "name": "PHILOSOPHY",
-      "nameKo": "철학",
-      "tagline": "왜 이 공장인가",
-      "icon": "🌀",
+      "id": "part-a",
+      "account": "a",
+      "account_email": "dimas.thomas.sancho@gmail.com",
+      "name": "KR 방송",
+      "nameKo": "박씨 직접 방송국",
+      "tagline": "박씨 본인 출연 5채널 — OrbitPrompt가 여기 속한다",
+      "icon": "📻",
       "color": "#a855f7",
       "status": "live",
-      "description": "PHL 프로토콜 — 짧은 토큰이 엄격한 규칙을 실행한다. 제약이 설계 결정의 근거다.",
-      "chapters": [
-        { "id": "phl-spec",      "title": "PHL 프로토콜 SPEC",    "path": "PHL_SPEC.md",        "status": "live" },
-        { "id": "whitepaper",    "title": "Whitepaper",           "path": "whitepaper.html",    "status": "live" },
-        { "id": "fab-manifest",  "title": "FAB 매니페스트",        "path": "data/fab-manifest.json", "status": "live" },
-        { "id": "why",           "title": "왜 OrbitPrompt인가",    "path": "about/why.html",     "status": "pending" }
+      "channel_count": 5,
+      "channels": [
+        {
+          "handle": "@blogger-parksy",
+          "channel_id": "UC5H8CnRGDxvx4v3HWrktuSg",
+          "title": "Parksy 블로그",
+          "desc": "1인 미디어 운영 노하우 · AI 자동화 파이프라인 · 개발일지",
+          "repos": ["parksy.kr"],
+          "domain": "parksy.kr"
+        },
+        {
+          "handle": "@musician-parksy",
+          "channel_id": "UCun6b2HD3ekp35PhqbTfOlg",
+          "title": "Parksy 뮤직",
+          "desc": "AI 성우 · DiffSinger · VSTi · GPT-SoVITS 음악 파이프라인",
+          "repos": ["parksy-audio"],
+          "domain": null
+        },
+        {
+          "handle": "@visualizer-parksy",
+          "channel_id": "UC2MfUghTnMRE1xrODSfoELA",
+          "title": "Parksy 비주얼",
+          "desc": "FLUX ComfyUI · 웹툰 자동화 · 썸네일 · CAD 도면",
+          "repos": ["parksy-image"],
+          "domain": null
+        },
+        {
+          "handle": "@technician-parksy",
+          "channel_id": "UCfRaJjIn2oXyThHpAhOBSYg",
+          "title": "Parksy 테크",
+          "desc": "Claude Code · GitHub Pages · APK/PWA · 자동화 인프라",
+          "repos": ["dtslib-papyrus", "dtslib-apk-lab", "dtslib-cloud-appstore", "dtslib-localpc"]
+        },
+        {
+          "handle": "@philosopher-parksy",
+          "channel_id": "UCJaGuXjxoNjFMqfYUSFjZVg",
+          "title": "Parksy 철학",
+          "desc": "OrbitPrompt · PHL 프로토콜 · Prompt Atom · parksy-logs RAG",
+          "repos": ["OrbitPrompt", "parksy-logs"],
+          "domain": null,
+          "note": "OrbitPrompt가 이 채널의 레포"
+        }
       ]
     },
     {
-      "id": "part-1",
-      "number": 1,
-      "name": "RAW MATERIAL",
-      "nameKo": "원자재",
-      "tagline": "parksy-logs → orbit/raw/",
-      "icon": "📥",
+      "id": "part-b",
+      "account": "b",
+      "account_email": "dtslib1979@gmail.com",
+      "name": "경제방송",
+      "nameKo": "직영점 · 브랜치 길드",
+      "tagline": "파트너/직영 비즈니스 6채널 — 레포별 독립 운영",
+      "icon": "💼",
       "color": "#22d3ee",
-      "status": "building",
-      "description": "박씨 대화 캡처 → 원자재 스테이징. 입력 파이프라인. 이 파이프라인이 없으면 공장 전체가 껍데기다.",
-      "sourceRepos": ["parksy-logs", "dtslib-localpc", "termux-bridge"],
-      "chapters": [
-        { "id": "capture",       "title": "대화 캡처 파이프라인",  "path": "orbit/raw/",          "status": "building" },
-        { "id": "perplexity",    "title": "8개 Perplexity Space", "path": "about/spaces.html",   "status": "pending" },
-        { "id": "rag",           "title": "RAG / 검색",           "path": "parksy-logs/rag/",    "status": "external" }
+      "status": "live",
+      "channel_count": 6,
+      "channels": [
+        {
+          "handle": "@dtslib-branch",
+          "channel_id": "UCxz800sMD27pk6X6HvxNS1g",
+          "title": "DTSLIB Branch",
+          "desc": "브랜치 길드 총괄 — 세그먼트 P&L · 프랜차이즈 OS",
+          "repos": ["dtslib-branch", "buckleychang.com", "buddies.kr", "dtslib.kr", "gohsy", "gohsy-fashion", "gohsy-production", "hoyadang.com", "koosy", "namoneygoal", "papafly"]
+        },
+        {
+          "handle": "@espiritu-tango",
+          "channel_id": "UCfhlV8VijgD9wMT9WY2KI0Q",
+          "title": "Espiritu Tango",
+          "desc": "탱고 · 몸·춤·피지컬 판타지 (보류 — IP 박씨 소유)",
+          "repos": ["espiritu-tango"],
+          "status": "pending"
+        },
+        {
+          "handle": "@artrew-i1w",
+          "channel_id": "UCNciU69gQolXddS9nQx29XA",
+          "title": "Artrew",
+          "desc": "AI 시대 미대생 육성 · FLUX · 포트폴리오 · 미대 입시",
+          "repos": ["artrew"],
+          "domain": "artrew.com"
+        },
+        {
+          "handle": "@phoneparis-r6q",
+          "channel_id": "UCOvHKAfWYYUQKPunZIjOQbg",
+          "title": "Phone Paris",
+          "desc": "갤럭시 세팅 · APK 설치 · Baptism · Termux 모바일 퍼스트",
+          "repos": ["phoneparis", "termux-bridge"],
+          "domain": "phoneparis.kr"
+        },
+        {
+          "handle": "@alexandria-y6k",
+          "channel_id": "UCt-pTP_Bketi7o9R-2Q7tPA",
+          "title": "Alexandria Sanctuary",
+          "desc": "요양 문화 · 사람 중심 요양 공간 · 어르신 디지털 활용",
+          "repos": ["alexandria-sanctuary"]
+        },
+        {
+          "handle": "@justino-fashion",
+          "channel_id": "UCRJsaNvt9tQtOJ1tZ-_T3Yg",
+          "title": "Justino Fashion",
+          "desc": "패션 · 스타일링 · 룩북",
+          "repos": ["justino"],
+          "domain": "dtslib1979.github.io/justino"
+        }
       ]
     },
     {
-      "id": "part-2",
-      "number": 2,
-      "name": "PROCESS",
-      "nameKo": "공정",
-      "tagline": "Prompt Atom 6종 생산",
-      "icon": "⚙️",
+      "id": "part-c",
+      "account": "c",
+      "account_email": "Thomas.tj.Park@gmail.com",
+      "name": "교육방송",
+      "nameKo": "EAE 사내대학",
+      "tagline": "EAE 2채널 — 강의 · 기술 교육 · 6대 스킬셋",
+      "icon": "🎓",
       "color": "#d4af37",
-      "status": "building",
-      "description": "parksy-logs/raw/ → 철학 조건 필터(7축) → 패턴 리버스 엔지니어링 → Prompt Atom 6종. OrbitPrompt의 존재 이유.",
-      "atomTypes": [
-        { "id": "repo-janitor",        "desc": "레포 정리/감사 프롬프트" },
-        { "id": "broadcast-packager",  "desc": "칠판 방송 패키징" },
-        { "id": "branch-onboarding",   "desc": "신규 레포 온보딩" },
-        { "id": "web-deploy",          "desc": "GitHub Pages 배포" },
-        { "id": "asset-forge",         "desc": "에셋 생성/변환" },
-        { "id": "automation-lab",      "desc": "자동화 스크립트 생성" }
-      ],
-      "chapters": [
-        { "id": "atom-schema",    "title": "Atom 스키마",         "path": "orbit/schemas/prompt-atom.schema.json", "status": "live" },
-        { "id": "atom-templates", "title": "6종 템플릿",           "path": "orbit/templates/",    "status": "live" },
-        { "id": "atom-index",     "title": "생성된 Atom 인덱스",   "path": "data/atom-index.json","status": "pending" },
-        { "id": "extract-script", "title": "추출 스크립트",        "path": "scripts/extract-atoms.py", "status": "pending" }
+      "status": "live",
+      "channel_count": 2,
+      "channels": [
+        {
+          "handle": "@BeingEduartEngineer-4",
+          "channel_id": "UC9aqEC7Onh7UpCEoPwhujvA",
+          "title": "EAE 교육방송",
+          "desc": "POST▶ 렛저 · 사내대학 자료 포스팅",
+          "repos": ["eae.kr"],
+          "domain": "www.eae.kr"
+        },
+        {
+          "handle": "@EAE-University",
+          "channel_id": "UCogemhYGCnbVp13ARqFYM8A",
+          "title": "EAE University",
+          "desc": "6대 스킬셋 강의 — EML · QSketch · MAL · PENON · PHL · Patchtech",
+          "repos": ["eae-univ"],
+          "youtube_cache": "data/youtube-cache.json"
+        }
       ]
     },
     {
-      "id": "part-3",
-      "number": 3,
-      "name": "PRODUCT",
-      "nameKo": "완제품",
-      "tagline": "14개 Generator",
-      "icon": "🏭",
+      "id": "part-d",
+      "account": "d",
+      "account_email": "dimas@dtslib.com",
+      "name": "명함도메인",
+      "nameKo": "DTSLIB 본사 · 관제센터",
+      "tagline": "28레포 전체 통제 · 판타지 채널 · 더블카운팅 3개",
+      "icon": "🏛️",
       "color": "#10b981",
       "status": "live",
-      "description": "Prompt Atom → Generator UI에서 소비. 14개 Generator로 아이디어를 방송으로 바꾼다.",
-      "generatorCount": 14,
-      "liveCount": 5,
-      "chapters": [
-        { "id": "generators",  "title": "Generator Hub",        "path": "#generators",            "status": "live" },
-        { "id": "chalkboard",  "title": "Chalkboard Generator", "path": "prompts/chalkboard/",    "status": "building" },
-        { "id": "editorial",   "title": "Editorial Generator",  "path": "prompts/editorial/",     "status": "building" },
-        { "id": "broadcast",   "title": "Broadcast Generator",  "path": "prompts/broadcast/",     "status": "live" },
-        { "id": "publisher",   "title": "Publisher Generator",  "path": "prompts/publisher/",     "status": "live" },
-        { "id": "boards",      "title": "Archive (생성 결과물)", "path": "archive.html",           "status": "live" }
-      ]
-    },
-    {
-      "id": "part-4",
-      "number": 4,
-      "name": "DEPLOYMENT",
-      "nameKo": "배포",
-      "tagline": "28레포 × 7패키지 × FAB 8라우트",
-      "icon": "🚀",
-      "color": "#f97316",
-      "status": "live",
-      "description": "완제품이 28개 레포로 흘러들어간다. 7패키지 × FAB 8라우트 매트릭스. 방송국 트릴로지 + 브랜치 길드.",
-      "packages": [
-        { "id": "P0", "name": "TELEGRAM",  "repos": ["dtslib-localpc/telegram-bots", "termux-bridge"],              "icon": "📡" },
-        { "id": "P1", "name": "INFRA",     "repos": ["termux-bridge", "dtslib-localpc", "parksy-image", "parksy-audio", "phoneparis"], "icon": "🔧" },
-        { "id": "P2", "name": "YOUTUBE",   "repos": ["parksy.kr", "eae.kr", "dtslib.kr", "eae-univ"],               "icon": "📺" },
-        { "id": "P3", "name": "BROADCAST", "repos": ["parksy.kr", "eae.kr", "dtslib.kr"],                           "icon": "📻" },
-        { "id": "P4", "name": "KNOWLEDGE", "repos": ["OrbitPrompt", "eae-univ", "parksy-logs"],                     "icon": "🧠" },
-        { "id": "P5", "name": "PHYSICAL",  "repos": ["hoyadang.com", "gohsy-production", "gohsy-fashion"],          "icon": "🏪" },
-        { "id": "P6", "name": "DIRECT",    "repos": ["artrew", "justino", "espiritu-tango", "alexandria-sanctuary", "phoneparis"], "icon": "🏬" },
-        { "id": "P7", "name": "BRANCH",    "repos": ["dtslib-branch", "gohsy", "koosy", "papafly", "namoneygoal", "buddies.kr", "buckleychang.com"], "icon": "🌿" }
-      ],
-      "chapters": [
-        { "id": "ecosystem-map", "title": "생태계 맵",       "path": "map.html",           "status": "live" },
-        { "id": "broadcast-3",   "title": "방송국 트릴로지", "path": "about/broadcast.html","status": "pending" },
-        { "id": "fab-routes",    "title": "FAB 8라우트",     "path": "data/fab-manifest.json", "status": "live" }
-      ]
-    },
-    {
-      "id": "appendix",
-      "number": 99,
-      "name": "ECOSYSTEM",
-      "nameKo": "생태계",
-      "tagline": "AI 성우 · 악기 · 영상 · 15채널 전체",
-      "icon": "🌐",
-      "color": "#6366f1",
-      "status": "building",
-      "description": "GPT-SoVITS AI 성우 + DiffSinger 보컬 + DDSP 악기 + VSTi 파이프라인 + 유튜브 15채널 + dongseon-studio. 박씨 생태계 전체.",
-      "devices": [
-        { "id": "pc",    "name": "집 PC WSL2",  "os": "Ubuntu/WSL2",  "role": "관제탑 — Claude Code 메인", "repos": 37 },
-        { "id": "phone", "name": "S25 Ultra",   "os": "Android/Termux","role": "SSH 클라이언트 + termux-bridge",  "repos": 1 },
-        { "id": "tab",   "name": "Tab S9 5G",   "os": "Android/Termux","role": "dongseon-studio + parksy-image + dtslib-apk-lab", "repos": 4 }
-      ],
-      "aiPipelines": [
-        { "id": "tts",       "name": "AI 성우",        "tech": "GPT-SoVITS v1 → v2", "status": "live" },
-        { "id": "vocal",     "name": "DiffSinger 보컬", "tech": "PARKSY_EN v3 + Tiger-ko", "status": "building" },
-        { "id": "instrument","name": "DDSP 악기",       "tech": "VSCO-2-CE + 바순", "status": "building" },
-        { "id": "vsti",      "name": "VSTi 파이프라인", "tech": "REAPER + BBC SO + loopMIDI", "status": "live" },
-        { "id": "image",     "name": "ComfyUI FLUX",   "tech": "Vast.ai RTX4090", "status": "building" },
-        { "id": "video",     "name": "WAN 2.1",        "tech": "Vast.ai RTX4090", "status": "pending" }
-      ],
-      "chapters": [
-        { "id": "ai-pipeline", "title": "AI 파이프라인",     "path": "about/ai.html",         "status": "pending" },
-        { "id": "youtube-15",  "title": "유튜브 15채널",     "path": "about/youtube.html",    "status": "pending" },
-        { "id": "dongseon",    "title": "DONGSEON Studio",  "path": "about/dongseon.html",   "status": "pending" },
-        { "id": "devices",     "title": "3장치 매트릭스",    "path": "about/devices.html",    "status": "pending" }
+      "channel_count": 2,
+      "channels": [
+        {
+          "handle": "@dtslib_com",
+          "channel_id": "UCd1tVVsxwsLrd254ZlXeYqA",
+          "title": "DTSLIB 관제센터",
+          "desc": "28개 전 레포 통제 · 반도체 공정 구조 · FAB 아키텍처",
+          "repos": ["dtslib-papyrus"],
+          "domain": "dtslib.com"
+        },
+        {
+          "handle": "@dtslib_world",
+          "channel_id": "UCv33IgkQ8P3ctFHwXLGyglw",
+          "title": "DTSLIB World",
+          "desc": "판타지 채널 — alexandria-sanctuary / espiritu-tango / artrew 더블카운팅 3개",
+          "repos": ["dtslib-papyrus", "alexandria-sanctuary", "espiritu-tango", "artrew"],
+          "double_counting": ["alexandria-sanctuary", "espiritu-tango", "artrew"]
+        }
       ]
     }
   ]

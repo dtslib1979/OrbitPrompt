@@ -329,26 +329,21 @@
       </div>
     `).join('');
 
-    // ── Render FAB Parts from phases.json ─────────────────
+    // ── Render Parts from phases.json (channel-repo map) ──
     const partsNav = document.getElementById('parts-nav');
     fetch('./data/phases.json')
       .then(r => r.json())
       .then(data => {
-        const mainParts = data.parts.filter(p => p.number !== 99);
-        const appendix  = data.parts.find(p => p.number === 99);
-        const all = appendix ? [...mainParts, appendix] : mainParts;
-        partsNav.innerHTML = all.map(p => {
-          const firstChapter = p.chapters && p.chapters.find(c => c.status === 'live');
-          const href = firstChapter ? ` href="${firstChapter.path}"` : '';
-          const tag  = firstChapter ? 'a' : 'div';
-          return `<${tag}${href} class="part-card" style="--part-color:${p.color}">
-            <div class="part-number">Part ${p.number === 99 ? 'X' : p.number}</div>
+        partsNav.innerHTML = data.parts.map(p => {
+          const repoCount = p.channels.reduce((n, c) => n + (c.repos ? c.repos.length : 0), 0);
+          return `<div class="part-card" style="--part-color:${p.color}">
+            <div class="part-number">Part ${p.id.replace('part-','').toUpperCase()} · ${p.channel_count}채널</div>
             <div class="part-icon">${p.icon}</div>
             <div class="part-name">${p.name}</div>
             <div class="part-nameKo">${p.nameKo}</div>
-            <div class="part-tagline">${p.tagline}</div>
-            <div class="part-status ${p.status}">${p.status === 'live' ? '● live' : p.status === 'building' ? '◐ building' : '○ 준비 중'}</div>
-          </${tag}>`;
+            <div class="part-tagline">${p.channels.map(c => c.handle).join(' · ')}</div>
+            <div class="part-status ${p.status}">● ${repoCount}개 레포</div>
+          </div>`;
         }).join('');
       })
       .catch(() => { partsNav.innerHTML = '<div style="color:#666;font-size:12px;">phases.json 로드 실패</div>'; });
