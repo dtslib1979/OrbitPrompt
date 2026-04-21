@@ -1,0 +1,35 @@
+name: Discord Cache Update
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Fetch Discord messages
+      env:
+        DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
+      run: |
+        mkdir -p data
+        curl -s \
+          -H "Authorization: Bot $DISCORD_BOT_TOKEN" \
+          "https://discord.com/api/v10/channels/${CHANNEL_ID}/messages?limit=10" \
+          -o data/latest-messages.json
+
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data/latest-messages.json
+        git diff --staged --quiet || git commit -m "chore: Discord cache update $(date -u +%Y-%m-%dT%H:%M)"
+        git push
