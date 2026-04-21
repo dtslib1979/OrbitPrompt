@@ -862,9 +862,18 @@
         if (!Array.isArray(msgs) || !msgs.length) {
           discordContainer.innerHTML = '<div class="discord-loading">공지 없음</div>'; return;
         }
-        discordContainer.innerHTML = msgs.slice(0, 5).map(m => {
+        const visible = msgs.filter(m => {
+          const hasText = m.content && m.content.trim();
+          const hasEmbed = m.embeds && m.embeds.length > 0 && (m.embeds[0].title || m.embeds[0].description);
+          return hasText || hasEmbed;
+        });
+        if (!visible.length) {
+          discordContainer.innerHTML = '<div class="discord-loading">채널 활성화 대기 중 — Discord #orbitprompt 채널에 첫 메시지를 올리면 여기 표시됩니다</div>'; return;
+        }
+        discordContainer.innerHTML = visible.slice(0, 5).map(m => {
           const author = m.author?.username || '알 수 없음';
-          const content = m.content || '';
+          const embed = m.embeds?.[0];
+          const content = m.content?.trim() || (embed ? `**${embed.title || ''}**\n${embed.description || ''}` : '');
           const time = m.timestamp ? new Date(m.timestamp).toLocaleString('ko-KR') : '';
           return `<div class="discord-msg">
             <div class="discord-author">${author}</div>
@@ -873,7 +882,7 @@
           </div>`;
         }).join('');
       })
-      .catch(() => { discordContainer.innerHTML = '<div class="discord-loading">latest-messages.json 없음 — Discord 워크플로우 대기 중</div>'; });
+      .catch(() => { discordContainer.innerHTML = '<div class="discord-loading">latest-messages.json 로드 중</div>'; });
 
     // ── Render perplexity spaces ───────────────────────────
     const spacesGrid = document.getElementById('spaces-grid');
