@@ -1,199 +1,150 @@
-# OrbitPrompt 개발 계획 v1 (2026-04-21)
+# OrbitPrompt 개발 계획 v1.1 (2026-04-21)
 
-> phoneparis 관찰 3회 → 미러링 목록 확정 → OrbitPrompt 특화 설계 통합
+> parksy-logs 원자재 → 리버스 엔지니어링 → Prompt Atom 생산 — 이것이 OrbitPrompt의 FAB 공정이다.
 
 ---
 
-## 0. 현황 스냅샷
+## 0. 철학 확정 (파피루스 검증 완료)
 
-### phoneparis가 완성한 패턴 (레퍼런스)
+### OrbitPrompt의 진짜 역할
 
-| 패턴 | 파일 | 상태 |
-|------|------|------|
-| youtube-cache.json 루프백 | `data/youtube-cache.json` + index.html 최신 영상 섹션 | ✅ 2026-04-21 완성 |
-| Discord 공지 캐시 | `data/latest-messages.json` + `.github/workflows/discord-cache.yml` | ✅ 완성 |
-| prompts/index.json 자동 갱신 | `.github/workflows/update-index.yml` | ✅ 완성 |
-| data/ SSOT 구조 | notices.json / phases.json / portfolio.json / team.json / registry.json | ✅ 완성 |
-| CSS 아키텍처 분리 | `assets/css/theme.css` + film-border.css + graph-map.css | ✅ 완성 |
+```
+[INPUT]  parksy-logs/raw/  ←── 박씨 대화 캡처 (원자재 투입)
+           ↓
+[PROCESS] OrbitPrompt 칠판센터
+           ├── 철학 조건 필터 (7축: Meta/Reverse/Modular/Language/Zoom/Spiral/Quantum)
+           ├── 패턴 리버스 엔지니어링
+           └── Prompt Atom 생성
+           ↓
+[OUTPUT]  prompts/ 6종 Atom  ←── Generator가 꺼내 쓰는 완제품
+```
 
-### OrbitPrompt 현재 상태
+**칠판센터(Prompt Compiler)** = 출력 플랫폼이 아닌 **리버스 엔지니어링 공정**.
+
+### Prompt Atom 6종 (완제품 규격)
+
+| Atom | 설명 | 적용 Generator |
+|------|------|---------------|
+| `repo-janitor` | 레포 정리/감사 프롬프트 | Engine / Route |
+| `broadcast-packager` | 칠판 방송 패키징 | Broadcast / Chalkboard |
+| `branch-onboarding` | 신규 레포 온보딩 | Instruction |
+| `web-deploy` | GitHub Pages 배포 | Engine |
+| `asset-forge` | 에셋 생성/변환 | Studio |
+| `automation-lab` | 자동화 스크립트 생성 | Dataset / Form |
+
+---
+
+## 1. 현황 스냅샷 (2026-04-21)
 
 | 항목 | 상태 |
 |------|------|
-| index.html | ✅ 전면 개편 완료 (681줄) |
+| index.html | ✅ fetch 기반 (generators.json SSOT 완료) |
+| data/generators.json | ✅ 신설 완료 — 14개 Generator SSOT |
 | .github/workflows/ | ✅ update-index + discord-cache + discord-notify + repo-guard |
+| links/index.html | ✅ 신설 완료 — 4섹션 허브 |
+| youtube-setup.json | ✅ EAE-University (account c) scaffold 완료 |
 | docs/dev-logs/ | ✅ 신설 (001 기록) |
-| data/ | ⚠️ fab-manifest.json만 있음 — SSOT JSON 없음 |
-| youtube-cache.json | ❌ 없음 (EAE-University 채널 연동 필요) |
-| CSS 분리 | ❌ 전부 index.html inline |
-| Discord 섹션 | ⚠️ discord-cache.yml만 있고 data/latest-messages.json 없음, 렌더러 없음 |
-| Generator 활성화 | ⚠️ 14개 중 4개만 live (broadcast/publisher/engine/guide) |
-| Generator SSOT | ❌ index.html inline 하드코딩 → 외부 JSON 없음 |
+| data/youtube-cache.json | ❌ export.cjs c 실행 필요 (박씨 수동) |
+| data/latest-messages.json | ❌ Discord Secrets 설정 필요 (박씨 수동) |
+| CSS 분리 | ⚠️ index.html inline — STEP 4 예정 |
+| Prompt Atom 파이프라인 | ❌ parksy-logs → Atom 스크립트 없음 |
+| Generator 활성화 | ⚠️ 4개 live / 10개 pending |
 
 ---
 
-## 1. 미러링 목록 (phoneparis → OrbitPrompt)
+## 2. 개발 시퀀스 (INPUT 파이프라인 우선)
 
-### 1-A: youtube-cache.json 루프백 ★★★ (최우선)
-
-**phoneparis 패턴:**
-```html
-<section id="latest-videos">
-  <div id="yt-latest-container"></div>
-</section>
-<script>
-(async () => {
-  const data = await fetch('./data/youtube-cache.json').then(r=>r.json());
-  const videos = data.videos || [];
-  container.innerHTML = videos.map(v => `카드 HTML`).join('');
-})();
-</script>
-```
-
-**OrbitPrompt 적용:**
-- 대상 채널: `@EAE-University` (채널ID: UCogemhYGCnbVp13ARqFYM8A)
-- `youtube-setup.json` 이미 있음 → `node tools/youtube/export.cjs c` 실행 → `data/youtube-cache.json` 생성
-- index.html 하단에 "EAE 최신 강의" 섹션 추가
+### STEP 1 ✅ data/generators.json SSOT
+- 14개 Generator 외부 JSON으로 분리
+- index.html fetch 기반 렌더링 전환
+- `커밋: "refactor: Generator SSOT — data/generators.json 분리"`
 
 ---
 
-### 1-B: Discord 섹션 렌더러
+### STEP 2 — Prompt Atom 리버스 엔지니어링 파이프라인 ★★★ (핵심)
 
-**phoneparis 패턴:** discord-cache.yml → `data/latest-messages.json` → index.html에 공지 섹션
-
-**OrbitPrompt 적용:**
-- discord-cache.yml ✅ 이미 생성됨
-- 필요한 것: Secrets 설정 + index.html에 Discord 공지 섹션 추가
-- 섹션 위치: PHL Protocol 섹션 아래
-
----
-
-### 1-C: data/ SSOT JSON 구조
-
-**phoneparis 패턴:** 모든 동적 콘텐츠를 `data/*.json`으로 분리 → HTML은 fetch만
-
-**OrbitPrompt 적용:**
+**OrbitPrompt의 존재 이유가 이것이다.**
 
 ```
-data/
-├── generators.json      ← 14개 Generator 정의 SSOT (index.html 인라인에서 분리)
-├── youtube-cache.json   ← export.cjs 자동 생성
-├── latest-messages.json ← discord-cache.yml 자동 생성
-└── notices.json         ← Generator 업데이트 공지
+parksy-logs/raw/*.md (대화 캡처)
+  ↓
+orbit/raw/ (원자재 스테이징)
+  ↓
+orbit/atoms/ (Atom 생성)
+  ├── repo-janitor.md
+  ├── broadcast-packager.md
+  ├── branch-onboarding.md
+  ├── web-deploy.md
+  ├── asset-forge.md
+  └── automation-lab.md
+  ↓
+prompts/*/index.html (Generator UI에서 소비)
 ```
 
----
+**작업:**
+1. `orbit/schemas/atom-schema.json` — Atom 규격 정의
+2. `orbit/templates/` — 6종 템플릿 초안 작성
+3. `scripts/extract-atoms.py` — parksy-logs/raw/ → Atom 추출 스크립트
+4. `data/atom-index.json` — 생성된 Atom 목록 SSOT
 
-### 1-D: CSS 분리
-
-**phoneparis 패턴:** `assets/css/theme.css` + 추가 CSS 파일들
-
-**OrbitPrompt 적용:**
-- `assets/css/orbit-theme.css` 분리
-- index.html inline `<style>` → 외부 파일로
+커밋: `"feat: Prompt Atom 파이프라인 — parksy-logs → orbit/atoms/"`
 
 ---
 
-## 2. OrbitPrompt 특화 개발 (phoneparis에 없는 것)
+### STEP 3 — youtube-cache.json 루프백
 
-### 2-A: data/generators.json SSOT ★★★
+**전제조건:** 박씨가 `node /home/dtsli/dtslib-papyrus/tools/youtube/export.cjs c` 실행
 
-현재 14개 Generator가 index.html 자바스크립트에 하드코딩되어 있음.
-외부 JSON으로 분리 → index.html은 fetch만.
-
-```json
-{
-  "version": "1.0",
-  "updated": "2026-04-21",
-  "generators": [
-    {
-      "id": "broadcast",
-      "icon": "📡",
-      "name": "Broadcast",
-      "status": "live",
-      "files": ["math-tutor", "memorial", "music-curation"],
-      "path": "prompts/broadcast/",
-      "description": "방송 칠판 템플릿"
-    },
-    ...
-  ]
-}
-```
-
-→ update-index.yml 트리거에 `data/generators.json` 갱신 추가
+- youtube-setup.json ✅ 이미 완료
+- index.html에 "EAE 최신 강의" 섹션 추가
+- 커밋: `"feat: EAE-University youtube-cache 루프백 연결"`
 
 ---
 
-### 2-B: Generator 순차 활성화 계획
+### STEP 4 — Discord 공지 섹션
 
-| 단계 | Generator | 전제 조건 |
-|------|-----------|-----------|
-| 현재 live | broadcast / publisher / engine / guide | ✅ |
-| STEP 3 | chalkboard / editorial | 칠판 템플릿 파일 추가 |
-| STEP 4 | instruction / form | 인스트럭션 카테고리 파일 추가 |
-| STEP 5 | identity / studio | 브랜딩 템플릿 추가 |
-| STEP 6 | apk / dataset / route / whitepaper | APK/데이터 카테고리 파일 추가 |
+**전제조건:** GitHub repo Settings → Secrets → DISCORD_BOT_TOKEN / DISCORD_CHANNEL_ID 설정
+
+- discord-cache.yml ✅ 이미 완료
+- index.html에 Discord 공지 섹션 추가
+- 커밋: `"feat: Discord 공지 섹션 — latest-messages.json 루프백"`
 
 ---
 
-### 2-C: PHL Whitepaper 페이지 완성
-
-- `whitepaper.html` 이미 있음
-- `docs/PHL-WHITEPAPER.md` 읽어서 HTML로 변환
-- index.html에서 whitepaper.html 링크 연결
-
----
-
-### 2-D: YouTube 채널 연동 (EAE-University)
-
-```bash
-# 실행 순서
-node /home/dtsli/dtslib-papyrus/tools/youtube/export.cjs c
-# → OrbitPrompt/data/youtube-cache.json 생성
-```
-
-eae-univ와 같은 `@EAE-University` 채널 → OrbitPrompt도 같은 캐시 참조 가능.
-OR OrbitPrompt 자체 채널이 생기면 별도 export.
-
----
-
-## 3. 전체 개발 시퀀스 (STEP)
+### STEP 5 — CSS 분리
 
 ```
-STEP 1  data/generators.json 신설
-        index.html Generator 렌더링 → fetch 기반으로 전환
-        커밋: "refactor: Generator SSOT — data/generators.json 분리"
-
-STEP 2  youtube-cache.json 루프백
-        export.cjs c 실행 → data/youtube-cache.json 생성
-        index.html에 "EAE 최신 강의" 섹션 추가 (phoneparis 패턴)
-        커밋: "feat: EAE-University youtube-cache 루프백 연결"
-
-STEP 3  Discord 섹션
-        data/latest-messages.json 렌더러 추가 (Secrets 설정 필요)
-        index.html에 Discord 공지 섹션 추가
-        커밋: "feat: Discord 공지 섹션 — latest-messages.json 루프백"
-
-STEP 4  CSS 분리
-        assets/css/orbit-theme.css 추출
-        index.html inline style 제거
-        커밋: "refactor: CSS 분리 — orbit-theme.css"
-
-STEP 5  Generator 활성화 (chalkboard + editorial)
-        prompts/chalkboard/ + prompts/editorial/ 파일 추가
-        generators.json status → "live"
-        커밋: "feat: chalkboard/editorial Generator 활성화"
-
-STEP 6  데이터 공지 파이프라인
-        data/notices.json 신설 (Generator 업데이트 알림)
-        index.html notices 섹션 렌더러 추가
-        커밋: "feat: notices.json 파이프라인"
-
-STEP 7  PHL Whitepaper 완성
-        whitepaper.html 콘텐츠 채움
-        index.html → whitepaper.html 링크
-        커밋: "feat: PHL Whitepaper 페이지 완성"
+index.html inline <style>
+  → assets/css/orbit-theme.css
 ```
+
+커밋: `"refactor: CSS 분리 — orbit-theme.css"`
+
+---
+
+### STEP 6 — Generator 활성화 (chalkboard + editorial)
+
+- prompts/chalkboard/ 파일 추가
+- prompts/editorial/ 파일 추가
+- generators.json status → "live"
+- 커밋: `"feat: chalkboard/editorial Generator 활성화"`
+
+---
+
+### STEP 7 — PHL Whitepaper 완성
+
+- whitepaper.html 콘텐츠 채움 (docs/PHL-WHITEPAPER.md 기반)
+- index.html → whitepaper.html 링크 연결
+- 커밋: `"feat: PHL Whitepaper 페이지 완성"`
+
+---
+
+## 3. 박씨 수동 작업 2개 (블로커)
+
+| 블로커 | 방법 | 비고 |
+|--------|------|------|
+| youtube-cache.json 생성 | `node /home/dtsli/dtslib-papyrus/tools/youtube/export.cjs c` WSL에서 실행 | STEP 3 전제조건 |
+| Discord Secrets | OrbitPrompt GitHub repo → Settings → Secrets and variables → Actions → 2개 추가 | STEP 4 전제조건 |
 
 ---
 
@@ -203,18 +154,26 @@ STEP 7  PHL Whitepaper 완성
 OrbitPrompt/
 ├── index.html                      ← fetch 기반 (inline 최소화)
 ├── whitepaper.html                 ← PHL Whitepaper
+├── youtube-setup.json              ← EAE-University scaffold
 ├── manifest.webmanifest
 │
 ├── assets/
-│   ├── css/
-│   │   └── orbit-theme.css        ← ← STEP 4 분리
-│   └── icons/
+│   └── css/
+│       └── orbit-theme.css        ← STEP 5 분리
 │
 ├── data/                           ← SSOT JSON 집합
-│   ├── generators.json            ← ← STEP 1 신설
-│   ├── youtube-cache.json         ← ← STEP 2 생성 (export.cjs)
-│   ├── latest-messages.json       ← ← STEP 3 (discord-cache.yml 자동)
-│   └── notices.json               ← ← STEP 6 신설
+│   ├── generators.json            ← ✅ STEP 1 완료
+│   ├── atom-index.json            ← STEP 2 신설
+│   ├── youtube-cache.json         ← STEP 3 (export.cjs)
+│   ├── latest-messages.json       ← STEP 4 (discord-cache.yml)
+│   └── notices.json               ← 추후
+│
+├── orbit/                          ← Prompt Atom 공정 (핵심)
+│   ├── atoms/                     ← ← 완제품 Atom 6종
+│   ├── raw/                       ← 원자재 스테이징
+│   ├── schemas/
+│   │   └── atom-schema.json       ← STEP 2 신설
+│   └── templates/                 ← 6종 템플릿
 │
 ├── prompts/                        ← Generator HTML 파일들
 │   ├── index.json                 ← update-index.yml 자동 갱신
@@ -222,46 +181,32 @@ OrbitPrompt/
 │   ├── publisher/
 │   ├── engine/
 │   ├── guide/
-│   ├── chalkboard/                ← STEP 5 활성화
-│   ├── editorial/                 ← STEP 5 활성화
-│   └── ...
+│   ├── chalkboard/                ← STEP 6 활성화
+│   └── editorial/                 ← STEP 6 활성화
+│
+├── links/
+│   └── index.html                 ← ✅ 신설 완료
 │
 ├── docs/
 │   ├── dev-logs/
 │   │   └── 001-...md
-│   ├── DEVPLAN-v1.md              ← 이 파일
-│   └── ...기존 docs...
+│   └── DEVPLAN-v1.md              ← 이 파일
 │
-├── .github/workflows/
-│   ├── update-index.yml           ← prompts/*.html → index.json
-│   ├── discord-cache.yml          ← 30분 cron → latest-messages.json
-│   ├── discord-notify.yml
-│   └── repo-guard.yml
-│
-└── orbit/                          ← Prompt Atom 엔진 (기존)
-    ├── atoms/
-    ├── raw/
-    ├── schemas/
-    └── templates/
+└── .github/workflows/
+    ├── update-index.yml
+    ├── discord-cache.yml
+    ├── discord-notify.yml
+    └── repo-guard.yml
 ```
 
 ---
 
-## 5. GitHub Secrets 필요 목록
-
-| Secret 이름 | 용도 | 설정 위치 |
-|-------------|------|-----------|
-| `DISCORD_BOT_TOKEN` | discord-cache.yml | OrbitPrompt repo → Settings → Secrets |
-| `DISCORD_CHANNEL_ID` | discord-cache.yml | OrbitPrompt repo → Settings → Secrets |
-
----
-
-## 6. 우선순위 판단 근거
+## 5. 우선순위 판단 근거
 
 | STEP | 이유 |
 |------|------|
-| STEP 1 (generators.json) | index.html 유지보수성 핵심. Generator 추가할 때마다 JSON만 수정하면 됨 |
-| STEP 2 (youtube 루프백) | phoneparis가 2026-04-21 완성. EAE-University 채널 87개 영상 이미 있음. 바로 적용 가능 |
-| STEP 3 (Discord) | Secrets 설정이 선행 조건. 박씨 Discord 채널 확정 후 진행 |
-| STEP 4 (CSS) | 기능 영향 없음. STEP 1~3 완료 후 |
-| STEP 5~7 | 콘텐츠 의존. Generator 파일이 먼저 있어야 활성화 가능 |
+| STEP 2 (Atom 파이프라인) | OrbitPrompt 존재 이유. 없으면 껍데기. |
+| STEP 3 (YouTube) | export.cjs 이미 있음. 박씨 1개 명령어로 즉시 완성 |
+| STEP 4 (Discord) | Secrets 설정이 전제. 박씨 수동 |
+| STEP 5 (CSS) | 기능 무관. 유지보수 편의 |
+| STEP 6~7 | 콘텐츠/파일 의존 |
