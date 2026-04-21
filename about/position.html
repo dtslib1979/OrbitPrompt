@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>포지션 페이퍼 — OrbitPrompt</title>
+  <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050505;
+      --bg2: #0f0f0f;
+      --bg3: #141414;
+      --ink: #f0f0f0;
+      --ink2: rgba(255,255,255,0.7);
+      --ink3: rgba(255,255,255,0.4);
+      --ink4: rgba(255,255,255,0.06);
+      --purple: #a855f7;
+      --cyan: #22d3ee;
+      --gold: #d4af37;
+      --green: #10b981;
+      --border: rgba(255,255,255,0.06);
+      --f: 'Inter', -apple-system, sans-serif;
+      --f-mono: 'JetBrains Mono', monospace;
+      --f-serif: 'Cormorant Garamond', Georgia, serif;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--f); background: var(--bg); color: var(--ink); min-height: 100vh; line-height: 1.7; }
+
+    .grain {
+      position: fixed; inset: 0; pointer-events: none; z-index: 1000; opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .hero {
+      padding: 4rem 1.5rem 3rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-label { font-family: var(--f-mono); font-size: 0.625rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cyan); margin-bottom: 1rem; }
+    .hero-title { font-family: var(--f-serif); font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 400; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+    .hero-subtitle { font-family: var(--f-serif); font-size: 1.125rem; font-style: italic; color: var(--ink3); }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+
+    .section { padding: 3rem 0; border-bottom: 1px solid var(--border); }
+    .section:last-of-type { border-bottom: none; }
+    .section-number { font-family: var(--f-mono); font-size: 0.625rem; letter-spacing: 0.15em; color: var(--gold); margin-bottom: 0.5rem; }
+    .section-title { font-family: var(--f-mono); font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; }
+
+    .manifesto { background: var(--bg3); border-left: 3px solid var(--cyan); padding: 1.5rem; margin: 1.5rem 0; }
+    .manifesto p { font-family: var(--f-serif); font-size: 1.25rem; font-style: italic; color: var(--ink2); margin-bottom: 0.75rem; }
+    .manifesto p:last-child { margin-bottom: 0; }
+
+    .prose { color: var(--ink2); font-size: 0.9375rem; }
+    .prose p { margin-bottom: 1rem; }
+    .prose strong { color: var(--ink); font-weight: 600; }
+    .prose ul { padding-left: 1.25rem; margin-bottom: 1rem; }
+    .prose li { margin-bottom: 0.35rem; }
+    .prose code { font-family: var(--f-mono); font-size: 0.8125rem; color: var(--gold); background: var(--bg3); padding: 0.125rem 0.375rem; }
+
+    .table-wrap { margin: 1.5rem 0; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+    th { font-family: var(--f-mono); font-size: 0.625rem; letter-spacing: 0.1em; text-transform: uppercase; text-align: left; padding: 0.75rem; background: var(--bg3); border-bottom: 1px solid var(--border); color: var(--ink3); }
+    td { padding: 0.75rem; border-bottom: 1px solid var(--border); color: var(--ink2); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .td-accent { color: var(--cyan); }
+    .td-gold { color: var(--gold); }
+
+    .card { background: var(--bg2); border: 1px solid var(--border); padding: 1.25rem; margin: 1rem 0; }
+    .card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .card-icon { font-size: 1.5rem; }
+    .card-title { font-family: var(--f-mono); font-size: 0.875rem; font-weight: 600; }
+    .card-body { font-size: 0.8125rem; color: var(--ink2); line-height: 1.6; }
+
+    .code-block {
+      background: var(--bg3); border: 1px solid var(--border);
+      padding: 1rem; margin: 1rem 0;
+      font-family: var(--f-mono); font-size: 0.75rem;
+      color: var(--ink3); overflow-x: auto; white-space: pre;
+    }
+    .kw { color: var(--purple); }
+    .str { color: var(--gold); }
+    .cm { color: rgba(255,255,255,0.2); }
+
+    .highlight { background: rgba(212,175,55,0.08); border-left: 3px solid var(--gold); padding: 1rem 1.25rem; margin: 1.5rem 0; }
+    .highlight-label { font-family: var(--f-mono); font-size: 0.625rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+    .highlight-body { font-size: 0.875rem; color: var(--ink2); }
+
+    /* timeline */
+    .timeline { display: grid; gap: 0; margin: 1.5rem 0; }
+    .tl-row { display: grid; grid-template-columns: 160px 1fr; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); font-size: 0.8125rem; }
+    .tl-row:last-child { border-bottom: none; }
+    .tl-date { font-family: var(--f-mono); color: var(--ink3); font-size: 0.75rem; padding-top: 0.1rem; }
+    .tl-event { color: var(--ink2); }
+
+    /* constraint chips */
+    .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+    .chip { background: var(--bg3); border: 1px solid var(--border); font-family: var(--f-mono); font-size: 0.6875rem; color: var(--ink3); padding: 0.25rem 0.625rem; }
+    .chip.purple { border-color: rgba(168,85,247,0.3); color: var(--purple); }
+    .chip.cyan { border-color: rgba(34,211,238,0.3); color: var(--cyan); }
+    .chip.gold { border-color: rgba(212,175,55,0.3); color: var(--gold); }
+
+    /* persona grid */
+    .persona-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+    .persona-card { background: var(--bg2); border: 1px solid var(--border); padding: 1rem; }
+    .persona-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    .persona-name { font-family: var(--f-mono); font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.35rem; }
+    .persona-role { font-size: 0.75rem; color: var(--ink3); }
+    .persona-highlight { font-size: 0.75rem; color: var(--cyan); margin-top: 0.5rem; }
+
+    footer { padding: 2rem 1.5rem; text-align: center; border-top: 1px solid var(--border); }
+    .footer-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .footer-back { font-family: var(--f-mono); font-size: 0.6875rem; color: var(--ink3); text-decoration: none; padding: 0.5rem 1rem; border: 1px solid var(--border); transition: all 0.15s; }
+    .footer-back:hover { border-color: var(--cyan); color: var(--cyan); }
+    .footer-credit { font-family: var(--f-mono); font-size: 0.5rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.12); }
+  </style>
+</head>
+<body>
+  <script src="../assets/js/nav.js"></script>
+  <div class="grain"></div>
+
+  <header class="hero">
+    <p class="hero-label">OrbitPrompt Position Paper</p>
+    <h1 class="hero-title">28개 레포 생태계의<br>메타 설계실</h1>
+    <p class="hero-subtitle">공장이 아니라, 공장을 찍어내는 설계도면실</p>
+  </header>
+
+  <main class="container">
+
+    <!-- S1 -->
+    <section class="section">
+      <p class="section-number">01</p>
+      <h2 class="section-title">타임라인: 3개월의 기록</h2>
+
+      <div class="timeline">
+        <div class="tl-row">
+          <span class="tl-date">2025년 8~11월</span>
+          <span class="tl-event">Claude Desktop + MCP 탐색기</span>
+        </div>
+        <div class="tl-row">
+          <span class="tl-date">2025년 12월</span>
+          <span class="tl-event">Claude Max 5x 본격 시작</span>
+        </div>
+        <div class="tl-row">
+          <span class="tl-date">2026년 1~2월</span>
+          <span class="tl-event">28개 레포 구축, 파이프라인 완성</span>
+        </div>
+        <div class="tl-row">
+          <span class="tl-date">2026년 2월 (마지막 2주)</span>
+          <span class="tl-event">샘플링 테스트, 자기강화 디버깅, 라인 퀄리파이</span>
+        </div>
+      </div>
+
+      <div class="chips">
+        <span class="chip">PC 없음</span>
+        <span class="chip">12시간 육체노동 (식당)</span>
+        <span class="chip">핸드폰이 유일한 개발 도구</span>
+        <span class="chip purple">Termux + Claude Code</span>
+        <span class="chip cyan">코드 한 줄 직접 치지 않음</span>
+        <span class="chip gold">전부 자연어로 지시</span>
+      </div>
+
+      <div class="highlight">
+        <p class="highlight-label">핵심 전략적 선택</p>
+        <p class="highlight-body"><strong>GitHub 하나에 집중. 공짜니까.</strong><br>
+        저장소 · 호스팅(GitHub Pages 무료) · CI/CD(push → 즉시 라이브) · 협업(Claude Code가 직접 commit) · 백업 · 문서 · 포트폴리오 — 전부 GitHub 하나로.</p>
+      </div>
+    </section>
+
+    <!-- S2 -->
+    <section class="section">
+      <p class="section-number">02</p>
+      <h2 class="section-title">PWA에서 웹페이지로 — 서비스 워커 제거 결정</h2>
+
+      <div class="table-wrap">
+        <table>
+          <tr>
+            <th>서비스 워커 "기능"</th>
+            <th>실제 문제</th>
+          </tr>
+          <tr><td>오프라인 캐시</td><td class="td-gold">코드 수정해도 옛날 버전 표시</td></tr>
+          <tr><td>캐시 전략</td><td class="td-gold">크롬 번역 기능 먹통</td></tr>
+          <tr><td>PWA 쉘</td><td class="td-gold">브라우저 TTS 읽어주기 안 됨</td></tr>
+          <tr><td>앱 격리</td><td class="td-gold">오버레이/방송킷 기능 제한</td></tr>
+        </table>
+      </div>
+
+      <div class="code-block"><span class="str">웹페이지</span> = 칠판 (방송 화면)
+<span class="str">화면 녹화</span> = 촬영
+<span class="str">녹화본</span>   = 완성물 (편집 0분)
+<span class="str">→</span>         YouTube 업로드</div>
+
+      <div class="prose">
+        <p>서비스 워커 제거 후: git push → 즉시 반영 · 크롬 번역·TTS 정상 · 오버레이 방송킷 정상.</p>
+        <p><strong>교과서가 아니라 자기 용도에 맞는 판단. 제약이 설계를 결정한다.</strong></p>
+      </div>
+    </section>
+
+    <!-- S3 -->
+    <section class="section">
+      <p class="section-number">03</p>
+      <h2 class="section-title">28개 레포 생태계 구조</h2>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">📱</span>
+          <span class="card-title">핸드폰 = 운영 체제</span>
+        </div>
+        <div class="card-body">
+          28개 레포지토리는 GitHub Pages PWA로 핸드폰 홈화면에 설치. 각각 커스텀 아이콘을 가진 <strong>네이티브 앱처럼</strong> 동작한다.<br>
+          앱스토어 없이 · 개발자 계정 없이 · 심사 없이 · <strong>비용 0원.</strong>
+        </div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:1.5rem">
+        <table>
+          <tr><th>방송국</th><th>역할</th><th>콘텐츠</th></tr>
+          <tr>
+            <td><strong>parksy.kr</strong></td>
+            <td class="td-accent">페르소나 방송</td>
+            <td>KR Merit × 페르소나 채널 운영</td>
+          </tr>
+          <tr>
+            <td><strong>eae.kr</strong></td>
+            <td class="td-accent">교육 방송</td>
+            <td>강의·튜토리얼·아티클</td>
+          </tr>
+          <tr>
+            <td><strong>dtslib.kr</strong></td>
+            <td class="td-accent">비즈니스 다큐</td>
+            <td>28개 레포 서사를 소설·만화·다큐로</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- S4 -->
+    <section class="section">
+      <p class="section-number">04</p>
+      <h2 class="section-title">KR Merit — 한국인 개체 특성 모듈</h2>
+
+      <div class="prose">
+        <p>콘텐츠에 곱해지는 4개 특성 모듈. 박씨의 비교우위를 시스템으로 정의한 것.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>KR Merit</th><th>콘텐츠 효과</th></tr>
+          <tr><td><strong>허세 교양</strong></td><td>퀄리티 기준을 끌어올림</td></tr>
+          <tr><td><strong>편집 평가 강박</strong></td><td>자기 검수 품질관리 내장</td></tr>
+          <tr><td><strong>하프블러드 어학</strong></td><td>영어·한국어 이중 시장</td></tr>
+          <tr><td><strong>민주주의 샤먼</strong></td><td>서사에 감정선 + 설득력</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- S5 -->
+    <section class="section">
+      <p class="section-number">05</p>
+      <h2 class="section-title">페르소나 5종</h2>
+
+      <div class="persona-grid">
+        <div class="persona-card">
+          <div class="persona-icon">🔧</div>
+          <div class="persona-name">기능인 박씨</div>
+          <div class="persona-role">엔지니어링·프로그래밍. 28개 레포 전체 인프라 구축. <strong>공장장</strong></div>
+          <div class="persona-highlight">기술적 허세가 실제 구현력으로 전환</div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-icon">🎨</div>
+          <div class="persona-name">화가 박씨</div>
+          <div class="persona-role">비주얼 콘텐츠</div>
+          <div class="persona-highlight">허세 있는 미술 교양 + 이중언어 아트 비평</div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-icon">🎵</div>
+          <div class="persona-name">뮤지션 박씨</div>
+          <div class="persona-role">오디오 콘텐츠</div>
+          <div class="persona-highlight">클래식 교양 + 감정 서사 음악 큐레이션</div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-icon">🧠</div>
+          <div class="persona-name">철학자 박씨</div>
+          <div class="persona-role">메타 사고·백서</div>
+          <div class="persona-highlight">편집 강박 수준의 논리 + 샤먼 설득력</div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-icon">📝</div>
+          <div class="persona-name">블로거 박씨</div>
+          <div class="persona-role">글·아티클</div>
+          <div class="persona-highlight">전 모듈 종합</div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <p class="highlight-label">공장장 원칙</p>
+        <p class="highlight-body"><strong>기능인 박씨가 없으면 나머지 4명은 무대도 없다.</strong> 플랫폼 자체를 만드는 페르소나. 자기 땅에서 자기 건물 짓고 자기 방송한다.</p>
+      </div>
+    </section>
+
+    <!-- S6 -->
+    <section class="section">
+      <p class="section-number">06</p>
+      <h2 class="section-title">대화 로그 파이프라인 — 대화가 원유다</h2>
+
+      <div class="code-block">LLM 대화 (모든 AI 대화창)
+    <span class="kw">│</span>
+    <span class="kw">▼</span>
+박씨 캡처 (공유 → 마크다운 저장)
+    <span class="kw">│</span>
+    <span class="kw">├─→</span> 로컬 폴더 (핸드폰) <span class="kw">←→</span> GitHub repo (parksy-logs) 동기화
+    <span class="kw">│</span>
+    <span class="kw">├───</span> Track 1: 원재료
+    <span class="kw">│</span>    <span class="kw">├→</span> RAG 소재 (검색/참조)
+    <span class="kw">│</span>    <span class="kw">└→</span> 파인튜닝 JSONL (Dataset Generator)
+    <span class="kw">│</span>
+    <span class="kw">└───</span> Track 2: 가공
+         <span class="kw">├→</span> University repo → 강의안/아티클 (교육 콘텐츠)
+         <span class="kw">└→</span> OrbitPrompt → 메타 프롬프팅 사고 엔진 (철학적 재해석)</div>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>#</th><th>하나의 대화에서 나오는 산출물</th></tr>
+          <tr><td>1</td><td>RAG 소재</td></tr>
+          <tr><td>2</td><td>파인튜닝 데이터</td></tr>
+          <tr><td>3</td><td>강의안 (University)</td></tr>
+          <tr><td>4</td><td>메타 프롬프트 (OrbitPrompt)</td></tr>
+          <tr><td>5</td><td>방송 콘텐츠 (parksy.kr → YouTube)</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- S7 -->
+    <section class="section">
+      <p class="section-number">07</p>
+      <h2 class="section-title">OrbitPrompt의 지위 — 공장을 만드는 공장</h2>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>28개 레포</th><th>OrbitPrompt</th></tr>
+          <tr><td>제품을 만든다</td><td class="td-accent"><strong>만드는 방법</strong>을 만든다</td></tr>
+          <tr><td>콘텐츠 양산</td><td class="td-accent">양산 <strong>체계</strong> 설계</td></tr>
+          <tr><td>실행한다</td><td class="td-accent"><strong>사고한다</strong></td></tr>
+          <tr><td>공장</td><td class="td-accent">공장의 <strong>두뇌</strong></td></tr>
+        </table>
+      </div>
+
+      <div class="manifesto">
+        <p>Prompt를 만드는 Prompt를 만드는 곳.</p>
+        <p>생각을 만드는 생각을 하는 곳.</p>
+        <p>공장을 만드는 공장.</p>
+      </div>
+
+      <p style="font-family: var(--f-mono); font-size: 0.75rem; color: var(--ink3); margin: 1.5rem 0 0.75rem;">6개 Generator의 역할</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Generator</th><th>출력</th><th>생태계 기능</th></tr>
+          <tr>
+            <td>🎬 Chalkboard</td>
+            <td>방송용 PWA</td>
+            <td>3개 방송국 화면 공급</td>
+          </tr>
+          <tr>
+            <td>📱 PWA</td>
+            <td>설치형 웹앱</td>
+            <td>28개 레포 도구 생산</td>
+          </tr>
+          <tr>
+            <td>📋 Instruction</td>
+            <td>CLAUDE.md</td>
+            <td>각 레포의 두뇌 설치</td>
+          </tr>
+          <tr>
+            <td>🧬 Dataset</td>
+            <td>파인튜닝 JSONL</td>
+            <td>자기강화 학습 데이터</td>
+          </tr>
+          <tr>
+            <td>🪞 Identity</td>
+            <td>자기 모델 JSON</td>
+            <td>페르소나 정밀화</td>
+          </tr>
+          <tr>
+            <td>✨ Editorial</td>
+            <td>스토리텔링 PWA</td>
+            <td>프리미엄 콘텐츠</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- S8 -->
+    <section class="section">
+      <p class="section-number">08</p>
+      <h2 class="section-title">결론 — 자기참조 생산 체계</h2>
+
+      <div class="prose">
+        <p>이 생태계의 <strong>원재료는 대화</strong>다.</p>
+        <p>기능인 박씨가 12시간 식당 노동 후 핸드폰 Termux에서 자연어로 설계하는 그 대화 자체가 원유이며, OrbitPrompt는 그 원유를 정제하는 정유소다.</p>
+        <p>3개월 만에 도달한 것은 단순한 레포 28개가 아니라, <strong>자기 자신을 입력으로 받아 자기 자신을 개선하는 자기참조 생산 체계</strong>다.</p>
+      </div>
+
+      <div class="manifesto">
+        <p>OrbitPrompt는 28개 레포의 심장이자 두뇌다.</p>
+        <p>공장을 만드는 공장. 생각을 만드는 생각. 프롬프트를 만드는 프롬프트.</p>
+      </div>
+
+      <div class="prose" style="margin-top: 1.5rem; font-size: 0.8125rem; color: var(--ink3);">
+        <p>2026-02-28 — Claude Code 세션에서 기능인 박씨와의 대화를 기반으로 작성</p>
+        <p>Co-Authored-By: Claude Opus 4.6 &lt;noreply@anthropic.com&gt;</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-links">
+      <a href="../index.html" class="footer-back">← OrbitPrompt 홈</a>
+      <a href="../whitepaper.html" class="footer-back">PHL 백서</a>
+    </div>
+    <p class="footer-credit">DTSLIB · @philosopher-parksy</p>
+  </footer>
+</body>
+</html>

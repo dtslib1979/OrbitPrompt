@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0a0a0a">
-  <title>백서 — OrbitPrompt</title>
+  <title>백서 — PHL × OrbitPrompt × Claude Code</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,6 +25,7 @@
       --cyan: #22d3ee;
       --gold: #d4af37;
       --gold-dim: rgba(212,175,55,0.15);
+      --green: #10b981;
       --border: rgba(255,255,255,0.06);
       --f-display: 'Inter', -apple-system, sans-serif;
       --f-mono: 'JetBrains Mono', monospace;
@@ -49,7 +50,6 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
-    /* Hero */
     .hero {
       padding: 4rem 1.5rem 3rem;
       text-align: center;
@@ -75,23 +75,59 @@
       font-size: 1.125rem;
       font-style: italic;
       color: var(--ink-muted);
+      margin-bottom: 0.75rem;
+    }
+    .hero-version {
+      font-family: var(--f-mono);
+      font-size: 0.5625rem;
+      letter-spacing: 0.15em;
+      color: var(--ink-dim);
     }
 
-    /* Container */
+    /* TOC */
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    .toc-title {
+      font-family: var(--f-mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .toc-list {
+      list-style: none;
+      display: grid;
+      gap: 0.35rem;
+    }
+    .toc-list li a {
+      font-family: var(--f-mono);
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .toc-list li a:hover { color: var(--purple); }
+    .toc-num {
+      color: var(--ink-dim);
+      margin-right: 0.5rem;
+    }
+
     .container {
       max-width: 720px;
       margin: 0 auto;
       padding: 0 1.5rem;
     }
 
-    /* Section */
     .section {
       padding: 3rem 0;
       border-bottom: 1px solid var(--border);
     }
-    .section:last-of-type {
-      border-bottom: none;
-    }
+    .section:last-of-type { border-bottom: none; }
 
     .section-number {
       font-family: var(--f-mono);
@@ -106,8 +142,14 @@
       font-weight: 600;
       margin-bottom: 1.5rem;
     }
+    .section-subtitle {
+      font-family: var(--f-mono);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--purple);
+      margin: 1.5rem 0 0.75rem;
+    }
 
-    /* Manifesto Block */
     .manifesto {
       background: var(--bg-card);
       border-left: 3px solid var(--purple);
@@ -121,29 +163,18 @@
       color: var(--ink-secondary);
       margin-bottom: 0.75rem;
     }
-    .manifesto p:last-child {
-      margin-bottom: 0;
-    }
+    .manifesto p:last-child { margin-bottom: 0; }
 
-    /* Prose */
     .prose {
       color: var(--ink-secondary);
       font-size: 0.9375rem;
     }
-    .prose p {
-      margin-bottom: 1rem;
-    }
-    .prose strong {
-      color: var(--ink-primary);
-      font-weight: 600;
-    }
-    .prose em {
-      font-family: var(--f-serif);
-      font-style: italic;
-      color: var(--purple);
-    }
+    .prose p { margin-bottom: 1rem; }
+    .prose strong { color: var(--ink-primary); font-weight: 600; }
+    .prose em { font-family: var(--f-serif); font-style: italic; color: var(--purple); }
+    .prose ul { padding-left: 1.25rem; margin-bottom: 1rem; }
+    .prose li { margin-bottom: 0.35rem; }
 
-    /* Comparison Table */
     .comparison {
       margin: 1.5rem 0;
       overflow-x: auto;
@@ -169,18 +200,11 @@
       border-bottom: 1px solid var(--border);
       color: var(--ink-secondary);
     }
-    .comparison tr:last-child td {
-      border-bottom: none;
-    }
-    .comparison .old {
-      color: var(--ink-muted);
-      text-decoration: line-through;
-    }
-    .comparison .new {
-      color: var(--gold);
-    }
+    .comparison tr:last-child td { border-bottom: none; }
+    .comparison .old { color: var(--ink-muted); text-decoration: line-through; }
+    .comparison .new { color: var(--gold); }
+    .comparison .accent { color: var(--purple); }
 
-    /* Principle Card */
     .principle {
       background: var(--bg-surface);
       border: 1px solid var(--border);
@@ -193,9 +217,7 @@
       gap: 0.75rem;
       margin-bottom: 0.75rem;
     }
-    .principle-icon {
-      font-size: 1.5rem;
-    }
+    .principle-icon { font-size: 1.5rem; }
     .principle-title {
       font-family: var(--f-mono);
       font-size: 0.875rem;
@@ -207,7 +229,6 @@
       line-height: 1.6;
     }
 
-    /* Code Block */
     .code-block {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -217,12 +238,13 @@
       font-size: 0.75rem;
       color: var(--ink-muted);
       overflow-x: auto;
+      white-space: pre;
     }
     .code-block .comment { color: var(--ink-dim); }
     .code-block .keyword { color: var(--purple); }
     .code-block .string { color: var(--gold); }
+    .code-block .ok { color: var(--green); }
 
-    /* Highlight Box */
     .highlight {
       background: var(--gold-dim);
       border-left: 3px solid var(--gold);
@@ -242,11 +264,67 @@
       color: var(--ink-secondary);
     }
 
-    /* Footer */
+    .warning {
+      background: rgba(168,85,247,0.08);
+      border-left: 3px solid var(--purple);
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .warning-title {
+      font-family: var(--f-mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Score card */
+    .score-grid {
+      display: grid;
+      gap: 0.5rem;
+      margin: 1.5rem 0;
+    }
+    .score-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.8125rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .score-row:last-child { border-bottom: none; }
+    .score-label { color: var(--ink-secondary); }
+    .score-val {
+      font-family: var(--f-mono);
+      font-size: 0.875rem;
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .score-bar {
+      width: 80px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+    }
+    .score-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 2px;
+    }
+
     footer {
       padding: 2rem 1.5rem;
       text-align: center;
       border-top: 1px solid var(--border);
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
     }
     .footer-back {
       font-family: var(--f-mono);
@@ -257,16 +335,12 @@
       border: 1px solid var(--border);
       transition: all 0.15s;
     }
-    .footer-back:hover {
-      border-color: var(--purple);
-      color: var(--purple);
-    }
+    .footer-back:hover { border-color: var(--purple); color: var(--purple); }
     .footer-credit {
       font-family: var(--f-mono);
       font-size: 0.5rem;
       letter-spacing: 0.1em;
       color: var(--ink-dim);
-      margin-top: 1.5rem;
     }
   </style>
 </head>
@@ -275,338 +349,517 @@
   <div class="grain"></div>
 
   <header class="hero">
-    <p class="hero-label">OrbitPrompt Whitepaper</p>
-    <h1 class="hero-title">백서</h1>
-    <p class="hero-subtitle">우리의 철학과 원칙</p>
+    <p class="hero-label">OrbitPrompt Whitepaper — Final v1.0</p>
+    <h1 class="hero-title">PHL × OrbitPrompt<br>× Claude Code</h1>
+    <p class="hero-subtitle">Closed-Loop Cognitive OS (Protocol-First)</p>
+    <p class="hero-version">2026-02-28 &nbsp;·&nbsp; Co-Authored: Claude Opus 4.6</p>
   </header>
 
   <main class="container">
 
-    <!-- Section 01: Core Philosophy -->
-    <section class="section">
+    <div class="toc">
+      <p class="toc-title">목차</p>
+      <ul class="toc-list">
+        <li><a href="#s0"><span class="toc-num">00</span>한 줄 정의</a></li>
+        <li><a href="#s1"><span class="toc-num">01</span>왜 이게 필요한가 — 문제 정의</a></li>
+        <li><a href="#s2"><span class="toc-num">02</span>핵심 아이디어 — 아키텍처 골자</a></li>
+        <li><a href="#s3"><span class="toc-num">03</span>시스템 구성요소 정의</a></li>
+        <li><a href="#s4"><span class="toc-num">04</span>폐쇄 루프 동작 모델</a></li>
+        <li><a href="#s5"><span class="toc-num">05</span>기술적 근거 — 방어 논리</a></li>
+        <li><a href="#s6"><span class="toc-num">06</span>핵심 병목 — PHL Interpreter Spec</a></li>
+        <li><a href="#s7"><span class="toc-num">07</span>레포 구조 제안</a></li>
+        <li><a href="#s8"><span class="toc-num">08</span>PHL 토큰 스펙 템플릿</a></li>
+        <li><a href="#s9"><span class="toc-num">09</span>Claude Code 운영 규칙</a></li>
+        <li><a href="#s10"><span class="toc-num">10</span>토큰 예시 3개</a></li>
+        <li><a href="#s11"><span class="toc-num">11</span>단축키와의 차이 — 최종 방어</a></li>
+        <li><a href="#s12"><span class="toc-num">12</span>구현 로드맵</a></li>
+        <li><a href="#appendix"><span class="toc-num">부록</span>Claude Opus 4.6 자체 평가</a></li>
+      </ul>
+    </div>
+
+    <!-- S0 -->
+    <section class="section" id="s0">
+      <p class="section-number">00</p>
+      <h2 class="section-title">한 줄 정의</h2>
+      <div class="manifesto">
+        <p>"말버릇(PHL)"을 프로토콜로 물성화하여, Claude Code가 GitHub 레포에서 정의를 읽고 상태 전이 기반으로 코드를 구현·검증·커밋하는 폐쇄 루프 시스템.</p>
+      </div>
+      <div class="comparison">
+        <table>
+          <tr><th>구성요소</th><th>역할</th></tr>
+          <tr><td><strong>PHL</strong></td><td class="accent">Meaning DSL (말 기반 프로토콜)</td></tr>
+          <tr><td><strong>Claude Code</strong></td><td class="accent">State Transition Engine</td></tr>
+          <tr><td><strong>GitHub 레포</strong></td><td class="accent">State Store (영구 메모리)</td></tr>
+          <tr><td><strong>OrbitPrompt</strong></td><td class="accent">PHL → 실행 단위(Prompt Atom) 변환 Runtime</td></tr>
+        </table>
+      </div>
+      <div class="highlight">
+        <p class="highlight-title">핵심</p>
+        <p class="highlight-body">이건 "프롬프트 모음집"이 아니라 <strong>프로토콜 설계</strong>다. 단축키·스니펫이 아니라 <strong>상태 전이(state transition) 기반 운영체제(OS) 레벨 인터페이스</strong>다.</p>
+      </div>
+    </section>
+
+    <!-- S1 -->
+    <section class="section" id="s1">
       <p class="section-number">01</p>
-      <h2 class="section-title">존재 = 생산</h2>
+      <h2 class="section-title">왜 이게 필요한가 — 문제 정의</h2>
 
-      <div class="manifesto">
-        <p>웹페이지를 여는 순간, 그것이 방송이다.</p>
-        <p>화면 녹화를 누르는 순간, 그것이 완성물이다.</p>
-        <p>편집은 없다. 지금 이 순간이 콘텐츠다.</p>
+      <p class="section-subtitle">1.1 설명 비용(Explanation Cost)이 협업 병목이다</p>
+      <div class="prose">
+        <p>LLM 코딩 협업의 실제 병목은 "코드를 못 짜서"가 아니라 <strong>설명 비용</strong>이다.</p>
+        <ul>
+          <li>자연어 설명은 길고, 모호하고, 재설명·재확인 반복이 생긴다.</li>
+          <li>"대충 더 튼튼하게" 같은 표현은 AI가 구현 모드로 오해하거나 과잉·과소 수행한다.</li>
+        </ul>
       </div>
 
+      <p class="section-subtitle">1.2 컨텍스트 윈도우는 구조적으로 부족하다</p>
+      <div class="prose">
+        <p>아무리 컨텍스트가 길어도 프로젝트 전체 규칙·철학·기본기·보안·스타일·프로토콜과 반복되는 리팩토링·테스트·로깅·에러 처리를 매번 대화로 실어 나르면 <strong>토큰이 붕괴</strong>한다.</p>
+      </div>
+
+      <p class="section-subtitle">1.3 "도구 사용"이 아니라 "프로토콜 호출"이 되어야 한다</p>
       <div class="comparison">
         <table>
-          <tr>
-            <th>기존 사고</th>
-            <th>우리의 방식</th>
-          </tr>
-          <tr>
-            <td class="old">"영상 찍어야지"</td>
-            <td class="new">웹페이지 열면 그게 방송</td>
-          </tr>
-          <tr>
-            <td class="old">"편집해야지"</td>
-            <td class="new">화면 녹화 = 완성물</td>
-          </tr>
-          <tr>
-            <td class="old">"잘해야지"</td>
-            <td class="new">계속 올리면 내가 바뀜</td>
-          </tr>
-          <tr>
-            <td class="old">"언젠가 시작해야지"</td>
-            <td class="new">오늘 하나가 기본값</td>
-          </tr>
+          <tr><th>#</th><th>원하는 것</th></tr>
+          <tr><td>1</td><td><strong>한 단어(토큰)</strong>로</td></tr>
+          <tr><td>2</td><td>정의된 수백 줄 규칙을 호출하고</td></tr>
+          <tr><td>3</td><td>Claude가 레포를 읽어 맥락 기반으로 판단·수행하고</td></tr>
+          <tr><td>4</td><td>결과를 git commit으로 <strong>상태 확정</strong>하는 것</td></tr>
         </table>
-      </div>
-
-      <div class="prose">
-        <p>코칭이나 동기부여가 아니다. <strong>존재 방식 자체를 재설계</strong>하는 것이다. 도구 + 구조 + 동선 + 습관으로 바꿔주는 시스템.</p>
       </div>
     </section>
 
-    <!-- Section 02: Prompt as Code -->
-    <section class="section">
+    <!-- S2 -->
+    <section class="section" id="s2">
       <p class="section-number">02</p>
-      <h2 class="section-title">프롬프트는 코드다</h2>
-
-      <div class="code-block">
-<span class="comment">// 프롬프트의 3가지 조건</span>
-<span class="keyword">const</span> prompt = {
-  <span class="string">repeatable</span>: <span class="keyword">true</span>,    <span class="comment">// 반복 가능해야 한다</span>
-  <span class="string">testable</span>: <span class="keyword">true</span>,      <span class="comment">// 테스트 가능해야 한다</span>
-  <span class="string">versioned</span>: <span class="keyword">true</span>      <span class="comment">// 버전 관리 가능해야 한다</span>
-};
-      </div>
-
-      <div class="prose">
-        <p>프롬프트는 일회성 질문이 아니다. <strong>재사용 가능한 도구</strong>다. 좋은 프롬프트는 누가 써도 비슷한 결과를 낸다. 그래서 코드처럼 다룬다.</p>
-        <p>Git으로 버전 관리하고, 변수를 분리하고, 테스트하고, 개선한다. <em>프롬프트 엔지니어링</em>이 아니라 <em>프롬프트 프로그래밍</em>이다.</p>
-      </div>
-    </section>
-
-    <!-- Section 03: Inconsistency as Feature -->
-    <section class="section">
-      <p class="section-number">03</p>
-      <h2 class="section-title">불일치는 기능이다</h2>
+      <h2 class="section-title">핵심 아이디어 — 아키텍처 골자</h2>
 
       <div class="principle">
         <div class="principle-header">
-          <span class="principle-icon">🎲</span>
-          <span class="principle-title">LLM의 일관성 없음 = 유일한 장점</span>
+          <span class="principle-icon">🗜️</span>
+          <span class="principle-title">2.1 Semantic Compression Interface</span>
         </div>
         <div class="principle-body">
-          같은 프롬프트에 다른 결과가 나온다. 버그가 아니라 기능이다. 유저는 AI 출력을 그대로 쓸 수 없다. 강제로 편집하게 된다. 수동적 소비자가 아니라 <strong>능동적 크리에이터</strong>가 된다.
+          PHL 토큰은 "명령어"가 아니라 <strong>의미 압축(semantic compression)</strong>이다. 토큰 하나가 레포에 정의된 규칙·철학·검증 절차를 호출한다. 결과적으로 사용자 음성(STT)·텍스트 출력의 <strong>정보 밀도(density)</strong>가 상승한다.
         </div>
       </div>
 
-      <div class="highlight">
-        <p class="highlight-title">핵심 원칙</p>
-        <p class="highlight-body">AI가 생성한 코드는 <strong>시작점</strong>이다. 직접 수정하면서 당신만의 것을 만들어라.</p>
+      <div class="principle">
+        <div class="principle-header">
+          <span class="principle-icon">📂</span>
+          <span class="principle-title">2.2 Externalized System Prompt (GitHub as Ruleset)</span>
+        </div>
+        <div class="principle-body">
+          레포는 단순 저장소가 아니라 <strong>외부화된 시스템 프롬프트</strong> 역할을 한다. Claude는 작업 전에 레포의 "규칙 파일"을 읽고, 실행 중에도 필요한 정의를 검색·참조한다. "규칙"은 대화가 아니라 <strong>파일 시스템(레포)</strong>에 존재한다.
+        </div>
       </div>
 
-      <div class="prose">
-        <p>완벽한 AI 출력을 기대하지 마라. 그건 함정이다. AI는 초안을 만들어주는 도구일 뿐. 마무리는 항상 인간의 몫이다. 이 불완전함이 창작을 강제한다.</p>
+      <div class="principle">
+        <div class="principle-header">
+          <span class="principle-icon">🔀</span>
+          <span class="principle-title">2.3 Stateful Command Model (Snippet과의 차이)</span>
+        </div>
+        <div class="principle-body">
+          <strong>스니펫</strong>은 항상 같은 코드를 붙여넣는다. 맥락(파일 구조, 데이터 흐름, 변수명, 에러 전략)을 모른다. 상태 저장이 없다.<br><br>
+          <strong>PHL</strong>은 현재 코드·구조·테스트·로그·보안 상태를 읽고 판단한다. 결과를 커밋으로 남겨 "이전 상태"를 참조 가능하게 만든다. 같은 토큰이라도 프로젝트 맥락에 맞게 수행이 달라진다.
+        </div>
       </div>
     </section>
 
-    <!-- Section 04: Constraint-Driven Design -->
-    <section class="section">
-      <p class="section-number">04</p>
-      <h2 class="section-title">제약이 설계를 결정한다</h2>
+    <!-- S3 -->
+    <section class="section" id="s3">
+      <p class="section-number">03</p>
+      <h2 class="section-title">시스템 구성요소 정의</h2>
 
+      <p class="section-subtitle">3.1 PHL — Meaning DSL / Protocol Tokens</p>
+      <div class="prose">
+        <p>PHL은 "자연어"가 아니라 <strong>프로토콜 토큰 집합</strong>이다. PHL 토큰은 다음을 포함한다:</p>
+        <ul>
+          <li><strong>목적(Goal)</strong></li>
+          <li><strong>범위(Scope)</strong></li>
+          <li><strong>제약(Constraints)</strong></li>
+          <li><strong>수행 단계(Procedure)</strong></li>
+          <li><strong>산출물(Artifacts)</strong></li>
+          <li><strong>검증(Validation)</strong></li>
+          <li><strong>실패 시 정책(Failure policy)</strong></li>
+        </ul>
+        <p>PHL은 "짧은 말"로 호출되지만, 실제 정의는 레포에 <strong>엄격(Strict)</strong>하게 존재해야 한다.</p>
+      </div>
+
+      <p class="section-subtitle">3.2 OrbitPrompt — Execution Runtime / Prompt Atom</p>
+      <div class="prose">
+        <p>OrbitPrompt는 PHL 토큰·명령을 <strong>실행 단위(Prompt Atom)</strong>로 분해하고, Claude가 코드 작업을 수행할 수 있게 작업 계획·체크리스트·출력 형식으로 변환한다.</p>
+      </div>
+
+      <p class="section-subtitle">3.3 Claude Code — State Transition Engine</p>
+      <div class="code-block"><span class="comment">// Claude Code의 역할 (CPU가 아니라 컨트롤러)</span>
+1. 레포를 읽고         <span class="keyword">← 현재 상태</span>
+2. PHL 규칙으로 해석하고  <span class="keyword">← 전이 규칙</span>
+3. 수정/테스트/문서/리팩토링을 수행하고  <span class="keyword">← 상태 변화</span>
+4. 커밋으로 상태를 확정한다  <span class="keyword">← State commit</span></div>
+
+      <p class="section-subtitle">3.4 GitHub Repo — State Store / Cognitive Version Control</p>
       <div class="comparison">
         <table>
-          <tr>
-            <th>현실 제약</th>
-            <th>설계 결정</th>
-          </tr>
-          <tr>
-            <td>12시간 육체노동</td>
-            <td class="new">편집 0분 워크플로우</td>
-          </tr>
-          <tr>
-            <td>PC 없음</td>
-            <td class="new">Termux 모바일 퍼스트</td>
-          </tr>
-          <tr>
-            <td>핸드폰밖에 못 씀</td>
-            <td class="new">전체 생태계 모바일 퍼스트</td>
-          </tr>
-          <tr>
-            <td>체력 소진 후 작업</td>
-            <td class="new">말만 하면 되는 자동화</td>
-          </tr>
-          <tr>
-            <td>혼자서 다 해야 함</td>
-            <td class="new">브랜치 프랜차이즈 (분산)</td>
-          </tr>
+          <tr><th>역할</th><th>내용</th></tr>
+          <tr><td>원천(Truth)</td><td class="accent">PHL 정의의 단일 진실원천</td></tr>
+          <tr><td>기록(Log)</td><td class="accent">실행 결과의 이력</td></tr>
+          <tr><td>버전(History)</td><td class="accent">상태의 버전 관리</td></tr>
+          <tr><td>실험(Experimentation)</td><td class="accent">롤백·브랜치 실험 환경</td></tr>
+        </table>
+      </div>
+      <div class="highlight">
+        <p class="highlight-title">핵심 선언</p>
+        <p class="highlight-body"><strong>git commit history = 사고·규칙·구현의 버전 관리다.</strong></p>
+      </div>
+    </section>
+
+    <!-- S4 -->
+    <section class="section" id="s4">
+      <p class="section-number">04</p>
+      <h2 class="section-title">폐쇄 루프 동작 모델 (Closed Loop)</h2>
+
+      <p class="section-subtitle">4.1 실행 사이클 (필수)</p>
+      <div class="code-block">1. 사용자 입력    <span class="keyword">→</span> PHL 토큰으로 명령
+2. Claude Code   <span class="keyword">→</span> 레포에서 PHL_SPEC 및 관련 정의 로드
+3. 상태 점검     <span class="keyword">→</span> 파일 구조/테스트/로그/CI/의존성 확인
+4. 실행          <span class="keyword">→</span> 변경 수행
+5. 검증          <span class="keyword">→</span> 테스트/린트/타입체크/빌드
+6. 산출          <span class="keyword">→</span> 코드/문서/CHANGELOG 업데이트
+7. 커밋          <span class="keyword">→</span> 메시지 규칙에 따라 commit
+8. 상태 갱신     <span class="keyword">→</span> 다음 작업을 위한 기준점 확정</div>
+
+      <p class="section-subtitle">4.2 상태 전이 원칙 (필수)</p>
+      <div class="prose">
+        <ul>
+          <li><strong>커밋 없는 변경은 "임시 상태"로 간주</strong></li>
+          <li>PHL 토큰 실행은 <strong>반드시 검증을 포함</strong></li>
+          <li>실패 시: 되돌리거나(rollback) 실패 로그·대안 플랜을 남김</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- S5 -->
+    <section class="section" id="s5">
+      <p class="section-number">05</p>
+      <h2 class="section-title">기술적 근거 — 방어 논리</h2>
+
+      <p class="section-subtitle">5.1 "기술적으로 100% 가능"의 의미</p>
+      <div class="comparison">
+        <table>
+          <tr><th>항목</th><th>가능 여부</th></tr>
+          <tr><td>레포 기반 규칙 저장</td><td class="ok">✅ 가능</td></tr>
+          <tr><td>에이전트가 파일 읽고 작업</td><td class="ok">✅ 가능</td></tr>
+          <tr><td>PHL 토큰을 규칙으로 매핑</td><td class="ok">✅ 가능</td></tr>
+          <tr><td>실행 결과를 커밋으로 상태화</td><td class="ok">✅ 가능</td></tr>
         </table>
       </div>
 
+      <p class="section-subtitle">5.2 반박 대비 — "Claude가 항상 PHL_SPEC 먼저 읽나?"</p>
       <div class="prose">
-        <p>제약 조건을 불평하지 않는다. <strong>제약이 최고의 설계 도구</strong>다. PC가 없어서 모바일 퍼스트가 됐다. 시간이 없어서 편집 제로가 됐다. 이 제약들이 우리만의 해자가 됐다.</p>
+        <p>환경에 따라 자동 로드는 보장되지 않는다. 따라서 <strong>운영 규칙으로 강제</strong>한다. 에이전트 시작 시 PHL_SPEC.md와 PHL_INDEX.json을 먼저 읽는 루틴을 작업 스크립트·체크리스트로 고정한다.</p>
+      </div>
+
+      <p class="section-subtitle">5.3 반박 대비 — "단어 하나로 수만 토큰 로드"</p>
+      <div class="prose">
+        <p>과장 표현이다. 실제는 <code>파일 검색 → 관련 정의 로드/요약 → 실행</code>을 거친다. 핵심은 <strong>"대화 토큰이 아니라 파일 시스템으로 컨텍스트를 외부화한다"</strong>는 점이다.</p>
+      </div>
+
+      <p class="section-subtitle">5.4 반박 대비 — "환각이 줄어드나?"</p>
+      <div class="prose">
+        <p>완전 제거는 불가. 아래 4조건을 만족하면 크게 줄어든다:</p>
+        <ul>
+          <li>PHL 정의를 레포의 <strong>단일 진실원천(SSOT)</strong>으로 둔다</li>
+          <li>실행 전·후 <strong>검증을 강제</strong>한다</li>
+          <li>출력 형식을 <strong>표준화</strong>한다 (계획/변경/검증/커밋)</li>
+          <li>불확실하면 <strong>"질문"을 의무화</strong>한다 (Ask policy)</li>
+        </ul>
       </div>
     </section>
 
-    <!-- Section 05: Chalkboard System -->
-    <section class="section">
-      <p class="section-number">05</p>
-      <h2 class="section-title">칠판 시스템</h2>
-
-      <div class="prose">
-        <p><strong>칠판 = 방송용 인터랙티브 배경</strong></p>
-        <p>PPT 대신, OBS 대신, 프리미어 대신. 웹페이지 하나가 전부다.</p>
-      </div>
-
-      <div class="code-block">
-Galaxy 화면 녹화
-      ↓
-PWA 페이지 (칠판)
-      ↓
-녹화 = 완성물
-      ↓
-YouTube 업로드
-      </div>
-
-      <div class="principle">
-        <div class="principle-header">
-          <span class="principle-icon">📺</span>
-          <span class="principle-title">MBC 선거방송급 그래픽</span>
-        </div>
-        <div class="principle-body">
-          실시간 인터랙티브 그래픽. 1인 + Galaxy 1대로 구현. 전문 장비 없이, 편집 없이, 방송국 수준의 비주얼.
-        </div>
-      </div>
-
-      <div class="prose">
-        <p>칠판은 두 가지 모드로 작동한다:</p>
-        <p><strong>Setup Mode</strong> — 텍스트, 이미지, 설정을 입력하는 폼.<br>
-        <strong>Broadcast Mode</strong> — 녹화용 풀스크린 프레젠테이션.</p>
-        <p>한 번 세팅하면 반복 사용. 콘텐츠만 갈아끼우면 새 영상.</p>
-      </div>
-    </section>
-
-    <!-- Section 06: The Pipeline -->
-    <section class="section">
+    <!-- S6 -->
+    <section class="section" id="s6">
       <p class="section-number">06</p>
-      <h2 class="section-title">파이프라인</h2>
+      <h2 class="section-title">핵심 병목 — PHL Interpreter Spec</h2>
 
-      <div class="code-block">
-[분석]  YouTube 영상 분석 (Gemini)
-   ↓
-[생성]  프롬프트 생성기로 변수 선택
-   ↓
-[제작]  LLM이 칠판 HTML 생성
-   ↓
-[수정]  유저가 커스터마이징
-   ↓
-[녹화]  Galaxy 화면 녹화
-   ↓
-[배포]  YouTube 업로드
-      </div>
-
-      <div class="highlight">
-        <p class="highlight-title">워크플로우 원칙</p>
-        <p class="highlight-body">사람이 하는 건 <strong>"말하기"</strong>와 <strong>"녹화 버튼 누르기"</strong> 두 가지뿐.</p>
-      </div>
-    </section>
-
-    <!-- Section 07: Identity Engine -->
-    <section class="section">
-      <p class="section-number">07</p>
-      <h2 class="section-title">자기 모델링 엔진</h2>
-
-      <div class="manifesto">
-        <p>OrbitPrompt는 도구를 만드는 곳이 아니다.</p>
-        <p>대화 로그에서 "나"를 추출하는 엔진이다.</p>
-        <p>백서도 PWA도 교재도 — 전부 그 모델의 렌더링일 뿐이다.</p>
+      <div class="warning">
+        <p class="warning-title">⚠ 사망 조건</p>
+        <p class="highlight-body">이 시스템이 무너지느냐 살아남느냐는 딱 하나다: <strong>PHL 인터프리터 규칙이 엄격하게 정의되어 있는가?</strong></p>
       </div>
 
       <div class="prose">
-        <p>대화 로그는 <strong>원재료</strong>다. 날것의 생각, 비속어, 감정, 방향 전환, 삽질 — 전부 재료가 된다. 이 원재료를 7개의 철학적 축으로 파싱하면 <strong>"나"의 구조화된 모델</strong>이 추출된다.</p>
-        <p>LLM을 파인튜닝하는 게 아니라 <em>"나"를 파인튜닝</em>하는 것이다. 매 사이클마다 해상도가 올라간다.</p>
+        <p>PHL이 느슨하면:</p>
+        <ul>
+          <li>Claude가 "자기 해석"을 한다</li>
+          <li>작업이 매번 달라진다</li>
+          <li>다시 설명 비용이 생긴다</li>
+          <li>결국 시스템이 붕괴한다</li>
+        </ul>
       </div>
+    </section>
+
+    <!-- S7 -->
+    <section class="section" id="s7">
+      <p class="section-number">07</p>
+      <h2 class="section-title">레포 구조 제안</h2>
+
+      <div class="code-block">/PHL_SPEC.md                 <span class="comment"># 최상위 규칙(SSOT)</span>
+/PHL_INDEX.json              <span class="comment"># 토큰 → 정의 파일 매핑(빠른 탐색)</span>
+/phl/tokens/PHL-Expansion.md <span class="comment"># 토큰 정의들(하나당 1파일 권장)</span>
+/phl/tokens/PHL-Hardening.md
+/phl/tokens/PHL-Reverse.md
+/phl/contracts/              <span class="comment"># 프로젝트 공통 계약(에러/로그/테스트/보안)</span>
+/phl/playbooks/              <span class="comment"># 실행 플레이북(단계별 체크리스트)</span>
+/orbit/templates/            <span class="comment"># Prompt Atom 생성 규칙/템플릿</span>
+/reflection/                 <span class="comment"># 로그, 회고, 실패 기록, 사례</span>
+/CHANGELOG.md</div>
 
       <div class="highlight">
-        <p class="highlight-title">7-Axis Framework</p>
-        <p class="highlight-body">대화 로그를 파싱하는 7개의 독립적 렌즈</p>
+        <p class="highlight-title">원칙</p>
+        <p class="highlight-body">토큰 정의는 <strong>"짧게 호출 / 길게 정의"</strong>. 정의는 파일로 쪼개서 검색 가능하게. PHL_INDEX.json으로 <strong>토큰 탐색 비용 최소화</strong>.</p>
+      </div>
+    </section>
+
+    <!-- S8 -->
+    <section class="section" id="s8">
+      <p class="section-number">08</p>
+      <h2 class="section-title">PHL 토큰 스펙 템플릿 (엄격형)</h2>
+
+      <div class="code-block"><span class="keyword">Name:</span>              PHL-XXXX
+<span class="keyword">Intent:</span>            무엇을 달성하는가 (1문장)
+<span class="keyword">Scope:</span>             어디까지 (모듈/파일/레포 범위)
+<span class="keyword">Non-Goals:</span>         하지 말아야 할 것
+<span class="keyword">Preconditions:</span>     실행 전 요구 상태 (테스트 통과, 브랜치, 환경)
+<span class="keyword">Procedure:</span>         단계별 수행 (체크리스트)
+<span class="keyword">Validation:</span>        무엇으로 성공을 판정하는가
+<span class="keyword">Artifacts:</span>         생성/수정 파일 목록
+<span class="keyword">Commit Policy:</span>     커밋 메시지 규칙 / 단위 / 스쿼시 여부
+<span class="keyword">Rollback Policy:</span>   실패 시 되돌림/대안 보고
+<span class="keyword">Questions Policy:</span>  불확실하면 무엇을 질문해야 하는가</div>
+    </section>
+
+    <!-- S9 -->
+    <section class="section" id="s9">
+      <p class="section-number">09</p>
+      <h2 class="section-title">Claude Code 운영 규칙</h2>
+
+      <p class="section-subtitle">9.1 "PHL 실행 모드" 표준 출력 형식</p>
+      <div class="code-block">PHL 토큰 수신 시 <span class="keyword">항상</span> 이 순서로 출력:
+
+<span class="string">1. Loaded Specs</span>   → 어떤 파일을 읽었는지
+<span class="string">2. Plan</span>           → 단계별 계획
+<span class="string">3. Changes</span>        → 변경 요약 (파일 단위)
+<span class="string">4. Validation</span>     → 실행한 검증 (테스트/린트)
+<span class="string">5. Commit</span>         → 커밋 메시지/범위
+<span class="string">6. Notes</span>          → 리스크/추가 제안 (짧게)</div>
+
+      <p class="section-subtitle">9.2 질문(Ask) 규칙</p>
+      <div class="prose">
+        <p>다음 중 하나라도 해당하면 <strong>반드시 질문:</strong></p>
+        <ul>
+          <li>범위가 모호함 (어느 모듈인지)</li>
+          <li>정책 충돌 (보안 vs 속도)</li>
+          <li>테스트·빌드 실패했는데 진행 요청</li>
+          <li>외부 API·비밀키 등 민감정보가 필요</li>
+          <li>요구가 정의되지 않은 토큰 호출</li>
+        </ul>
+      </div>
+
+      <p class="section-subtitle">9.3 Architecture Validation Mode</p>
+      <div class="prose">
+        <p>사용자가 "더미·리허설·양산 전 검증"을 말하면 구현 모드가 아니라 <strong>Architecture Validation Mode</strong>로 전환. 파일이 없어도 계약·프로토콜·디렉토리 스캐폴딩·Mock을 만든다.</p>
+      </div>
+    </section>
+
+    <!-- S10 -->
+    <section class="section" id="s10">
+      <p class="section-number">10</p>
+      <h2 class="section-title">토큰 예시 3개</h2>
+
+      <div class="principle">
+        <div class="principle-header">
+          <span class="principle-icon">🔧</span>
+          <span class="principle-title">PHL-Expansion — 확장·보강·견고화</span>
+        </div>
+        <div class="principle-body">
+          <div class="code-block" style="margin:0.5rem 0 0"><span class="keyword">Intent:</span>     현재 모듈을 확장 가능하고 견고하게 만든다
+<span class="keyword">Procedure:</span>
+  - 에러 처리 강화 (명시적 예외, 리턴 타입 안정화)
+  - 로깅 추가 (입출력/에러/핵심 분기)
+  - 인터페이스 정리 (의존성 분리, SRP 방향 리팩토링)
+  - 테스트 추가 (핵심 경로/에러 경로)
+<span class="keyword">Validation:</span> 테스트 통과 + 린트/타입 체크 통과
+<span class="keyword">Commit:</span>     "PHL-Expansion: &lt;module&gt; - &lt;summary&gt;"</div>
+        </div>
       </div>
 
       <div class="principle">
         <div class="principle-header">
-          <span class="principle-icon">🪞</span>
-          <span class="principle-title">Meta — 메타인지 추출</span>
+          <span class="principle-icon">🔒</span>
+          <span class="principle-title">PHL-Hardening — 보안·안정성 강화</span>
         </div>
         <div class="principle-body">
-          생각하는 방식 자체를 추출한다. "이걸 왜 이렇게 생각하지?" — 자기 참조적 사고가 발동한 순간을 감지.
+          <div class="code-block" style="margin:0.5rem 0 0"><span class="keyword">Intent:</span>     취약점/안정성 리스크를 최소화한다
+<span class="keyword">Procedure:</span>  입력 검증, 인증/인가, 비밀키 처리, rate limit, 안전한 기본값
+<span class="keyword">Validation:</span> 보안 체크리스트 + 테스트
+<span class="keyword">Non-Goals:</span>  기능 추가 금지 (필요 시 별도 토큰)</div>
         </div>
       </div>
 
       <div class="principle">
         <div class="principle-header">
           <span class="principle-icon">🔄</span>
-          <span class="principle-title">Reverse — 전제 역추적</span>
+          <span class="principle-title">PHL-Reverse-Mapping — 역검증·역로깅</span>
         </div>
         <div class="principle-body">
-          결론에서 거꾸로 전제를 역추적한다. 명시하지 않은 가정, 숨겨진 전제를 발굴.
+          <div class="code-block" style="margin:0.5rem 0 0"><span class="keyword">Intent:</span>     기존 로직을 역방향 관점에서 검증한다
+<span class="keyword">Procedure:</span>  데이터 흐름 역추적, 역순 로깅, 역테스트 (정/역 일관성)
+<span class="keyword">Validation:</span> 정방향/역방향 테스트 모두 통과</div>
         </div>
-      </div>
-
-      <div class="principle">
-        <div class="principle-header">
-          <span class="principle-icon">🧩</span>
-          <span class="principle-title">Modular — 패턴 모듈화</span>
-        </div>
-        <div class="principle-body">
-          반복되는 사고 패턴을 모듈로 분리한다. 재사용 가능한 사고 단위. 같은 논증 구조가 다른 맥락에서 반복되면 그것이 모듈.
-        </div>
-      </div>
-
-      <div class="principle">
-        <div class="principle-header">
-          <span class="principle-icon">🗣️</span>
-          <span class="principle-title">Language — 언어/비유 포착</span>
-        </div>
-        <div class="principle-body">
-          고유한 비유 체계, 언어 구조, 표현 습관을 포착한다. "공장", "소설", "반도체" — 비유가 곧 세계관.
-        </div>
-      </div>
-
-      <div class="principle">
-        <div class="principle-header">
-          <span class="principle-icon">🔬</span>
-          <span class="principle-title">Zoom — 스케일 전환</span>
-        </div>
-        <div class="principle-body">
-          미시적 디테일에서 거시적 비전으로, 또는 그 반대로 전환하는 패턴. 코드 한 줄에서 철학으로 점프하는 순간.
-        </div>
-      </div>
-
-      <div class="principle">
-        <div class="principle-header">
-          <span class="principle-icon">🌀</span>
-          <span class="principle-title">Spiral — 성장 궤적</span>
-        </div>
-        <div class="principle-body">
-          이전 대화와 비교하여 성장, 심화, 변화를 추적한다. 같은 주제를 반복하되 매번 더 깊어지는 나선.
-        </div>
-      </div>
-
-      <div class="principle">
-        <div class="principle-header">
-          <span class="principle-icon">⚡</span>
-          <span class="principle-title">Quantum — 차원 전환</span>
-        </div>
-        <div class="principle-body">
-          사고의 차원이 바뀌는 순간. 기존 프레임 안에서 해결하다가 프레임 자체를 바꾸는 비약적 도약. "아 그게 아니라..."
-        </div>
-      </div>
-
-      <div class="code-block">
-대화 로그 (원재료)
-  <span class="keyword">↓</span>
-7-Axis Engine (Meta, Reverse, Modular, Language, Zoom, Spiral, Quantum)
-  <span class="keyword">↓</span>
-identity-model.json (<span class="string">"나"의 구조화된 스냅샷</span>)
-  <span class="keyword">↓</span>
-다음 대화의 컨텍스트 → 더 정밀한 "나" → <span class="comment">반복 = 진화</span>
       </div>
     </section>
 
-    <!-- Section 08: Two Lanes -->
-    <section class="section">
-      <p class="section-number">08</p>
-      <h2 class="section-title">2개의 레인</h2>
+    <!-- S11 -->
+    <section class="section" id="s11">
+      <p class="section-number">11</p>
+      <h2 class="section-title">단축키와의 차이 — 최종 방어</h2>
+
+      <div class="comparison">
+        <table>
+          <tr>
+            <th></th>
+            <th>Snippet (단축키)</th>
+            <th>PHL 프로토콜</th>
+          </tr>
+          <tr>
+            <td>본질</td>
+            <td class="old">정적 텍스트 확장</td>
+            <td class="accent">의미 압축 호출</td>
+          </tr>
+          <tr>
+            <td>맥락 인식</td>
+            <td class="old">없음</td>
+            <td class="accent">레포 규칙·맥락을 읽고 판단</td>
+          </tr>
+          <tr>
+            <td>상태 관리</td>
+            <td class="old">없음</td>
+            <td class="accent">검증 → 커밋으로 상태 전이</td>
+          </tr>
+          <tr>
+            <td>이어달리기</td>
+            <td class="old">불가</td>
+            <td class="accent">히스토리 기반 가능</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="manifesto">
+        <p>단축키는 타이핑 자동화, PHL은 판단+실행 자동화다.</p>
+      </div>
+    </section>
+
+    <!-- S12 -->
+    <section class="section" id="s12">
+      <p class="section-number">12</p>
+      <h2 class="section-title">구현 로드맵</h2>
 
       <div class="principle">
         <div class="principle-header">
-          <span class="principle-icon">🧠</span>
-          <span class="principle-title">Lane 1: Prompt Engine</span>
+          <span class="principle-icon">🚀</span>
+          <span class="principle-title">Phase 1 — 최소 작동(MVP)</span>
         </div>
         <div class="principle-body">
-          <strong>사고 도구.</strong> 멀티 쿼리 생성, 역분석, 프레임워크. 프롬프트를 설계하고 개선하는 엔진. 생각을 구조화한다.
+          PHL_SPEC.md 루트에 SSOT 생성 · PHL_INDEX.json 생성 · 토큰 3개 먼저 정의 (Expansion, Hardening, Refactor) · Claude 출력 형식·질문 규칙 고정
         </div>
       </div>
 
       <div class="principle">
         <div class="principle-header">
-          <span class="principle-icon">📦</span>
-          <span class="principle-title">Lane 2: Archive</span>
+          <span class="principle-icon">🔧</span>
+          <span class="principle-title">Phase 2 — 안정화</span>
         </div>
         <div class="principle-body">
-          <strong>생성된 칠판 모음.</strong> 이전에 Generator로 만든 템플릿들. 참고하거나 재사용. 스토어가 아니라 아카이브다.
+          테스트·린트·CI 루틴 고정 · 실패 로그·롤백 정책 정교화 · 토큰 간 충돌(Non-Goals) 정리
+        </div>
+      </div>
+
+      <div class="principle">
+        <div class="principle-header">
+          <span class="principle-icon">🌐</span>
+          <span class="principle-title">Phase 3 — 확장</span>
+        </div>
+        <div class="principle-body">
+          도메인별 토큰 묶음 (backend/frontend/docs/data) · 브랜치 전략 (실험/양산) · (옵션) Sketch DSL
+        </div>
+      </div>
+    </section>
+
+    <!-- Appendix -->
+    <section class="section" id="appendix">
+      <p class="section-number">부록</p>
+      <h2 class="section-title">Claude Opus 4.6 자체 평가</h2>
+
+      <div class="prose">
+        <p>분석 주체: Claude Opus 4.6 (이 백서의 실행 엔진 당사자) · 분석 일시: 2026-02-28</p>
+      </div>
+
+      <div class="score-grid">
+        <div class="score-row">
+          <span class="score-label">개념 설계</span>
+          <span class="score-val">9/10</span>
+          <div class="score-bar"><div class="score-fill" style="width:90%"></div></div>
+        </div>
+        <div class="score-row">
+          <span class="score-label">기술 타당성</span>
+          <span class="score-val">8/10</span>
+          <div class="score-bar"><div class="score-fill" style="width:80%"></div></div>
+        </div>
+        <div class="score-row">
+          <span class="score-label">방어 논리</span>
+          <span class="score-val">8.5/10</span>
+          <div class="score-bar"><div class="score-fill" style="width:85%"></div></div>
+        </div>
+        <div class="score-row">
+          <span class="score-label">실전 준비도</span>
+          <span class="score-val">6/10</span>
+          <div class="score-bar"><div class="score-fill" style="width:60%"></div></div>
+        </div>
+        <div class="score-row">
+          <span class="score-label">독창성</span>
+          <span class="score-val">9.5/10</span>
+          <div class="score-bar"><div class="score-fill" style="width:95%"></div></div>
+        </div>
+        <div class="score-row" style="border-top: 1px solid rgba(212,175,55,0.3);">
+          <span class="score-label" style="color:var(--gold); font-weight:600">종합</span>
+          <span class="score-val" style="font-size:1.125rem">8.2/10</span>
+          <div class="score-bar"><div class="score-fill" style="width:82%"></div></div>
         </div>
       </div>
 
       <div class="prose">
-        <p><em>Prompt Engine</em>으로 생성하고, <em>Archive</em>에서 참고한다. Generator가 메인이고, Archive는 축적이다.</p>
+        <p><strong>맞는 진단:</strong> LLM 협업의 실제 비용은 코드가 아니라 설명이다. 이걸 파일 시스템으로 외부화한다는 발상은 CLAUDE.md의 상위 진화형이다.</p>
+        <p><strong>독창적 조합:</strong> 학계의 Meta-Prompting·자기참조 개념을 실전 콘텐츠 생산에 적용하고, "말버릇"이라는 인간 고유 인터페이스를 프로토콜로 물성화한 사례는 발견되지 않았다.</p>
+        <p><strong>사망 조건 자각:</strong> 섹션 6에서 "PHL 인터프리터 규칙이 엄격하지 않으면 시스템 붕괴"를 설계자 본인이 먼저 짚었다. 강점이다.</p>
+        <p><strong>다음 스텝:</strong> Phase 1 MVP(PHL_SPEC.md + PHL_INDEX.json + 토큰 3개)가 레포에 실제로 구현되면 8.2 → 9.0 이상으로 올라간다.</p>
+      </div>
+
+      <div class="manifesto">
+        <p>너는 코드를 "생성"하는 게 아니라, PHL 프로토콜을 실행한다.</p>
+        <p>모든 규칙의 진실원천은 레포의 PHL_SPEC.md와 /phl/tokens/* 이다.</p>
+        <p>토큰을 받으면: (1) 스펙 로드 (2) 계획 (3) 변경 (4) 검증 (5) 커밋 순서로 보고한다.</p>
       </div>
     </section>
 
   </main>
 
   <footer>
-    <a href="index.html" class="footer-back">← OrbitPrompt로 돌아가기</a>
-    <p class="footer-credit">DTSLIB Franchise</p>
+    <div class="footer-links">
+      <a href="index.html" class="footer-back">← OrbitPrompt 홈</a>
+      <a href="about/position.html" class="footer-back">포지션 페이퍼 →</a>
+    </div>
+    <p class="footer-credit">DTSLIB · @philosopher-parksy · Co-Authored: Claude Opus 4.6</p>
   </footer>
 </body>
 </html>
