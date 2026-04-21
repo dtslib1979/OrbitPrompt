@@ -477,6 +477,47 @@
       line-height: 1.5;
     }
 
+    /* ── YOUTUBE SECTION ────────────────────────────────── */
+    .yt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .yt-card {
+      display: block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      text-decoration: none;
+      color: var(--ink1);
+      transition: border-color .15s;
+    }
+    .yt-card:hover { border-color: #3a3a3a; }
+    .yt-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      background: #111;
+    }
+    .yt-info { padding: 10px 12px; }
+    .yt-title { font-size: 12px; font-weight: 600; line-height: 1.4; margin-bottom: 4px; }
+    .yt-date { font-family: var(--f-mono); font-size: 9px; color: var(--ink3); }
+    .yt-loading { color: var(--ink3); font-size: 12px; padding: 16px 0; }
+
+    /* ── DISCORD SECTION ─────────────────────────────── */
+    .discord-list { display: flex; flex-direction: column; gap: 8px; }
+    .discord-msg {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 14px;
+    }
+    .discord-author { font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+    .discord-content { font-size: 13px; line-height: 1.5; color: var(--ink1); }
+    .discord-time { font-family: var(--f-mono); font-size: 9px; color: var(--ink3); margin-top: 6px; }
+    .discord-loading { color: var(--ink3); font-size: 12px; padding: 16px 0; }
+
     /* ── EAE LINK ────────────────────────────────────────── */
     .eae-link {
       display: block;
@@ -701,6 +742,30 @@
 
   <hr class="section-divider">
 
+  <!-- ── EAE LATEST VIDEOS ─────────────────────────────────── -->
+  <section class="section" id="latest-videos">
+    <div class="sec-label">EAE University · 최신 강의</div>
+    <h2 class="sec-title">EAE 최신 영상</h2>
+    <p class="sec-desc">@EAE-University 채널 최신 업로드. GitHub Actions 자동 갱신.</p>
+    <div class="yt-grid" id="yt-latest-container">
+      <div class="yt-loading">로딩 중…</div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── DISCORD NOTICES ───────────────────────────────────── -->
+  <section class="section" id="discord-notices">
+    <div class="sec-label">Discord · orbitprompt 채널</div>
+    <h2 class="sec-title">최신 공지</h2>
+    <p class="sec-desc">Discord #orbitprompt 채널 최신 메시지. 30분마다 자동 갱신.</p>
+    <div class="discord-list" id="discord-container">
+      <div class="discord-loading">로딩 중…</div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
   <!-- ── EAE LINK ───────────────────────────────────────────── -->
   <section class="section" id="university">
     <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener" class="eae-link">
@@ -767,6 +832,48 @@
       .catch(() => {
         genGrid.innerHTML = '<div style="color:#888;padding:24px;">generators.json 로드 실패</div>';
       });
+
+    // ── Render YouTube latest videos ──────────────────────
+    const ytContainer = document.getElementById('yt-latest-container');
+    fetch('./data/youtube-cache.json')
+      .then(r => r.json())
+      .then(data => {
+        const videos = data.videos || [];
+        if (!videos.length) { ytContainer.innerHTML = '<div class="yt-loading">영상 없음</div>'; return; }
+        ytContainer.innerHTML = videos.slice(0, 6).map(v => {
+          const thumb = v.thumbnail || `https://i.ytimg.com/vi/${v.videoId}/mqdefault.jpg`;
+          const date = v.publishedAt ? new Date(v.publishedAt).toLocaleDateString('ko-KR') : '';
+          return `<a class="yt-card" href="https://www.youtube.com/watch?v=${v.videoId}" target="_blank" rel="noopener">
+            <img class="yt-thumb" src="${thumb}" alt="${v.title}" loading="lazy">
+            <div class="yt-info">
+              <div class="yt-title">${v.title}</div>
+              <div class="yt-date">${date}</div>
+            </div>
+          </a>`;
+        }).join('');
+      })
+      .catch(() => { ytContainer.innerHTML = '<div class="yt-loading">youtube-cache.json 없음</div>'; });
+
+    // ── Render Discord notices ─────────────────────────────
+    const discordContainer = document.getElementById('discord-container');
+    fetch('./data/latest-messages.json')
+      .then(r => r.json())
+      .then(msgs => {
+        if (!Array.isArray(msgs) || !msgs.length) {
+          discordContainer.innerHTML = '<div class="discord-loading">공지 없음</div>'; return;
+        }
+        discordContainer.innerHTML = msgs.slice(0, 5).map(m => {
+          const author = m.author?.username || '알 수 없음';
+          const content = m.content || '';
+          const time = m.timestamp ? new Date(m.timestamp).toLocaleString('ko-KR') : '';
+          return `<div class="discord-msg">
+            <div class="discord-author">${author}</div>
+            <div class="discord-content">${content}</div>
+            <div class="discord-time">${time}</div>
+          </div>`;
+        }).join('');
+      })
+      .catch(() => { discordContainer.innerHTML = '<div class="discord-loading">latest-messages.json 없음 — Discord 워크플로우 대기 중</div>'; });
 
     // ── Render perplexity spaces ───────────────────────────
     const spacesGrid = document.getElementById('spaces-grid');
