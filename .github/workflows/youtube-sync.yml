@@ -1,0 +1,29 @@
+name: YouTube Cache Sync
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Fetch YouTube cache from eae-univ
+      run: |
+        mkdir -p data
+        curl -s "https://raw.githubusercontent.com/dtslib1979/eae-univ/main/data/youtube-cache.json" \
+          -o data/youtube-cache.json
+
+    - name: Commit if changed
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data/youtube-cache.json
+        git diff --staged --quiet || git commit -m "chore: YouTube cache sync $(date -u +%Y-%m-%dT%H:%M)"
+        git push
