@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "updated": "2026-04-21",
+  "notices": [
+    {
+      "id": "2026-04-21-phases-ssot",
+      "date": "2026-04-21",
+      "type": "feature",
+      "title": "data/phases.json SSOT 신설",
+      "description": "Part 0~4 + Appendix — FAB 공정 파트 구조 가드레일 확정",
+      "link": "data/phases.json"
+    },
+    {
+      "id": "2026-04-21-css-separation",
+      "date": "2026-04-21",
+      "type": "refactor",
+      "title": "CSS 분리 완료 — orbit-theme.css",
+      "description": "index.html 580줄 inline <style> → assets/css/orbit-theme.css 단일 소스",
+      "link": "assets/css/orbit-theme.css"
+    },
+    {
+      "id": "2026-04-21-generators-ssot",
+      "date": "2026-04-21",
+      "type": "feature",
+      "title": "data/generators.json SSOT",
+      "description": "14개 Generator SSOT — fetch 기반 렌더링 전환",
+      "link": "data/generators.json"
+    },
+    {
+      "id": "2026-04-21-youtube-sync",
+      "date": "2026-04-21",
+      "type": "feature",
+      "title": "EAE-University YouTube 자동 동기화",
+      "description": "6시간마다 youtube-cache.json 자동 갱신 — GitHub Actions",
+      "link": "data/youtube-cache.json"
+    },
+    {
+      "id": "2026-04-21-nav-js",
+      "date": "2026-04-21",
+      "type": "feature",
+      "title": "공유 nav.js 전 페이지 주입",
+      "description": "17개 페이지 공통 네비게이션 자동 주입 — 경로 깊이 자동 감지",
+      "link": "assets/js/nav.js"
+    },
+    {
+      "id": "2026-04-21-devplan-v1",
+      "date": "2026-04-21",
+      "type": "docs",
+      "title": "DEVPLAN v1.1 확정",
+      "description": "INPUT 파이프라인 우선 — parksy-logs → Prompt Atom 6종 공정 확정",
+      "link": "docs/DEVPLAN-v1.md"
+    }
+  ]
+}

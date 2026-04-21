@@ -445,3 +445,45 @@ footer {
 .notice-tag.feature  { background: rgba(168,85,247,.12); color: var(--purple2); }
 .notice-tag.update   { background: rgba(34,211,238,.1);  color: var(--cyan); }
 .notice-tag.fix      { background: rgba(16,185,129,.1);  color: var(--green); }
+
+/* ── FAB PARTS NAV ──────────────────────────────────────── */
+.parts-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+.part-card {
+  background: var(--bg2);
+  border: 1px solid var(--ink4);
+  border-radius: 12px;
+  padding: 20px 18px;
+  cursor: default;
+  transition: border-color .2s, transform .15s;
+  position: relative;
+  overflow: hidden;
+}
+.part-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--part-color, var(--purple));
+}
+.part-card:hover { border-color: rgba(255,255,255,.15); transform: translateY(-2px); }
+.part-number {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  color: var(--ink3);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.part-icon { font-size: 22px; margin-bottom: 8px; line-height: 1; }
+.part-name { font-size: 11px; font-weight: 700; color: var(--part-color, var(--purple)); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+.part-nameKo { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.part-tagline { font-size: 10px; color: var(--ink3); font-family: var(--f-mono); line-height: 1.4; }
+.part-status { font-family: var(--f-mono); font-size: 8px; padding: 2px 7px; border-radius: 99px; margin-top: 10px; display: inline-block; }
+.part-status.live     { background: rgba(16,185,129,.12); color: var(--green); }
+.part-status.building { background: rgba(212,175,55,.1);  color: var(--gold); }
+.part-status.pending  { background: rgba(255,255,255,.05); color: var(--ink3); }

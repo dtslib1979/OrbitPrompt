@@ -70,6 +70,16 @@
 
   <hr class="section-divider">
 
+  <!-- ── FAB PARTS NAV ────────────────────────────────────── -->
+  <section class="section" id="fab-parts">
+    <div class="sec-label">FAB 공정 구조</div>
+    <h2 class="sec-title">Part 0 — 4</h2>
+    <p class="sec-desc">원자재에서 방송까지. 대화를 공장으로 — 5개 파트로 박씨 시스템 전체를 설계한다.</p>
+    <div class="parts-nav" id="parts-nav"><!-- Rendered by JS --></div>
+  </section>
+
+  <hr class="section-divider">
+
   <!-- ── GENERATORS ───────────────────────────────────────── -->
   <section class="section" id="generators">
     <div class="sec-label">Generator Hub</div>
@@ -318,6 +328,30 @@
         <div class="space-desc">${s.desc}</div>
       </div>
     `).join('');
+
+    // ── Render FAB Parts from phases.json ─────────────────
+    const partsNav = document.getElementById('parts-nav');
+    fetch('./data/phases.json')
+      .then(r => r.json())
+      .then(data => {
+        const mainParts = data.parts.filter(p => p.number !== 99);
+        const appendix  = data.parts.find(p => p.number === 99);
+        const all = appendix ? [...mainParts, appendix] : mainParts;
+        partsNav.innerHTML = all.map(p => {
+          const firstChapter = p.chapters && p.chapters.find(c => c.status === 'live');
+          const href = firstChapter ? ` href="${firstChapter.path}"` : '';
+          const tag  = firstChapter ? 'a' : 'div';
+          return `<${tag}${href} class="part-card" style="--part-color:${p.color}">
+            <div class="part-number">Part ${p.number === 99 ? 'X' : p.number}</div>
+            <div class="part-icon">${p.icon}</div>
+            <div class="part-name">${p.name}</div>
+            <div class="part-nameKo">${p.nameKo}</div>
+            <div class="part-tagline">${p.tagline}</div>
+            <div class="part-status ${p.status}">${p.status === 'live' ? '● live' : p.status === 'building' ? '◐ building' : '○ 준비 중'}</div>
+          </${tag}>`;
+        }).join('');
+      })
+      .catch(() => { partsNav.innerHTML = '<div style="color:#666;font-size:12px;">phases.json 로드 실패</div>'; });
   })();
   </script>
 
