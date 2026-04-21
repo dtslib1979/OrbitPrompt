@@ -23,6 +23,7 @@
       <li><a href="#generators">Generators</a></li>
       <li><a href="#phl">PHL</a></li>
       <li><a href="whitepaper.html">Whitepaper</a></li>
+      <li><a href="about/position.html">About</a></li>
       <li><a href="links/">Links</a></li>
       <li><a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener">EAE-Univ</a></li>
       <li><a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" rel="noopener">GitHub</a></li>
@@ -70,11 +71,11 @@
 
   <hr class="section-divider">
 
-  <!-- ── FAB PARTS NAV ────────────────────────────────────── -->
+  <!-- ── PARTS NAV ────────────────────────────────────────── -->
   <section class="section" id="fab-parts">
-    <div class="sec-label">FAB 공정 구조</div>
-    <h2 class="sec-title">Part 0 — 4</h2>
-    <p class="sec-desc">원자재에서 방송까지. 대화를 공장으로 — 5개 파트로 박씨 시스템 전체를 설계한다.</p>
+    <div class="sec-label">파트 · 챕터 구조 가드레일</div>
+    <h2 class="sec-title">Part 00 — 04</h2>
+    <p class="sec-desc">레포에 있는 내용이 웹페이지가 된다. WHY → PHL → Atom → Generator → Archive — 5개 파트, 22개 챕터.</p>
     <div class="parts-nav" id="parts-nav"><!-- Rendered by JS --></div>
   </section>
 
@@ -215,6 +216,7 @@
     <div class="footer-links">
       <a href="links/">Links</a>
       <a href="whitepaper.html">Whitepaper</a>
+      <a href="about/position.html">About</a>
       <a href="prompts/broadcast/" target="_blank">Broadcast</a>
       <a href="prompts/publisher/" target="_blank">Publisher</a>
       <a href="PHL_SPEC.md" target="_blank" rel="noopener">PHL Spec</a>
@@ -329,21 +331,26 @@
       </div>
     `).join('');
 
-    // ── Render Parts from phases.json (channel-repo map) ──
+    // ── Render Parts from phases.json v3 ──────────────────
     const partsNav = document.getElementById('parts-nav');
     fetch('./data/phases.json')
       .then(r => r.json())
       .then(data => {
         partsNav.innerHTML = data.parts.map(p => {
-          const repoCount = p.channels.reduce((n, c) => n + (c.repos ? c.repos.length : 0), 0);
-          return `<div class="part-card" style="--part-color:${p.color}">
-            <div class="part-number">Part ${p.id.replace('part-','').toUpperCase()} · ${p.channel_count}채널</div>
+          const liveCount = p.chapters.filter(c => c.status === 'live').length;
+          const total = p.chapters.length;
+          const firstLive = p.chapters.find(c => c.status === 'live' && c.url);
+          const cardTag = firstLive ? 'a' : 'div';
+          const cardHref = firstLive ? ` href="${firstLive.url}"` : '';
+          const statusClass = liveCount === total ? 'live' : liveCount > 0 ? 'building' : 'pending';
+          const statusText = liveCount === total ? `● ${total}챕터 완료` : liveCount > 0 ? `◐ ${liveCount}/${total} 라이브` : `○ ${total}챕터 준비 중`;
+          return `<${cardTag}${cardHref} class="part-card" style="--part-color:${p.color};text-decoration:none;display:block;">
+            <div class="part-number">Part ${p.number}</div>
             <div class="part-icon">${p.icon}</div>
-            <div class="part-name">${p.name}</div>
-            <div class="part-nameKo">${p.nameKo}</div>
-            <div class="part-tagline">${p.channels.map(c => c.handle).join(' · ')}</div>
-            <div class="part-status ${p.status}">● ${repoCount}개 레포</div>
-          </div>`;
+            <div class="part-name">${p.title}</div>
+            <div class="part-nameKo">${p.subtitle}</div>
+            <div class="part-status ${statusClass}">${statusText}</div>
+          </${cardTag}>`;
         }).join('');
       })
       .catch(() => { partsNav.innerHTML = '<div style="color:#666;font-size:12px;">phases.json 로드 실패</div>'; });
