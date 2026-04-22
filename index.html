@@ -13,6 +13,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="assets/css/orbit-theme.css">
+  <style>
+    .journal-list { display: flex; flex-direction: column; gap: 16px; }
+    .journal-item { background: var(--bg2, #111); border: 1px solid var(--border, #222); border-radius: 10px; padding: 18px 20px; }
+    .journal-date { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--purple, #7c3aed); margin-bottom: 6px; }
+    .journal-title { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+    .journal-body { font-size: 13px; color: var(--ink2, #999); line-height: 1.65; }
+    .journal-link { display: inline-block; margin-top: 4px; font-size: 13px; color: var(--purple, #7c3aed); text-decoration: none; }
+    .journal-link:hover { text-decoration: underline; }
+  </style>
 </head>
 <body>
 
@@ -20,6 +29,7 @@
   <nav>
     <a href="/" class="nav-brand">OrbitPrompt</a>
     <ul class="nav-links">
+      <li><a href="#session-log">저널</a></li>
       <li><a href="#generators">Generators</a></li>
       <li><a href="#phl">PHL</a></li>
       <li><a href="philosophy.html">7축 철학</a></li>
@@ -33,18 +43,18 @@
 
   <!-- ── HERO ────────────────────────────────────────────── -->
   <div class="hero">
-    <div class="hero-label">출판사 · 칠판센터 · Knowledge Publisher</div>
+    <div class="hero-label">스튜디오 저널 · 과정의 기록</div>
     <h1 class="hero-title">
-      지식을 <span class="accent">형식으로</span>.<br>
-      아이디어를 방송으로.
+      철학자가 <span class="accent">되어가는</span><br>
+      과정.
     </h1>
     <p class="hero-sub">
-      14개 Generator로 대화를 칠판으로, 칠판을 방송으로 바꾼다.<br>
-      PHL 프로토콜 · Dual Lane · Perplexity Spaces
+      도구를 쌓는 곳이 아니다. 생각이 형식이 되는 과정을 기록하는 곳이다.<br>
+      Generator는 밖으로 나간다. 여기엔 그걸 만들게 된 이유가 남는다.
     </p>
     <div class="hero-actions">
-      <a href="#generators" class="btn-primary">Generator 열기</a>
-      <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener" class="btn-secondary">EAE-Univ →</a>
+      <a href="#session-log" class="btn-primary">저널 읽기</a>
+      <a href="#generators" class="btn-secondary">Generator →</a>
     </div>
   </div>
 
@@ -106,25 +116,28 @@
 
     <div class="phl-grid">
       <div class="phl-card">
-        <div class="phl-token">PHL-1</div>
-        <div class="phl-name">SPEC 로드 → 상태 점검</div>
-        <div class="phl-desc">PHL_SPEC.md + PHL_INDEX.json 로드. 현재 파일 구조/테스트/의존성 확인. 계획 보고 → 실행 → 검증 → 커밋 사이클.</div>
+        <div class="phl-token">PHL-Expansion</div>
+        <div class="phl-name">모듈 확장 · 견고화</div>
+        <div class="phl-desc">에러 처리 강화, 로깅 추가, 인터페이스 정리, 테스트 추가. 단계별 수행 → 커밋.</div>
+        <a href="phl/PHL-Expansion.html" class="phl-spec-link">Generator 열기 →</a>
       </div>
       <div class="phl-card">
-        <div class="phl-token">PHL-2</div>
-        <div class="phl-name">Dual Compiler</div>
-        <div class="phl-desc">Lane A (University): 사건→지식 컴파일. Lane B (Orbit): 대화→프롬프트 컴파일. 두 레인 동시 실행.</div>
+        <div class="phl-token">PHL-Hardening</div>
+        <div class="phl-name">보안 하드닝</div>
+        <div class="phl-desc">입력 검증, 인증/인가 우회 차단, 비밀키 환경변수 이동, 안정성 강화.</div>
+        <a href="phl/PHL-Hardening.html" class="phl-spec-link">Generator 열기 →</a>
       </div>
       <div class="phl-card">
-        <div class="phl-token">PHL-3</div>
-        <div class="phl-name">표준 출력 형식</div>
-        <div class="phl-desc">Loaded Specs → Plan → Changes → Validation → Commit → Notes. 이 형식에서 벗어난 보고 없음.</div>
-        <a href="PHL_SPEC.md" class="phl-spec-link" target="_blank" rel="noopener">PHL_SPEC.md 읽기 →</a>
+        <div class="phl-token">PHL-Reverse</div>
+        <div class="phl-name">역방향 검증</div>
+        <div class="phl-desc">정방향 흐름 매핑 → 역방향 설계 → 역순 로깅 → 정역 일관성 테스트 → 불일치 리포트.</div>
+        <a href="phl/PHL-Reverse.html" class="phl-spec-link">Generator 열기 →</a>
       </div>
       <div class="phl-card">
-        <div class="phl-token">46 Tests</div>
-        <div class="phl-name">FAB Contracts</div>
-        <div class="phl-desc">PHL_INDEX.json → contracts/ + playbooks/ + tokens/. 46개 테스트 케이스로 검증. BOM 확인 후 착공 원칙.</div>
+        <div class="phl-token">스펙 원본</div>
+        <div class="phl-name">PHL_SPEC.md</div>
+        <div class="phl-desc">46개 테스트 케이스 · FAB 계약 · 실행 사이클. PHL 최상위 SSOT.</div>
+        <a href="PHL_SPEC.md" class="phl-spec-link" target="_blank" rel="noopener">읽기 →</a>
       </div>
     </div>
   </section>
@@ -173,6 +186,49 @@
 
     <div class="spaces-grid" id="spaces-grid">
       <!-- Rendered by JS -->
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── SESSION JOURNAL ──────────────────────────────────── -->
+  <section class="section" id="session-log">
+    <div class="sec-label">스튜디오 저널 · 과정 기록</div>
+    <h2 class="sec-title">최근 세션 로그</h2>
+    <p class="sec-desc">
+      어떤 문제를 만났고, 어떻게 해결했고, 뭘 배웠는지 — 그 과정이 여기 남는다.
+    </p>
+    <div class="journal-list" id="journal-container">
+      <div class="journal-item">
+        <div class="journal-date">2026-04-22</div>
+        <div class="journal-title">OrbitPrompt 근본 재정의 — 스튜디오(엔진), 사이트(저널)</div>
+        <div class="journal-body">도구 쇼케이스로 쓰던 사이트를 과정 저널로 전환. Generator는 밖으로 납품하고 사이트엔 왜 만들었는지만 남긴다. phoneparis 스캐폴드 85% 완성 (GitHub Pages + Discord + YouTube 파이프 전부 연결).</div>
+      </div>
+      <div class="journal-item">
+        <div class="journal-date">2026-04-18</div>
+        <div class="journal-title">FAB 컴퓨트 아키텍처 확정 — CapEx 제로</div>
+        <div class="journal-body">저장=GitHub/CDN, 연산=Railway MCP, GPU=Vast.ai. 클라우드 서버 영구 포기. PWA/APK 폐기 근거 정립. 28레포가 전부 이 모델 따름.</div>
+      </div>
+      <div class="journal-item">
+        <div class="journal-date">2026-04-07</div>
+        <div class="journal-title">DiffSinger v4 MFA — 외계인 목소리 근본 원인 해결</div>
+        <div class="journal-body">v1~v3 ph_dur 균등 배분 문제 발견. Montreal Forced Aligner로 실제 발음 타이밍 맞춤. 재학습 시작.</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;">
+      <a href="docs/SESSION-LOG-20260422.md" class="journal-link" target="_blank" rel="noopener">전체 세션 로그 →</a>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ── PHILOSOPHER-PARKSY YOUTUBE ────────────────────────── -->
+  <section class="section" id="philosopher-feed">
+    <div class="sec-label">@philosopher-parksy · 최신 영상</div>
+    <h2 class="sec-title">철학자 박씨 채널</h2>
+    <p class="sec-desc">OrbitPrompt · dtslib-papyrus · parksy-logs — 이 세 레포의 산출물이 여기 올라온다.</p>
+    <div class="yt-grid" id="philosopher-yt-container">
+      <div class="yt-loading">로딩 중…</div>
     </div>
   </section>
 
@@ -272,6 +328,32 @@
       .catch(() => {
         genGrid.innerHTML = '<div style="color:#888;padding:24px;">generators.json 로드 실패</div>';
       });
+
+    // ── Render philosopher-parksy RSS ─────────────────────
+    const PHILOSOPHER_CH = 'UCJaGuXjxoNjFMqfYUSFjZVg';
+    const philContainer = document.getElementById('philosopher-yt-container');
+    fetch(`https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.youtube.com%2Ffeeds%2Fvideos.xml%3Fchannel_id%3D${PHILOSOPHER_CH}&api_key=public&count=6`)
+      .then(r => r.json())
+      .then(data => {
+        const items = data.items || [];
+        if (!items.length) {
+          philContainer.innerHTML = '<div class="yt-loading">아직 업로드된 영상이 없습니다</div>';
+          return;
+        }
+        philContainer.innerHTML = items.map(v => {
+          const vid = v.link.split('v=')[1]?.split('&')[0] || '';
+          const thumb = vid ? `https://i.ytimg.com/vi/${vid}/mqdefault.jpg` : '';
+          const date = v.pubDate ? new Date(v.pubDate).toLocaleDateString('ko-KR') : '';
+          return `<a class="yt-card" href="${v.link}" target="_blank" rel="noopener">
+            ${thumb ? `<img class="yt-thumb" src="${thumb}" alt="${v.title}" loading="lazy">` : ''}
+            <div class="yt-info">
+              <div class="yt-title">${v.title}</div>
+              <div class="yt-date">${date}</div>
+            </div>
+          </a>`;
+        }).join('');
+      })
+      .catch(() => { philContainer.innerHTML = '<div class="yt-loading">피드 로드 실패</div>'; });
 
     // ── Render YouTube latest videos ──────────────────────
     const ytContainer = document.getElementById('yt-latest-container');

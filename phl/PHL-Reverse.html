@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHL-Reverse Generator — OrbitPrompt</title>
+  <style>
+    :root {
+      --bg: #050505;
+      --surface: #111;
+      --border: #222;
+      --accent: #0891b2;
+      --accent-glow: rgba(8,145,178,0.18);
+      --text: #e8e8e8;
+      --muted: #666;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; min-height: 100vh; padding: 24px 16px 60px; }
+
+    .nav { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; font-size: 13px; color: var(--muted); }
+    .nav a { color: var(--muted); text-decoration: none; }
+    .nav a:hover { color: var(--text); }
+    .nav-sep { opacity: 0.4; }
+
+    .token-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-glow); border: 1px solid var(--accent);
+      border-radius: 6px; padding: 6px 14px; margin-bottom: 16px;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent);
+    }
+    .token-badge::before { content: '↩'; font-size: 13px; }
+
+    h1 { font-size: clamp(22px, 5vw, 32px); font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 32px; line-height: 1.6; }
+
+    .form-section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+    .form-section h2 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
+
+    label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+    input[type="text"], textarea {
+      width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); font-size: 14px; padding: 10px 12px; outline: none;
+      font-family: inherit; transition: border-color 0.2s;
+    }
+    input[type="text"]:focus, textarea:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .check-group { display: flex; flex-direction: column; gap: 8px; }
+    .check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .check-item input[type="checkbox"] { accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; }
+    .check-item span { font-size: 13px; color: var(--text); }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+    button { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: opacity 0.15s, transform 0.1s; }
+    button:active { transform: scale(0.97); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn-copy { background: #1a2a1a; color: #6ee7b7; border: 1px solid #2a3d2a; }
+
+    .output-box { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+    .output-box.visible { display: block; }
+    .output-box h2 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
+    .prompt-text { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+
+    .spec-toggle { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; padding: 8px 16px; font-size: 12px; cursor: pointer; width: 100%; text-align: left; margin-top: 32px; }
+    .spec-toggle:hover { border-color: var(--accent); color: var(--text); }
+    .spec-content { display: none; margin-top: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .spec-content.open { display: block; }
+    .spec-content pre { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.6; color: var(--muted); white-space: pre-wrap; }
+
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a2a1a; color: #6ee7b7; border: 1px solid #2a3d2a; padding: 10px 20px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 600px) { .btn-row { flex-direction: column; } button { width: 100%; } }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../index.html">OrbitPrompt</a>
+  <span class="nav-sep">/</span>
+  <a href="../index.html#phl">PHL</a>
+  <span class="nav-sep">/</span>
+  <span>PHL-Reverse</span>
+</nav>
+
+<div class="token-badge">PHL-Reverse</div>
+<h1>역방향 검증 Generator</h1>
+<p class="subtitle">데이터 흐름을 역방향으로 추적해 정역 일관성을 검증하는 프롬프트를 생성한다.</p>
+
+<div class="form-section">
+  <h2>대상 정보</h2>
+
+  <div style="margin-bottom:14px;">
+    <label>데이터 흐름 / 파이프라인 / 모듈 <span style="color:#ef4444">*</span></label>
+    <input type="text" id="module-path" placeholder="예: scripts/encode_audio.py · src/transform/normalize.js · 전체 ETL 파이프라인">
+  </div>
+
+  <div style="margin-bottom:14px;">
+    <label>정방향 흐름 설명</label>
+    <textarea id="forward-flow" placeholder="예: 원본 텍스트 → 토크나이저 → 임베딩 벡터 → DB 저장&#10;예: 사용자 입력 → JSON 직렬화 → Base64 인코딩 → 전송"></textarea>
+  </div>
+
+  <div>
+    <label>비가역 변환 예상 지점 (선택)</label>
+    <input type="text" id="irreversible" placeholder="예: 해싱 (bcrypt) · 손실 압축 (mp3) · 없음 · 모르겠음">
+  </div>
+</div>
+
+<div class="form-section">
+  <h2>검증 항목 선택</h2>
+  <div class="check-group">
+    <label class="check-item"><input type="checkbox" id="chk-map" checked><span>정방향 흐름 매핑 (입력→변환→출력 단계별 문서화)</span></label>
+    <label class="check-item"><input type="checkbox" id="chk-inverse" checked><span>역방향 흐름 설계 (역함수 존재 여부 확인)</span></label>
+    <label class="check-item"><input type="checkbox" id="chk-log" checked><span>역순 로깅 삽입 (각 단계 입출력 쌍 기록)</span></label>
+    <label class="check-item"><input type="checkbox" id="chk-test" checked><span>역테스트 작성 (정역 일관성·불변량·경계값)</span></label>
+    <label class="check-item"><input type="checkbox" id="chk-report" checked><span>불일치 리포트 (의도적 비가역 vs 버그 분류)</span></label>
+  </div>
+</div>
+
+<div class="form-section">
+  <h2>추가 컨텍스트 (선택)</h2>
+  <div style="margin-bottom:14px;">
+    <label>테스트 프레임워크</label>
+    <input type="text" id="test-fw" placeholder="예: pytest · Jest · 없음 (새로 만들어줘)">
+  </div>
+  <div style="margin-bottom:14px;">
+    <label>역순 로깅 환경</label>
+    <input type="text" id="log-env" placeholder="예: 프로덕션에도 남김 · DEBUG 레벨만 · 없음">
+  </div>
+  <div>
+    <label>특별 요청사항</label>
+    <textarea id="extra" placeholder="예: 부동소수점 오차 허용 범위 1e-6으로 설정해줘 · 역변환 불가 지점만 먼저 찾아줘"></textarea>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button class="btn-primary" onclick="generate()">프롬프트 생성</button>
+  <button class="btn-secondary" onclick="clearForm()">초기화</button>
+</div>
+
+<div class="output-box" id="output-box">
+  <h2>생성된 프롬프트 — Claude Code에 붙여넣기</h2>
+  <div class="prompt-text" id="prompt-output"></div>
+  <div class="btn-row" style="margin-top:16px;">
+    <button class="btn-copy" onclick="copyPrompt()">복사</button>
+  </div>
+</div>
+
+<button class="spec-toggle" onclick="toggleSpec()">▸ PHL-Reverse 스펙 전체 보기</button>
+<div class="spec-content" id="spec-content">
+  <pre>Name:    PHL-Reverse
+Intent:  기존 로직을 역방향 관점에서 검증한다
+
+Procedure:
+  Step 1: 정방향 흐름 매핑 (입력→변환→출력 문서화)
+  Step 2: 역방향 흐름 설계 (역함수 존재 여부·비가역 지점 표시)
+  Step 3: 역순 로깅 삽입 ([REVERSE] step={name} input={hash} output={hash} reversible={bool})
+  Step 4: 역테스트 작성 (reverse(forward(x))==x, 불변량, 경계값, 비가역 예상치)
+  Step 5: 불일치 분석 (의도적 비가역·버그·부동소수점 분류)
+
+Commit Format:
+  PHL-Reverse: &lt;module&gt; - &lt;summary&gt;
+  - 역방향 매핑: [흐름도/문서]
+  - 역테스트: [추가된 테스트]
+  - 역순 로깅: [삽입 지점]
+  - 불일치: [발견 건수, 의도적/버그 분류]
+
+Key Test: reverse(forward(x)) == x (가역 구간)</pre>
+</div>
+
+<div id="toast" class="toast">클립보드에 복사됨</div>
+
+<script>
+function generate() {
+  const path = document.getElementById('module-path').value.trim();
+  if (!path) { alert('대상 흐름/모듈을 입력하세요.'); return; }
+
+  const forward = document.getElementById('forward-flow').value.trim();
+  const irreversible = document.getElementById('irreversible').value.trim();
+  const fw = document.getElementById('test-fw').value.trim();
+  const logEnv = document.getElementById('log-env').value.trim();
+  const extra = document.getElementById('extra').value.trim();
+
+  const checks = [];
+  if (document.getElementById('chk-map').checked) checks.push('정방향 흐름 매핑');
+  if (document.getElementById('chk-inverse').checked) checks.push('역방향 흐름 설계');
+  if (document.getElementById('chk-log').checked) checks.push('역순 로깅');
+  if (document.getElementById('chk-test').checked) checks.push('역테스트');
+  if (document.getElementById('chk-report').checked) checks.push('불일치 리포트');
+
+  let prompt = `PHL-Reverse 실행 요청
+
+대상: ${path}`;
+  if (forward) prompt += `\n정방향 흐름: ${forward}`;
+  if (irreversible) prompt += `\n비가역 예상 지점: ${irreversible}`;
+  prompt += `\n검증 항목: ${checks.join(', ') || '전체'}`;
+  if (fw) prompt += `\n테스트 프레임워크: ${fw}`;
+  if (logEnv) prompt += `\n로깅 환경: ${logEnv}`;
+  if (extra) prompt += `\n추가 요청: ${extra}`;
+
+  prompt += `
+
+---
+PHL-Reverse 프로토콜 기준으로 실행:`;
+
+  if (document.getElementById('chk-map').checked)
+    prompt += `\n1. ${path} 정방향 흐름 매핑 — 입력·변환 단계·출력 문서화, 각 단계 입출력 관계 명시`;
+  if (document.getElementById('chk-inverse').checked)
+    prompt += `\n2. 역방향 흐름 설계 — 각 변환의 역함수 존재 여부 확인, 비가역 지점 표시`;
+  if (document.getElementById('chk-log').checked)
+    prompt += `\n3. 역순 로깅 삽입 — [REVERSE] step={name} input={hash} output={hash} reversible={bool} 포맷`;
+  if (document.getElementById('chk-test').checked)
+    prompt += `\n4. 역테스트 작성:
+   - 정역 일관성: reverse(forward(x)) == x (가역 구간)
+   - 불변량: 변환 전후 유지 속성 검증
+   - 경계값: 빈 입력·최대값·특수문자 역변환
+   - 비가역: 정보 손실이 예상대로인지 확인`;
+  if (document.getElementById('chk-report').checked)
+    prompt += `\n5. 불일치 리포트 — 발견된 불일치를 의도적 비가역·버그·부동소수점 오차로 분류`;
+
+  prompt += `
+
+커밋 형식:
+PHL-Reverse: ${path} - [작업 요약]
+- 역방향 매핑: [흐름도/문서]
+- 역테스트: [추가된 테스트]
+- 역순 로깅: [삽입 지점]
+- 불일치: [발견 건수, 의도적/버그 분류]
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>`;
+
+  document.getElementById('prompt-output').textContent = prompt;
+  const box = document.getElementById('output-box');
+  box.classList.add('visible');
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyPrompt() {
+  navigator.clipboard.writeText(document.getElementById('prompt-output').textContent).then(() => showToast());
+}
+
+function clearForm() {
+  ['module-path','forward-flow','irreversible','test-fw','log-env','extra'].forEach(id => document.getElementById(id).value = '');
+  ['chk-map','chk-inverse','chk-log','chk-test','chk-report'].forEach(id => document.getElementById(id).checked = true);
+  document.getElementById('output-box').classList.remove('visible');
+}
+
+function toggleSpec() {
+  const c = document.getElementById('spec-content');
+  const btn = document.querySelector('.spec-toggle');
+  c.classList.toggle('open');
+  btn.textContent = c.classList.contains('open') ? '▾ PHL-Reverse 스펙 접기' : '▸ PHL-Reverse 스펙 전체 보기';
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+</script>
+</body>
+</html>
