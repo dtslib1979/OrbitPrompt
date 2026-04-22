@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7축 철학 모듈 — OrbitPrompt</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --border: rgba(255,255,255,0.08);
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --accent: #a855f7;
+
+      --meta-c:    #a855f7;
+      --reverse-c: #22d3ee;
+      --modular-c: #d4af37;
+      --lang-c:    #10b981;
+      --zoom-c:    #f97316;
+      --spiral-c:  #ec4899;
+      --quantum-c: #facc15;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand { font-size: .85rem; font-weight: 600; color: var(--accent); letter-spacing: .05em; text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a { color: var(--muted); font-size: .82rem; text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+
+    /* HERO */
+    .hero {
+      padding: 120px 2rem 60px;
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: .72rem;
+      letter-spacing: .12em;
+      color: var(--accent);
+      text-transform: uppercase;
+      border: 1px solid var(--accent);
+      padding: .2rem .7rem;
+      border-radius: 2rem;
+      margin-bottom: 1.4rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 em { color: var(--accent); font-style: normal; }
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .hero-cta {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      padding: .7rem 1.8rem;
+      border-radius: .4rem;
+      font-size: .9rem;
+      font-weight: 600;
+      transition: opacity .2s;
+    }
+    .hero-cta:hover { opacity: .85; }
+
+    /* AXIS GRID */
+    .axes-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem 80px;
+    }
+    .section-label {
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .axes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .axis-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: .75rem;
+      padding: 1.6rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .25s, transform .2s;
+      cursor: default;
+    }
+    .axis-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--axis-color);
+      border-radius: .75rem .75rem 0 0;
+    }
+    .axis-card:hover {
+      border-color: var(--axis-color);
+      transform: translateY(-2px);
+    }
+
+    .axis-header {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      margin-bottom: 1rem;
+    }
+    .axis-icon {
+      font-size: 1.5rem;
+      width: 2.4rem;
+      height: 2.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: color-mix(in srgb, var(--axis-color) 12%, transparent);
+      border-radius: .4rem;
+    }
+    .axis-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--axis-color);
+      letter-spacing: .03em;
+    }
+    .axis-num {
+      margin-left: auto;
+      font-size: .7rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .axis-question {
+      font-size: .88rem;
+      color: var(--text);
+      line-height: 1.55;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .axis-deep {
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.6;
+      padding-top: .8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* 7번째 카드 — Quantum — 강조 */
+    .axis-card.quantum-card {
+      grid-column: span 1;
+    }
+
+    /* LOOP DIAGRAM */
+    .loop-section {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 2rem 80px;
+    }
+    .loop-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: .75rem;
+      padding: 2rem;
+    }
+    .loop-title {
+      font-size: .75rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.4rem;
+    }
+    .loop-flow {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      font-size: .88rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .loop-step {
+      display: flex;
+      align-items: flex-start;
+      gap: .8rem;
+    }
+    .loop-arrow {
+      color: var(--accent);
+      font-size: 1rem;
+      margin-top: .05rem;
+      flex-shrink: 0;
+    }
+    .loop-step strong { color: var(--text); }
+    .loop-step span { color: var(--muted); }
+
+    /* TOOL CTA */
+    .tool-cta {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 2rem 100px;
+      text-align: center;
+    }
+    .tool-cta p { color: var(--muted); font-size: .9rem; margin-bottom: 1.2rem; }
+    .tool-btn {
+      display: inline-block;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      text-decoration: none;
+      padding: .65rem 1.6rem;
+      border-radius: .4rem;
+      font-size: .88rem;
+      font-weight: 600;
+      transition: background .2s, color .2s;
+    }
+    .tool-btn:hover { background: var(--accent); color: #fff; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 600px) {
+      .axes-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">OrbitPrompt</a>
+  <ul class="nav-links">
+    <li><a href="index.html">홈</a></li>
+    <li><a href="philosophy.html" style="color:var(--text)">7축 철학</a></li>
+    <li><a href="whitepaper.html">백서</a></li>
+    <li><a href="about/position.html">About</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">Core Philosophy Modules</div>
+  <h1>사고를 해부하는<br><em>7개의 축</em></h1>
+  <p>
+    대화 로그에서 사람의 고유한 사고 패턴을 추출하는 7가지 렌즈.<br>
+    이 7축이 PHL 프로토콜의 철학적 기반이다.
+  </p>
+  <a href="prompts/identity/identity-engine.html" class="hero-cta">→ Identity Engine으로 분석하기</a>
+</section>
+
+<!-- AXES -->
+<section class="axes-section">
+  <p class="section-label">7 Axes — 사고 해부 모듈</p>
+  <div class="axes-grid">
+
+    <div class="axis-card" style="--axis-color: var(--meta-c)">
+      <div class="axis-header">
+        <div class="axis-icon">🪞</div>
+        <div class="axis-name">Meta</div>
+        <div class="axis-num">01</div>
+      </div>
+      <div class="axis-question">이 대화에서 화자가 자기 사고 과정 자체를 인식하거나 언급하는 순간은?</div>
+      <div class="axis-deep">메타인지가 발동한 정확한 지점, 자기 참조적 발언, "이걸 왜 이렇게 생각하지?"류의 순간을 전부 추출한다. 각 메타인지의 트리거까지 분석.</div>
+    </div>
+
+    <div class="axis-card" style="--axis-color: var(--reverse-c)">
+      <div class="axis-header">
+        <div class="axis-icon">🔄</div>
+        <div class="axis-name">Reverse</div>
+        <div class="axis-num">02</div>
+      </div>
+      <div class="axis-question">결론이나 주장에서 역추적하면 어떤 숨겨진 전제/가정이 드러나는가?</div>
+      <div class="axis-deep">화자가 명시하지 않은 전제들을 발굴한다. "이 결론이 성립하려면 X를 당연시해야 한다"를 전부 찾아 전제들 사이의 의존 관계와 모순을 분석.</div>
+    </div>
+
+    <div class="axis-card" style="--axis-color: var(--modular-c)">
+      <div class="axis-header">
+        <div class="axis-icon">🧩</div>
+        <div class="axis-name">Modular</div>
+        <div class="axis-num">03</div>
+      </div>
+      <div class="axis-question">반복적으로 등장하는 사고 패턴이나 논증 구조는?</div>
+      <div class="axis-deep">같은 논증 틀, 같은 비교 방식, 같은 결론 도출 패턴이 반복되는 것을 모듈로 분리한다. 각 패턴의 출현 빈도, 변형, 진화 과정을 기록.</div>
+    </div>
+
+    <div class="axis-card" style="--axis-color: var(--lang-c)">
+      <div class="axis-header">
+        <div class="axis-icon">🗣️</div>
+        <div class="axis-name">Language</div>
+        <div class="axis-num">04</div>
+      </div>
+      <div class="axis-question">화자 고유의 비유, 언어 구조, 표현 습관은?</div>
+      <div class="axis-deep">고유 비유 체계 (공장, 소설, 반도체 등), 말투 패턴, 코드스위칭, 감정 표현 방식을 추출한다. 비유 간 체계 관계와 비유의 진화까지 전수 조사.</div>
+    </div>
+
+    <div class="axis-card" style="--axis-color: var(--zoom-c)">
+      <div class="axis-header">
+        <div class="axis-icon">🔬</div>
+        <div class="axis-name">Zoom</div>
+        <div class="axis-num">05</div>
+      </div>
+      <div class="axis-question">미시적 디테일과 거시적 비전 사이를 전환하는 패턴은?</div>
+      <div class="axis-deep">구체적 코드/파일에서 갑자기 철학/비전으로 점프하거나 그 역방향 전환을 감지한다. 스케일 전환 지점의 빈도와 패턴을 정량 분석.</div>
+    </div>
+
+    <div class="axis-card" style="--axis-color: var(--spiral-c)">
+      <div class="axis-header">
+        <div class="axis-icon">🌀</div>
+        <div class="axis-name">Spiral</div>
+        <div class="axis-num">06</div>
+      </div>
+      <div class="axis-question">이전 대화/모델 대비 어떤 성장, 심화, 변화가 있는가?</div>
+      <div class="axis-deep">같은 주제를 다시 다루면서 더 깊어진 부분, 이전에 없던 관점, 수정된 생각을 비교 추출한다. 이전 모델과 1:1 대조해 성장/퇴행/정체를 항목별 판정.</div>
+    </div>
+
+    <div class="axis-card quantum-card" style="--axis-color: var(--quantum-c)">
+      <div class="axis-header">
+        <div class="axis-icon">⚡</div>
+        <div class="axis-name">Quantum</div>
+        <div class="axis-num">07</div>
+      </div>
+      <div class="axis-question">사고의 차원이 바뀌는 순간 — 패러다임 시프트, 비약적 도약은?</div>
+      <div class="axis-deep">기존 프레임 안에서 해결하다가 갑자기 프레임 자체를 바꾸는 순간을 찾는다. "아 그게 아니라…"류의 전환. 전환 전후의 프레임을 비교하며 촉발 계기를 분석.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- LOOP -->
+<section class="loop-section">
+  <div class="loop-box">
+    <div class="loop-title">7축이 만드는 루프</div>
+    <div class="loop-flow">
+      <div class="loop-step">
+        <span class="loop-arrow">①</span>
+        <div><strong>parksy-logs</strong> <span>— 대화 로그가 원석 시드로 투입</span></div>
+      </div>
+      <div class="loop-step">
+        <span class="loop-arrow">↓</span>
+        <div><strong>7축 분석</strong> <span>— 사고 패턴, 언어 구조, 패러다임 시프트 추출</span></div>
+      </div>
+      <div class="loop-step">
+        <span class="loop-arrow">↓</span>
+        <div><strong>자기 모델 JSON</strong> <span>— Identity Engine이 구조화된 자기 모델 생성</span></div>
+      </div>
+      <div class="loop-step">
+        <span class="loop-arrow">↓</span>
+        <div><strong>PHL 프로토콜</strong> <span>— 자기 모델에서 재사용 가능한 언어 체계로 물성화</span></div>
+      </div>
+      <div class="loop-step">
+        <span class="loop-arrow">↓</span>
+        <div><strong>MCP 엔진 납품</strong> <span>— PHL이 자동화 도구로 변환되어 다른 레포로</span></div>
+      </div>
+      <div class="loop-step">
+        <span class="loop-arrow">↓</span>
+        <div><strong>@philosopher-parksy</strong> <span>— 과정이 영상으로 출판됨</span></div>
+      </div>
+      <div class="loop-step">
+        <span class="loop-arrow">↻</span>
+        <div><strong>새 대화</strong> <span>— 영상이 다음 대화를 만들고 루프 반복</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOL CTA -->
+<section class="tool-cta">
+  <p>대화 로그를 붙여넣으면 7축으로 자동 분석하는 프롬프트를 생성합니다.</p>
+  <a href="prompts/identity/identity-engine.html" class="tool-btn">Identity Engine 열기 →</a>
+</section>
+
+<footer>
+  <a href="index.html">← OrbitPrompt</a>
+  &nbsp;·&nbsp;
+  <a href="whitepaper.html">PHL 백서</a>
+  &nbsp;·&nbsp;
+  <a href="about/position.html">About</a>
+</footer>
+
+</body>
+</html>
