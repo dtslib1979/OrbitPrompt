@@ -1,1 +1,126 @@
-404: Not Found
+{
+  "updated": "2026-04-21T06:02:27.255Z",
+  "handle": "@EAE-University",
+  "repo": "eae-univ",
+  "channelId": "UCogemhYGCnbVp13ARqFYM8A",
+  "name": "EAE Univ.",
+  "description": "How this channel works\n- Most videos are Unlisted by default\n- Public videos are released only when a unit is complete\n- Uploads are manually gated for quality and intent\n\nThis channel exists to\n- Train creative judgment, not chase views\n- Build reusable assets, not finished artworks\n- Create a repe",
+  "thumbnail": "https://yt3.ggpht.com/VSuTS6cpgpCG1kUv1vVFLp2pzvWNjp3P71Tx0lKzpigqSNsjztE_2KBVVTe_9Oc5RkP0MtUGhg=s88-c-k-c0x00ffffff-no-rj",
+  "stats": {
+    "subscriberCount": 11,
+    "viewCount": 13132,
+    "videoCount": 87
+  },
+  "videos": [
+    {
+      "videoId": "ZoNCR_h5qEQ",
+      "title": "EAE University — Design Your Existence",
+      "publishedAt": "2026-03-23T06:05:11Z",
+      "thumbnail": "https://i.ytimg.com/vi/ZoNCR_h5qEQ/mqdefault.jpg",
+      "viewCount": 58,
+      "likeCount": 0,
+      "commentCount": 0,
+      "duration": "PT1M11S",
+      "url": "https://youtu.be/ZoNCR_h5qEQ"
+    },
+    {
+      "videoId": "rNRQ_N7gN4o",
+      "title": "Alexandria Sanctuary - Where Wisdom Meets Mortality",
+      "publishedAt": "2026-03-23T05:42:16Z",
+      "thumbnail": "https://i.ytimg.com/vi/rNRQ_N7gN4o/mqdefault.jpg",
+      "viewCount": 0,
+      "likeCount": 0,
+      "commentCount": 0,
+      "duration": "PT1M1S",
+      "url": "https://youtu.be/rNRQ_N7gN4o"
+    },
+    {
+      "videoId": "4nC-5XShOYA",
+      "title": "ESPÍRITU TANGO — Performance Protocol",
+      "publishedAt": "2026-03-23T05:39:24Z",
+      "thumbnail": "https://i.ytimg.com/vi/4nC-5XShOYA/mqdefault.jpg",
+      "viewCount": 0,
+      "likeCount": 0,
+      "commentCount": 0,
+      "duration": "PT1M11S",
+      "url": "https://youtu.be/4nC-5XShOYA"
+    },
+    {
+      "videoId": "cU_gvcC7BW4",
+      "title": "ESPÍRITU TANGO — Performance Protocol",
+      "publishedAt": "2026-03-23T05:36:08Z",
+      "thumbnail": "https://i.ytimg.com/vi/cU_gvcC7BW4/mqdefault.jpg",
+      "viewCount": 0,
+      "likeCount": 0,
+      "commentCount": 0,
+      "duration": "PT1M10S",
+      "url": "https://youtu.be/cU_gvcC7BW4"
+    },
+    {
+      "videoId": "imRMvuDhLTA",
+      "title": "Alexandria Sanctuary - Where Wisdom Meets Mortality",
+      "publishedAt": "2026-03-23T05:35:55Z",
+      "thumbnail": "https://i.ytimg.com/vi/imRMvuDhLTA/mqdefault.jpg",
+      "viewCount": 0,
+      "likeCount": 0,
+      "commentCount": 0,
+      "duration": "PT54S",
+      "url": "https://youtu.be/imRMvuDhLTA"
+    },
+    {
+      "videoId": "TppewJzeRss",
+      "title": "1분쇼츠 AI 활용 제작 튜토리얼",
+      "publishedAt": "2026-02-07T23:53:00Z",
+      "thumbnail": "https://i.ytimg.com/vi/TppewJzeRss/mqdefault.jpg",
+      "viewCount": 131,
+      "likeCount": 0,
+      "commentCount": 0,
+      "duration": "PT1M1S",
+      "url": "https://youtu.be/TppewJzeRss"
+    },
+    {
+      "videoId": "HrEcbp-b_7s",
+      "title": "호야당 4번",
+      "publishedAt": "2026-01-27T23:59:19Z",
+      "thumbnail": "https://i.ytimg.com/vi/HrEcbp-b_7s/mqdefault.jpg",
+      "viewCount": 4,
+      "likeCount": 0,
+      "commentCount": 0,
+      "duration": "PT16S",
+      "url": "https://youtu.be/HrEcbp-b_7s"
+    },
+    {
+      "videoId": "tJMnHI-Gz3U",
+      "title": "호야당 3번",
+      "publishedAt": "2026-01-27T23:56:50Z",
+      "thumbnail": "https://i.ytimg.com/vi/tJMnHI-Gz3U/mqdefault.jpg",
+      "viewCount": 71,
+      "likeCount": 0,
+      "commentCount": 0,
+      "duration": "PT16S",
+      "url": "https://youtu.be/tJMnHI-Gz3U"
+    },
+    {
+      "videoId": "tu7uUR4beSo",
+      "title": "호야당 2번",
+      "publishedAt": "2026-01-27T23:50:32Z",
+      "thumbnail": "https://i.ytimg.com/vi/tu7uUR4beSo/mqdefault.jpg",
+      "viewCount": 5,
+      "likeCount": 0,
+      "commentCount": 0,
+      "duration": "PT16S",
+      "url": "https://youtu.be/tu7uUR4beSo"
+    },
+    {
+      "videoId": "kBe0qb_Stz4",
+      "title": "호야당 1번",
+      "publishedAt": "2026-01-27T23:45:58Z",
+      "thumbnail": "https://i.ytimg.com/vi/kBe0qb_Stz4/mqdefault.jpg",
+      "viewCount": 281,
+      "likeCount": 0,
+      "commentCount": 0,
+      "duration": "PT16S",
+      "url": "https://youtu.be/kBe0qb_Stz4"
+    }
+  ]
+}
