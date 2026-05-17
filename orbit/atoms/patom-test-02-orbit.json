@@ -1,0 +1,12 @@
+{
+  "id": "test-02-orbit",
+  "ts": "2026-02-06T00:00:00.000Z",
+  "title": "자동화 스크립트 만들어줘: 이슈 파싱 템플릿",
+  "body": "이슈 본문에서 키워드를 추출하는 프롬프트 템플릿을 구현해야 함. 코드 생성 필요.",
+  "tags": [
+    "automation",
+    "template"
+  ],
+  "owner": "parksy",
+  "source_event": "test-02-orbit"
+}
