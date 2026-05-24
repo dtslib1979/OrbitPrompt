@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>OrbitPrompt</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-void: #050505;
+      --bg-primary: #0a0a0a;
+      --bg-surface: #0f0f0f;
+      --bg-card: #141414;
+      --bg-elevated: #1a1a1a;
+      --ink-primary: #f0f0f0;
+      --ink-secondary: rgba(255,255,255,0.7);
+      --ink-muted: rgba(255,255,255,0.4);
+      --ink-dim: rgba(255,255,255,0.15);
+      --purple: #a855f7;
+      --purple-dim: rgba(168,85,247,0.15);
+      --cyan: #22d3ee;
+      --cyan-dim: rgba(34,211,238,0.15);
+      --gold: #d4af37;
+      --gold-dim: rgba(212,175,55,0.15);
+      --border: rgba(255,255,255,0.06);
+      --f-display: 'Inter', -apple-system, sans-serif;
+      --f-mono: 'JetBrains Mono', monospace;
+      --f-serif: 'Cormorant Garamond', Georgia, serif;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: var(--f-display);
+      background: var(--bg-void);
+      color: var(--ink-primary);
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 2rem 0 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      font-family: var(--f-mono);
+      font-size: clamp(1.75rem, 7vw, 2.5rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline {
+      font-family: var(--f-serif);
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--ink-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Lanes */
+    .lanes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 640px) {
+      .lanes { grid-template-columns: 1fr; }
+    }
+
+    .lane {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+    }
+
+    .lane-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .lane-icon { font-size: 1.25rem; }
+    .lane-title {
+      font-family: var(--f-mono);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    .lane-tag {
+      font-family: var(--f-mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.4rem;
+      margin-left: auto;
+    }
+
+    .lane--engine .lane-tag { background: var(--purple-dim); color: var(--purple); }
+    .lane--board .lane-tag { background: var(--gold-dim); color: var(--gold); }
+
+    .lane-desc {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    /* Items */
+    .item-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--bg-surface);
+      border: 1px solid transparent;
+      text-decoration: none;
+      color: var(--ink-primary);
+      transition: all 0.15s;
+    }
+    .item:hover {
+      border-color: var(--purple);
+      background: var(--bg-elevated);
+    }
+    .item.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .item-icon { font-size: 1.125rem; }
+    .item-text { flex: 1; }
+    .item-name {
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .item-meta {
+      font-size: 0.625rem;
+      color: var(--ink-muted);
+    }
+    .item-arrow {
+      font-size: 0.75rem;
+      color: var(--ink-dim);
+    }
+
+    /* Boards */
+    .lane--board .item:hover { border-color: var(--gold); }
+
+    /* Categories */
+    .category-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .cat-tab {
+      font-family: var(--f-mono);
+      font-size: 0.5625rem;
+      padding: 0.25rem 0.5rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--ink-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .cat-tab:hover, .cat-tab.active {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .footer-link {
+      font-family: var(--f-mono);
+      font-size: 0.5625rem;
+      color: var(--ink-muted);
+      text-decoration: none;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid var(--border);
+      transition: all 0.15s;
+    }
+    .footer-link:hover {
+      border-color: var(--purple);
+      color: var(--purple);
+    }
+
+    .footer-credit {
+      font-family: var(--f-mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      color: var(--ink-dim);
+    }
+  </style>
+</head>
+<body>
+  <div class="grain"></div>
+
+  <div class="container">
+    <header>
+      <h1 class="logo">OrbitPrompt</h1>
+      <p class="tagline">Prompt Engine + Broadcast Boards</p>
+    </header>
+
+    <div class="lanes">
+      <!-- Lane 1: Prompt Engine -->
+      <div class="lane lane--engine">
+        <div class="lane-header">
+          <span class="lane-icon">🧠</span>
+          <span class="lane-title">Prompt Engine</span>
+          <span class="lane-tag">사고 도구</span>
+        </div>
+        <p class="lane-desc">메타 프롬프트 생성기. 변수 선택 → 프롬프트 생성 → LLM이 코드 생성.</p>
+        <div class="item-list">
+          <a href="prompts/chalkboard/" class="item" style="border-color: var(--gold);">
+            <span class="item-icon">🎬</span>
+            <div class="item-text">
+              <div class="item-name" style="color: var(--gold);">Chalkboard</div>
+              <div class="item-meta">YouTube 분석 → 방송용 PWA</div>
+            </div>
+            <span class="item-arrow">→</span>
+          </a>
+          <a href="prompts/apk/" class="item">
+            <span class="item-icon">📱</span>
+            <div class="item-text">
+              <div class="item-name">PWA</div>
+              <div class="item-meta">앱 요구사항 → 설치형 PWA</div>
+            </div>
+            <span class="item-arrow">→</span>
+          </a>
+          <a href="prompts/instruction/" class="item">
+            <span class="item-icon">📋</span>
+            <div class="item-text">
+              <div class="item-name">Instruction</div>
+              <div class="item-meta">레포 목적 → CLAUDE.md</div>
+            </div>
+            <span class="item-arrow">→</span>
+          </a>
+          <a href="prompts/dataset/" class="item">
+            <span class="item-icon">🧬</span>
+            <div class="item-text">
+              <div class="item-name">Dataset</div>
+              <div class="item-meta">대화 로그 → 파인튜닝 JSONL</div>
+            </div>
+            <span class="item-arrow">→</span>
+          </a>
+          <a href="prompts/identity/" class="item" style="border-color: var(--cyan);">
+            <span class="item-icon">🪞</span>
+            <div class="item-text">
+              <div class="item-name" style="color: var(--cyan);">Identity</div>
+              <div class="item-meta">대화 로그 → 7축 파싱 → 자기 모델 추출</div>
+            </div>
+            <span class="item-arrow">→</span>
+          </a>
+          <a href="prompts/editorial/" class="item">
+            <span class="item-icon">✨</span>
+            <div class="item-text">
+              <div class="item-name">Editorial</div>
+              <div class="item-meta">럭셔리 룩북 스토리텔링</div>
+            </div>
+            <span class="item-arrow">→</span>
+          </a>
+          <a href="prompts/route/" class="item" style="border-color: var(--cyan);">
+            <span class="item-icon">🏭</span>
+            <div class="item-text">
+              <div class="item-name" style="color: var(--cyan);">Route</div>
+              <div class="item-meta">FAB 라우트 정의 → 본사 대시보드 연동</div>
+            </div>
+            <span class="item-arrow">→</span>
+          </a>
+          <a href="prompts/form/" class="item" style="border-color: #10b981;">
+            <span class="item-icon">📝</span>
+            <div class="item-text">
+              <div class="item-name" style="color: #10b981;">Form</div>
+              <div class="item-meta">서식 × 다국어 → 인터랙티브 어학 학습</div>
+            </div>
+            <span class="item-arrow">→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Lane 2: Archive -->
+      <div class="lane lane--board">
+        <div class="lane-header">
+          <span class="lane-icon">📦</span>
+          <span class="lane-title">Archive</span>
+          <span class="lane-tag">생성된 칠판</span>
+        </div>
+        <p class="lane-desc">이전에 생성된 Chalkboard 템플릿. 참고하거나 재사용.</p>
+        <div class="category-tabs" id="categoryTabs"></div>
+        <div class="item-list" id="boardList"></div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-links">
+        <a href="whitepaper.html" class="footer-link">백서</a>
+        <a href="map.html" class="footer-link">🗺 Treasure Map</a>
+        <a href="https://github.com/dtslib1979/OrbitPrompt" class="footer-link" target="_blank">GitHub</a>
+        <a href="https://phoneparis.com" class="footer-link" target="_blank">Phoneparis</a>
+      </div>
+      <p class="footer-credit">DTSLIB Franchise</p>
+    </footer>
+  </div>
+
+  <script>
+    let templatesData = null;
+    let currentCategory = 'all';
+
+    async function loadData() {
+      try {
+        const res = await fetch('data/templates.json');
+        templatesData = await res.json();
+        renderCategories();
+        renderBoards();
+      } catch (e) {
+        document.getElementById('boardList').innerHTML = '<div class="item disabled"><span class="item-icon">⚠️</span><div class="item-text"><div class="item-name">템플릿 로드 실패</div></div></div>';
+      }
+    }
+
+    function renderCategories() {
+      const tabs = document.getElementById('categoryTabs');
+      let html = '<button class="cat-tab active" data-cat="all">All</button>';
+      templatesData.categories.forEach(cat => {
+        html += `<button class="cat-tab" data-cat="${cat.id}">${cat.icon} ${cat.nameKo}</button>`;
+      });
+      tabs.innerHTML = html;
+
+      tabs.querySelectorAll('.cat-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabs.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentCategory = btn.dataset.cat;
+          renderBoards();
+        });
+      });
+    }
+
+    function renderBoards() {
+      const list = document.getElementById('boardList');
+      const filtered = currentCategory === 'all'
+        ? templatesData.templates
+        : templatesData.templates.filter(t => t.category === currentCategory);
+
+      list.innerHTML = filtered.map(t => {
+        const isDisabled = t.status === 'coming-soon';
+        return `
+          <a href="${isDisabled ? '#' : t.file}" class="item ${isDisabled ? 'disabled' : ''}">
+            <span class="item-icon">${t.icon}</span>
+            <div class="item-text">
+              <div class="item-name">${t.nameKo}</div>
+              <div class="item-meta">${t.format}</div>
+            </div>
+            ${isDisabled ? '' : '<span class="item-arrow">→</span>'}
+          </a>
+        `;
+      }).join('');
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
