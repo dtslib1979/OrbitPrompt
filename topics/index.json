@@ -1,8 +1,20 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "OrbitPrompt Topics Database",
-  "lastUpdated": "2026-01-25",
+  "lastUpdated": "2026-05-28",
   "categories": [
+    {
+      "id": "grandparent",
+      "dir": "grandparent/",
+      "name": "할머니·할아버지",
+      "nameEn": "Grandparent Wisdom",
+      "track": "A+B",
+      "files": ["life_en.md", "wisdom_en.md", "story_en.md", "life_ko.md", "wisdom_ko.md"],
+      "count": 5,
+      "autoSuggest": true,
+      "pipelinePriority": 1,
+      "note": "Track A(EN 자동화) + Track B(KO 박씨 직접) 시작점"
+    },
     {
       "id": "math-tutor",
       "file": "math.json",
@@ -37,7 +49,7 @@
     }
   ],
   "stats": {
-    "totalTopics": 27,
-    "autoSuggestTopics": 22
+    "totalTopics": 32,
+    "autoSuggestTopics": 27
   }
 }

@@ -1,12 +1,19 @@
 {
-  "repo": "orbitprompt",
-  "level": 2,
+  "repo": "OrbitPrompt",
+  "level": 3,
   "parent": "dtslib-papyrus",
-  "type": "Independent Project",
+  "type": "editorial-os",
+  "pipeline_position": "midstream",
+  "receives_from": ["parksy-logs"],
+  "feeds_into": ["eae-univ"],
+  "role": "PHL 프로토콜 IP + 편집 솔루션 — 개념추출·PHL태깅·topics딕셔너리",
+  "narrative": "2부 — 언어를 분해하다",
+  "fab_route": "RT-α",
   "inherit": {
     "immutable": "strict",
     "defaults": "override-allowed"
   },
   "created": "2026-01-26",
+  "updated": "2026-05-28",
   "overrides": []
 }
