@@ -50,7 +50,7 @@
           "id": "c1-1",
           "title": "PHL-Expansion",
           "desc": "모듈 확장·보강·견고화 — Intent / Procedure / Validation / Commit Policy",
-          "source": "phl/tokens/PHL-Expansion.md",
+          "source": "phl-spec/tokens/PHL-Expansion.md",
           "url": null,
           "status": "pending"
         },
@@ -58,7 +58,7 @@
           "id": "c1-2",
           "title": "PHL-Hardening",
           "desc": "보안·안정성 강화 — 취약점·리스크 최소화 프로토콜",
-          "source": "phl/tokens/PHL-Hardening.md",
+          "source": "phl-spec/tokens/PHL-Hardening.md",
           "url": null,
           "status": "pending"
         },
@@ -66,7 +66,7 @@
           "id": "c1-3",
           "title": "PHL-Reverse",
           "desc": "역검증·역로깅 — 데이터 흐름을 역방향에서 검증하는 프로토콜",
-          "source": "phl/tokens/PHL-Reverse.md",
+          "source": "phl-spec/tokens/PHL-Reverse.md",
           "url": null,
           "status": "pending"
         }

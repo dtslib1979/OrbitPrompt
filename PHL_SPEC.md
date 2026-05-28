@@ -73,7 +73,7 @@ PHL 토큰 실행 시 Claude는 **항상** 아래 형식으로 보고한다:
 
 ## 5. 토큰 스펙 스키마
 
-모든 PHL 토큰은 `/phl/tokens/` 에 개별 파일로 존재하며, 아래 스키마를 따른다:
+모든 PHL 토큰은 `/phl-spec/tokens/` 에 개별 파일로 존재하며, 아래 스키마를 따른다:
 
 ```yaml
 Name:              PHL-XXXX
@@ -113,7 +113,7 @@ PHL 토큰 → 코드 변경 → 검증 → 커밋
 
 ### 7.3 토큰 정의 모드
 사용자가 새 PHL 토큰을 정의하려 할 때:
-- 섹션 5의 스키마에 따라 `/phl/tokens/PHL-{Name}.md` 생성
+- 섹션 5의 스키마에 따라 `/phl-spec/tokens/PHL-{Name}.md` 생성
 - `PHL_INDEX.json` 업데이트
 - 이 파일의 토큰 목록 갱신
 
@@ -125,9 +125,9 @@ PHL 토큰 → 코드 변경 → 검증 → 커밋
 
 | 토큰 | 파일 | Intent |
 |------|------|--------|
-| `PHL-Expansion` | `/phl/tokens/PHL-Expansion.md` | 모듈 확장/보강/견고화 |
-| `PHL-Hardening` | `/phl/tokens/PHL-Hardening.md` | 보안/안정성 강화 |
-| `PHL-Reverse` | `/phl/tokens/PHL-Reverse.md` | 역방향 검증/역로깅 |
+| `PHL-Expansion` | `/phl-spec/tokens/PHL-Expansion.md` | 모듈 확장/보강/견고화 |
+| `PHL-Hardening` | `/phl-spec/tokens/PHL-Hardening.md` | 보안/안정성 강화 |
+| `PHL-Reverse` | `/phl-spec/tokens/PHL-Reverse.md` | 역방향 검증/역로깅 |
 
 ---
 
@@ -137,18 +137,18 @@ PHL 토큰 → 코드 변경 → 검증 → 커밋
 
 | 계약 | 파일 | 내용 |
 |------|------|------|
-| 에러 처리 | `/phl/contracts/error-handling.md` | 예외 전략, 리턴 타입, 폴백 |
-| 로깅 | `/phl/contracts/logging.md` | 로그 레벨, 포맷, 필수 지점 |
-| 테스트 | `/phl/contracts/testing.md` | 커버리지 기준, 필수 경로 |
-| 보안 | `/phl/contracts/security.md` | 입력 검증, 인증, 비밀키 |
-| 커밋 | `/phl/contracts/commit.md` | 메시지 형식, 단위, Co-Author |
+| 에러 처리 | `/phl-spec/contracts/error-handling.md` | 예외 전략, 리턴 타입, 폴백 |
+| 로깅 | `/phl-spec/contracts/logging.md` | 로그 레벨, 포맷, 필수 지점 |
+| 테스트 | `/phl-spec/contracts/testing.md` | 커버리지 기준, 필수 경로 |
+| 보안 | `/phl-spec/contracts/security.md` | 입력 검증, 인증, 비밀키 |
+| 커밋 | `/phl-spec/contracts/commit.md` | 메시지 형식, 단위, Co-Author |
 
 ---
 
 ## 10. 운영 선언문
 
 > 너는 코드를 "생성"하는 게 아니라, **PHL 프로토콜을 실행**한다.
-> 모든 규칙의 진실원천은 이 파일(`PHL_SPEC.md`)과 `/phl/tokens/*` 이다.
+> 모든 규칙의 진실원천은 이 파일(`PHL_SPEC.md`)과 `/phl-spec/tokens/*` 이다.
 > 토큰을 받으면: **(1) 스펙 로드 (2) 계획 (3) 변경 (4) 검증 (5) 커밋** 순서로 보고한다.
 > 불확실하면 질문한다.
 > 결과는 커밋으로 상태를 확정한다.

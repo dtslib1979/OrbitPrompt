@@ -5,7 +5,7 @@
   "fab_manifest": "/data/fab-manifest.json",
   "tokens": {
     "PHL-Expansion": {
-      "file": "/phl/tokens/PHL-Expansion.md",
+      "file": "/phl-spec/tokens/PHL-Expansion.md",
       "intent": "모듈 확장/보강/견고화",
       "aliases": ["확장", "보강", "튼튼하게", "expansion", "expand"],
       "category": "engineering",
@@ -13,7 +13,7 @@
       "er_cmd": "fab-run.sh --er --token=PHL-Expansion"
     },
     "PHL-Hardening": {
-      "file": "/phl/tokens/PHL-Hardening.md",
+      "file": "/phl-spec/tokens/PHL-Hardening.md",
       "intent": "보안/안정성 강화",
       "aliases": ["보안", "하드닝", "hardening", "secure"],
       "category": "security",
@@ -21,7 +21,7 @@
       "er_cmd": "fab-run.sh --er --token=PHL-Hardening"
     },
     "PHL-Reverse": {
-      "file": "/phl/tokens/PHL-Reverse.md",
+      "file": "/phl-spec/tokens/PHL-Reverse.md",
       "intent": "역방향 검증/역로깅",
       "aliases": ["역검증", "리버스", "reverse", "역추적"],
       "category": "validation",
@@ -30,14 +30,14 @@
     }
   },
   "contracts": {
-    "error-handling": "/phl/contracts/error-handling.md",
-    "logging": "/phl/contracts/logging.md",
-    "testing": "/phl/contracts/testing.md",
-    "security": "/phl/contracts/security.md",
-    "commit": "/phl/contracts/commit.md"
+    "error-handling": "/phl-spec/contracts/error-handling.md",
+    "logging": "/phl-spec/contracts/logging.md",
+    "testing": "/phl-spec/contracts/testing.md",
+    "security": "/phl-spec/contracts/security.md",
+    "commit": "/phl-spec/contracts/commit.md"
   },
   "playbooks": {
-    "phl-execution": "/phl/playbooks/phl-execution.md",
-    "new-token": "/phl/playbooks/new-token.md"
+    "phl-execution": "/phl-spec/playbooks/phl-execution.md",
+    "new-token": "/phl-spec/playbooks/new-token.md"
   }
 }

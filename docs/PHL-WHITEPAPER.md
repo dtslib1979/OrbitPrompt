@@ -202,11 +202,11 @@ PHL이 느슨하면:
 ```
 /PHL_SPEC.md                 # 최상위 규칙(SSOT)
 /PHL_INDEX.json              # 토큰 → 정의 파일 매핑(빠른 탐색)
-/phl/tokens/PHL-Expansion.md # 토큰 정의들(하나당 1파일 권장)
-/phl/tokens/PHL-Hardening.md
-/phl/tokens/PHL-Reverse.md
-/phl/contracts/              # 프로젝트 공통 계약(에러/로그/테스트/보안)
-/phl/playbooks/              # 실행 플레이북(단계별 체크리스트)
+/phl-spec/tokens/PHL-Expansion.md # 토큰 정의들(하나당 1파일 권장)
+/phl-spec/tokens/PHL-Hardening.md
+/phl-spec/tokens/PHL-Reverse.md
+/phl-spec/contracts/              # 프로젝트 공통 계약(에러/로그/테스트/보안)
+/phl-spec/playbooks/              # 실행 플레이북(단계별 체크리스트)
 /orbitprompt/                # (선택) Prompt Atom 생성 규칙/템플릿
 /reflection/                 # 로그, 회고, 실패 기록, 사례
 /CHANGELOG.md
