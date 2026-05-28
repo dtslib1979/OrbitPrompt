@@ -1,0 +1,16 @@
+name: Sync topics to eae-univ
+on:
+  push:
+    branches: [main]
+    paths: ['topics/**']
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Notify eae-univ
+        run: |
+          curl -X POST https://api.github.com/repos/dtslib1979/eae-univ/dispatches \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GH_PAT }}" \
+            -d '{"event_type":"topics_updated"}'
