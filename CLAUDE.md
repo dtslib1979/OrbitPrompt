@@ -127,9 +127,9 @@
 |------|------|
 | `/PHL_SPEC.md` | 최상위 규칙, 실행 사이클, 출력 형식 |
 | `/PHL_INDEX.json` | 토큰 → 정의 파일 매핑 (빠른 탐색) |
-| `/phl/tokens/*` | 토큰별 엄격한 정의 (Procedure, Validation 등) |
-| `/phl/contracts/*` | 공통 계약 (에러/로깅/테스트/보안/커밋) |
-| `/phl/playbooks/*` | 실행 플레이북 (체크리스트) |
+| `/phl-spec/tokens/*` | 토큰별 엄격한 정의 (Procedure, Validation 등) |
+| `/phl-spec/contracts/*` | 공통 계약 (에러/로깅/테스트/보안/커밋) |
+| `/phl-spec/playbooks/*` | 실행 플레이북 (체크리스트) |
 
 ### 실행 규칙
 
@@ -483,7 +483,7 @@ OrbitPrompt/
 │       ├── index.html
 │       └── route-generator.html     ← 라우트 정의 프롬프트 생성기
 │
-├── phl/                          ← PHL 프로토콜 정의
+├── phl-spec/                          ← PHL 프로토콜 정의
 │   ├── tokens/                   ← 토큰 정의 파일
 │   ├── contracts/                ← 공통 계약
 │   └── playbooks/                ← 실행 플레이북

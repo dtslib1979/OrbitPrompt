@@ -35,6 +35,19 @@
 | `emotion/` | `emotion-palette.json` (8개 감정) | — | ✅ (공용 파이프라인) | ✅ 완료 |
 | `symbol/` | — | — | — | ⏳ TODO |
 | `masterpiece/` | — | — | — | ⏳ TODO |
+| **`grandparent/`** | **topics/grandparent/** (EN 3개 + KO 2개) | **`en_grandparent.md`** ✅ | **Track A — 영미권 할머니·할아버지** | ✅ **v1.0 완료** |
+
+## EN Grandparent (Track A)
+
+Track A 전용 편집 Generator. topics/grandparent/ 딕셔너리를 입력받아 영미권 고CPM YouTube 콘텐츠로 변환한다.
+
+| 항목 | 값 |
+|------|-----|
+| Generator | `prompts/dictionary/en_grandparent.md` |
+| 입력 | `topics/grandparent/*.md` (PHL 프레임 적용된 개념) |
+| 출력 | 영미권 할머니·할아버지 대상 YouTube 대본 + 메타데이터 |
+| 채널 | @EAE-University (Track A) |
+| CPM | $3-8 (고CPM: Health, Finance, Resilience) |
 
 ## 파이프라인 연동
 
@@ -63,6 +76,9 @@ python3 ~/parksy-logs/pipelines/batch_generate.py --use-vast
 
 # 특정 카테고리만 목록
 python3 ~/parksy-logs/pipelines/batch_generate.py --list
+
+# Track A — grandparent 콘텐츠 생성
+python3 ~/parksy-logs/pipelines/track_a_grandparent.py
 ```
 
 ## 정합성
