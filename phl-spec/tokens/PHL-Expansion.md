@@ -36,7 +36,7 @@ Preconditions:
 - [ ] 함수 진입/종료 로그 (핵심 함수만)
 - [ ] 에러 발생 지점 로그 (에러 객체 + 입력값)
 - [ ] 핵심 분기 로그 (if/else에서 어느 쪽으로 갔는지)
-- [ ] `/phl/contracts/logging.md` 포맷 준수
+- [ ] `/phl-spec/contracts/logging.md` 포맷 준수
 
 ### Step 4: 인터페이스 정리
 - [ ] 하나의 함수가 하나의 책임만 (SRP 방향)

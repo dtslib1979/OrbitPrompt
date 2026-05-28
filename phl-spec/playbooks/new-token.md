@@ -20,7 +20,7 @@
 - [ ] 기존 토큰과 겹치는 부분은?
 
 ### 2. 스펙 작성
-- [ ] `/phl/tokens/PHL-{Name}.md` 파일 생성
+- [ ] `/phl-spec/tokens/PHL-{Name}.md` 파일 생성
 - [ ] `PHL_SPEC.md` 섹션 5의 스키마 준수:
   ```yaml
   Name, Intent, Scope, Non-Goals, Preconditions,
@@ -34,7 +34,7 @@
 - [ ] `PHL_INDEX.json`의 `tokens` 객체에 추가:
   ```json
   "PHL-{Name}": {
-    "file": "/phl/tokens/PHL-{Name}.md",
+    "file": "/phl-spec/tokens/PHL-{Name}.md",
     "intent": "1문장 요약",
     "aliases": ["한국어 별칭", "영어 별칭"],
     "category": "카테고리"
@@ -53,7 +53,7 @@
 ```
 PHL-Define: PHL-{Name} - 새 토큰 정의
 
-- 토큰: /phl/tokens/PHL-{Name}.md
+- 토큰: /phl-spec/tokens/PHL-{Name}.md
 - 인덱스: PHL_INDEX.json 업데이트
 - 레지스트리: PHL_SPEC.md 업데이트
 

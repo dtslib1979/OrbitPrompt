@@ -8,8 +8,8 @@
 
 - [ ] `PHL_SPEC.md` 읽었는가?
 - [ ] `PHL_INDEX.json`에서 토큰 매핑 확인했는가?
-- [ ] 해당 토큰 정의 파일(`/phl/tokens/PHL-{Name}.md`) 읽었는가?
-- [ ] 관련 공통 계약(`/phl/contracts/*`) 확인했는가?
+- [ ] 해당 토큰 정의 파일(`/phl-spec/tokens/PHL-{Name}.md`) 읽었는가?
+- [ ] 관련 공통 계약(`/phl-spec/contracts/*`) 확인했는가?
 
 ---
 
@@ -20,8 +20,8 @@
 읽은 파일:
 - PHL_SPEC.md
 - PHL_INDEX.json
-- /phl/tokens/PHL-{Name}.md
-- /phl/contracts/{relevant}.md
+- /phl-spec/tokens/PHL-{Name}.md
+- /phl-spec/contracts/{relevant}.md
 ```
 
 ### 2. 상태 점검
@@ -48,7 +48,7 @@
 - [ ] 기존 테스트 regression 확인
 
 ### 6. 커밋
-- [ ] `/phl/contracts/commit.md` 형식에 따라 메시지 작성
+- [ ] `/phl-spec/contracts/commit.md` 형식에 따라 메시지 작성
 - [ ] 변경 파일 목록 확인
 - [ ] 커밋 실행
 - [ ] push
