@@ -1,0 +1,146 @@
+{
+  "meta": {
+    "title": "EMOTION Palette",
+    "description": "8감정 × 4축 매핑 팔레트 — Plutchik 감정 모델 확장",
+    "version": "0.1",
+    "generated": "2026-05-28",
+    "base_model": "Plutchik 8 emotions × EAE 4 axes (생존/소유/공간/시간)",
+    "total_entries": 8
+  },
+  "entries": [
+    {
+      "id": "joy",
+      "term": "기쁨",
+      "definition": "욕구 충족 또는 예상치 못한 긍정적 사건으로 인한 감정",
+      "plutchik_position": "core: joy, intensity: ecstasy-serenity",
+      "four_axis_profile": {
+        "생존": 85,
+        "소유": 75,
+        "공간": 90,
+        "시간": 70
+      },
+      "image_style": "warm_radiant",
+      "color_palette": ["#FFD700", "#FFA500", "#FF6B35"],
+      "related_emotions": ["기대", "신뢰"],
+      "opposite": "슬픔"
+    },
+    {
+      "id": "sadness",
+      "term": "슬픔",
+      "definition": "상실·분리·좌절로 인한 감정, 에너지의 수축",
+      "plutchik_position": "core: sadness, intensity: grief-pensiveness",
+      "four_axis_profile": {
+        "생존": 60,
+        "소유": 80,
+        "공간": 50,
+        "시간": 90
+      },
+      "image_style": "cool_melancholic",
+      "color_palette": ["#4A4A6A", "#2E2E4A", "#1A1A2E"],
+      "related_emotions": ["공포", "분노"],
+      "opposite": "기쁨"
+    },
+    {
+      "id": "anger",
+      "term": "분노",
+      "definition": "목표 달성을 방해하는 장애물에 대한 반응 감정",
+      "plutchik_position": "core: anger, intensity: rage-annoyance",
+      "four_axis_profile": {
+        "생존": 95,
+        "소유": 90,
+        "공간": 80,
+        "시간": 70
+      },
+      "image_style": "intense_fiery",
+      "color_palette": ["#FF0000", "#CC0000", "#8B0000"],
+      "related_emotions": ["혐오", "공포"],
+      "opposite": "공포"
+    },
+    {
+      "id": "fear",
+      "term": "공포",
+      "definition": "위협·위험에 대한 예측적 반응, 회피·경계 유발",
+      "plutchik_position": "core: fear, intensity: terror-apprehension",
+      "four_axis_profile": {
+        "생존": 98,
+        "소유": 85,
+        "공간": 70,
+        "시간": 90
+      },
+      "image_style": "dark_tension",
+      "color_palette": ["#1A1A2E", "#0F0F1A", "#2A2A4A"],
+      "related_emotions": ["놀람", "분노"],
+      "opposite": "분노"
+    },
+    {
+      "id": "trust",
+      "term": "신뢰",
+      "definition": "타자나 대상이 예측 가능하고 긍정적일 것이라는 기대",
+      "plutchik_position": "core: trust, intensity: admiration-acceptance",
+      "four_axis_profile": {
+        "생존": 80,
+        "소유": 85,
+        "공간": 75,
+        "시간": 95
+      },
+      "image_style": "stable_warm",
+      "color_palette": ["#2E8B57", "#3CB371", "#90EE90"],
+      "related_emotions": ["기쁨", "기대"],
+      "opposite": "혐오"
+    },
+    {
+      "id": "disgust",
+      "term": "혐오",
+      "definition": "유해·오염된 대상에 대한 강한 회피·거부 반응",
+      "plutchik_position": "core: disgust, intensity: loathing-dislike",
+      "four_axis_profile": {
+        "생존": 90,
+        "소유": 80,
+        "공간": 70,
+        "시간": 50
+      },
+      "image_style": "repulsive_cold",
+      "color_palette": ["#556B2F", "#6B4226", "#4A3728"],
+      "related_emotions": ["분노", "공포"],
+      "opposite": "신뢰"
+    },
+    {
+      "id": "anticipation",
+      "term": "기대",
+      "definition": "미래 사건에 대한 예측적 긍정 감정, 호기심과 설렘",
+      "plutchik_position": "core: anticipation, intensity: vigilance-interest",
+      "four_axis_profile": {
+        "생존": 60,
+        "소유": 70,
+        "공간": 80,
+        "시간": 98
+      },
+      "image_style": "forward_orange",
+      "color_palette": ["#FF8C00", "#FFA500", "#FFD700"],
+      "related_emotions": ["기쁨", "놀람"],
+      "opposite": "놀람"
+    },
+    {
+      "id": "surprise",
+      "term": "놀람",
+      "definition": "예상치 못한 사건에 대한 즉각적·일시적 반응",
+      "plutchik_position": "core: surprise, intensity: amazement-distraction",
+      "four_axis_profile": {
+        "생존": 85,
+        "소유": 65,
+        "공간": 90,
+        "시간": 70
+      },
+      "image_style": "electric_flash",
+      "color_palette": ["#9400D3", "#8A2BE2", "#FF00FF"],
+      "related_emotions": ["공포", "기쁨"],
+      "opposite": "기대"
+    }
+  ],
+  "complementary_pairs": [
+    ["기쁨", "슬픔"],
+    ["분노", "공포"],
+    ["신뢰", "혐오"],
+    ["기대", "놀람"]
+  ]
+}
