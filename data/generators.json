@@ -141,6 +141,16 @@
       "path": "whitepaper.html",
       "desc": "백서/기술문서 Generator.",
       "route": null
+    },
+    {
+      "id": "printer",
+      "icon": "🧾",
+      "name": "Printer",
+      "status": "live",
+      "files": ["printer-format"],
+      "path": "prompts/printer/",
+      "desc": "ESP 전표 프린터 출력 포맷 Generator. 576px 감열지 포맷으로 철학·출판물·암기장 출력.",
+      "route": "RT-γ"
     }
   ]
 }

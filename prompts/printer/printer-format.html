@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Printer Format Generator — OrbitPrompt</title>
+  <link rel="icon" href="../../assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/css/orbit-theme.css">
+  <style>
+    :root {
+      --print-w: 576px;
+    }
+    .gen-layout { display:flex; gap:24px; flex-wrap:wrap; }
+    .gen-controls { flex:1; min-width:300px; }
+    .gen-preview { flex:0 0 var(--print-w); max-width:100%; }
+    .printer-preview {
+      width:100%;
+      background:#f5f0e8;
+      color:#1a1a1a;
+      font-family:'Courier New',monospace;
+      font-size:12px;
+      line-height:1.4;
+      padding:16px 12px;
+      border-radius:2px;
+      box-shadow:0 2px 12px rgba(0,0,0,0.3);
+      min-height:300px;
+      white-space:pre-wrap;
+    }
+    .fmt-select { width:100%; padding:10px; background:#111; color:#e8e8f0; border:1px solid #333; border-radius:6px; margin-bottom:12px; font-size:14px; }
+    .fmt-textarea { width:100%; min-height:200px; padding:12px; background:#111; color:#e8e8f0; border:1px solid #333; border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:13px; resize:vertical; }
+    .fmt-btn { padding:10px 20px; background:#7c3aed; color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:600; }
+    .fmt-btn:hover { opacity:0.85; }
+    label { display:block; font-size:13px; color:#999; margin-bottom:4px; margin-top:12px; }
+    .esc-pos-code { background:#0d0d0d; border:1px solid #222; border-radius:6px; padding:12px; font-family:'JetBrains Mono',monospace; font-size:11px; color:#a8e6cf; overflow-x:auto; margin-top:12px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="../../index.html" class="nav-brand">OrbitPrompt</a>
+    <ul class="nav-links">
+      <li><a href="../../index.html">홈</a></li>
+      <li><a href="../../philosophy.html">7축 철학</a></li>
+      <li><a href="../printer/">Printer Format</a></li>
+    </ul>
+  </nav>
+
+  <div class="section" style="padding-top:80px;">
+    <div class="sec-label">Generator · Printer Format</div>
+    <h1 class="sec-title">🧾 전표 프린터 포맷 생성기</h1>
+    <p class="sec-desc">내용을 선택하면 576px 감열지 출력 포맷으로 변환한다. 실제 ESC/POS 바이트 시퀀스도 함께 생성.</p>
+
+    <div class="gen-layout">
+      <div class="gen-controls">
+        <label>출력 서식</label>
+        <select class="fmt-select" id="fmtTemplate">
+          <option value="philosophy">📜 철학 카드 — 7축 분석 결과 출력</option>
+          <option value="memorization">📖 출판물 암기장 — 개념 + 빈칸</option>
+          <option value="vocabulary">🗂️ 단어장 — 앞면/뒷면</option>
+          <option value="prescription">📋 처방전 — 진단 → 처방 → 실행</option>
+          <option value="voucher">📊 정산표 — PHL 토큰 정산</option>
+          <option value="quote">🔖 인용구 카드 — 한 줄 + 코멘트</option>
+        </select>
+
+        <label>입력 내용 (텍스트 또는 GitHub URL)</label>
+        <textarea class="fmt-textarea" id="fmtInput" placeholder="철학/출판 콘텐츠를 입력하세요...
+
+예: 7축 분석: Meta — 이 대화에서 메타인지가 발동한 순간은 '내가 왜 이걸 이렇게 생각하지?'라는 자기 질문에서 시작된다. 트리거는 기존 가정과 새로운 사실의 충돌이었다."></textarea>
+
+        <label>제목 (선택)</label>
+        <input type="text" id="fmtTitle" placeholder="카드 제목" style="width:100%;padding:10px;background:#111;color:#e8e8f0;border:1px solid #333;border-radius:6px;">
+
+        <button class="fmt-btn" onclick="generatePrint()">🧾 576px 포맷 생성</button>
+
+        <div class="esc-pos-code" id="escPosOutput">
+# ESC/POS 바이트 시퀀스가 여기에 표시됩니다
+        </div>
+      </div>
+
+      <div class="gen-preview">
+        <label>🧾 출력 프리뷰 (576px × 무제한)</label>
+        <div class="printer-preview" id="printPreview">
+ORBITPROMPT · 전표 프린터 포맷
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+내용을 입력하고 생성 버튼을 누르면
+576px 감열지 출력 포맷이 표시됩니다.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  function generatePrint() {
+    const template = document.getElementById('fmtTemplate').value;
+    const input = document.getElementById('fmtInput').value;
+    const title = document.getElementById('fmtTitle').value || document.getElementById('fmtTemplate').selectedOptions[0].text.split('—')[0].trim();
+    const preview = document.getElementById('printPreview');
+    const escOutput = document.getElementById('escPosOutput');
+
+    const templates = {
+      philosophy: (txt, t) => `ORBITPROMPT · ${t}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+일자: ${new Date().toLocaleDateString('ko-KR')}
+토큰: PHL-Printer-01
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${txt}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· 접으면 암기카드 · 펼치면 정답 ·
+· 576px × 물성화된 철학 ·
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+
+      memorization: (txt, t) => `EAE UNIV · ${t}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[개념]
+${txt.split('\n')[0] || txt.slice(0, 60)}
+
+[빈칸 문제]
+─────────────────────────
+${txt.split('\n').slice(1).join('\n') || txt.slice(60, 120)}
+─────────────────────────
+
+[정답] ← 접어서 확인
+${txt}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+
+      vocabulary: (txt, t) => `${t}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${txt.split('\n').map((line, i) => {
+  const parts = line.split(/[,:\t]/);
+  if (parts.length >= 2) {
+    return `${parts[0].trim().padEnd(20)} │ ${parts.slice(1).join(',').trim()}`;
+  }
+  return line;
+}).join('\n')}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ${Math.max(1, txt.split('\n').length)}항목 ·
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+
+      prescription: (txt, t) => `🧾 ${t}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[진단]
+${txt.split('\n')[0] || '분석 필요'}
+
+[처방]
+${txt.split('\n').slice(1).map(l => `• ${l}`).join('\n') || '관찰 기록'}
+
+[복용법]
+실행 계획을 따를 것. 1일 1회 복용.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+
+      voucher: (txt, t) => `📊 ${t}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+전표번호: V-${Date.now().toString(36).toUpperCase()}
+일자: ${new Date().toLocaleDateString('ko-KR')}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${txt}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· 커밋은 전표다 · 반대 분개만 있다 ·
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+
+      quote: (txt, t) => `🔖 ${t}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"${txt.split('\n')[0] || txt}"
+
+— ${txt.split('\n').slice(1).join(' ') || 'OrbitPrompt'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· 지갑에 넣고 다니는 철학 한 조각 ·
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`
+    };
+
+    const gen = templates[template] || templates.philosophy;
+    const output = gen(input || '(내용 없음)', title);
+    preview.textContent = output;
+
+    // ESC/POS 시뮬레이션
+    const lines = output.split('\n');
+    const hexBytes = [];
+    hexBytes.push('1B 40'); // ESC @ (init)
+    hexBytes.push('1B 21 00'); // ESC ! (reset font)
+    lines.forEach((line, i) => {
+      hexBytes.push(`1B 50 ${line.length.toString(16).padStart(2,'0')} // ${line.slice(0, 30)}${line.length > 30 ? '...' : ''}`);
+    });
+    hexBytes.push('1B 64 03'); // ESC d 3 (feed 3 lines)
+    hexBytes.push('1D 56 00'); // GS V 0 (cut)
+
+    escOutput.innerHTML = `# ESC/POS Byte Sequence
+# Total: ${lines.length} lines / ${hexBytes.length} commands
+# Copy to ESP32 UART TX buffer:
+
+${hexBytes.join('\n')}
+
+# Python:
+# data = bytes.fromhex('${hexBytes.map(b => b.split('/')[0].replace(/ /g,'')).join('')}')
+# uart.write(data)`;
+  }
+  </script>
+
+  <footer>
+    <a href="../../index.html">← OrbitPrompt</a>
+    &nbsp;·&nbsp;
+    <a href="../printer/">Printer Format</a>
+  </footer>
+</body>
+</html>
