@@ -1,0 +1,127 @@
+/* ═══════════════════════════════════════════════════════
+   Ecosystem Map + FAB Factory Floor + Repo Stories
+   ═══════════════════════════════════════════════════════ */
+
+/* ── REPO ECOSYSTEM MAP ──────────────────────────────── */
+.eco-map { display:flex; flex-direction:column; gap:20px; margin:12px 0; }
+
+.eco-tier {}
+.eco-tier-header {
+  display:flex; align-items:center; gap:10px; margin-bottom:10px;
+  font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+}
+.eco-tier-badge {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:24px; height:24px; border-radius:6px;
+  font-size:10px; font-weight:700; font-family:var(--f-mono);
+}
+.eco-tier-label { color:var(--ink3); }
+.eco-tier-count { color:var(--ink4); font-size:9px; }
+
+.eco-tier-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px; }
+
+.eco-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+  padding:12px 14px; text-decoration:none; color:inherit;
+  display:flex; flex-direction:column; gap:4px;
+  transition:border-color .2s, transform .15s;
+  position:relative; overflow:hidden;
+}
+.eco-card:hover { border-color:rgba(168,85,247,.3); transform:translateY(-1px); }
+.eco-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  opacity:0; transition:opacity .2s;
+}
+.eco-card:hover::before { opacity:1; }
+.eco-card.t1::before { background:var(--gold); }
+.eco-card.t2::before { background:var(--purple); }
+.eco-card.t3::before { background:var(--cyan); }
+.eco-card.t4::before { background:var(--green); }
+.eco-card.t5::before { background:var(--ink4); }
+
+.eco-card-id { font-family:var(--f-mono); font-size:11px; font-weight:600; color:var(--ink); }
+.eco-card-name { font-size:10px; color:var(--ink3); }
+.eco-card-role {
+  font-size:9px; color:var(--ink3);
+  background:rgba(255,255,255,.04); border-radius:4px;
+  padding:2px 6px; display:inline-block; margin-top:2px;
+  font-family:var(--f-mono); letter-spacing:.02em;
+}
+
+/* ── FAB FACTORY FLOOR ───────────────────────────────── */
+.fab-floor { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; margin:12px 0; }
+
+.fab-route {
+  background:var(--bg2); border:1px solid var(--border); border-radius:10px;
+  padding:16px; display:flex; flex-direction:column; gap:8px;
+  position:relative; overflow:hidden;
+}
+.fab-route::before {
+  content:''; position:absolute; top:0; left:0; bottom:0; width:3px;
+  border-radius:0 2px 2px 0;
+}
+.fab-route.rt-alpha::before { background:var(--purple); }
+.fab-route.rt-beta::before  { background:var(--cyan); }
+.fab-route.rt-gamma::before { background:var(--gold); }
+.fab-route.rt-delta::before { background:var(--green); }
+.fab-route.rt-epsilon::before { background:#f97316; }
+.fab-route.rt-zeta::before  { background:#ec4899; }
+.fab-route.rt-eta::before   { background:#6366f1; }
+.fab-route.rt-theta::before { background:var(--ink3); }
+
+.fab-route-top { display:flex; align-items:center; gap:8px; }
+.fab-route-id {
+  font-family:var(--f-mono); font-size:11px; font-weight:600; color:var(--ink);
+}
+.fab-route-name { font-size:11px; color:var(--ink2); }
+.fab-route-desc { font-size:10px; color:var(--ink3); line-height:1.5; }
+.fab-route-meta { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+.fab-route-tag {
+  font-family:var(--f-mono); font-size:8px; padding:2px 8px; border-radius:99px;
+  background:rgba(255,255,255,.05); color:var(--ink3); border:1px solid var(--ink4);
+  letter-spacing:.03em;
+}
+.fab-route-tag.gen { background:rgba(168,85,247,.1); color:var(--purple2); border-color:rgba(168,85,247,.15); }
+.fab-route-tag.repo { background:rgba(34,211,238,.08); color:var(--cyan); border-color:rgba(34,211,238,.1); }
+.fab-route-tag.tool { background:rgba(212,175,55,.08); color:var(--gold); border-color:rgba(212,175,55,.1); }
+
+/* ── CROSS-REPO MAP ──────────────────────────────────── */
+.cross-repo { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px; margin:12px 0; }
+.cross-repo-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+  padding:12px; text-decoration:none; color:inherit;
+}
+.cross-repo-card:hover { border-color:rgba(168,85,247,.3); }
+.cross-repo-name { font-family:var(--f-mono); font-size:10px; font-weight:600; margin-bottom:4px; }
+.cross-repo-role { font-size:10px; color:var(--ink3); line-height:1.5; }
+
+/* ── REPO STORIES ────────────────────────────────────── */
+.story-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; margin:12px 0; }
+
+.story-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:10px;
+  padding:16px; text-decoration:none; color:inherit;
+  display:flex; flex-direction:column; gap:6px;
+  transition:border-color .2s;
+}
+.story-card:hover { border-color:rgba(34,211,238,.2); }
+
+.story-card-top { display:flex; align-items:center; gap:8px; }
+.story-card-icon {
+  width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+  font-size:16px; background:rgba(168,85,247,.08); border-radius:6px; flex-shrink:0;
+}
+.story-card-title { font-size:13px; font-weight:600; color:var(--ink); }
+.story-card-subtitle { font-size:10px; color:var(--ink3); font-family:var(--f-mono); }
+.story-card-desc { font-size:11px; color:var(--ink2); line-height:1.5; margin-top:2px; }
+
+/* ── SECTION DIVIDER VARIANTS ────────────────────────── */
+.section-divider.eco-divider { border-color:rgba(168,85,247,.08); }
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width:700px) {
+  .eco-tier-grid { grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); }
+  .fab-floor { grid-template-columns:1fr; }
+  .story-grid { grid-template-columns:1fr; }
+  .cross-repo { grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); }
+}

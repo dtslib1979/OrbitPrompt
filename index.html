@@ -3,233 +3,253 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="OrbitPrompt — 칠판센터 · 출판사. 지식을 형식으로. 14개 Generator로 아이디어를 방송으로 바꾼다.">
+  <meta name="description" content="OrbitPrompt — 철학자의 실험실. 철학에서 프로그래밍으로, 모델에서 앱으로. 사고 과정이 곧 페이지.">
   <meta name="theme-color" content="#050505">
-  <title>OrbitPrompt — 칠판센터</title>
+  <title>OrbitPrompt — 모듈 갤러리</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="assets/css/orbit-theme.css">
-  <style>
-    .journal-list { display: flex; flex-direction: column; gap: 16px; }
-    .journal-item { background: var(--bg2, #111); border: 1px solid var(--border, #222); border-radius: 10px; padding: 18px 20px; }
-    .journal-date { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--purple, #7c3aed); margin-bottom: 6px; }
-    .journal-title { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
-    .journal-body { font-size: 13px; color: var(--ink2, #999); line-height: 1.65; }
-    .journal-link { display: inline-block; margin-top: 4px; font-size: 13px; color: var(--purple, #7c3aed); text-decoration: none; }
-    .journal-link:hover { text-decoration: underline; }
-  </style>
+  <link rel="stylesheet" href="assets/css/ecosystem.css">
+  <script src="assets/js/gallery-store.js"></script>
+<style>
+.mod-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:8px; }
+.mod-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; text-decoration:none; color:inherit; display:flex; flex-direction:column; transition:border-color .25s,transform .2s; position:relative; overflow:hidden; }
+.mod-card:hover { border-color:rgba(168,85,247,.35); transform:translateY(-2px); }
+.mod-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--purple); opacity:0; transition:opacity .25s; }
+.mod-card:hover::before { opacity:1; }
+.mod-card.planned { opacity:.55; }
+.mod-card.planned:hover { opacity:.75; }
+.mod-card.planned::before { background:var(--ink3); }
+.mod-top { display:flex; align-items:flex-start; gap:12px; margin-bottom:10px; }
+.mod-icon { width:40px; height:40px; display:flex; align-items:center; justify-content:center; font-size:20px; background:rgba(168,85,247,.08); border-radius:8px; flex-shrink:0; }
+.mod-meta { flex:1; min-width:0; }
+.mod-number { font-family:var(--f-mono); font-size:10px; color:var(--purple); letter-spacing:.05em; }
+.mod-score { font-family:var(--f-mono); font-size:20px; font-weight:600; line-height:1; }
+.mod-score small { font-size:11px; font-weight:400; color:var(--ink3); }
+.mod-badge { font-family:var(--f-mono); font-size:9px; padding:3px 8px; border-radius:99px; flex-shrink:0; margin-top:2px; font-weight:600; letter-spacing:.03em; }
+.mod-badge.live { background:rgba(74,222,128,.12); color:var(--live); border:1px solid rgba(74,222,128,.15); }
+.mod-badge.building { background:rgba(250,204,21,.1); color:#facc15; border:1px solid rgba(250,204,21,.12); }
+.mod-badge.planned { background:rgba(255,255,255,.04); color:var(--ink3); border:1px solid var(--ink4); }
+.mod-domain { font-family:var(--f-mono); font-size:9px; letter-spacing:.08em; color:var(--cyan); text-transform:uppercase; margin-bottom:4px; }
+.mod-title { font-size:16px; font-weight:700; color:var(--ink); margin-bottom:6px; line-height:1.3; }
+.mod-desc { font-size:12px; color:var(--ink3); line-height:1.6; margin-bottom:12px; flex:1; }
+.mod-tags { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:12px; }
+.mod-tags span { font-family:var(--f-mono); font-size:9px; padding:2px 8px; border-radius:99px; background:rgba(168,85,247,.06); color:var(--purple2); border:1px solid rgba(168,85,247,.08); }
+.mod-tags span.cyan { background:rgba(34,211,238,.06); color:var(--cyan); border-color:rgba(34,211,238,.08); }
+.mod-tags span.gold { background:rgba(212,175,55,.06); color:var(--gold); border-color:rgba(212,175,55,.08); }
+.mod-scorebar { height:3px; background:var(--ink4); border-radius:2px; overflow:hidden; margin-bottom:14px; }
+.mod-scorebar-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--purple),var(--cyan)); transition:width .5s; }
+.mod-actions { display:flex; gap:6px; }
+.mod-btn { font-family:var(--f-mono); font-size:10px; padding:5px 12px; border-radius:4px; background:var(--purple); color:#fff; text-decoration:none; font-weight:600; transition:opacity .2s; }
+.mod-btn:hover { opacity:.8; }
+.mod-btn-ghost { font-family:var(--f-mono); font-size:10px; padding:5px 12px; border-radius:4px; border:1px solid var(--ink4); color:var(--ink2); text-decoration:none; transition:border-color .2s; }
+.mod-btn-ghost:hover { border-color:var(--purple); color:var(--purple2); }
+.gallery-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:24px; }
+.gallery-filters { display:flex; gap:4px; flex-wrap:wrap; }
+.filter-btn { font-family:var(--f-mono); font-size:11px; padding:6px 14px; border-radius:99px; border:1px solid var(--ink4); background:transparent; color:var(--ink3); cursor:pointer; transition:all .2s; }
+.filter-btn:hover { border-color:var(--purple); color:var(--purple2); }
+.filter-btn.active { background:rgba(168,85,247,.1); border-color:var(--purple); color:var(--purple2); font-weight:600; }
+.filter-btn .count { font-size:9px; opacity:.6; }
+.gallery-footer { margin-top:20px; text-align:center; font-family:var(--f-mono); font-size:11px; color:var(--ink3); }
+.workshop-sub { margin-bottom:40px; }
+.workshop-sub:last-child { margin-bottom:0; }
+.ws-label { font-family:var(--f-mono); font-size:9px; letter-spacing:.1em; color:var(--ink3); text-transform:uppercase; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+@media (max-width:900px) { .mod-grid { grid-template-columns:repeat(2,1fr); } }
+@media (max-width:600px) { .mod-grid { grid-template-columns:1fr; } .gallery-header { flex-direction:column; align-items:flex-start; } }
+.journal-list { display:flex; flex-direction:column; gap:16px; }
+.journal-item { background:var(--bg2,#111); border:1px solid var(--border,#222); border-radius:10px; padding:18px 20px; }
+.journal-date { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--purple,#7c3aed); margin-bottom:6px; }
+.journal-title { font-size:15px; font-weight:600; margin-bottom:8px; }
+.journal-body { font-size:13px; color:var(--ink2,#999); line-height:1.65; }
+.journal-link { display:inline-block; margin-top:4px; font-size:13px; color:var(--purple,#7c3aed); text-decoration:none; }
+.journal-link:hover { text-decoration:underline; }
+</style>
 </head>
 <body>
-
-  <!-- ── NAV ─────────────────────────────────────────────── -->
   <nav>
     <a href="/" class="nav-brand">OrbitPrompt</a>
     <ul class="nav-links">
+      <li><a href="#ecosystem">생태계</a></li>
+      <li><a href="#fab-floor">FAB</a></li>
+      <li><a href="#gallery">갤러리</a></li>
+      <li><a href="#workshop">Workshop</a></li>
       <li><a href="#session-log">저널</a></li>
-      <li><a href="#generators">Generators</a></li>
-      <li><a href="#phl">PHL</a></li>
       <li><a href="philosophy.html">7축 철학</a></li>
-      <li><a href="whitepaper.html">Whitepaper</a></li>
-      <li><a href="prompts/printer/">🧾 Printer</a></li>
-      <li><a href="about/position.html">About</a></li>
       <li><a href="links/">Links</a></li>
-      <li><a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener">EAE-Univ</a></li>
-      <li><a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank">GitHub</a></li>
     </ul>
   </nav>
-
-  <!-- ── HERO ────────────────────────────────────────────── -->
   <div class="hero">
-    <div class="hero-label">스튜디오 저널 · 과정의 기록</div>
-    <h1 class="hero-title">
-      철학자가 <span class="accent">되어가는</span><br>
-      과정.
-    </h1>
-    <p class="hero-sub">
-      도구를 쌓는 곳이 아니다. 생각이 형식이 되는 과정을 기록하는 곳이다.<br>
-      Generator는 밖으로 나간다. 여기엔 그걸 만들게 된 이유가 남는다.
-    </p>
+    <div class="hero-label">철학자의 실험실 · Philosopher's Laboratory</div>
+    <h1 class="hero-title">철학에서 <span class="accent">앱으로</span><br>사고 과정이 곧 페이지다.</h1>
+    <p class="hero-sub">생각을 프로그래밍하고, 모델을 앱으로 출판한다.<br>Generator는 밖으로 나간다. 여기엔 그걸 만들게 된 사고 과정이 남는다.</p>
     <div class="hero-actions">
-      <a href="#session-log" class="btn-primary">저널 읽기</a>
-      <a href="#generators" class="btn-secondary">Generator →</a>
+      <a href="#gallery" class="btn-primary">모듈 갤러리 탐색</a>
+      <a href="#workshop" class="btn-secondary">Workshop →</a>
     </div>
   </div>
-
-  <!-- ── STATS BAR ─────────────────────────────────────────── -->
   <div class="section" style="padding-top:0;padding-bottom:32px;">
     <div class="stats-bar">
-      <div class="stat-item">
-        <div class="stat-number">14</div>
-        <div class="stat-label">Generator</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">46</div>
-        <div class="stat-label">PHL 테스트</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">8</div>
-        <div class="stat-label">Perplexity Spaces</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">3</div>
-        <div class="stat-label">PHL 토큰</div>
-      </div>
+      <div class="stat-item"><div class="stat-number" id="stat-generators">14</div><div class="stat-label">Generator</div></div>
+      <div class="stat-item"><div class="stat-number" id="stat-repos">29</div><div class="stat-label">Repos</div></div>
+      <div class="stat-item"><div class="stat-number" id="stat-routes">8</div><div class="stat-label">FAB Routes</div></div>
+      <div class="stat-item"><div class="stat-number" id="stat-modules">1</div><div class="stat-label">Thought Modules</div></div>
+      <div class="stat-item"><div class="stat-number" id="stat-phases">5</div><div class="stat-label">Parts</div></div>
     </div>
   </div>
 
-  <hr class="section-divider">
+  <hr class="section-divider eco-divider">
 
-  <!-- ── PARTS NAV ────────────────────────────────────────── -->
-  <section class="section" id="fab-parts">
-    <div class="sec-label">파트 · 챕터 구조 가드레일</div>
-    <h2 class="sec-title">Part 00 — 04</h2>
-    <p class="sec-desc">레포에 있는 내용이 웹페이지가 된다. WHY → PHL → Atom → Generator → Archive — 5개 파트, 22개 챕터.</p>
-    <div class="parts-nav" id="parts-nav"><!-- Rendered by JS --></div>
+  <section class="section" id="ecosystem">
+    <div class="sec-label">Ecosystem · 29개 레포 생태계</div>
+    <h2 class="sec-title">5개 계층, 하나의 OS</h2>
+    <p class="sec-desc">Tier 1 본사에서 Tier 5 인프라까지. 각 레포는 공장이고, 커밋은 전표이며, 전체는 하나의 분산 운영체계다. 모든 레포는 <a href="https://github.com/dtslib1979" target="_blank" rel="noopener" style="color:var(--purple2)">dtslib1979</a> GitHub Organization 아래 운영된다.</p>
+    <div class="eco-map" id="eco-map"><div style="color:var(--ink3);font-size:12px;">로딩 중...</div></div>
   </section>
 
-  <hr class="section-divider">
+  <hr class="section-divider eco-divider">
 
-  <!-- ── GENERATORS ───────────────────────────────────────── -->
-  <section class="section" id="generators">
-    <div class="sec-label">Generator Hub</div>
-    <h2 class="sec-title">14개 Generator</h2>
-    <p class="sec-desc">지식의 형태를 바꾸는 도구들. 클릭하면 해당 칠판으로 이동.</p>
-
-    <div class="gen-grid" id="gen-grid">
-      <!-- Rendered by JS -->
+  <section class="section" id="fab-floor">
+    <div class="sec-label">FAB Factory Floor · 제조 공정</div>
+    <h2 class="sec-title">8개 라우트, 하나의 공장</h2>
+    <p class="sec-desc">RT-α 콘텐츠 생산에서 RT-θ 인프라까지. Generator는 각 라우트에 배정되고, 출력물은 output_repo로 자동 출하된다. 세로축이 공정(FAB), 가로축이 재무 원장(ERP).</p>
+    <div class="fab-floor" id="fab-floor-content"><div style="color:var(--ink3);font-size:12px;">로딩 중...</div></div>
+    <div style="margin-top:24px;">
+      <div class="ws-label">Cross-Repo Map · 레포 역할 맵</div>
+      <div class="cross-repo" id="cross-repo-map"><div style="color:var(--ink3);font-size:12px;">로딩 중...</div></div>
     </div>
   </section>
 
   <hr class="section-divider">
 
-  <!-- ── PHL PROTOCOL ──────────────────────────────────────── -->
-  <section class="section" id="phl">
-    <div class="sec-label">PHL Protocol</div>
-    <h2 class="sec-title">상태 전이 인터페이스</h2>
-    <p class="sec-desc">
-      PHL(Protocol for Human Language) — 짧은 토큰이 엄격한 규칙을 실행한다.
-      단축키가 아니라 상태 전이(state transition) 인터페이스다.
-    </p>
-
-    <div class="phl-grid">
-      <div class="phl-card">
-        <div class="phl-token">PHL-Expansion</div>
-        <div class="phl-name">모듈 확장 · 견고화</div>
-        <div class="phl-desc">에러 처리 강화, 로깅 추가, 인터페이스 정리, 테스트 추가. 단계별 수행 → 커밋.</div>
-        <a href="phl-spec/PHL-Expansion.html" class="phl-spec-link">Generator 열기 →</a>
-      </div>
-      <div class="phl-card">
-        <div class="phl-token">PHL-Hardening</div>
-        <div class="phl-name">보안 하드닝</div>
-        <div class="phl-desc">입력 검증, 인증/인가 우회 차단, 비밀키 환경변수 이동, 안정성 강화.</div>
-        <a href="phl-spec/PHL-Hardening.html" class="phl-spec-link">Generator 열기 →</a>
-      </div>
-      <div class="phl-card">
-        <div class="phl-token">PHL-Reverse</div>
-        <div class="phl-name">역방향 검증</div>
-        <div class="phl-desc">정방향 흐름 매핑 → 역방향 설계 → 역순 로깅 → 정역 일관성 테스트 → 불일치 리포트.</div>
-        <a href="phl-spec/PHL-Reverse.html" class="phl-spec-link">Generator 열기 →</a>
-      </div>
-      <div class="phl-card">
-        <div class="phl-token">스펙 원본</div>
-        <div class="phl-name">PHL_SPEC.md</div>
-        <div class="phl-desc">46개 테스트 케이스 · FAB 계약 · 실행 사이클. PHL 최상위 SSOT.</div>
-        <a href="PHL_SPEC.md" class="phl-spec-link" target="_blank" rel="noopener">읽기 →</a>
-      </div>
+  <section class="section" id="gallery">
+    <div class="sec-label">Module Gallery · 사고 과정 출판소</div>
+    <h2 class="sec-title">사고가 모듈이 되는 순간</h2>
+    <p class="sec-desc">하나의 질문에서 시작해 철학적 사고 → 수학적 모델링 → 인터랙티브 앱으로 이어지는 출판 단위. 각 모듈은 독립적이면서도 7축 철학 프레임워크 안에서 연결된다.</p>
+    <div class="gallery-header">
+      <div class="gallery-filters" id="gallery-filters"></div>
     </div>
+    <div class="mod-grid" id="mod-grid"></div>
+    <div class="gallery-footer" id="gallery-footer"></div>
   </section>
 
   <hr class="section-divider">
 
-  <!-- ── PHYSICAL OUTPUT ──────────────────────────────────── -->
-  <section class="section" id="printer">
-    <div class="sec-label">Physical Output · 물성화 채널</div>
-    <h2 class="sec-title">🧾 전표 프린터 포맷</h2>
-    <p class="sec-desc">
-      디지털로 만들어서 아날로그로 소비한다. 철학 카드 · 암기장 · 처방전 · 정산표 —<br>
-      576px 감열지에 출력하여 손에 쥐는 지식으로 물성화.
-    </p>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;">
-      <a href="prompts/printer/" class="btn-secondary">포맷 살펴보기 →</a>
-      <a href="prompts/printer/printer-format.html" class="btn-primary">Generator 열기 →</a>
+  <section class="section" id="workshop">
+    <div class="sec-label">Workshop · 철학 공작소</div>
+    <h2 class="sec-title">모듈을 만드는 도구들</h2>
+    <p class="sec-desc">모듈 뒤에 있는 공정들. Generator, PHL, Parts — 사고 과정을 앱으로 출판하는 작업대. 아래 도구들은 철학을 모델로, 모델을 앱으로 바꾼다.</p>
+
+    <div class="workshop-sub">
+      <div class="ws-label">Fab Parts · 챕터 구조</div>
+      <div class="parts-nav" id="parts-nav"></div>
     </div>
-  </section>
 
-  <hr class="section-divider">
+    <div class="workshop-sub">
+      <div class="ws-label">Generator Hub · 14개 Generator</div>
+      <div class="gen-grid" id="gen-grid"></div>
+    </div>
 
-  <!-- ── DUAL LANE ──────────────────────────────────────────── -->
-  <section class="section" id="lanes">
-    <div class="sec-label">Dual Lane Architecture</div>
-    <h2 class="sec-title">2개 컴파일러</h2>
-    <p class="sec-desc">사건과 대화를 동시에 지식과 프롬프트로 변환하는 이중 레인.</p>
-
-    <div class="dual-lane">
-      <div class="lane-card">
-        <div class="lane-icon">🎓</div>
-        <div class="lane-name">Lane A · University</div>
-        <div class="lane-title">Knowledge Compiler</div>
-        <div class="lane-desc">
-          사건 → Knowledge Atom.<br>
-          Context · Decision · Reason · Outcome · Route.<br>
-          5개 Design Type으로 즉시 분류.
+    <div class="workshop-sub">
+      <div class="ws-label">PHL Protocol · 상태 전이 인터페이스</div>
+      <div class="phl-grid">
+        <div class="phl-card">
+          <div class="phl-token">PHL-Expansion</div>
+          <div class="phl-name">모듈 확장 · 견고화</div>
+          <div class="phl-desc">에러 처리 강화, 로깅 추가, 인터페이스 정리, 테스트 추가. 단계별 수행 → 커밋.</div>
+          <a href="phl-spec/PHL-Expansion.html" class="phl-spec-link">Generator 열기 →</a>
         </div>
-        <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener" class="lane-link">EAE University →</a>
-      </div>
-      <div class="lane-card">
-        <div class="lane-icon">🌀</div>
-        <div class="lane-name">Lane B · Orbit</div>
-        <div class="lane-title">Prompt Compiler</div>
-        <div class="lane-desc">
-          대화 → Prompt Atom.<br>
-          intent · target · constraints · tone · done_criteria.<br>
-          6개 Prompt Type (Repo-Janitor/Broadcast/Onboarding/Deploy/Asset/Automation).
+        <div class="phl-card">
+          <div class="phl-token">PHL-Hardening</div>
+          <div class="phl-name">보안 하드닝</div>
+          <div class="phl-desc">입력 검증, 인증/인가 우회 차단, 비밀키 환경변수 이동, 안정성 강화.</div>
+          <a href="phl-spec/PHL-Hardening.html" class="phl-spec-link">Generator 열기 →</a>
         </div>
-        <a href="orbit/" class="lane-link">Orbit Atoms →</a>
+        <div class="phl-card">
+          <div class="phl-token">PHL-Reverse</div>
+          <div class="phl-name">역방향 검증</div>
+          <div class="phl-desc">정방향 흐름 매핑 → 역방향 설계 → 역순 로깅 → 정역 일관성 테스트 → 불일치 리포트.</div>
+          <a href="phl-spec/PHL-Reverse.html" class="phl-spec-link">Generator 열기 →</a>
+        </div>
+        <div class="phl-card">
+          <div class="phl-token">스펙 원본</div>
+          <div class="phl-name">PHL_SPEC.md</div>
+          <div class="phl-desc">46개 테스트 케이스 · FAB 계약 · 실행 사이클. PHL 최상위 SSOT.</div>
+          <a href="PHL_SPEC.md" class="phl-spec-link" target="_blank" rel="noopener">읽기 →</a>
+        </div>
       </div>
     </div>
-  </section>
 
-  <hr class="section-divider">
+    <div class="workshop-sub">
+      <div class="ws-label">Physical Output · 물성화 채널</div>
+      <h2 class="sec-title" style="margin-bottom:8px;">🧾 전표 프린터 포맷</h2>
+      <p class="sec-desc" style="margin-bottom:16px;">디지털로 만들어서 아날로그로 소비한다. 철학 카드 · 암기장 · 처방전 · 정산표 — 576px 감열지에 출력하여 손에 쥐는 지식으로 물성화.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="prompts/printer/" class="btn-secondary">포맷 살펴보기 →</a>
+        <a href="prompts/printer/printer-format.html" class="btn-primary">Generator 열기 →</a>
+      </div>
+    </div>
 
-  <!-- ── PERPLEXITY SPACES ──────────────────────────────────── -->
-  <section class="section" id="spaces">
-    <div class="sec-label">Perplexity Spaces</div>
-    <h2 class="sec-title">8개 지식 공간</h2>
-    <p class="sec-desc">parksy-logs 기반 Perplexity Space. 각 공간은 특화된 검색/생성 컨텍스트를 가진다.</p>
+    <div class="workshop-sub">
+      <div class="ws-label">Dual Lane Architecture</div>
+      <h2 class="sec-title" style="margin-bottom:8px;">2개 컴파일러</h2>
+      <p class="sec-desc" style="margin-bottom:16px;">사건과 대화를 동시에 지식과 프롬프트로 변환하는 이중 레인.</p>
+      <div class="dual-lane">
+        <div class="lane-card">
+          <div class="lane-icon">🎓</div>
+          <div class="lane-name">Lane A · University</div>
+          <div class="lane-title">Knowledge Compiler</div>
+          <div class="lane-desc">사건 → Knowledge Atom. Context · Decision · Reason · Outcome · Route. 5개 Design Type으로 즉시 분류.</div>
+          <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener" class="lane-link">EAE University →</a>
+        </div>
+        <div class="lane-card">
+          <div class="lane-icon">🌀</div>
+          <div class="lane-name">Lane B · Orbit</div>
+          <div class="lane-title">Prompt Compiler</div>
+          <div class="lane-desc">대화 → Prompt Atom. intent · target · constraints · tone · done_criteria. 6개 Prompt Type.</div>
+          <a href="orbit/" class="lane-link">Orbit Atoms →</a>
+        </div>
+      </div>
+    </div>
 
-    <div class="spaces-grid" id="spaces-grid">
-      <!-- Rendered by JS -->
+    <div class="workshop-sub">
+      <div class="ws-label">Perplexity Spaces · 8개 지식 공간</div>
+      <div class="spaces-grid" id="spaces-grid"></div>
     </div>
   </section>
 
   <hr class="section-divider">
 
-  <!-- ── SESSION JOURNAL ──────────────────────────────────── -->
+  <section class="section" id="repo-stories">
+    <div class="sec-label">Repo Stories · 레포 서사</div>
+    <h2 class="sec-title">각 레포는 한 권의 소설이다</h2>
+    <p class="sec-desc">헌법 제1조: 모든 레포지토리는 소설책이다. 커밋이 문장이고, 브랜치가 챕터이고, git log --reverse가 줄거리다. 각 레포의 서사와 정체성을 한눈에.</p>
+    <div class="story-grid" id="story-grid"><div style="color:var(--ink3);font-size:12px;">로딩 중...</div></div>
+  </section>
+
+  <hr class="section-divider">
+
   <section class="section" id="session-log">
     <div class="sec-label">스튜디오 저널 · 과정 기록</div>
     <h2 class="sec-title">최근 세션 로그</h2>
-    <p class="sec-desc">
-      어떤 문제를 만났고, 어떻게 해결했고, 뭘 배웠는지 — 그 과정이 여기 남는다.
-    </p>
+    <p class="sec-desc">어떤 문제를 만났고, 어떻게 해결했고, 뭘 배웠는지 — 그 과정이 여기 남는다.</p>
     <div class="journal-list" id="journal-container">
+      <div class="journal-item">
+        <div class="journal-date">2026-05-30</div>
+        <div class="journal-title">축구협회 수학 모델 — Φ-I-C-K-P 프레임워크 완성</div>
+        <div class="journal-body">97/100 점수로 축구협회 경기력 모델 완성. 철학·인프라·컨텍스트·전략·슈퍼스타의 5변수 동적 모델. 백서 + 인터랙티브 계산기 + 30시즌 시뮬레이션을 하나의 Thought Module로 출판.</div>
+      </div>
       <div class="journal-item">
         <div class="journal-date">2026-04-22</div>
         <div class="journal-title">OrbitPrompt 근본 재정의 — 스튜디오(엔진), 사이트(저널)</div>
-        <div class="journal-body">도구 쇼케이스로 쓰던 사이트를 과정 저널로 전환. Generator는 밖으로 납품하고 사이트엔 왜 만들었는지만 남긴다. phoneparis 스캐폴드 85% 완성 (GitHub Pages + Discord + YouTube 파이프 전부 연결).</div>
+        <div class="journal-body">도구 쇼케이스로 쓰던 사이트를 과정 저널로 전환. Generator는 밖으로 납품하고 사이트엔 왜 만들었는지만 남긴다.</div>
       </div>
       <div class="journal-item">
         <div class="journal-date">2026-04-18</div>
         <div class="journal-title">FAB 컴퓨트 아키텍처 확정 — CapEx 제로</div>
-        <div class="journal-body">저장=GitHub/CDN, 연산=Railway MCP, GPU=Vast.ai. 클라우드 서버 영구 포기. PWA/APK 폐기 근거 정립. 28레포가 전부 이 모델 따름.</div>
-      </div>
-      <div class="journal-item">
-        <div class="journal-date">2026-04-07</div>
-        <div class="journal-title">DiffSinger v4 MFA — 외계인 목소리 근본 원인 해결</div>
-        <div class="journal-body">v1~v3 ph_dur 균등 배분 문제 발견. Montreal Forced Aligner로 실제 발음 타이밍 맞춤. 재학습 시작.</div>
+        <div class="journal-body">저장=GitHub/CDN, 연산=Railway MCP, GPU=Vast.ai. 클라우드 서버 영구 포기. 28레포 전부 이 모델 따름.</div>
       </div>
     </div>
     <div style="margin-top:16px;">
@@ -239,43 +259,33 @@
 
   <hr class="section-divider">
 
-  <!-- ── PHILOSOPHER-PARKSY YOUTUBE ────────────────────────── -->
   <section class="section" id="philosopher-feed">
     <div class="sec-label">@philosopher-parksy · 최신 영상</div>
     <h2 class="sec-title">철학자 박씨 채널</h2>
     <p class="sec-desc">OrbitPrompt · dtslib-papyrus · parksy-logs — 이 세 레포의 산출물이 여기 올라온다.</p>
-    <div class="yt-grid" id="philosopher-yt-container">
-      <div class="yt-loading">로딩 중…</div>
-    </div>
+    <div class="yt-grid" id="philosopher-yt-container"><div class="yt-loading">로딩 중…</div></div>
   </section>
 
   <hr class="section-divider">
 
-  <!-- ── EAE LATEST VIDEOS ─────────────────────────────────── -->
   <section class="section" id="latest-videos">
     <div class="sec-label">EAE University · 최신 강의</div>
     <h2 class="sec-title">EAE 최신 영상</h2>
     <p class="sec-desc">@EAE-University 채널 최신 업로드. GitHub Actions 자동 갱신.</p>
-    <div class="yt-grid" id="yt-latest-container">
-      <div class="yt-loading">로딩 중…</div>
-    </div>
+    <div class="yt-grid" id="yt-latest-container"><div class="yt-loading">로딩 중…</div></div>
   </section>
 
   <hr class="section-divider" id="discord-divider" style="display:none;">
 
-  <!-- ── DISCORD NOTICES ───────────────────────────────────── -->
   <section class="section" id="discord-notices" style="display:none;">
     <div class="sec-label">Discord · orbitprompt 채널</div>
     <h2 class="sec-title">최신 공지</h2>
     <p class="sec-desc">Discord #orbitprompt 채널 최신 메시지. 30분마다 자동 갱신.</p>
-    <div class="discord-list" id="discord-container">
-      <div class="discord-loading">로딩 중…</div>
-    </div>
+    <div class="discord-list" id="discord-container"><div class="discord-loading">로딩 중…</div></div>
   </section>
 
   <hr class="section-divider">
 
-  <!-- ── EAE LINK ───────────────────────────────────────────── -->
   <section class="section" id="university">
     <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener" class="eae-link">
       <div class="eae-link-label">대학교 · 6대 스킬셋</div>
@@ -284,13 +294,13 @@
     </a>
   </section>
 
-  <!-- ── FOOTER ──────────────────────────────────────────── -->
   <footer>
     <div class="footer-brand">OrbitPrompt</div>
     <div class="footer-links">
       <a href="links/">Links</a>
       <a href="philosophy.html">7축 철학</a>
       <a href="whitepaper.html">Whitepaper</a>
+      <a href="football-model/index.html">축구 모델</a>
       <a href="about/position.html">About</a>
       <a href="prompts/broadcast/" target="_blank">Broadcast</a>
       <a href="prompts/publisher/" target="_blank">Publisher</a>
@@ -299,13 +309,271 @@
       <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener">EAE-Univ</a>
       <a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" rel="noopener">GitHub</a>
     </div>
-    <p class="footer-copy">© 2026 OrbitPrompt · 지식을 형식으로. 아이디어를 방송으로.</p>
+    <p class="footer-copy">© 2026 OrbitPrompt · 철학자의 실험실. 철학 → 모델 → 앱.</p>
   </footer>
 
-  <!-- ── SCRIPTS ─────────────────────────────────────────── -->
   <script>
   (() => {
-    // ── Perplexity spaces ──────────────────────────────────
+    /* ======== MODULES DATA ======== */
+    const MODULES = [
+      {
+        id: 'football',
+        icon: '⚽',
+        domain: '축구',
+        number: '01',
+        title: 'KFA Φ-I-C-K-P 시뮬레이터',
+        desc: '축구협회장 선출 모델 v2. Chart.js 4뷰 + 5인 레이더 비교 + L 게이트 선출 + 4대 위험 시나리오 + 20년 시뮬레이터.',
+        tags: ['Φ ∈ Δ²', 'Chart.js', 'L 게이트', 'Monte Carlo'],
+        score: 98,
+        maxScore: 100,
+        status: 'live',
+        fromLog: 'ParksyLog_20260530',
+        path: 'football-model/index.html',
+        whitepaper: 'football-model/whitepaper.html'
+      },
+      {
+        id: 'empty-1',
+        icon: '◇',
+        domain: '준비중',
+        number: '02',
+        title: 'Next Module',
+        desc: 'ParksyLog에서 추출한 다음 사고 과정이 여기에 등록됩니다. 대화를 모듈로 출판하는 파이프라인이 자동화됩니다.',
+        tags: [],
+        score: 0,
+        maxScore: 100,
+        status: 'planned',
+        path: ''
+      },
+      {
+        id: 'empty-2',
+        icon: '◇',
+        domain: '준비중',
+        number: '03',
+        title: '철학 모듈',
+        desc: '7축 철학 프레임워크를 대화형 모델로 시각화. 각 축의 관계와 변환을 인터랙티브하게 탐색.',
+        tags: [],
+        score: 0,
+        maxScore: 100,
+        status: 'planned',
+        path: ''
+      },
+      {
+        id: 'empty-3',
+        icon: '◇',
+        domain: '준비중',
+        number: '04',
+        title: '금융 모델',
+        desc: 'FAB 아키텍처의 재무 원장(ERP) 개념을 수학적 모델로 확장. CapEx 제로 분산 시스템의 경제학.',
+        tags: [],
+        score: 0,
+        maxScore: 100,
+        status: 'planned',
+        path: ''
+      }
+    ];
+
+    /* ======== GALLERY ======== */
+    const filterBtn = document.getElementById('gallery-filters');
+    const modGrid = document.getElementById('mod-grid');
+    const galFoot = document.getElementById('gallery-footer');
+
+    function renderGallery(filter) {
+      const f = filter === 'all' ? null : filter;
+      const filtered = f ? MODULES.filter(m => m.domain === f) : MODULES;
+      const live = filtered.filter(m => m.status === 'live');
+      const planned = filtered.filter(m => m.status !== 'live');
+
+      modGrid.innerHTML = [...live, ...planned].map(m => {
+        const pct = m.maxScore > 0 ? (m.score / m.maxScore * 100) : 0;
+        return '<a' + (m.path ? ' href="' + m.path + '"' : '') + ' class="mod-card' + (m.status !== 'live' ? ' planned' : '') + '"' + (m.path ? '' : '') + '>' +
+          '<div class="mod-top">' +
+            '<div class="mod-icon">' + m.icon + '</div>' +
+            '<div class="mod-meta">' +
+              '<div class="mod-number">#' + m.number + '</div>' +
+              '<div class="mod-score">' + (m.score > 0 ? m.score + '<small>/' + m.maxScore + '</small>' : '<small style="color:var(--ink3)">준비 중</small>') + '</div>' +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;align-items:flex-end;">' +
+              '<span class="mod-badge ' + m.status + '">' + (m.status === 'live' ? '● Live' : m.status === 'building' ? '◐ Building' : '○ Planned') + '</span>' +
+              (m.fromLog ? '<span class="mod-from-log">📋 ' + m.fromLog + '</span>' : '') +
+            '</div>' +
+          '</div>' +
+          '<div class="mod-domain">' + m.domain + '</div>' +
+          '<div class="mod-title">' + m.title + '</div>' +
+          '<div class="mod-desc">' + m.desc + '</div>' +
+          (m.tags.length ? '<div class="mod-tags">' + m.tags.map(t => '<span>' + t + '</span>').join('') + '</div>' : '') +
+          (m.score > 0 ? '<div class="mod-scorebar"><div class="mod-scorebar-fill" style="width:' + pct + '%"></div></div>' : '') +
+          '<div class="mod-actions">' +
+            (m.path ? '<span class="mod-btn">모듈 열기 →</span>' : '') +
+            (m.whitepaper ? '<a href="' + m.whitepaper + '" class="mod-btn-ghost" onclick="event.stopPropagation()">백서</a>' : '') +
+          '</div>' +
+        '</a>';
+      }).join('');
+
+      const total = MODULES.filter(m => m.status === 'live').length;
+      galFoot.textContent = '총 ' + MODULES.length + '개 모듈 · ' + total + '개 출판됨';
+    }
+
+    function renderFilters() {
+      const domains = {};
+      MODULES.forEach(m => { domains[m.domain] = (domains[m.domain] || 0) + 1; });
+      const allCount = MODULES.length;
+      let html = '<button class="filter-btn active" data-filter="all">All <span class="count">(' + allCount + ')</span></button>';
+      Object.entries(domains).forEach(([d, c]) => {
+        html += '<button class="filter-btn" data-filter="' + d + '">' + d + ' <span class="count">(' + c + ')</span></button>';
+      });
+      filterBtn.innerHTML = html;
+      filterBtn.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          filterBtn.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          renderGallery(this.dataset.filter);
+        });
+      });
+    }
+
+    renderFilters();
+    renderGallery('all');
+
+    // give MODULES to the GalleryStore
+    if (window.GalleryStore) {
+      GalleryStore.modules = MODULES;
+    }
+
+    /* ======== INIT: Ecosystem / FAB / Stories / Stats ======== */
+    function initDataSections(store) {
+      updateStats(store);
+      renderEcosystem(store.repos);
+      renderFabFloor(store.fab);
+    }
+
+    // Try using store immediately if ready
+    if (window.GalleryStore && GalleryStore.repos?.length) {
+      initDataSections(GalleryStore);
+    } else {
+      document.addEventListener('GalleryStoreReady', e => initDataSections(e.detail));
+    }
+
+    // Repo stories don't need GalleryStore (static data)
+    renderRepoStories();
+
+    /* ======== STATS BAR (dynamic) ======== */
+    function updateStats(store) {
+      const s = store.stats;
+      const el = (id) => document.getElementById(id);
+      if (el('stat-generators')) el('stat-generators').textContent = s.generators;
+      if (el('stat-repos')) el('stat-repos').textContent = s.totalRepos;
+      if (el('stat-routes')) el('stat-routes').textContent = s.routes;
+      if (el('stat-modules')) el('stat-modules').textContent = s.liveModules;
+      if (el('stat-phases')) el('stat-phases').textContent = s.phases;
+    }
+
+    /* ======== ECOSYSTEM MAP ======== */
+    function renderEcosystem(repos) {
+      const mapEl = document.getElementById('eco-map');
+      if (!mapEl || !Array.isArray(repos) || !repos.length) return;
+      const tierNames = { 1: 'Group HQ', 2: 'Division HQ', 3: 'Studio', 4: 'Venture', 5: 'Infrastructure' };
+      const tierColors = { 1: 'var(--gold)', 2: 'var(--purple)', 3: 'var(--cyan)', 4: 'var(--green)', 5: 'var(--ink3)' };
+      const grouped = {};
+      repos.forEach(r => { const t = r.tier || 3; if (!grouped[t]) grouped[t] = []; grouped[t].push(r); });
+
+      mapEl.innerHTML = Object.keys(grouped).sort((a,b) => a-b).map(tier => {
+        const list = grouped[tier];
+        return '<div class="eco-tier">' +
+          '<div class="eco-tier-header">' +
+            '<span class="eco-tier-badge" style="background:' + tierColors[tier] + '20;color:' + tierColors[tier] + '">' + tier + '</span>' +
+            '<span class="eco-tier-label">' + (tierNames[tier] || 'Tier ' + tier) + '</span>' +
+            '<span class="eco-tier-count">(' + list.length + ' repos)</span>' +
+          '</div>' +
+          '<div class="eco-tier-grid">' +
+            list.map(r => {
+              const gh = 'https://github.com/dtslib1979/' + r.id;
+              return '<a href="' + gh + '" target="_blank" rel="noopener" class="eco-card t' + (r.tier||3) + '">' +
+                '<div class="eco-card-id">' + r.id + '</div>' +
+                '<div class="eco-card-name">' + (r.name || '') + '</div>' +
+                '<div class="eco-card-role">' + (r.role || '') + '</div>' +
+              '</a>';
+            }).join('') +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    /* ======== FAB FACTORY FLOOR ======== */
+    function renderFabFloor(fab) {
+      const floorEl = document.getElementById('fab-floor-content');
+      const crossEl = document.getElementById('cross-repo-map');
+      if (!floorEl || !fab?.routes) return;
+
+      const routeOrder = ['RT-α','RT-β','RT-γ','RT-δ','RT-ε','RT-ζ','RT-η','RT-θ'];
+      const routeClass = { 'RT-α':'rt-alpha','RT-β':'rt-beta','RT-γ':'rt-gamma','RT-δ':'rt-delta','RT-ε':'rt-epsilon','RT-ζ':'rt-zeta','RT-η':'rt-eta','RT-θ':'rt-theta' };
+
+      floorEl.innerHTML = routeOrder.filter(id => fab.routes[id]).map(id => {
+        const r = fab.routes[id];
+        return '<div class="fab-route ' + (routeClass[id] || '') + '">' +
+          '<div class="fab-route-top"><span class="fab-route-id">' + id + '</span><span class="fab-route-name">' + r.name + '</span></div>' +
+          '<div class="fab-route-desc">' + (r.desc || '') + '</div>' +
+          '<div class="fab-route-meta">' +
+            (r.generators?.length ? r.generators.map(g => '<span class="fab-route-tag gen">⚙️ ' + g + '</span>').join('') : '') +
+            (r.output_repos?.length ? r.output_repos.map(o => '<span class="fab-route-tag repo">📦 ' + o.split('/').pop() + '</span>').join('') : '') +
+            (r.studio_tools?.length ? r.studio_tools.map(t => '<span class="fab-route-tag tool">🔧 ' + t + '</span>').join('') : '') +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      if (crossEl && fab.cross_repo_map) {
+        crossEl.innerHTML = Object.entries(fab.cross_repo_map).map(([name, role]) =>
+          '<div class="cross-repo-card"><div class="cross-repo-name">' + name + '</div><div class="cross-repo-role">' + role + '</div></div>'
+        ).join('');
+      }
+    }
+
+    /* ======== REPO STORIES ======== */
+    const REPO_STORIES = [
+      { icon:'🏛️', title:'dtslib-papyrus', subtitle:'그룹 본사 · Tier 1', desc:'28개 레포 관제 + FAB 대시보드. registry.json + fab-run.sh로 전체 공정 모니터링.' },
+      { icon:'🌿', title:'dtslib-branch', subtitle:'프랜차이즈 OS · Tier 2', desc:'레포 복제 가능한 Branch OS. 동일 구조로 확장 가능한 조직 아키텍처.' },
+      { icon:'🎵', title:'espiritu-tango', subtitle:'물성 HQ · Tier 2', desc:'물성 스튜디오 HQ. MV88+ 보컬 녹음 + tactile 브랜드 철학.' },
+      { icon:'👗', title:'gohsy-fashion', subtitle:'커머스 HQ · Tier 2', desc:'패션 커머스 HQ. 브랜드 + 스토어 운영.' },
+      { icon:'🎓', title:'eae-univ', subtitle:'사내대학 · Tier 2', desc:'6대 스킬셋: EML, QSketch, MAL, PENON, PHL, Patchtech. 교육 + KDP 출판.' },
+      { icon:'📺', title:'parksy.kr', subtitle:'메리트 방송 · Tier 3', desc:'뮤지션 박씨 채널. YouTube 송출 + 방송 콘텐츠 제작.' },
+      { icon:'📡', title:'eae.kr', subtitle:'교육방송 · Tier 3', desc:'교육 콘텐츠 YouTube 채널. EAE 강의 시리즈 방송.' },
+      { icon:'💰', title:'dtslib.kr', subtitle:'경제방송 · Tier 3', desc:'경제/금융 콘텐츠 YouTube 채널.' },
+      { icon:'🖼️', title:'parksy-image', subtitle:'이미지 스튜디오 · Tier 3', desc:'이미지 에셋 + Showcase 페이지. infographic 14종 템플릿.' },
+      { icon:'🎧', title:'parksy-audio', subtitle:'오디오 스튜디오 · Tier 3', desc:'BGM 파이프라인, 3-Layer 믹싱, SoVITS 음색 합성, RVC 변환.' },
+      { icon:'🌀', title:'OrbitPrompt', subtitle:'프롬프트 엔진 · Tier 3', desc:'여기. PHL 프로토콜 IP + 편집 솔루션. 개념 추출 → 모듈 출판.' },
+      { icon:'🍞', title:'hoyadang.com', subtitle:'빵집 · Tier 3', desc:'Hoyadang 브랜드 — 빵 + 커피 + 스토리.' },
+      { icon:'🎬', title:'gohsy-production', subtitle:'방송 스튜디오 · Tier 3', desc:'물성 스튜디오. 녹음/녹화/렌더. slim-lens, clip-shorts, luxury-editorial.' },
+      { icon:'📱', title:'phoneparis', subtitle:'모바일 유통 · Tier 3', desc:'모바일 유통 채널. phoneparis 앱 + 스토어.' },
+      { icon:'🏥', title:'alexandria-sanctuary', subtitle:'요양원 · Tier 3', desc:'알렉산드리아 요양원 — 지식의 보존과 휴식.' },
+      { icon:'🤝', title:'buddies.kr', subtitle:'소기업 인스톨 · Tier 3', desc:'소기업 향 IT 인스톨/컨설팅 패키지.' },
+      { icon:'💼', title:'buckleychang.com', subtitle:'컨설팅 · Tier 3', desc:'버클리 체인 컨설팅 — 경영/전략 컨설팅.' },
+      { icon:'📐', title:'koosy', subtitle:'수학과외 · Tier 4', desc:'수학 과외 브랜드 — 개인 맞춤 수학 교육.' },
+      { icon:'🎭', title:'gohsy', subtitle:'배우/PD · Tier 4', desc:'고시(배우/PD) — 연기/제작 포트폴리오.' },
+      { icon:'🎨', title:'artrew', subtitle:'AI 미대생 · Tier 4', desc:'AI 미대생 — 생성형 아트 + 디자인.' },
+      { icon:'🍩', title:'papafly', subtitle:'K-도넛 · Tier 4', desc:'K-도넛 브랜드 — 파파플라이.' },
+      { icon:'🛍️', title:'justino', subtitle:'쇼핑몰 · Tier 4', desc:'쇼핑몰 브랜드 — Justino.' },
+      { icon:'🏠', title:'namoneygoal', subtitle:'부동산 길드 · Tier 4', desc:'부동산 길드 — 부동산 투자/거래 커뮤니티.' },
+      { icon:'📲', title:'dtslib-apk-lab', subtitle:'APK 스토어 · Tier 5', desc:'APK 빌드/배포 스토어. PWA Generator 출력물 출하.' },
+      { icon:'☁️', title:'dtslib-cloud-appstore', subtitle:'PWA 스튜디오 · Tier 5', desc:'브라우저 스튜디오 — FFmpeg/이미지/오디오/방송소재 제작.' },
+      { icon:'🔧', title:'termux-bridge', subtitle:'도구 모음 · Tier 5', desc:'Termux 도구 모음 — SSH/자동화/브릿지 스크립트.' },
+      { icon:'💻', title:'dtslib-localpc', subtitle:'GPU 환경 · Tier 5', desc:'로컬 PC GPU 환경 — WSL2 + CUDA.' },
+      { icon:'📋', title:'parksy-logs', subtitle:'로그/RAG · Tier 5', desc:'대화 로그 저장소 + RAG. Dataset Generator 입력. MCP pipeline 원재료.' },
+    ];
+
+    function renderRepoStories() {
+      const grid = document.getElementById('story-grid');
+      if (!grid) return;
+      grid.innerHTML = REPO_STORIES.map(s =>
+        '<div class="story-card">' +
+          '<div class="story-card-top">' +
+            '<div class="story-card-icon">' + s.icon + '</div>' +
+            '<div><div class="story-card-title">' + s.title + '</div><div class="story-card-subtitle">' + s.subtitle + '</div></div>' +
+          '</div>' +
+          '<div class="story-card-desc">' + s.desc + '</div>' +
+        '</div>'
+      ).join('');
+    }
+
+    /* ======== PERPLEXITY SPACES ======== */
     const SPACES = [
       { icon:'📊', name:'EAE Analytics',    desc:'6대 스킬셋 성과 분석' },
       { icon:'🎙️', name:'Parksy Logs',      desc:'대화 로그 RAG 검색' },
@@ -317,63 +585,81 @@
       { icon:'🎬', name:'YouTube Insights', desc:'채널 성과 분석' },
     ];
 
+    const spacesGrid = document.getElementById('spaces-grid');
+    spacesGrid.innerHTML = SPACES.map(s =>
+      '<div class="space-card"><div class="space-icon">' + s.icon + '</div><div class="space-name">' + s.name + '</div><div class="space-desc">' + s.desc + '</div></div>'
+    ).join('');
+
+    /* ======== PARTS FROM phases.json ======== */
+    const partsNav = document.getElementById('parts-nav');
+    fetch('./data/phases.json')
+      .then(r => r.json())
+      .then(data => {
+        partsNav.innerHTML = data.parts.map(p => {
+          const liveCount = p.chapters.filter(c => c.status === 'live').length;
+          const total = p.chapters.length;
+          const firstLive = p.chapters.find(c => c.status === 'live' && c.url);
+          const cardTag = firstLive ? 'a' : 'div';
+          const cardHref = firstLive ? ' href="' + firstLive.url + '"' : '';
+          const statusClass = liveCount === total ? 'live' : liveCount > 0 ? 'building' : 'pending';
+          const statusText = liveCount === total ? '● ' + total + '챕터 완료' : liveCount > 0 ? '◐ ' + liveCount + '/' + total + ' 라이브' : '○ ' + total + '챕터 준비 중';
+          return '<' + cardTag + cardHref + ' class="part-card" style="--part-color:' + p.color + ';text-decoration:none;display:block;">' +
+            '<div class="part-number">Part ' + p.number + '</div>' +
+            '<div class="part-icon">' + p.icon + '</div>' +
+            '<div class="part-name">' + p.title + '</div>' +
+            '<div class="part-nameKo">' + p.subtitle + '</div>' +
+            '<div class="part-status ' + statusClass + '">' + statusText + '</div>' +
+          '</' + cardTag + '>';
+        }).join('');
+      })
+      .catch(() => { partsNav.innerHTML = '<div style="color:#666;font-size:12px;">phases.json 로드 실패</div>'; });
+
+    /* ======== GENERATORS ======== */
     const STATUS_TAG = { live: '● live', building: '◐ building', pending: '○ 준비 중' };
 
     function renderCard(g) {
       const isLive = g.status === 'live';
       const isBuilding = g.status === 'building';
       const disabled = !isLive;
-      const href = isLive ? ` href="${g.path}" ${g.path.endsWith('.html') ? '' : 'target="_blank" rel="noopener"'}` : '';
+      const href = isLive ? ' href="' + g.path + '"' + (g.path.endsWith('.html') ? '' : ' target="_blank" rel="noopener"') : '';
       const tag = isLive ? 'a' : 'div';
       const fileCount = g.files ? g.files.length : 0;
       const statusCls = isLive ? 'gen-tag-live' : isBuilding ? 'gen-tag-building' : 'gen-tag-pending';
-      return `<${tag}${href} class="gen-card${disabled ? ' disabled' : ''}">
-        <div class="gen-icon">${g.icon}</div>
-        <div class="gen-name">${g.name}</div>
-        <div class="gen-desc">${g.desc}</div>
-        ${fileCount > 0 ? `<div class="gen-count">${fileCount}개 칠판</div>` : ''}
-        <div class="gen-status ${statusCls}">${STATUS_TAG[g.status] || g.status}</div>
-      </${tag}>`;
+      return '<' + tag + href + ' class="gen-card' + (disabled ? ' disabled' : '') + '">' +
+        '<div class="gen-icon">' + g.icon + '</div>' +
+        '<div class="gen-name">' + g.name + '</div>' +
+        '<div class="gen-desc">' + g.desc + '</div>' +
+        (fileCount > 0 ? '<div class="gen-count">' + fileCount + '개 칠판</div>' : '') +
+        '<div class="gen-status ' + statusCls + '">' + (STATUS_TAG[g.status] || g.status) + '</div>' +
+      '</' + tag + '>';
     }
 
-    // ── Render generators from SSOT JSON ──────────────────
     const genGrid = document.getElementById('gen-grid');
     fetch('./data/generators.json')
       .then(r => r.json())
-      .then(data => {
-        genGrid.innerHTML = data.generators.map(renderCard).join('');
-      })
-      .catch(() => {
-        genGrid.innerHTML = '<div style="color:#888;padding:24px;">generators.json 로드 실패</div>';
-      });
+      .then(data => { genGrid.innerHTML = data.generators.map(renderCard).join(''); })
+      .catch(() => { genGrid.innerHTML = '<div style="color:#888;padding:24px;">generators.json 로드 실패</div>'; });
 
-    // ── Render philosopher-parksy RSS ─────────────────────
+    /* ======== YOUTUBE: philosopher-parksy ======== */
     const PHILOSOPHER_CH = 'UCJaGuXjxoNjFMqfYUSFjZVg';
     const philContainer = document.getElementById('philosopher-yt-container');
-    fetch(`https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.youtube.com%2Ffeeds%2Fvideos.xml%3Fchannel_id%3D${PHILOSOPHER_CH}&api_key=public&count=6`)
+    fetch('https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.youtube.com%2Ffeeds%2Fvideos.xml%3Fchannel_id%3D' + PHILOSOPHER_CH + '&api_key=public&count=6')
       .then(r => r.json())
       .then(data => {
         const items = data.items || [];
-        if (!items.length) {
-          philContainer.innerHTML = '<div class="yt-loading">아직 업로드된 영상이 없습니다</div>';
-          return;
-        }
+        if (!items.length) { philContainer.innerHTML = '<div class="yt-loading">아직 업로드된 영상이 없습니다</div>'; return; }
         philContainer.innerHTML = items.map(v => {
-          const vid = v.link.split('v=')[1]?.split('&')[0] || '';
-          const thumb = vid ? `https://i.ytimg.com/vi/${vid}/mqdefault.jpg` : '';
+          const vid = (v.link || '').split('v=')[1]?.split('&')[0] || '';
+          const thumb = vid ? 'https://i.ytimg.com/vi/' + vid + '/mqdefault.jpg' : '';
           const date = v.pubDate ? new Date(v.pubDate).toLocaleDateString('ko-KR') : '';
-          return `<a class="yt-card" href="${v.link}" target="_blank" rel="noopener">
-            ${thumb ? `<img class="yt-thumb" src="${thumb}" alt="${v.title}" loading="lazy">` : ''}
-            <div class="yt-info">
-              <div class="yt-title">${v.title}</div>
-              <div class="yt-date">${date}</div>
-            </div>
-          </a>`;
+          return '<a class="yt-card" href="' + v.link + '" target="_blank" rel="noopener">' +
+            (thumb ? '<img class="yt-thumb" src="' + thumb + '" alt="' + v.title + '" loading="lazy">' : '') +
+            '<div class="yt-info"><div class="yt-title">' + v.title + '</div><div class="yt-date">' + date + '</div></div></a>';
         }).join('');
       })
       .catch(() => { philContainer.innerHTML = '<div class="yt-loading">피드 로드 실패</div>'; });
 
-    // ── Render YouTube latest videos ──────────────────────
+    /* ======== YOUTUBE: EAE latest ======== */
     const ytContainer = document.getElementById('yt-latest-container');
     fetch('./data/youtube-cache.json')
       .then(r => r.json())
@@ -381,20 +667,16 @@
         const videos = data.videos || [];
         if (!videos.length) { ytContainer.innerHTML = '<div class="yt-loading">영상 없음</div>'; return; }
         ytContainer.innerHTML = videos.slice(0, 6).map(v => {
-          const thumb = v.thumbnail || `https://i.ytimg.com/vi/${v.videoId}/mqdefault.jpg`;
+          const thumb = v.thumbnail || 'https://i.ytimg.com/vi/' + v.videoId + '/mqdefault.jpg';
           const date = v.publishedAt ? new Date(v.publishedAt).toLocaleDateString('ko-KR') : '';
-          return `<a class="yt-card" href="https://www.youtube.com/watch?v=${v.videoId}" target="_blank" rel="noopener">
-            <img class="yt-thumb" src="${thumb}" alt="${v.title}" loading="lazy">
-            <div class="yt-info">
-              <div class="yt-title">${v.title}</div>
-              <div class="yt-date">${date}</div>
-            </div>
-          </a>`;
+          return '<a class="yt-card" href="https://www.youtube.com/watch?v=' + v.videoId + '" target="_blank" rel="noopener">' +
+            '<img class="yt-thumb" src="' + thumb + '" alt="' + v.title + '" loading="lazy">' +
+            '<div class="yt-info"><div class="yt-title">' + v.title + '</div><div class="yt-date">' + date + '</div></div></a>';
         }).join('');
       })
       .catch(() => { ytContainer.innerHTML = '<div class="yt-loading">youtube-cache.json 없음</div>'; });
 
-    // ── Render Discord notices ─────────────────────────────
+    /* ======== DISCORD ======== */
     const discordContainer = document.getElementById('discord-container');
     fetch('./data/latest-messages.json')
       .then(r => r.json())
@@ -412,52 +694,13 @@
         discordContainer.innerHTML = visible.slice(0, 5).map(m => {
           const author = m.author?.username || '알 수 없음';
           const embed = m.embeds?.[0];
-          const content = m.content?.trim() || (embed ? `**${embed.title || ''}**\n${embed.description || ''}` : '');
+          const content = m.content?.trim() || (embed ? '**' + (embed.title || '') + '**\n' + (embed.description || '') : '');
           const time = m.timestamp ? new Date(m.timestamp).toLocaleString('ko-KR') : '';
-          return `<div class="discord-msg">
-            <div class="discord-author">${author}</div>
-            <div class="discord-content">${content}</div>
-            <div class="discord-time">${time}</div>
-          </div>`;
+          return '<div class="discord-msg"><div class="discord-author">' + author + '</div><div class="discord-content">' + content + '</div><div class="discord-time">' + time + '</div></div>';
         }).join('');
       })
       .catch(() => { discordContainer.innerHTML = '<div class="discord-loading">latest-messages.json 로드 중</div>'; });
-
-    // ── Render perplexity spaces ───────────────────────────
-    const spacesGrid = document.getElementById('spaces-grid');
-    spacesGrid.innerHTML = SPACES.map(s => `
-      <div class="space-card">
-        <div class="space-icon">${s.icon}</div>
-        <div class="space-name">${s.name}</div>
-        <div class="space-desc">${s.desc}</div>
-      </div>
-    `).join('');
-
-    // ── Render Parts from phases.json v3 ──────────────────
-    const partsNav = document.getElementById('parts-nav');
-    fetch('./data/phases.json')
-      .then(r => r.json())
-      .then(data => {
-        partsNav.innerHTML = data.parts.map(p => {
-          const liveCount = p.chapters.filter(c => c.status === 'live').length;
-          const total = p.chapters.length;
-          const firstLive = p.chapters.find(c => c.status === 'live' && c.url);
-          const cardTag = firstLive ? 'a' : 'div';
-          const cardHref = firstLive ? ` href="${firstLive.url}"` : '';
-          const statusClass = liveCount === total ? 'live' : liveCount > 0 ? 'building' : 'pending';
-          const statusText = liveCount === total ? `● ${total}챕터 완료` : liveCount > 0 ? `◐ ${liveCount}/${total} 라이브` : `○ ${total}챕터 준비 중`;
-          return `<${cardTag}${cardHref} class="part-card" style="--part-color:${p.color};text-decoration:none;display:block;">
-            <div class="part-number">Part ${p.number}</div>
-            <div class="part-icon">${p.icon}</div>
-            <div class="part-name">${p.title}</div>
-            <div class="part-nameKo">${p.subtitle}</div>
-            <div class="part-status ${statusClass}">${statusText}</div>
-          </${cardTag}>`;
-        }).join('');
-      })
-      .catch(() => { partsNav.innerHTML = '<div style="color:#666;font-size:12px;">phases.json 로드 실패</div>'; });
   })();
   </script>
-
 </body>
 </html>

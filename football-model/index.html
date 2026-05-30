@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KFA Φ-I-C-K-P 시뮬레이터 — 축구협회 경기력 모델</title>
+  <meta name="description" content="축구협회장 선출 모델. Φ-I-C-K-P 프레임워크 기반 20년 시뮬레이터 + 5인 비교 + 위험 시나리오.">
+  <meta name="theme-color" content="#050505">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #050505; --surface: #0a0a0f; --card: #0f0f15;
+      --border: rgba(255,255,255,0.07); --text: #e8e8f0;
+      --muted: rgba(255,255,255,0.5); --dim: rgba(255,255,255,0.12);
+      --purple: #a855f7; --cyan: #22d3ee; --gold: #facc15;
+      --green: #10b981; --orange: #f97316; --pink: #ec4899;
+      --f-sans: 'Inter',-apple-system,sans-serif;
+      --f-mono: 'JetBrains Mono',monospace;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:var(--f-sans); background:var(--bg); color:var(--text); min-height:100vh; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(5,5,5,0.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:0 2rem; height:52px; display:flex; align-items:center; justify-content:space-between; }
+    .nav-brand { font-size:.85rem; font-weight:600; color:var(--purple); letter-spacing:.05em; text-decoration:none; }
+    .nav-links { display:flex; gap:1.5rem; list-style:none; }
+    .nav-links a { color:var(--muted); font-size:.82rem; text-decoration:none; transition:color .2s; }
+    .nav-links a:hover, .nav-links a.active { color:var(--text); }
+    .container { max-width:1100px; margin:0 auto; padding:80px 1.5rem 100px; }
+
+    .hero { text-align:center; padding:30px 0 40px; border-bottom:1px solid var(--border); margin-bottom:40px; }
+    .hero-badge { display:inline-block; font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; color:var(--purple); border:1px solid var(--purple); padding:.2rem .7rem; border-radius:2rem; margin-bottom:1rem; }
+    .hero h1 { font-size:clamp(1.6rem,4vw,2.4rem); font-weight:700; letter-spacing:-.02em; margin-bottom:.6rem; }
+    .hero h1 em { color:var(--purple); font-style:normal; }
+    .hero p { color:var(--muted); font-size:.92rem; line-height:1.6; max-width:600px; margin:0 auto; }
+    .hero-actions { margin-top:1.2rem; display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap; }
+    .btn { padding:.6rem 1.4rem; border-radius:.4rem; font-size:.85rem; font-weight:600; text-decoration:none; transition:opacity .2s; cursor:pointer; border:none; font-family:var(--f-sans); }
+    .btn-primary { background:var(--purple); color:#fff; }
+    .btn-primary:hover { opacity:.85; }
+    .btn-secondary { border:1px solid var(--border); color:var(--text); background:transparent; }
+    .btn-secondary:hover { border-color:var(--purple); }
+
+    .tab-bar { display:flex; gap:4px; margin-bottom:24px; flex-wrap:wrap; border-bottom:1px solid var(--border); padding-bottom:8px; }
+    .tab-btn { padding:8px 16px; border-radius:6px; border:none; background:transparent; color:var(--muted); font-size:.82rem; cursor:pointer; font-family:var(--f-sans); transition:all .2s; }
+    .tab-btn:hover { color:var(--text); background:rgba(255,255,255,.04); }
+    .tab-btn.active { color:var(--purple); background:rgba(168,85,247,.1); }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+
+    .chart-box { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:16px; }
+    .chart-box canvas { width:100% !important; max-height:400px; }
+    .chart-title { font-size:.85rem; font-weight:600; margin-bottom:12px; color:var(--muted); }
+
+    .slider-row { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin-bottom:6px; display:flex; align-items:center; gap:10px; }
+    .slider-label { font-size:.78rem; font-weight:600; min-width:80px; }
+    .slider-label .sub { font-weight:400; font-size:.68rem; color:var(--muted); }
+    .slider-row input[type=range] { flex:1; height:4px; -webkit-appearance:none; appearance:none; background:var(--dim); border-radius:2px; outline:none; }
+    .slider-row input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:var(--purple); cursor:pointer; }
+    .slider-value { font-family:var(--f-mono); font-size:.78rem; min-width:40px; text-align:right; color:var(--cyan); }
+    .phi-a input::-webkit-slider-thumb { background:var(--orange); } .phi-a .slider-label { color:var(--orange); }
+    .phi-b input::-webkit-slider-thumb { background:var(--green); } .phi-b .slider-label { color:var(--green); }
+    .phi-c input::-webkit-slider-thumb { background:var(--pink); } .phi-c .slider-label { color:var(--pink); }
+    .inf input::-webkit-slider-thumb { background:var(--cyan); } .inf .slider-label { color:var(--cyan); }
+    .ctx input::-webkit-slider-thumb { background:var(--gold); } .ctx .slider-label { color:var(--gold); }
+
+    .output-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; margin:16px 0; }
+    .output-card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:12px; text-align:center; }
+    .output-label { font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--dim); margin-bottom:4px; }
+    .output-value { font-family:var(--f-mono); font-size:1.3rem; font-weight:600; }
+    .output-value.purple { color:var(--purple); } .output-value.cyan { color:var(--cyan); } .output-value.gold { color:var(--gold); } .output-value.green { color:var(--green); }
+
+    .preset-row { display:flex; gap:8px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+    .preset-row select { background:var(--card); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:6px; font-size:.82rem; outline:none; cursor:pointer; font-family:var(--f-sans); }
+
+    .candidate-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:8px; margin:12px 0; }
+    .candidate-card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:12px; text-align:center; }
+    .candidate-card.elected { border-color:var(--gold); box-shadow:0 0 12px rgba(250,204,21,.15); }
+    .candidate-name { font-size:.9rem; font-weight:600; margin-bottom:4px; }
+    .candidate-score { font-family:var(--f-mono); font-size:1.1rem; color:var(--cyan); }
+
+    .milestone-strip { display:flex; gap:0; overflow-x:auto; padding:8px 0; margin:16px 0; }
+    .milestone-item { flex-shrink:0; width:120px; padding:8px 12px; border-left:2px solid var(--purple); }
+    .milestone-year { font-family:var(--f-mono); font-size:.75rem; color:var(--purple); }
+    .milestone-text { font-size:.72rem; color:var(--muted); margin-top:2px; }
+
+    .risk-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px; margin:12px 0; }
+    .risk-card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:12px; border-left:3px solid; }
+    .risk-card.r1 { border-left-color:var(--green); } .risk-card.r2 { border-left-color:var(--gold); }
+    .risk-card.r3 { border-left-color:var(--orange); } .risk-card.r4 { border-left-color:var(--pink); }
+    .risk-label { font-family:var(--f-mono); font-size:.7rem; letter-spacing:.08em; margin-bottom:4px; }
+    .risk-desc { font-size:.78rem; color:var(--muted); line-height:1.5; }
+
+    .election-result { background:var(--card); border:1px solid var(--gold); border-radius:10px; padding:20px; text-align:center; margin:16px 0; }
+    .election-result .winner { font-size:1.8rem; font-weight:700; color:var(--gold); }
+    .election-result .detail { font-size:.82rem; color:var(--muted); margin-top:8px; }
+
+    @media (max-width:600px) {
+      .container { padding:70px 1rem 60px; }
+      .slider-row { flex-wrap:wrap; }
+      .slider-label { min-width:60px; }
+      .candidate-grid { grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="../index.html">OrbitPrompt</a>
+  <ul class="nav-links">
+    <li><a href="../index.html">홈</a></li>
+    <li><a href="whitepaper.html">백서</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">Thought Module 01 · v2.0</div>
+    <h1>KFA <em>Φ-I-C-K-P</em> 시뮬레이터</h1>
+    <p>축구협회장 선출 모델 — 철학·인프라·정치·전략·슈퍼스타가 만드는 20년 경기력 궤적. 5인 비교, 위험 시나리오, L 게이트 선출.</p>
+    <div class="hero-actions">
+      <a href="#simulator" class="btn btn-primary">시뮬레이터 시작</a>
+      <a href="whitepaper.html" class="btn btn-secondary">백서 읽기 →</a>
+    </div>
+  </div>
+
+  <!-- TAB BAR -->
+  <div class="tab-bar" id="tab-bar">
+    <button class="tab-btn active" data-tab="radar">5인 비교</button>
+    <button class="tab-btn" data-tab="simulator">20년 시뮬레이션</button>
+    <button class="tab-btn" data-tab="election">선출 모델</button>
+    <button class="tab-btn" data-tab="risk">위험 시나리오</button>
+  </div>
+
+  <!-- TAB 1: RADAR -->
+  <div class="tab-content active" id="tab-radar">
+    <div class="chart-box">
+      <div class="chart-title">후보 5인 Φ-I-C-K-P 레이더</div>
+      <canvas id="radar-chart"></canvas>
+    </div>
+    <div class="candidate-grid" id="candidate-grid"></div>
+  </div>
+
+  <!-- TAB 2: SIMULATOR -->
+  <div class="tab-content" id="tab-simulator">
+    <div class="preset-row">
+      <label style="font-size:.82rem;color:var(--muted)">프리셋:</label>
+      <select id="preset-select">
+        <option value="korea">🇰🇷 한국</option>
+        <option value="germany">🇩🇪 독일</option>
+        <option value="spain">🇪🇸 스페인</option>
+        <option value="brazil">🇧🇷 브라질</option>
+        <option value="argentina">🇦🇷 아르헨티나</option>
+      </select>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+      <div class="chart-box">
+        <div class="chart-title">Φ 철학 벡터 (a+b+c=1)</div>
+        <div class="slider-row phi-a"><div class="slider-label">a <span class="sub">전쟁형</span></div><input type="range" id="slider-a" min="0" max="1" step=".001" value=".55"><span class="slider-value" id="val-a">0.550</span></div>
+        <div class="slider-row phi-b"><div class="slider-label">b <span class="sub">아티스트</span></div><input type="range" id="slider-b" min="0" max="1" step=".001" value=".15"><span class="slider-value" id="val-b">0.150</span></div>
+        <div class="slider-row phi-c"><div class="slider-label">c <span class="sub">네트워크</span></div><input type="range" id="slider-c" min="0" max="1" step=".001" value=".30"><span class="slider-value" id="val-c">0.300</span></div>
+        <canvas id="phi-chart" height="100" style="margin-top:8px"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">I 인프라 레벨</div>
+        <div class="slider-row inf"><div class="slider-label">I_a</div><input type="range" id="slider-ia" min="0" max="1" step=".01" value=".55"><span class="slider-value" id="val-ia">0.55</span></div>
+        <div class="slider-row inf"><div class="slider-label">I_b</div><input type="range" id="slider-ib" min="0" max="1" step=".01" value=".25"><span class="slider-value" id="val-ib">0.25</span></div>
+        <div class="slider-row inf"><div class="slider-label">I_c</div><input type="range" id="slider-ic" min="0" max="1" step=".01" value=".40"><span class="slider-value" id="val-ic">0.40</span></div>
+        <canvas id="inf-chart" height="100" style="margin-top:8px"></canvas>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px">
+      <div class="chart-box">
+        <div class="chart-title">C 정치·문화 컨텍스트</div>
+        <div class="slider-row ctx"><div class="slider-label">국가주의</div><input type="range" id="slider-cn" min="0" max="1" step=".01" value=".70"><span class="slider-value" id="val-cn">0.70</span></div>
+        <div class="slider-row ctx"><div class="slider-label">재벌개입</div><input type="range" id="slider-cj" min="0" max="1" step=".01" value=".60"><span class="slider-value" id="val-cj">0.60</span></div>
+        <div class="slider-row ctx"><div class="slider-label">민주성</div><input type="range" id="slider-cd" min="0" max="1" step=".01" value=".50"><span class="slider-value" id="val-cd">0.50</span></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">S 슈퍼스타 · λ 레버리지 · α 학습률</div>
+        <div class="slider-row"><div class="slider-label">S</div><input type="range" id="slider-s" min="0" max="1" step=".1" value=".2"><span class="slider-value" id="val-s">0.2</span></div>
+        <div class="slider-row"><div class="slider-label">λ</div><input type="range" id="slider-lam" min="0" max="2" step=".1" value=".3"><span class="slider-value" id="val-lam">0.3</span></div>
+        <div class="slider-row"><div class="slider-label">α_Φ</div><input type="range" id="slider-aphi" min="0" max=".5" step=".01" value=".20"><span class="slider-value" id="val-aphi">0.20</span></div>
+        <div class="slider-row"><div class="slider-label">α_I</div><input type="range" id="slider-ai" min="0" max=".5" step=".01" value=".12"><span class="slider-value" id="val-ai">0.12</span></div>
+      </div>
+    </div>
+
+    <div class="output-grid">
+      <div class="output-card"><div class="output-label">Sync_H</div><div class="output-value purple" id="out-sync">0.0000</div></div>
+      <div class="output-card"><div class="output-label">K̄_H</div><div class="output-value cyan" id="out-kbar">0.0000</div></div>
+      <div class="output-card"><div class="output-label">θ(C_H)</div><div class="output-value gold" id="out-theta">0.0000</div></div>
+      <div class="output-card"><div class="output-label">P_H</div><div class="output-value green" id="out-perf">0.0000</div></div>
+    </div>
+
+    <div class="chart-box">
+      <div class="chart-title">20년 경기력 궤적</div>
+      <canvas id="timeline-chart"></canvas>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="sim-btn">▶ 시뮬레이션 실행</button>
+        <label style="font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:6px">
+          충격시점: <input type="range" id="shock-slider" min="3" max="15" step="1" value="8" style="width:80px"> <span id="shock-val" style="font-family:var(--f-mono)">8</span>년차
+        </label>
+        <label style="font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:6px">
+          S_K 성장: <input type="range" id="sk-slider" min=".01" max=".1" step=".005" value=".04" style="width:80px"> <span id="sk-val" style="font-family:var(--f-mono)">0.040</span>
+        </label>
+      </div>
+    </div>
+    <div class="milestone-strip" id="milestone-strip"></div>
+  </div>
+
+  <!-- TAB 3: ELECTION -->
+  <div class="tab-content" id="tab-election">
+    <div class="chart-box">
+      <div class="chart-title">L 게이트 선출 모델</div>
+      <canvas id="election-chart"></canvas>
+    </div>
+    <div class="election-result" id="election-result">
+      <div style="font-size:.82rem;color:var(--muted);margin-bottom:8px">시뮬레이션 결과</div>
+      <div class="winner" id="elect-winner">—</div>
+      <div class="detail" id="elect-detail">시뮬레이션을 실행하면 선출 결과가 표시됩니다</div>
+    </div>
+    <div class="candidate-grid" id="elect-grid"></div>
+    <div class="chart-box">
+      <div class="chart-title">S 변별 스코어</div>
+      <canvas id="s-score-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- TAB 4: RISK -->
+  <div class="tab-content" id="tab-risk">
+    <div class="risk-grid">
+      <div class="risk-card r1"><div class="risk-label">R1 · 안정적 발전 (Sync↑)</div><div class="risk-desc">철학-인프라 싱크로율 0.8↑. 자연스러운 경기력 성장. 감독 교체에도 일관성 유지. 8-12년차에 첫 정점.</div></div>
+      <div class="risk-card r2"><div class="risk-label">R2 · 정치적 교체 (θ↑)</div><div class="risk-desc">국가주의·재벌개입 증가 → θ 상승 → 감독 자율성 하락. 단기 성적 압박으로 철학 이탈. 5-7년차 위기.</div></div>
+      <div class="risk-card r3"><div class="risk-label">R3 · 인프라 붕괴 (I↓)</div><div class="risk-desc">예산 삭감 또는 스캔들로 인프라 급락. 회복에 5-8시즌 소요. 유소년 시스템 타격이 가장 큼.</div></div>
+      <div class="risk-card r4"><div class="risk-label">R4 · 슈퍼스타 의존 (λS↑)</div><div class="risk-desc">슈퍼스타 의존도 상승 → 은퇴 후 급락. S 의존도 0.6↑이면 위험 신호. 포스트-손흥민 시나리오.</div></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">위험 시나리오 시뮬레이션</div>
+      <canvas id="risk-chart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== Φ-I-C-K-P CORE MODEL ======
+const CORE = {
+  norm: v => Math.sqrt(v.reduce((s,x)=>s+x*x,0)),
+  dot: (a,b) => a.reduce((s,x,i)=>s+x*b[i],0),
+  sigmoid: x => 1/(1+Math.exp(-x)),
+  projectSimplex(v) {
+    let u = v.slice();
+    for(let iter=0;iter<100;iter++) {
+      const sum = u.reduce((s,x)=>s+x,0), diff = sum-1;
+      if(Math.abs(diff)<1e-12) break;
+      const excess = diff / 3;
+      let neg = false;
+      for(let i=0;i<3;i++) { u[i]-=excess; if(u[i]<0){u[i]=0;neg=true;} }
+      if(!neg) break;
+    }
+    const s = u.reduce((a,b)=>a+b,0);
+    return s>0 ? u.map(x=>x/s) : [1/3,1/3,1/3];
+  },
+  computeSync(phi,inf) { const d = this.dot(phi,inf), n = this.norm(phi); return n>0 ? d/n : 0; },
+  computeTheta(ctx) { return this.sigmoid(this.dot(ctx,[1,.8,-.7])-0.3); },
+  computeKbar(phi,ctx) {
+    const th = this.computeTheta(ctx), noise = (1-th)*.15;
+    let k = phi.map((p,i)=>Math.max(0,p+(Math.random()-.5)*noise*2));
+    const sum = k.reduce((a,b)=>a+b,0);
+    if(sum>0) k = k.map(x=>x/sum);
+    return this.dot(phi,k);
+  },
+  computePerf(phi,inf,ctx,s,lam) {
+    const sync = this.computeSync(phi,inf);
+    let kSum=0; for(let i=0;i<50;i++) kSum+=this.computeKbar(phi,ctx);
+    const kbar = kSum/50;
+    return {sync, kbar, theta:this.computeTheta(ctx), perf: sync * kbar * (1+lam*s)};
+  },
+  simulate(phi,inf,ctx,s,lam,aphi,ai,steps) {
+    const hist = [];
+    for(let n=0;n<steps;n++) {
+      const r = this.computePerf(phi,inf,ctx,s,lam);
+      hist.push({phi:[...phi],inf:[...inf],sync:r.sync,kbar:r.kbar,perf:r.perf,theta:r.theta});
+      const delta=.01, base=this.computePerf(phi,inf,ctx,s,lam).perf;
+      const gradPhi = phi.map((_,i)=>{const u=[...phi];u[i]+=delta;return(this.computePerf(u,inf,ctx,s,lam).perf-base)/delta;});
+      phi = this.projectSimplex(phi.map((v,i)=>v+aphi*gradPhi[i]));
+      const baseI = this.computePerf(phi,inf,ctx,s,lam).perf;
+      const gradI = inf.map((_,i)=>{const u=[...inf];u[i]+=delta;return(this.computePerf(phi,u,ctx,s,lam).perf-baseI)/delta*(1-inf[i]);});
+      inf = inf.map((v,i)=>Math.min(1,Math.max(0,v+ai*gradI[i])));
+    }
+    return hist;
+  }
+};
+
+// ====== DATA ======
+const CANDIDATES = [
+  {id:'park-js', name:'박지성', phi:[.40,.30,.30], inf:[.60,.55,.60], ctx:[.35,.25,.75], s:.4, lam:.6, desc:'맨유 레전드, 글로벌 네트워크' },
+  {id:'heo-jm', name:'허정무', phi:[.50,.20,.30], inf:[.50,.35,.45], ctx:[.55,.40,.55], s:.1, lam:.2, desc:'2010 16강 감독, 행정 경험' },
+  {id:'cha-bg', name:'차범근', phi:[.45,.25,.30], inf:[.55,.40,.50], ctx:[.50,.35,.60], s:.3, lam:.5, desc:'전설적 선수, 독일 네트워크' },
+  {id:'shin-ms', name:'신문선', phi:[.35,.35,.30], inf:[.35,.45,.40], ctx:[.30,.15,.80], s:.05, lam:.1, desc:'해설가, 학계, 혁신적 철학' },
+  {id:'jung-mg', name:'정몽규', phi:[.55,.15,.30], inf:[.55,.30,.45], ctx:[.70,.65,.45], s:.15, lam:.25, desc:'현 회장, 재벌, 인프라 경험' }
+];
+
+let radarChart, timelineChart, electionChart, sScoreChart, riskChart, phiChart, infChart;
+let simResult = null;
+
+function normPhi() {
+  const a=+sliderA.value, b=+sliderB.value, c=+sliderC.value, s=a+b+c||1;
+  sliderA.value=a/s; sliderB.value=b/s; sliderC.value=c/s;
+  valA.textContent=(a/s).toFixed(3); valB.textContent=(b/s).toFixed(3); valC.textContent=(c/s).toFixed(3);
+}
+
+const $=id=>document.getElementById(id);
+const sliderA=$('slider-a'),sliderB=$('slider-b'),sliderC=$('slider-c');
+const valA=$('val-a'),valB=$('val-b'),valC=$('val-c');
+const sIa=$('slider-ia'),sIb=$('slider-ib'),sIc=$('slider-ic');
+const vIa=$('val-ia'),vIb=$('val-ib'),vIc=$('val-ic');
+const sCn=$('slider-cn'),sCj=$('slider-cj'),sCd=$('slider-cd');
+const vCn=$('val-cn'),vCj=$('val-cj'),vCd=$('val-cd');
+const sS=$('slider-s'),sL=$('slider-lam'),sA=$('slider-aphi'),sI=$('slider-ai');
+const vS=$('val-s'),vL=$('val-lam'),vA=$('val-aphi'),vI=$('val-ai');
+const shockSl=$('shock-slider'),skSl=$('sk-slider');
+
+function getVals() {
+  return {
+    phi:[+sliderA.value,+sliderB.value,+sliderC.value],
+    inf:[+sIa.value,+sIb.value,+sIc.value],
+    ctx:[+sCn.value,+sCj.value,+sCd.value],
+    s:+sS.value, lam:+sL.value, aphi:+sA.value, ai:+sI.value
+  };
+}
+function updateOutputs(v) {
+  const r = CORE.computePerf(v.phi,v.inf,v.ctx,v.s,v.lam);
+  $('out-sync').textContent=r.sync.toFixed(4);
+  $('out-kbar').textContent=r.kbar.toFixed(4);
+  $('out-theta').textContent=r.theta.toFixed(4);
+  $('out-perf').textContent=r.perf.toFixed(4);
+  return r;
+}
+
+// ====== RADAR CHART ======
+function initRadar() {
+  const ctx = $('radar-chart').getContext('2d');
+  radarChart = new Chart(ctx, {
+    type:'radar',
+    data:{labels:['Φ 철학','I 인프라','C 컨텍스트','K̄ 전략','P+S 성능'],
+      datasets: CANDIDATES.map((c,i)=>{
+        const colors = ['#a855f7','#22d3ee','#facc15','#f97316','#ec4899'];
+        const p = CORE.computePerf(c.phi,c.inf,c.ctx,c.s,c.lam);
+        return {
+          label:c.name, data:[
+            CORE.norm(c.phi)*100, CORE.norm(c.inf)*100,
+            c.ctx.reduce((a,b)=>a+b,0)/3*100, p.kbar*100, p.perf*100
+          ],
+          borderColor:colors[i], backgroundColor:colors[i]+'20', pointBackgroundColor:colors[i]
+        };
+      })
+    },
+    options:{responsive:true, maintainAspectRatio:true,
+      scales:{r:{grid:{color:'rgba(255,255,255,.06)'}, angleLines:{color:'rgba(255,255,255,.06)'}, ticks:{display:false}}},
+      plugins:{legend:{labels:{color:'rgba(255,255,255,.6)',font:{size:11}}}}
+    }
+  });
+  renderCandidates();
+}
+
+function renderCandidates() {
+  const grid = $('candidate-grid');
+  grid.innerHTML = CANDIDATES.map(c=>{
+    const r = CORE.computePerf(c.phi,c.inf,c.ctx,c.s,c.lam);
+    return `<div class="candidate-card"><div class="candidate-name">${c.name}</div><div class="candidate-score">P: ${r.perf.toFixed(3)}</div><div style="font-size:.7rem;color:var(--muted);margin-top:4px">${c.desc}</div></div>`;
+  }).join('');
+}
+
+// ====== 20-YEAR SIMULATOR ======
+function runSim() {
+  const v = getVals();
+  const shockYear = +shockSl.value;
+  const skGrowth = +skSl.value;
+  const years = 20;
+
+  // Baseline sim
+  let baseHist = CORE.simulate([...v.phi],[...v.inf],[...v.ctx],v.s,v.lam,v.aphi,v.ai,years);
+
+  // Apply shock at shockYear (context shock: nationalism spike)
+  let shockPhi = [...baseHist[shockYear-1].phi];
+  let shockInf = [...baseHist[shockYear-1].inf];
+  let shockCtx = [Math.min(1,v.ctx[0]+0.25), v.ctx[1], Math.max(0,v.ctx[2]-0.2)];
+  let shockHist = CORE.simulate(shockPhi, shockInf, shockCtx, v.s, v.lam, v.aphi, v.ai, years-shockYear+1);
+  let fullHist = baseHist.slice(0,shockYear).concat(shockHist);
+
+  // S growth scenario
+  let sHist = CORE.simulate([...v.phi],[...v.inf],[...v.ctx], Math.min(1,v.s+skGrowth*years), v.lam, v.aphi, v.ai, years);
+  simResult = {base:baseHist, shock:fullHist, sGrowth:sHist, years};
+  updateSimChart();
+  runElection();
+  runRisk();
+}
+
+// ====== CHART UPDATES ======
+function updateSimChart() {
+  if(!simResult) return;
+  const {base, shock, sGrowth, years} = simResult;
+  if(timelineChart) timelineChart.destroy();
+  const labels = Array.from({length:years},(_,i)=>`${i+1}년`);
+  const ctx = $('timeline-chart').getContext('2d');
+  timelineChart = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'P (기준)', data:base.map(d=>d.perf), borderColor:'#a855f7', pointRadius:0, borderWidth:2, tension:.3},
+        {label:'P (충격)', data:shock.map(d=>d.perf), borderColor:'#f97316', pointRadius:0, borderWidth:2, tension:.3, borderDash:[5,5]},
+        {label:'P (S성장)', data:sGrowth.map(d=>d.perf), borderColor:'#22d3ee', pointRadius:0, borderWidth:2, tension:.3, borderDash:[2,2]},
+        {label:'Sync', data:base.map(d=>d.sync), borderColor:'#10b981', pointRadius:0, borderWidth:1, tension:.3},
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{color:'rgba(255,255,255,.5)',font:{size:10},boxWidth:12,usePointStyle:true}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.03)'}, ticks:{color:'rgba(255,255,255,.3)',font:{size:9}}},
+        y:{grid:{color:'rgba(255,255,255,.03)'}, ticks:{color:'rgba(255,255,255,.3)',font:{size:9}}, beginAtZero:true}
+      }
+    }
+  });
+  updateMilestones(shock);
+}
+
+function updateMilestones(data) {
+  const strip = $('milestone-strip');
+  if(!strip) return;
+  const events = [
+    {year:3, text:'철학 정착기'},{year:5, text:'1차 평가'},{year:8, text:'위기/충격'},
+    {year:12, text:'재정비'},{year:15, text:'2차 평가'},{year:18, text:'성숙기'}
+  ];
+  strip.innerHTML = events.map(e=>{
+    const p = data[e.year-1]?.perf || 0;
+    return `<div class="milestone-item"><div class="milestone-year">${e.year}년차</div><div class="milestone-text">${e.text} (P: ${p.toFixed(3)})</div></div>`;
+  }).join('');
+}
+
+// ====== ELECTION MODEL ======
+function runElection() {
+  const v = getVals();
+  // L Gate: 각 후보 P >= 0.6
+  const scored = CANDIDATES.map(c=>{
+    const r = CORE.computePerf(c.phi,c.inf,c.ctx,c.s,c.lam);
+    return {...c, perf:r.perf, sync:r.sync, pass:r.perf>=0.6};
+  });
+  const passed = scored.filter(c=>c.pass);
+  // S discrimination: pick max P among passers, or max overall
+  const sorted = [...scored].sort((a,b)=>b.perf-a.perf);
+  const winner = passed.length>0 ? passed.sort((a,b)=>b.perf-a.perf)[0] : sorted[0];
+
+  // Update election result
+  $('elect-winner').textContent = winner.name;
+  $('elect-detail').textContent = `P: ${winner.perf.toFixed(4)} | Sync: ${winner.sync.toFixed(4)} | L 게이트 통과: ${passed.length}명 | 전체순위: ${scored.map(c=>c.name+'('+c.perf.toFixed(3)+')').join(' > ')}`;
+
+  // Candidate grid
+  $('elect-grid').innerHTML = scored.map(c=>
+    `<div class="candidate-card ${c===winner?'elected':''}"><div class="candidate-name">${c.name} ${c===winner?'👑':''}</div><div class="candidate-score">P: ${c.perf.toFixed(4)}</div><div style="font-size:.72rem;color:var(--muted)">L게이트: ${c.pass?'✅':'❌'} | Sync: ${c.sync.toFixed(3)}</div></div>`
+  ).join('');
+
+  // L gate chart
+  if(sScoreChart) sScoreChart.destroy();
+  const ctx = $('s-score-chart').getContext('2d');
+  sScoreChart = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: scored.map(c=>c.name),
+      datasets:[
+        {label:'P 성능', data:scored.map(c=>c.perf), backgroundColor:scored.map(c=>c===winner?'rgba(250,204,21,.6)':'rgba(168,85,247,.4)'), borderColor:scored.map(c=>c===winner?'#facc15':'#a855f7'), borderWidth:1},
+        {label:'Sync', data:scored.map(c=>c.sync), backgroundColor:'rgba(34,211,238,.3)', borderColor:'#22d3ee', borderWidth:1}
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{labels:{color:'rgba(255,255,255,.5)',font:{size:10}}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.03)'}, ticks:{color:'rgba(255,255,255,.6)'}},
+        y:{grid:{color:'rgba(255,255,255,.03)'}, ticks:{color:'rgba(255,255,255,.3)'}, beginAtZero:true}
+      }
+    }
+  });
+}
+
+function runRisk() {
+  const v = getVals();
+  const years = 20;
+  const R1 = CORE.simulate(v.phi, v.inf.map(x=>Math.min(1,x+.02)), v.ctx, v.s, v.lam, v.aphi+.03, v.ai+.02, years);
+  const R2 = CORE.simulate([...v.phi],[...v.inf], v.ctx.map((x,i)=>i===0?Math.min(1,x+.3):i===2?Math.max(0,x-.2):x), v.s, v.lam, v.aphi, v.ai, years);
+  const R3 = CORE.simulate([...v.phi], v.inf.map(x=>Math.max(0,x-.15)), v.ctx, v.s, v.lam, v.aphi, v.ai, years);
+  const R4 = CORE.simulate([...v.phi],[...v.inf],[...v.ctx], Math.max(0,v.s-.4), v.lam, v.aphi, v.ai, years);
+
+  if(riskChart) riskChart.destroy();
+  const labels = Array.from({length:years},(_,i)=>`${i+1}년`);
+  const ctx = $('risk-chart').getContext('2d');
+  riskChart = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'R1 안정적 발전', data:R1.map(d=>d.perf), borderColor:'#10b981', pointRadius:0, borderWidth:2, tension:.3},
+        {label:'R2 정치 교체', data:R2.map(d=>d.perf), borderColor:'#facc15', pointRadius:0, borderWidth:2, tension:.3},
+        {label:'R3 인프라 붕괴', data:R3.map(d=>d.perf), borderColor:'#f97316', pointRadius:0, borderWidth:2, tension:.3},
+        {label:'R4 SS 의존', data:R4.map(d=>d.perf), borderColor:'#ec4899', pointRadius:0, borderWidth:2, tension:.3},
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{labels:{color:'rgba(255,255,255,.5)',font:{size:10},boxWidth:12,usePointStyle:true}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.03)'}, ticks:{color:'rgba(255,255,255,.3)',font:{size:9}}},
+        y:{grid:{color:'rgba(255,255,255,.03)'}, ticks:{color:'rgba(255,255,255,.3)',font:{size:9}}, beginAtZero:true}
+      }
+    }
+  });
+}
+
+// ====== TABS ======
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    $(`tab-${btn.dataset.tab}`).classList.add('active');
+    // Resize charts on tab switch
+    setTimeout(()=>{
+      [radarChart,timelineChart,electionChart,sScoreChart,riskChart].forEach(c=>c?.resize());
+    },100);
+  });
+});
+
+// ====== EVENT BINDING ======
+sliderA.addEventListener('input',()=>{normPhi();updateOutputs(getVals());});
+sliderB.addEventListener('input',()=>{normPhi();updateOutputs(getVals());});
+sliderC.addEventListener('input',()=>{normPhi();updateOutputs(getVals());});
+sIa.addEventListener('input',()=>{vIa.textContent=(+sIa.value).toFixed(2);updateOutputs(getVals());});
+sIb.addEventListener('input',()=>{vIb.textContent=(+sIb.value).toFixed(2);updateOutputs(getVals());});
+sIc.addEventListener('input',()=>{vIc.textContent=(+sIc.value).toFixed(2);updateOutputs(getVals());});
+sCn.addEventListener('input',()=>{vCn.textContent=(+sCn.value).toFixed(2);updateOutputs(getVals());});
+sCj.addEventListener('input',()=>{vCj.textContent=(+sCj.value).toFixed(2);updateOutputs(getVals());});
+sCd.addEventListener('input',()=>{vCd.textContent=(+sCd.value).toFixed(2);updateOutputs(getVals());});
+sS.addEventListener('input',()=>{vS.textContent=(+sS.value).toFixed(1);updateOutputs(getVals());});
+sL.addEventListener('input',()=>{vL.textContent=(+sL.value).toFixed(1);updateOutputs(getVals());});
+sA.addEventListener('input',()=>{vA.textContent=(+sA.value).toFixed(2);});
+sI.addEventListener('input',()=>{vI.textContent=(+sI.value).toFixed(2);});
+shockSl.addEventListener('input',()=>{$('shock-val').textContent=shockSl.value;});
+skSl.addEventListener('input',()=>{$('sk-val').textContent=(+skSl.value).toFixed(3);});
+$('sim-btn').addEventListener('click',runSim);
+
+// Preset
+$('preset-select').addEventListener('change',function(){
+  const p = {
+    korea:{phi:[.55,.15,.30],inf:[.55,.25,.40],ctx:[.70,.60,.50],s:.2,lam:.3,aphi:.20,ai:.12},
+    germany:{phi:[.50,.20,.30],inf:[.85,.40,.60],ctx:[.30,.15,.85],s:.3,lam:.4,aphi:.15,ai:.10},
+    spain:{phi:[.15,.25,.60],inf:[.40,.50,.90],ctx:[.25,.10,.90],s:.4,lam:.6,aphi:.12,ai:.15},
+    brazil:{phi:[.10,.65,.25],inf:[.30,.85,.50],ctx:[.40,.20,.60],s:.7,lam:.8,aphi:.10,ai:.08},
+    argentina:{phi:[.20,.55,.25],inf:[.45,.75,.50],ctx:[.50,.25,.55],s:.9,lam:1.0,aphi:.10,ai:.08}
+  }[this.value];
+  if(!p) return;
+  const sum=p.phi[0]+p.phi[1]+p.phi[2];
+  sliderA.value=p.phi[0]/sum; sliderB.value=p.phi[1]/sum; sliderC.value=p.phi[2]/sum;
+  valA.textContent=(p.phi[0]/sum).toFixed(3);valB.textContent=(p.phi[1]/sum).toFixed(3);valC.textContent=(p.phi[2]/sum).toFixed(3);
+  sIa.value=p.inf[0];sIb.value=p.inf[1];sIc.value=p.inf[2];
+  vIa.textContent=p.inf[0].toFixed(2);vIb.textContent=p.inf[1].toFixed(2);vIc.textContent=p.inf[2].toFixed(2);
+  sCn.value=p.ctx[0];sCj.value=p.ctx[1];sCd.value=p.ctx[2];
+  vCn.textContent=p.ctx[0].toFixed(2);vCj.textContent=p.ctx[1].toFixed(2);vCd.textContent=p.ctx[2].toFixed(2);
+  sS.value=p.s;vS.textContent=p.s.toFixed(1);sL.value=p.lam;vL.textContent=p.lam.toFixed(1);
+  sA.value=p.aphi;vA.textContent=p.aphi.toFixed(2);sI.value=p.ai;vI.textContent=p.ai.toFixed(2);
+  updateOutputs(getVals());
+});
+
+// ====== INIT ======
+function init() {
+  initRadar();
+  updateOutputs(getVals());
+  runSim();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+
+<div style="display:flex;gap:12px;justify-content:center;margin:40px 0 20px;flex-wrap:wrap">
+  <a href="whitepaper.html" class="btn btn-secondary">📄 전체 백서 읽기</a>
+  <a href="../index.html" class="btn btn-secondary">← OrbitPrompt 홈</a>
+</div>
+
+</body>
+</html>
