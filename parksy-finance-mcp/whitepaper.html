@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>재무비율을 철학하는 모델 — 백서</title>
+<style>
+:root {
+  --gallery-bg: #08080e; --gallery-wall: #0c0c14;
+  --gold: #d4af37; --gold-dim: rgba(212,175,55,.15);
+  --purple: #a855f7; --cyan: #22d3ee;
+  --f-serif: 'Cormorant Garamond', serif; --f-sans: 'Inter', sans-serif;
+  --label-border: rgba(255,255,255,.06);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--gallery-bg); color: #ddd; font-family: var(--f-sans); line-height: 1.8; }
+a { color: var(--cyan); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.nav { position: sticky; top: 0; z-index: 100; background: rgba(8,8,14,.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--label-border); padding: 0 24px; display: flex; align-items: center; height: 52px; }
+.nav .brand { font-family: var(--f-serif); color: var(--gold); font-size: 14px; letter-spacing: 1px; }
+.nav a { margin-left: auto; font-size: 13px; color: #888; }
+.container { max-width: 720px; margin: 0 auto; padding: 60px 24px 100px; }
+h1 { font-family: var(--f-serif); font-size: clamp(28px,4vw,40px); font-weight: 400; color: #fff; line-height: 1.3; margin-bottom: 8px; }
+.subtitle { font-size: 14px; color: #888; margin-bottom: 48px; letter-spacing: .5px; }
+h2 { font-family: var(--f-serif); font-size: 24px; font-weight: 400; color: var(--gold); margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--label-border); }
+h3 { font-size: 16px; color: #fff; margin: 24px 0 12px; font-weight: 400; }
+p { margin-bottom: 16px; font-size: 15px; color: #bbb; }
+blockquote { border-left: 2px solid var(--gold); padding: 16px 20px; margin: 20px 0; background: var(--gold-dim); font-family: var(--f-serif); font-size: 17px; color: #ccc; font-style: italic; }
+blockquote strong { color: var(--gold); font-style: normal; }
+table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--label-border); }
+th { color: var(--gold); font-weight: 400; letter-spacing: .5px; }
+td { color: #bbb; }
+sup { font-size: 11px; color: var(--gold); cursor: pointer; }
+.ref { font-size: 12px; color: #666; margin: 4px 0; }
+.footer { border-top: 1px solid var(--label-border); padding: 24px; text-align: center; font-size: 12px; color: #555; }
+.footer a { color: #777; }
+</style>
+</head>
+<body>
+<div class="nav"><span class="brand">재무비율을 철학하는 모델</span><a href="../index.html">OrbitPrompt Gallery</a></div>
+<div class="container">
+
+<h1>재무비율을 철학하는 모델</h1>
+<div class="subtitle">재무비율 시계 × 60갑자 × MCP — 취지와 의미, 활용법에 관한 백서 · v2.0 · 2026.06</div>
+
+<h2>개요</h2>
+<p>이 백서는 재무비율 시계 × 60갑자 × MCP 모델의 기술적 구조보다 한 단계 앞선 취지, 즉 "재무비율을 외우는 것이 아니라 철학하는 것"이라는 목적을 정리한다.<sup>[1]</sup><sup>[2]</sup><sup>[3]</sup> 이 모델은 12개의 재무비율을 단순한 계산 공식이 아니라 반복적으로 질문을 던지는 좌표계로 바꾸고, 60갑자를 외부 서사 레퍼런스로 활용해 숫자를 삶과 산업의 국면 언어로 확장하는 것을 목표로 한다.<sup>[1]</sup><sup>[4]</sup><sup>[5]</sup></p>
+<p>기존 재무비율 교육은 주로 정의, 공식, 암기에 머무르기 때문에 숫자가 실제 판단 습관으로 이어지지 않는 문제가 있다.<sup>[3]</sup><sup>[6]</sup><sup>[7]</sup> 반면 이 모델은 재무비율을 "몇 시 몇 분" 좌표로 호출하게 만들어, 사용자가 숫자를 기억하는 동시에 상황을 해석하는 일관된 사고 루틴을 형성하도록 설계한다.<sup>[1]</sup><sup>[2]</sup><sup>[8]</sup></p>
+
+<h2>핵심 취지</h2>
+
+<h3>비율을 외우는 것이 아니라 비율로 생각하기</h3>
+<p>재무비율은 원래 재무제표 항목들 사이의 논리적 관계를 압축한 도구다.<sup>[3]</sup><sup>[6]</sup> 따라서 비율 분석의 핵심은 공식을 기계적으로 암기하는 데 있지 않고, 특정 비율이 무엇을 묻고 어떤 관계를 드러내는지를 반복적으로 해석하는 데 있다.<sup>[2]</sup><sup>[6]</sup><sup>[8]</sup></p>
+<p>이 모델은 그 점을 전면화한다. 12개의 재무비율을 시계 위치로 정의하고, 각 비율을 볼 때 반드시 하나의 관점(Form, Flow, Frag, Field, Fit)을 통과시키게 함으로써, 비율을 숫자에서 질문으로 전환한다.<sup>[1]</sup> 결과적으로 사용자는 "성장률 공식이 무엇이더라?"보다 "이 기업은 지금 성장률 관점에서 어떤 국면인가?"를 먼저 생각하게 된다.<sup>[1]</sup><sup>[2]</sup></p>
+
+<h3>철학으로서의 재무비율</h3>
+<p>여기서 말하는 철학은 추상적 관념이 아니라, <strong>반복되는 판단의 기준이 형성되는 상태</strong>를 의미한다.<sup>[2]</sup><sup>[9]</sup> 어떤 회사를 볼 때 자동으로 성장, 마진, 회전율, 레버리지, 가격의 순서를 떠올리고, 그 각각에 대해 구조·흐름·취약성·현장·정렬성의 질문을 붙이는 습관이 생기면, 재무비율은 더 이상 시험 과목이 아니라 세계를 읽는 렌즈가 된다.<sup>[1]</sup><sup>[8]</sup></p>
+<blockquote>비율을 공식이 아니라 관계, 질문, 국면, 선택의 기준으로 다루기 시작하면, 재무모델은 단순 분석 도구를 넘어 삶과 기업을 읽는 자기 언어가 된다.</blockquote>
+<p>이때 비율은 단순 평가 도구를 넘어 <strong>선택의 기준</strong>이 된다. 어떤 회사가 수익성은 높지만 삶의 철학과 맞지 않는지, 어떤 기업은 지금 취약한 국면이지만 장기적으로 응원할 가치가 있는지, 어떤 구조는 숫자는 좋지만 인간적으로 지속 가능하지 않은지 같은 질문이 가능해진다.<sup>[1]</sup><sup>[2]</sup><sup>[9]</sup></p>
+
+<h2>구조의 의미</h2>
+
+<h3>12개 재무비율의 역할</h3>
+<p>12개의 재무비율 시계는 모델의 실무 좌표계다.<sup>[1]</sup> 사용자가 실제로 외우고 반복하는 핵심 대상은 이 12개뿐이며, 각 시는 하나의 재무 질문과 연결된다.</p>
+
+<table>
+<tr><th>시계</th><th>비율</th><th>중심 질문</th></tr>
+<tr><td>1시</td><td>매출 성장률</td><td>외형이 확장되는가</td></tr>
+<tr><td>2시</td><td>매출 규모</td><td>시장에서 어느 정도 크기인가</td></tr>
+<tr><td>3시</td><td>매출총이익률</td><td>기본 구조에서 얼마를 남기는가</td></tr>
+<tr><td>4시</td><td>영업이익률</td><td>운영 후 실제 수익성이 있는가</td></tr>
+<tr><td>5시</td><td>순이익률</td><td>최종 수익이 남는가</td></tr>
+<tr><td>6시</td><td>ROE</td><td>자기자본 효율이 높은가</td></tr>
+<tr><td>7시</td><td>ROIC</td><td>사업 본체의 자본 효율이 높은가</td></tr>
+<tr><td>8시</td><td>자산회전율</td><td>자산을 매출로 바꾸는 효율은</td></tr>
+<tr><td>9시</td><td>재고회전율</td><td>재고가 빠르게 소진되는가</td></tr>
+<tr><td>10시</td><td>부채비율</td><td>확장이 빚에 얼마나 기대는가</td></tr>
+<tr><td>11시</td><td>이자보상배율</td><td>이익으로 금융비용을 감당하는가</td></tr>
+<tr><td>12시</td><td>PSR/PER</td><td>시장은 이 구조를 얼마에 가격 매기는가</td></tr>
+</table>
+
+<p>이 표는 비율 자체를 완결된 진리로 두기보다, <strong>항상 질문이 붙는 위치</strong>로 만든다는 점이 중요하다.<sup>[1]</sup><sup>[3]</sup> 사용자가 이 좌표를 반복적으로 호출하면, 비율은 자동 암기의 대상이면서 동시에 반복 판단의 습관이 된다.<sup>[1]</sup><sup>[2]</sup><sup>[8]</sup></p>
+
+<h3>5개 관점의 역할</h3>
+<p>5개 관점(Form, Flow, Frag, Field, Fit)은 비율을 다층적으로 읽게 만드는 해석 장치다.<sup>[1]</sup> 같은 영업이익률이라도 구조 문제인지, 현금흐름 문제인지, 취약성 문제인지, 현장 문제인지, 삶과 철학의 정렬 문제인지에 따라 완전히 다른 의미를 갖는다.</p>
+<p>이 장치는 비율의 철학화를 가능하게 한다. 하나의 숫자가 곧바로 정답을 뜻하는 것이 아니라, 어떤 관점에서 보느냐에 따라 전혀 다른 질문을 열어 준다는 사실을 시스템 수준에서 고정하기 때문이다.<sup>[1]</sup><sup>[2]</sup><sup>[9]</sup></p>
+
+<h3>60갑자의 역할</h3>
+<p>60갑자는 이 모델에서 직접 외워야 하는 실무 좌표가 아니라, 외부 서사 레퍼런스로 기능한다.<sup>[1]</sup><sup>[4]</sup><sup>[5]</sup> 전통적으로 60갑자는 10천간과 12지지가 독립 주기로 순환하며 형성되는 60개 조합이므로, 특정 재무비율과 1:1로 억지 매핑하는 것은 원형 구조를 손상시킬 수 있다.<sup>[4]</sup><sup>[10]</sup><sup>[11]</sup><sup>[12]</sup></p>
+<blockquote>60갑자는 "정답표"가 아니라 <strong>"스토리 인덱스"</strong>다.</blockquote>
+<p>따라서 이 모델은 60갑자를 "정답표"가 아니라 "스토리 인덱스"로 활용한다.<sup>[1]</sup> 사용자는 먼저 12비율 시계에서 좌표를 찍고, 그다음 LLM과 MCP가 가장 유사한 갑자 서사를 불러와 해당 기업이나 상황을 더 잘 기억하고 설명할 수 있게 돕는다.<sup>[1]</sup><sup>[13]</sup><sup>[14]</sup></p>
+
+<h2>활용 방식</h2>
+
+<h3>자동 암기와 재무 습관</h3>
+<p>이 구조를 지속적으로 사용하면 12개 비율은 자동으로 외워질 가능성이 높다.<sup>[1]</sup><sup>[2]</sup> 사용자는 매번 "몇 시 몇 분"으로 기업을 호출하게 되고, 그 좌표에 따라 동일한 질문 구조를 반복하게 되므로, 재무 분석은 공식 암기에서 판단 루틴으로 이동한다.<sup>[1]</sup><sup>[8]</sup></p>
+<p>이 습관이 쌓이면 재무비율은 더 이상 시험용 지식이 아니라 삶의 필터가 된다.<sup>[2]</sup><sup>[9]</sup> 기업을 볼 때 먼저 성장, 수익성, 회전율, 부채, 가격을 떠올리게 되고, 이는 장기적으로 투자, 사업, 소비, 협업까지 관통하는 사고 습관을 만든다.<sup>[1]</sup><sup>[8]</sup></p>
+
+<h3>LLM과 MCP의 역할 분담</h3>
+<p>최신 금융 분석 흐름에서는 MCP와 LLM을 결합해 정형 데이터와 문서 데이터를 구조적으로 불러오고 해석하는 시도가 실제로 늘고 있다.<sup>[15]</sup><sup>[16]</sup><sup>[17]</sup><sup>[13]</sup> 또한 연구에 따르면 LLM은 재무제표와 공시 문서를 읽고 인간 전문가와 유사한 방식으로 재무 분석을 수행할 수 있는 수준에 접근하고 있다.<sup>[14]</sup><sup>[18]</sup><sup>[19]</sup></p>
+<p>이 모델에서 MCP와 LLM은 <strong>자료 정리와 초안 생성</strong> 역할을 맡는다.<sup>[1]</sup><sup>[13]</sup> 사용자가 4시 3분이라는 좌표를 입력하면, 시스템은 해당 좌표의 재무 구조 설명, 관련 60갑자 서사 2~3개, 그리고 분석자가 던져야 할 후속 질문들을 자동으로 생성한다. 사용자는 레퍼런스를 모으는 대안 "이 해석이 맞는가, 이 회사를 응원할 가치가 있는가, 지금 매수·보유·포기 중 무엇이 맞는가"를 판단하는 쪽에 집중할 수 있다.<sup>[1]</sup><sup>[13]</sup><sup>[2]</sup></p>
+
+<h3>투자와 응원의 언어</h3>
+<p>이 모델은 투자 판단을 차갑게 기계화하기보다, 오히려 더 의식적인 선택으로 바꾸는 도구가 될 수 있다.<sup>[2]</sup><sup>[9]</sup> 숫자와 서사, 레퍼런스를 분리해서 보면 어떤 기업은 일시적으로 취약하지만 응원할 가치가 있고, 어떤 기업은 숫자는 좋아도 삶의 가치와 맞지 않을 수 있다.<sup>[1]</sup><sup>[2]</sup></p>
+<p>따라서 이 시스템은 단순히 "좋은 기업 찾기"가 아니라, 사용자가 <strong>어떤 기업과 함께 갈 것인지 스스로 설명할 수 있게</strong> 만든다. 이는 매수·보유·매도를 단순 가격 판단이 아니라 철학적 선택으로 바꾸는 효과를 갖는다.<sup>[2]</sup><sup>[9]</sup></p>
+
+<h2>한계와 주의점</h2>
+<p>이 모델이 철학으로 확장될 수 있다는 점과, 곧바로 모든 사람에게 설득력 있게 작동한다는 것은 별개의 문제다.<sup>[1]</sup> 특히 60갑자 레이어는 상징과 서사에 익숙한 사람에게는 강점이지만, 전통 상징 체계에 거리감을 느끼는 사용자에게는 과잉 장식처럼 보일 수 있다.<sup>[4]</sup><sup>[5]</sup></p>
+<p>또한 LLM이 생성하는 서사는 어디까지나 보조 해석이다.<sup>[14]</sup><sup>[18]</sup><sup>[19]</sup> 따라서 실제 운용에서는 재무 좌표를 먼저 확정하고, 그 위에 서사를 얹는 순서를 반드시 지켜야 한다.<sup>[1]</sup> 숫자보다 서사가 앞서면 철학은 깊어지지 않고 오히려 판단을 흐릴 수 있다.<sup>[1]</sup><sup>[2]</sup></p>
+<blockquote>재무 좌표를 먼저 확정하고, 그 위에 서사를 얹어라. 숫자보다 서사가 앞서면 철학은 깊어지지 않고 판단을 흐린다.</blockquote>
+
+<h2>결론</h2>
+<p>이 모델의 진짜 목적은 재무를 더 어렵게 만드는 데 있지 않다.<sup>[1]</sup> 오히려 12개의 핵심 비율을 몸에 붙이고, 그것을 반복 질문과 좌표 습관으로 바꾸고, 60갑자와 LLM을 통해 기억과 서사의 확장 장치로 사용하는 데 있다.<sup>[1]</sup><sup>[2]</sup><sup>[8]</sup></p>
+<blockquote><strong>재무비율을 철학하는 것</strong>은 충분히 가능하다. 비율을 공식이 아니라 관계, 질문, 국면, 선택의 기준으로 다루기 시작하면, 재무모델은 단순 분석 도구를 넘어 삶과 기업을 읽는 자기 언어가 된다.</blockquote>
+
+<h2>참고 출처</h2>
+<p class="ref">[1] ParksyLog_20260531_145951.md — 재무비율 모델 대화 전반 · 다중 AI 소싱</p>
+<p class="ref">[2] 재무비율_MCP_기술백서_v2.docx — 기술 구현 명세</p>
+<p class="ref">[3] 투자 지표의 이해 — naver · blog.naver.com</p>
+<p class="ref">[4] 60갑자 원리 — wikipedia · ko.wikipedia.org</p>
+<p class="ref">[5] 천간지지와 시간 — accesson · accesson.kr</p>
+<p class="ref">[6] 재무비율 분석 방법론 — youtube · youtube.com</p>
+<p class="ref">[7] 글로벌 AI 소프트웨어 시장 — strategicrevenueinsights · strategicrevenueinsights.com</p>
+<p class="ref">[8] AI 하드웨어 시장 — gminsights · gminsights.com</p>
+<p class="ref">[9] 사용가치 투자 철학 — deloitte · deloitte.com</p>
+<p class="ref">[10] 갑자와 시간 — product.kyobobook · product.kyobobook.co.kr</p>
+<p class="ref">[11] 간지의 구조 — blog.naver · blog.naver.com</p>
+<p class="ref">[12] 60갑자 해석 — counselors · counselors.co.kr</p>
+<p class="ref">[13] LLM 기반 금융 분석 — pmc.ncbi.nlm.nih · pmc.ncbi.nlm.nih.gov</p>
+<p class="ref">[14] LLM의 재무 분석 능력 연구 — ssrn.com</p>
+<p class="ref">[15] MCP와 LLM 결합 — modelcontextprotocol · modelcontextprotocol.io</p>
+<p class="ref">[16] AI 금융 분석 동향 — youtube · youtube.com</p>
+<p class="ref">[17] AI 산업 구조 분석 — pwc · pwc.com</p>
+<p class="ref">[18] LLM 재무 분석 — forbes · forbes.com</p>
+<p class="ref">[19] AI와 투자 분석 — mckinsey · mckinsey.com</p>
+
+</div>
+<div class="footer"><a href="../index.html">OrbitPrompt Gallery</a> · <a href="index.html">재무비율 시계 데모</a> · <a href="https://github.com/dtslib1979/OrbitPrompt/tree/main/parksy-finance-mcp">GitHub</a> · EduArt Engineer × dtslib.com v2.0</div>
+</body>
+</html>
