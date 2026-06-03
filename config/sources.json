@@ -6,19 +6,47 @@
       "name": "parksy-image",
       "description": "이미지 스튜디오 (시각)",
       "manifest": "https://dtslib1979.github.io/parksy-image/assets/manifest.json",
-      "provides": ["thumbnails", "backgrounds", "characters"]
+      "provides": [
+        "thumbnails",
+        "backgrounds",
+        "characters"
+      ]
     },
     "audio": {
       "name": "parksy-audio",
       "description": "오디오 스튜디오 (청각)",
       "manifest": "https://dtslib1979.github.io/parksy-audio/assets/manifest.json",
-      "provides": ["bgm", "sfx", "intro"]
+      "provides": [
+        "bgm",
+        "sfx",
+        "intro"
+      ]
     },
     "experience": {
       "name": "tango-magenta",
       "description": "경험 스튜디오 (체감)",
       "manifest": "https://dtslib1979.github.io/tango-magenta/api/content.json",
-      "provides": ["designTokens", "timing", "easing"]
+      "provides": [
+        "designTokens",
+        "timing",
+        "easing"
+      ]
+    },
+    "election": {
+      "name": "parksy-election-mcp",
+      "description": "선거 예측 MCP — F=ma 정치 변화력 엔진",
+      "path": "api/election_mcp.py",
+      "provides": [
+        "calc_political_force",
+        "compare_heroes",
+        "research_election",
+        "tag_political_frame",
+        "classify_hero_type",
+        "scenario_analysis",
+        "generate_broadcast_script",
+        "validate_fixtures",
+        "reproducibility_test"
+      ]
     }
   },
   "defaults": {

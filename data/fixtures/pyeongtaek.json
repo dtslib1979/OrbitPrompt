@@ -1,0 +1,16 @@
+{
+  "_meta": {"region": "평택을", "election": "2026 재보선", "note": "조직력(민주) vs 도전자(국힘)"},
+  "expected_classification": "visible_but_contestable",
+  "candidates": [
+    {
+      "name": "민주당 후보",
+      "expected_winner": true,
+      "params": {"m_base": 1.0, "k_media": 0.55, "g": 6, "d": 4, "i": 6, "o": 7, "R": 6}
+    },
+    {
+      "name": "국힘 후보",
+      "expected_winner": false,
+      "params": {"m_base": 1.0, "k_media": 0.50, "g": 5, "d": 5, "i": 5, "o": 5, "R": 5}
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "_meta": {"region": "부산광역시장", "election": "2026 광역", "note": "지역 보스 구조 vs 세대 반동"},
+  "expected_classification": "visible_but_contestable",
+  "candidates": [
+    {
+      "name": "국힘 후보",
+      "expected_winner": true,
+      "params": {"m_base": 1.0, "k_media": 0.60, "g": 7, "d": 4, "i": 5, "o": 8, "R": 7}
+    },
+    {
+      "name": "민주당 후보",
+      "expected_winner": false,
+      "params": {"m_base": 1.0, "k_media": 0.50, "g": 4, "d": 6, "i": 6, "o": 4, "R": 4}
+    }
+  ]
+}
