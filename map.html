@@ -106,7 +106,8 @@ const MAP = {
     {id:"phl",         type:"stat",    label:"PHL Protocol",           title:"PHL — Protocol for Human Language", body:"Semantic compression protocol. User speaks 1-3 word tokens → Claude Code loads strict rules from PHL_SPEC.md and executes. Tokens: PHL-Expansion, PHL-Hardening, PHL-Reverse.",                                                          tags:["PHL","PROTOCOL"]},
     {id:"fab",         type:"stat",    label:"FAB Routes",             title:"FAB Routes — Production Lines",     body:"8 FAB routes mapped to generators: RT-alpha content, RT-beta apps, RT-gamma security, RT-delta verify, RT-epsilon data, RT-zeta audio, RT-eta studio, RT-theta infra. Connected to dtslib-papyrus HQ dashboard.",                       tags:["FAB","ROUTES","PIPELINE"]},
     {id:"whitepaper",  type:"link",    label:"📄 Whitepaper",          title:"OrbitPrompt Whitepaper",            body:"Philosophy document: existence = production, prompts are code, inconsistency is a feature, constraints define design. The manifesto behind the prompt-first methodology.",                                                                  tags:["DOCS","PHILOSOPHY"],                 href:"https://dtslib1979.github.io/OrbitPrompt/whitepaper.html"},
-    {id:"localpc",     type:"link",    label:"🖥 DTSLIB Infra",        title:"DTSLIB Local PC — Infra Tower",     body:"Sister treasure map for dtslib-localpc. Home PC running 24/7 via WSL2. Remote control tower for all 28 repos. Cross-link between Knowledge (OrbitPrompt) and Infrastructure (dtslib-localpc) packages.",                                tags:["INFRA","CROSS-LINK"],                href:"https://dtslib1979.github.io/dtslib-localpc/"},
+    {id:"localpc",     type:"link",    label:"🖥 DTSLIB Infra",        title:"DTSLIB Local PC — Infra Tower",     body:"Sister treasure map for dtslib-localpc. Home PC running 24/7 via WSL2. Remote control tower for all 28 repos. Cross-link between Knowledge (OrbitPrompt) and Infrastructure (dtslib-localpc) packages.",                                tags:["INFRA","CROSS-LINK"],                href:"https://dtslib1979.github.io/dtslib-localpc/"},,
+    {id:"election",  type:"archive", label:"🧪 Election",          title:"Election MCP v2.0 — F=ma Prediction", body:"F=ma political force model. LLM research agent + Python calculation. 9 MCP tools: calc_political_force, compare_heroes, research_election, tag_political_frame, classify_hero_type, scenario_analysis, generate_broadcast_script, validate_fixtures, reproducibility_test. 3 fixture regions: Pyeongtaek, Busan, Daegu.",  tags:["MCP","ELECTION","F=ma","POLITICS"],  href:"https://dtslib1979.github.io/OrbitPrompt/boards/election-gallery.html"},
   ],
   edges:[
     {from:"hub",  to:"chalkboard", color:"#a855f7"},
@@ -222,7 +223,8 @@ function tick(){
   alpha*=(1-ADEC);
   const a=alpha;
   for(let i=0;i<SN.length;i++) for(let j=i+1;j<SN.length;j++){
-    const A=SN[i],B=SN[j];
+    const A=SN[i,{from:"hub",  to:"election", color:"#a060d8"},
+    ],B=SN[j];
     const dx=(B.x-A.x)||.01, dy=(B.y-A.y)||.01;
     const d2=dx*dx+dy*dy, d=Math.sqrt(d2);
     const f=REP/d2*a;

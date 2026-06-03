@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PARKSY ELECTION MCP v2.0 — 시뮬레이션 갤러리</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#070709;--s0:#0c0c0f;--s1:#111116;--s2:#18181f;--ln:#22222c;--dim:#2e2e3a;--mt:#4a4a5e;--bd:#7070a0;--tx:#b8b8d0;--hi:#e8e8f5;--wh:#f5f5ff;--rd:#e05060;--am:#c8941a;--cy:#3db8a0;--bl:#4888d4;--gn:#5a9e50;--pu:#a060d8;--og:#c07840;--mono:'JetBrains Mono',monospace;--sans:'Noto Sans KR',sans-serif}
+html{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:14px;line-height:1.6}
+body{max-width:960px;margin:0 auto;padding:40px 24px 80px}
+h1{font-family:var(--mono);font-size:22px;color:var(--wh);margin-bottom:4px;letter-spacing:-0.5px}
+.sub{font-family:var(--mono);font-size:10px;color:var(--mt);letter-spacing:1.5px;margin-bottom:24px;border-bottom:1px solid var(--ln);padding-bottom:16px}
+h2{font-size:14px;color:var(--cy);margin:24px 0 12px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1px}
+.card{background:var(--s0);border:1px solid var(--ln);border-radius:4px;padding:16px;margin-bottom:14px}
+.card .title{font-family:var(--mono);font-size:13px;color:var(--hi);margin-bottom:6px}
+.card .body{font-family:var(--mono);font-size:11px;color:var(--tx);line-height:1.7}
+.badge{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:2px;margin-left:4px}
+.badge.ok{background:rgba(61,184,160,.15);color:var(--cy)}
+.badge.fail{background:rgba(224,80,96,.15);color:var(--rd)}
+.badge.warn{background:rgba(200,148,26,.15);color:var(--am)}
+.stat{display:inline-block;margin-right:16px}
+.stat .n{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--hi)}
+.stat .l{font-family:var(--mono);font-size:9px;color:var(--mt);text-transform:uppercase}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin-top:8px}
+th{color:var(--mt);text-align:left;padding:6px 10px;border-bottom:1px solid var(--dim);font-weight:400;font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+td{padding:6px 10px;border-bottom:1px solid var(--ln);color:var(--hi)}
+tr:last-child td{border-bottom:none}
+.F{color:var(--am);font-weight:700}
+.verdict{color:var(--mt)}
+.tag{display:inline-block;font-family:var(--mono);font-size:8px;padding:2px 5px;border-radius:2px;letter-spacing:.5px}
+.tag.weak{background:rgba(74,74,94,.3);color:var(--mt)}
+.tag.visible{background:rgba(200,148,26,.12);color:var(--am)}
+.tag.clear{background:rgba(224,80,96,.12);color:var(--rd)}
+.tag.knockout{background:rgba(160,96,216,.15);color:var(--pu)}
+.flow{display:flex;align-items:center;gap:8px;padding:12px 0;font-family:var(--mono);font-size:10px;flex-wrap:wrap}
+.fbox{background:var(--s1);border:1px solid var(--dim);padding:6px 10px;border-radius:3px;text-align:center;min-width:80px}
+.farr{color:var(--dim);font-size:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.g2{grid-template-columns:1fr}}
+pre{font-family:var(--mono);font-size:10px;color:var(--hi);background:#050507;border:1px solid var(--ln);padding:12px;border-radius:3px;overflow-x:auto;line-height:1.5}
+.ftr{margin-top:32px;border-top:1px solid var(--ln);padding-top:14px;font-family:var(--mono);font-size:9px;color:var(--mt);display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+
+<h1>🧪 PARKSY ELECTION MCP v2.0</h1>
+<div class="sub">F=ma SIMULATION GALLERY · VALIDATION RESULTS · HERO COMPARISON</div>
+
+<div class="flow">
+  <div class="fbox">SD 카드<br><span style="color:var(--mt);font-size:8.5px">/mnt/e/mcp/election-mcp/</span></div>
+  <div class="farr">▶</div>
+  <div class="fbox">server.py<br><span style="color:var(--mt);font-size:8.5px">FastMCP 9 Tools</span></div>
+  <div class="farr">▶</div>
+  <div class="fbox">validate<br><span style="color:var(--mt);font-size:8.5px">3개 지역</span></div>
+  <div class="farr">▶</div>
+  <div class="fbox">compare<br><span style="color:var(--mt);font-size:8.5px">5명 히어로</span></div>
+  <div class="farr">▶</div>
+  <div class="fbox">갤러리<br><span style="color:var(--mt);font-size:8.5px">✅ 표시</span></div>
+</div>
+
+<h2>🏆 히어로 F=ma 랭킹</h2>
+<div class="card">
+<table>
+<tr><th>순위</th><th>히어로</th><th>m_eff</th><th>a</th><th style="color:var(--am)">F</th><th>R</th><th>F/R</th><th>판정</th></tr>
+<tr><td>1</td><td>룰라 (브라질 1기)</td><td>0.600</td><td>7.90</td><td class="F">4.740</td><td>7</td><td>0.677</td><td class="verdict">체제유지</td></tr>
+<tr><td>2</td><td>이재명</td><td>0.700</td><td>6.70</td><td class="F">4.690</td><td>7</td><td>0.670</td><td class="verdict">체제유지</td></tr>
+<tr><td>3</td><td>윤석열</td><td>0.850</td><td>5.30</td><td class="F">4.505</td><td>8</td><td>0.563</td><td class="verdict">체제유지</td></tr>
+<tr><td>4</td><td>조국</td><td>0.550</td><td>5.70</td><td class="F">3.135</td><td>6</td><td>0.522</td><td class="verdict">체제유지</td></tr>
+<tr><td>5</td><td>예수 (고대)</td><td>0.000</td><td>7.00</td><td class="F">0.000</td><td>10</td><td>0.000</td><td class="verdict">체제유지 (m≈0)</td></tr>
+</table>
+<div style="font-family:var(--mono);font-size:9px;color:var(--mt);margin-top:8px">// 챔피언: 룰라(F=4.74) · 챌린저: 이재명(F=4.69) · 격차: weak_signal (ko_prob: 1.73%)</div>
+</div>
+
+<h2>📊 3개 지역 검증 결과</h2>
+<div class="g2">
+<div class="card">
+<div class="title">📍 평택을 <span class="badge ok">direction ✅</span><span class="badge warn">cls ⚠️</span></div>
+<div class="body">
+예측: <strong style="color:var(--cy)">민주당 후보</strong> (F 우세)<br>
+실제: 민주당 후보 (승)<br>
+분류: weak_signal (expected: visible_but_contestable)<br>
+<span style="color:var(--mt)">// 승패방향: 일치 / 분류: 불일치 — 모델이 실제보다 보수적으로 판단</span>
+</div>
+</div>
+<div class="card">
+<div class="title">📍 부산광역시장 <span class="badge ok">direction ✅</span><span class="badge warn">cls ⚠️</span></div>
+<div class="body">
+예측: <strong style="color:var(--cy)">국힘 후보</strong> (F 우세)<br>
+실제: 국힘 후보 (승)<br>
+분류: weak_signal (expected: visible_but_contestable)<br>
+<span style="color:var(--mt)">// 부산 조직력(o=8) 반영 — 지역 보스 구조 모델이 정상 작동</span>
+</div>
+</div>
+<div class="card">
+<div class="title">📍 대구광역시장 <span class="badge fail">direction ❌</span><span class="badge ok">cls ✅</span></div>
+<div class="body">
+예측: <strong style="color:var(--rd)">민주당 후보</strong> (F 우세)<br>
+실제: 국힘 후보 (승)<br>
+분류: weak_signal (expected: weak_signal)<br>
+<span style="color:var(--mt)">// 초박빙(출구조사 49.9:49.1) — 오차범위 내. 분류는 정확.</span>
+</div>
+</div>
+<div class="card">
+<div style="font-family:var(--mono);font-size:11px;color:var(--hi);margin-bottom:6px">📈 종합 정확도</div>
+<div style="display:flex;gap:24px;margin-top:8px">
+<div class="stat"><div class="n">66.7%</div><div class="l">승패방향</div></div>
+<div class="stat"><div class="n">33.3%</div><div class="l">구간분류</div></div>
+<div class="stat"><div class="n">3</div><div class="l">테스트 지역</div></div>
+<div class="stat"><div class="n" style="color:var(--am)">0.667</div><div class="l">direction_acc</div></div>
+</div>
+<div style="font-family:var(--mono);font-size:9px;color:var(--mt);margin-top:8px">// 방향 정확도 67% — 3개 중 2개 승패 예측 성공. 분류 일치 33% — 임계값 튜닝 필요.</div>
+</div>
+</div>
+
+<h2>🔬 모델 파라미터 분석</h2>
+<div class="card">
+<div class="title">F=ma 공식</div>
+<pre style="margin-top:6px">
+F = m_eff × a
+m_eff = m_base × k_media
+a = 0.30·g + 0.30·d + 0.20·i + 0.20·o
+
+전복조건: F > R
+knockout_score = (perceived/30)×70 + max(0, net_edge)×0.8
+perceived = |challenger_F - champion_resilience| / 1.9</pre>
+</div>
+
+<div class="card">
+<div class="title">하이퍼파라미터 (weights_default.json)</div>
+<pre style="margin-top:6px">
+α(g) = 0.30  # 경제계급격차
+β(d) = 0.30  # 정치박탈감
+γ(i) = 0.20  # 정체성공명도
+δ(o) = 0.20  # 조직화능력
+
+knockout_thresholds:
+  weak_signal:            &lt; 10
+  visible_but_contestable: 10~20
+  clear_change:            20~30
+  knockout_frame_shift:    ≥ 30</pre>
+</div>
+
+<h2>⚙️ 시스템 정보</h2>
+<div class="card">
+<table>
+<tr><th>항목</th><th>값</th></tr>
+<tr><td>MCP 서버</td><td>election_mcp.py · FastMCP · 9 tools</td></tr>
+<tr><td>실행 위치</td><td>/mnt/e/mcp/election-mcp/ (SD 카드)</td></tr>
+<tr><td>모델 버전</td><td>v2.0 — F=ma 5축 + knockout_score</td></tr>
+<tr><td>설정 파일</td><td>hero_archetypes.json · weights_default.json · frame_rules.json</td></tr>
+<tr><td>검증셋</td><td>pyeongtaek.json · busan.json · daegu.json</td></tr>
+<tr><td>LLM 백엔드</td><td>Claude Haiku 4.5 (ANTHROPIC_API_KEY 필요)</td></tr>
+<tr><td>배포 방식</td><td>stdio (Claude Code) / HTTP (Railway)</td></tr>
+<tr><td>저장소</td><td>OrbitPrompt/api/election_mcp.py (GitHub)</td></tr>
+</table>
+</div>
+
+<div class="ftr">
+<div>parksy-election-mcp v2.0 · 2026-06-03</div>
+<div>dtslib · parksy.kr · dd5b559</div>
+<div>9 tools · P0×2 P1×3 P2×2 P3×2</div>
+</div>
+
+</body>
+</html>

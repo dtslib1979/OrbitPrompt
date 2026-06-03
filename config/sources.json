@@ -46,11 +46,20 @@
         "generate_broadcast_script",
         "validate_fixtures",
         "reproducibility_test"
-      ]
+      ],
+      "gallery": "boards/election-gallery.html"
     }
   },
   "defaults": {
     "background": "chalkboard-dark",
     "timing": "beat"
+  },
+  "boards": {
+    "election-gallery": {
+      "name": "Election MCP Gallery",
+      "description": "F=ma 선거 시뮬레이션 갤러리 — 3개 지역 검증 + 5인 히어로 비교",
+      "path": "boards/election-gallery.html",
+      "status": "active"
+    }
   }
 }
