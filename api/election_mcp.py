@@ -11,7 +11,9 @@ from typing import Optional
 import json, os, math, pathlib, httpx, statistics
 
 # ── 경로 & config ────────────────────────────────────────────────────────
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+# Auto-detect: OrbitPrompt/api/ or standalone
+HERE = pathlib.Path(__file__).resolve().parent
+ROOT = HERE.parent if (HERE.parent / 'config').exists() else HERE
 
 def _load(p):
     return json.loads(p.read_text(encoding="utf-8"))
@@ -284,7 +286,7 @@ JSON만: {{"opening":"","key_points":[""],"region_template":"","closing":"","par
 
 @mcp.tool(name="validate_fixtures", annotations={"readOnlyHint": True})
 async def validate_fixtures() -> str:
-    """[P3] data/fixtures/*.json → 모델 예측 vs 실제 대조"""
+    """[P3-보류] 실제 개표 데이터 확보 시 활성화"""
     results = []
     if not FIX.exists():
         return json.dumps({"error": "data/fixtures/ 없음 — Phase 3부터 활성화"})
