@@ -1,1 +1,187 @@
-[HTML 내용 생략 - 이미 위에서 전달받은 그대로 저장]
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>PARKSY ELECTION MCP v2.0 — 기술백서</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+:root{
+  --bg:#070709;--s0:#0c0c0f;--s1:#111116;--s2:#18181f;--ln:#22222c;--dim:#2e2e3a;
+  --mt:#4a4a5e;--bd:#7070a0;--tx:#b8b8d0;--hi:#e8e8f5;--wh:#f5f5ff;
+  --rd:#e05060;--am:#c8941a;--cy:#3db8a0;--bl:#4888d4;--gn:#5a9e50;--pu:#a060d8;--og:#c07840;
+  --mono:'JetBrains Mono',monospace;--sans:'Noto Sans KR',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:12.5px;line-height:1.65}
+body{max-width:1160px;margin:0 auto;padding:36px 28px 72px}
+.hdr{border-bottom:1px solid var(--ln);padding-bottom:20px;margin-bottom:28px;display:flex;justify-content:space-between;align-items:flex-end}
+.hdr-l h1{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--wh);letter-spacing:-0.3px}
+.hdr-l .sub{font-family:var(--mono);font-size:9.5px;color:var(--mt);margin-top:3px;letter-spacing:1.5px}
+.hdr-r{font-family:var(--mono);font-size:9px;color:var(--mt);text-align:right;line-height:1.7}
+.bx{display:inline-block;font-family:var(--mono);font-size:8.5px;padding:1px 5px;border-radius:2px;letter-spacing:.5px}
+.bx.c{background:rgba(61,184,160,.12);color:var(--cy)}.bx.b{background:rgba(72,136,212,.12);color:var(--bl)}
+.bx.a{background:rgba(200,148,26,.12);color:var(--am)}.bx.r{background:rgba(224,80,96,.12);color:var(--rd)}
+.bx.g{background:rgba(90,158,80,.12);color:var(--gn)}.bx.p{background:rgba(160,96,216,.12);color:var(--pu)}
+.sl{font-family:var(--mono);font-size:8px;letter-spacing:2.5px;color:var(--mt);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.sl::after{content:'';flex:1;height:1px;background:var(--ln)}
+.sec{margin-bottom:22px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g13{display:grid;grid-template-columns:1.1fr 2fr;gap:14px}
+.box{background:var(--s0);border:1px solid var(--ln);padding:14px;border-radius:3px}
+.box.ab{border-color:rgba(200,148,26,.25)}.box.rb{border-color:rgba(224,80,96,.25)}
+.box.bb{border-color:rgba(72,136,212,.25)}.box.cb{border-color:rgba(61,184,160,.25)}
+h3{font-size:11.5px;color:var(--hi);font-weight:700;margin-bottom:7px}
+p{font-size:11px;color:var(--tx);margin-bottom:5px;line-height:1.6}
+.fm{font-family:var(--mono);font-size:15px;color:var(--cy);text-align:center;padding:10px 0;letter-spacing:.5px}
+.fm sub{font-size:9px;color:var(--mt)}
+.mrow{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-top:9px}
+.mi{font-family:var(--mono);font-size:10.5px;text-align:center}
+.mi .sym{color:var(--am);font-size:13px;display:block;font-weight:600}
+.mi .def{color:var(--mt);font-size:9px}
+.tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:10.5px}
+.tbl th{color:var(--mt);text-align:left;padding:3px 8px;border-bottom:1px solid var(--dim);font-weight:400;font-size:9.5px}
+.tbl td{padding:4px 8px;border-bottom:1px solid var(--ln);color:var(--hi);vertical-align:top}
+pre{font-family:var(--mono);font-size:10px;line-height:1.6;overflow-x:auto;color:var(--hi);background:#050507;border:1px solid var(--ln);padding:13px 15px;border-radius:3px}
+.tag{display:inline-block;background:var(--dim);color:var(--am);font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:2px;letter-spacing:.5px}
+.ftr{margin-top:28px;border-top:1px solid var(--ln);padding-top:12px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--mt)}
+.jb{background:#050507;border:1px solid var(--ln);border-radius:3px;padding:11px 13px;font-family:var(--mono);font-size:9.5px;line-height:1.6}
+.jk{color:var(--bl)}.jv{color:var(--og)}.jn{color:var(--gn)}.jc{color:var(--mt);font-style:italic}
+.kot{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:10px}
+.kot td,.kot th{padding:4px 10px;border:1px solid var(--ln)}
+.kot th{background:var(--bg);color:var(--mt);font-weight:400}
+.kot td{color:var(--hi)}.kot .hi{color:var(--cy)}
+.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.tc{background:var(--s0);border:1px solid var(--ln);padding:11px;border-radius:3px}
+.tn{font-family:var(--mono);font-size:10.5px;color:var(--cy);margin-bottom:4px}
+.td{font-size:10.5px;color:var(--mt);line-height:1.5}
+.tio{margin-top:5px;font-family:var(--mono);font-size:9.5px}
+.tio .in{color:var(--am)}.tio .out{color:var(--gn)}
+.tp{font-family:var(--mono);font-size:8px;padding:1px 4px;border-radius:2px;margin-left:4px}
+.tp.p0{background:rgba(224,80,96,.15);color:var(--rd)}
+.tp.p1{background:rgba(200,148,26,.15);color:var(--am)}
+.tp.p2{background:rgba(61,184,160,.15);color:var(--cy)}
+.tp.p3{background:rgba(160,96,216,.15);color:var(--pu)}
+.flow{display:flex;align-items:center;gap:0;overflow-x:auto;padding:8px 0;font-family:var(--mono);font-size:10px}
+.fbox{text-align:center;min-width:100px;flex-shrink:0}
+.fbox .fi{padding:7px 10px;border-radius:3px;color:var(--hi)}
+.farr{color:var(--dim);padding:0 5px;white-space:nowrap;font-size:10px}
+.fg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ft{border:1px solid var(--dim);padding:8px 10px;border-radius:3px;font-family:var(--mono);font-size:9.5px}
+.ft .fn2{color:var(--am);margin-bottom:3px;font-size:10px}
+.ft .fd{color:var(--mt);line-height:1.45}.ft .fe{color:var(--bd);font-size:8.5px;margin-top:3px}
+.rr{display:grid;grid-template-columns:180px 62px 50px 62px 50px 88px 58px;font-family:var(--mono);font-size:10.5px;padding:5px 8px;border-bottom:1px solid var(--ln);align-items:center}
+.rr.rh{color:var(--mt);font-size:9.5px;background:var(--bg)}
+.vwa{color:var(--am);background:rgba(200,148,26,.1);padding:1px 6px;border-radius:2px}
+.vno{color:var(--mt);background:rgba(74,74,94,.2);padding:1px 6px;border-radius:2px}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-l">
+    <h1>PARKSY ELECTION MCP <span style="color:var(--mt);font-weight:300">v2.0</span> — 기술백서</h1>
+    <div class="sub">F=ma POLITICAL FORCE ENGINE · LLM RESEARCH AGENT · VALIDATION FRAMEWORK</div>
+  </div>
+  <div class="hdr-r">
+    <div>dtslib (475-01-03493) · parksy.kr</div>
+    <div>2026-06-03 · OrbitPrompt/api/election_mcp.py</div>
+    <div style="margin-top:4px">
+      <span class="bx c">Python</span> <span class="bx b">FastMCP</span>
+      <span class="bx a">LLM Agent</span> <span class="bx g">9 Tools</span>
+    </div>
+  </div>
+</div>
+<div class="sec">
+<div class="sl">01 · 설계 철학 &amp; 수학 모델</div>
+<div class="g13">
+  <div class="box ab">
+    <h3>박씨 F=ma 정치 변화력 모델 <span class="tag">핵심 엔진</span></h3>
+    <p>뉴턴 F=ma를 정치·역사 해석용 메타 모델로 전환. 예수·룰라·이재명을 동일 방정식 위에 올려 비교. <strong style="color:var(--hi)">LLM은 파라미터만 추정 — 계산은 Python이 독점</strong>.</p>
+    <div class="fm"><span style="color:var(--am)">F</span><span style="color:var(--mt)"> = </span><span style="color:var(--am)">m</span><sub>eff</sub><span style="color:var(--mt)"> · </span><span style="color:var(--am)">a</span></div>
+    <div class="fm" style="font-size:12px"><span style="color:var(--am)">a</span><span style="color:var(--mt)"> = α</span><span style="color:var(--am)">g</span><span style="color:var(--mt)"> + β</span><span style="color:var(--am)">d</span><span style="color:var(--mt)"> + γ</span><span style="color:var(--am)">i</span><span style="color:var(--mt)"> + δ</span><span style="color:var(--am)">o</span><span style="color:var(--mt)"> · 전복:</span><span style="color:var(--am)">F</span><span style="color:var(--rd)"> &gt; R</span></div>
+    <div class="mrow">
+      <div class="mi"><span class="sym">g</span><span class="def">계급격차</span></div>
+      <div class="mi"><span class="sym">d</span><span class="def">정치박탈감</span></div>
+      <div class="mi"><span class="sym">i</span><span class="def">정체성공명</span></div>
+      <div class="mi"><span class="sym">o</span><span class="def">조직화능력</span></div>
+      <div class="mi"><span class="sym" style="color:var(--rd)">R</span><span class="def">체제저항력</span></div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div class="box rb">
+      <h3>Knockout Score (선거 예측 엔진)</h3>
+      <div class="jb" style="font-size:9px">
+resilience  = R×0.6 + champ_F×0.4
+net_edge    = challenger_F − resilience
+perceived   = |net_edge| / 1.9
+ko_prob     = (perceived/30)×70 + max(0, net_edge)×0.8
+      </div>
+      <table class="kot" style="margin-top:7px">
+        <tr><th>perceived</th><th>분류</th></tr>
+        <tr><td>&lt; 10</td><td class="hi">weak_signal</td></tr>
+        <tr><td>10~20</td><td>visible_but_contestable</td></tr>
+        <tr><td>20~30</td><td>clear_change</td></tr>
+        <tr><td>≥ 30</td><td style="color:var(--rd)">knockout_frame_shift</td></tr>
+      </table>
+    </div>
+    <div class="box"><h3>포지셔닝</h3><p style="font-size:10.5px;margin:0">정치 무당 ❌ · 정치 전사 ❌ · <strong style="color:var(--hi)">정치 엔지니어 ✅</strong></p></div>
+  </div>
+</div>
+</div>
+<div class="sec">
+<div class="sl">02 · MCP 툴 9개</div>
+<div class="tg">
+  <div class="tc"><div class="tn">calc_political_force <span class="tp p0">P0</span></div><div class="td">F=ma 계산 + 전복조건. 결정론적.</div><div class="tio"><div class="in">→ g,d,i,o,R</div><div class="out">← F, verdict</div></div></div>
+  <div class="tc"><div class="tn">compare_heroes <span class="tp p0">P0</span></div><div class="td">여러 케이스 병렬 비교.</div><div class="tio"><div class="in">→ cases[]</div><div class="out">← F ranking</div></div></div>
+  <div class="tc"><div class="tn">research_election <span class="tp p1">P1</span></div><div class="td">LLM 리서치 → F 재계산 → 예측.</div><div class="tio"><div class="in">→ region</div><div class="out">← winner</div></div></div>
+  <div class="tc"><div class="tn">tag_political_frame <span class="tp p1">P1</span></div><div class="td">텍스트 → 6종 프레임 점수.</div><div class="tio"><div class="in">→ text</div><div class="out">← scores</div></div></div>
+  <div class="tc"><div class="tn">classify_hero_type <span class="tp p1">P1</span></div><div class="td">인물 → 5축 + 아키타입.</div><div class="tio"><div class="in">→ name</div><div class="out">← archetype</div></div></div>
+  <div class="tc"><div class="tn">scenario_analysis <span class="tp p2">P2</span></div><div class="td">당선 시나리오 축 재편.</div><div class="tio"><div class="in">→ winner</div><div class="out">← axis_shift</div></div></div>
+  <div class="tc"><div class="tn">generate_broadcast_script <span class="tp p2">P2</span></div><div class="td">방송 스크립트 자동 생성.</div><div class="tio"><div class="in">→ topic</div><div class="out">← script</div></div></div>
+  <div class="tc"><div class="tn">validate_fixtures <span class="tp p3">P3</span></div><div class="td">실제 vs 예측 대조 검증.</div><div class="tio"><div class="in">→ (자동)</div><div class="out">← 정확도</div></div></div>
+  <div class="tc"><div class="tn">reproducibility_test <span class="tp p3">P3</span></div><div class="td">LLM 파라미터 표준편차 측정.</div><div class="tio"><div class="in">→ n_runs</div><div class="out">← stdev</div></div></div>
+</div>
+</div>
+<div class="sec">
+<div class="sl">03 · 파일 구조 (새 레포 생성 금지 — OrbitPrompt 통합)</div>
+<div class="g2">
+  <div class="box">
+    <pre style="background:transparent;border:none;padding:0;font-size:10px">OrbitPrompt/
+├── api/election_mcp.py         # FastMCP 서버 (385줄)
+├── config/
+│   ├── hero_archetypes.json     # m_base, k_media
+│   ├── weights_default.json     # αβγδ + threshold
+│   └── frame_rules.json         # 6종 프레임
+├── prompts/election/            # LLM 프롬프트 (5개)
+└── data/fixtures/               # 검증셋 (3개 지역)</pre>
+  </div>
+  <div class="box">
+    <h3>배포</h3>
+    <pre style="background:transparent;border:none;padding:0;font-size:10px"># stdio (Claude Code)
+python api/election_mcp.py
+
+# HTTP (Railway)
+PORT=8000 python api/election_mcp.py
+
+# .claude.json 등록
+{"command":"python","args":["api/election_mcp.py"]}</pre>
+  </div>
+</div>
+</div>
+<div class="sec">
+<div class="sl">04 · 금지사항</div>
+<div class="box rb">
+<table class="tbl">
+<tr><td>❌</td><td>새 레포 생성 — OrbitPrompt/api/ 통합</td></tr>
+<tr><td>❌</td><td>CSV 수동 수집 — LLM이 실시간 리서치</td></tr>
+<tr><td>❌</td><td>웹 스크래퍼 / DB 구축</td></tr>
+<tr><td>❌</td><td>LLM 계산값 그대로 사용 — Python이 재계산</td></tr>
+<tr><td>❌</td><td>Phase 3 없이 완성</td></tr>
+</table>
+</div>
+</div>
+<div class="ftr">
+<div>parksy-election-mcp v2.0 · OrbitPrompt/api/election_mcp.py · dd5b559</div>
+<div>9 tools · P0×2 P1×3 P2×2 P3×2</div>
+</div>
+</body>
+</html>
