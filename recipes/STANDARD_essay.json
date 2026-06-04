@@ -1,0 +1,17 @@
+{
+  "recipe_name": "PARKSY 표준 레시피 — 철학 에세이 v3.0",
+  "status": "STANDARD",
+  "description": "텍스트 → 웹페이지 → 스크린샷 → GPT-SoVITS → FFmpeg → Telegram",
+  "chemistry": "mcp_slide_builder + Chrome + sovits_worker + FFmpeg + Telegram",
+  "total_time": "75초 (콜드스타트 60초 제외 15초)",
+  "output": "2.5MB MP4 (1080x1350, H.264+AAC)",
+  "sequence": [
+    "① parksy_build_page(text, page_type='article', lang='ko') → 83KB HTML",
+    "② Chrome Headless --screenshot 1080×1350 → 626KB PNG",
+    "③ sovits_worker POST /synth → 1.2MB WAV (GPT-SoVITS parksy_v2)",
+    "④ FFmpeg -loop 1 -i png -i wav → 2.5MB MP4 (18초)",
+    "⑤ Telegram sendVideo or distributor → @philosopher-parksy"
+  ],
+  "mcp_used": ["mcp_slide_builder (parksy_build_page)", "sovits_worker (GPT-SoVITS)"],
+  "created": "2026-06-04"
+}
