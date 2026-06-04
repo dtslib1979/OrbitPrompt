@@ -54,3 +54,23 @@ node ~/dtslib-papyrus/tools/youtube/upload.cjs a /tmp/final.mp4
 | sovits_worker | 1.0 | parksy-audio/scripts/sovits_worker.py |
 | tts_engine | 1.0 | parksy-audio/scripts/tts_engine.py |
 | web2video | 1.0 | parksy-image/tools/web2video/ |
+
+## 인코딩 규칙 (필수)
+
+**`pix_fmt=yuv420p` + `profile=main` + `movflags +faststart`** — 텔레그램 호환성
+
+```bash
+# 옳은 예 (텔레그램 재생됨)
+ffmpeg -y -loop 1 -i img.png -i audio.wav \
+  -c:v libx264 -pix_fmt yuv420p -profile:v main -level:v 3.1 \
+  -c:a aac -shortest -movflags +faststart \
+  output.mp4
+
+# 틀린 예 (텔레그램 재생 안 됨, yuv444p)
+ffmpeg -y -loop 1 -i img.png -i audio.wav \
+  -c:v libx264 -tune stillimage \
+  -c:a aac -shortest \
+  output.mp4 ❌
+```
+
+**규칙:** `-pix_fmt yuv420p -profile:v main -level:v 3.1 -movflags +faststart`는 무조건 붙일 것.
