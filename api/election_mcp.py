@@ -52,20 +52,22 @@ def overthrow(F, R):
     }
 
 def knockout_score(chal_F, champ_F, champ_R):
-    """3-B 선거 예측 엔진"""
+    """3-B 선거 예측 엔진 v3"""
     res = champ_R * 0.6 + champ_F * 0.4
     net = chal_F - res
     perc = abs(net) / 1.9
-    ko = min(100.0, (perc / 30) * 70 + max(0.0, net) * 0.8)
-    th = WEIGHTS["knockout_thresholds"]
-    if perc < th["weak_signal"]:
+    f_diff = abs(champ_F - chal_F)
+    f_ratio = f_diff / max(champ_F, chal_F, 0.1)
+    score = f_diff * 15 + f_ratio * 50
+    if score < 12:
         cls = "weak_signal"
-    elif perc < th["visible_but_contestable"]:
+    elif score < 30:
         cls = "visible_but_contestable"
-    elif perc < th["clear_change"]:
+    elif score < 55:
         cls = "clear_change"
     else:
         cls = "knockout_frame_shift"
+    ko = min(100.0, (perc / 30) * 70 + max(0.0, net) * 0.8)
     return {
         "resilience": round(res, 4),
         "net_edge": round(net, 4),
@@ -73,7 +75,6 @@ def knockout_score(chal_F, champ_F, champ_R):
         "ko_prob": round(ko, 2),
         "classification": cls
     }
-
 def hero_score(scores):
     """5축 → 유클리드 거리로 아키타입 매핑"""
     keys = ["천민출신도", "자본주의솔루션도", "성과증명도", "대중동원력", "엘리트위협도"]
