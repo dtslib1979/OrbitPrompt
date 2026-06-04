@@ -1,0 +1,19 @@
+{
+  "recipe_name": "PARKSY 철학 에세이 v2 — 웹페이지 빌더 + TTS + FFmpeg",
+  "version": "2.0",
+  "chemistry": "mcp_slide_builder + edge-tts + Chrome + FFmpeg + Telegram",
+  "atoms": [
+    {"mcp": "mcp_slide_builder (parksy_build_page)", "desc": "텍스트 → HTML 웹페이지"},
+    {"mcp": "edge-tts", "desc": "텍스트 → 네 목소리 오디오"},
+    {"mcp": "Chrome Headless", "desc": "HTML → PNG 스크린샷"},
+    {"mcp": "FFmpeg", "desc": "이미지 + 오디오 → MP4"},
+    {"mcp": "Telegram", "desc": "MP4 전송"}
+  ],
+  "sequence": [
+    {"step": 1, "action": "parksy_build_page(철학텍스트) → 웹페이지 HTML"},
+    {"step": 2, "action": "edge-tts(텍스트) → WAV 오디오"},
+    {"step": 3, "action": "Chrome Headless(HTML) → PNG 스크린샷"},
+    {"step": 4, "action": "FFmpeg(PNG+WAV) → MP4"},
+    {"step": 5, "action": "Telegram 전송"}
+  ]
+}
