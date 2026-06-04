@@ -1,0 +1,194 @@
+{
+  "schema_version": "1.0",
+  "description": "델타 레이어 — 이상적 모델 위에 실제 선거 결과에서 추출한 제약 조건/실수 가능성/불가능 Zone",
+  "layers": [
+    {
+      "id": "regional_impossibility",
+      "type": "hard_constraint",
+      "description": "지역 구조가 개인 능력치를 압도하는 케이스",
+      "rule": "F/R < 0.5 = 구조적 불가능 구간. 개인 능력치로 극복 불가.",
+      "cases": [
+        "TK(김부겸)",
+        "호남(보수후보)"
+      ],
+      "variables": {
+        "R": ">=9",
+        "o": ">=7",
+        "regional_bossism": ">=8"
+      }
+    },
+    {
+      "id": "challenger_130",
+      "type": "soft_constraint",
+      "description": "도전자는 챔피언보다 30% 높은 g/d/i/o 필요",
+      "rule": "챔피언 o+R 30% 구조우위. 도전자 g/d/i/o 합계 30% 높아야 F 같음.",
+      "cases": [
+        "평택 민주(조직력 부족)",
+        "김어준식 해석 반박"
+      ],
+      "variables": {
+        "champion_advantage": 0.3
+      }
+    },
+    {
+      "id": "faction_split",
+      "type": "structural_penalty",
+      "description": "민주 진영 내부 분열 시 도전자 force 분산",
+      "rule": "elite_fragmentation > 7 → challenger_force에 -30% 페널티",
+      "cases": [
+        "평택을(진영분열로 패배)",
+        "서울(민주단일화 실패 가능성)"
+      ],
+      "variables": {
+        "penalty": -0.3,
+        "trigger": "elite_fragmentation > 7"
+      }
+    },
+    {
+      "id": "incumbent_media_bonus",
+      "type": "structural_bonus",
+      "description": "현직/챔피언은 미디어 서사력 기본 보유",
+      "rule": "incumbent_status=True → k_media +0.10, R +0.5",
+      "cases": [
+        "서울(오세훈 역전승)",
+        "부산(국힘 조직력)"
+      ],
+      "variables": {
+        "k_media_bonus": 0.1,
+        "R_bonus": 0.5
+      }
+    },
+    {
+      "id": "seoul_barometer",
+      "type": "signal",
+      "description": "서울시장 선거 = 전국 판세의 m(질량). 서울=준고정 구조로 진화 중. 보수 70% 지지+오세훈 5선은 구조적 정상.",
+      "rule": "서울 승리 진영이 전국 판세 주도. m_factor=1.3. 서울은 TK/호남 수준은 아니지만 structural_fixture에 가까워짐.",
+      "cases": [
+        "2026 서울=보수 승 → 전국 보수 우세 신호"
+      ],
+      "variables": {
+        "m_factor": 1.3
+      }
+    },
+    {
+      "id": "pragmatic_mobility",
+      "type": "swing_factor",
+      "description": "실용/중도 블록(이재명)은 3블록 중 가장 유동적. 민주-보수 경합 시 캐스팅보트.",
+      "rule": "pragmatic 블록은 고정 지지층이 얇음. 이탈 시 ±15%p 변동 가능",
+      "cases": [
+        "이재명 노선 = 민주도 보수도 아닌 독립 블록"
+      ],
+      "variables": {
+        "volatility": 0.15
+      }
+    },
+    {
+      "id": "democratic_coalition_risk",
+      "type": "structural_dna",
+      "description": "민주당은 태생적 연합정당. 다양성을 품어야 하지만 분열 리스크가 항상 존재.",
+      "rule": "민주당 기본 elite_fragmentation >= 6 (타 정당 대비 +2). 실용주의만으로 당 전체 노선 불가.",
+      "cases": [
+        "평택(진영분열로 패배)",
+        "조국 합당 실패",
+        "정청래 책임론"
+      ],
+      "variables": {
+        "base_elite_fragmentation": 6,
+        "coalition_penalty": "faction_split 시 challenger_force -30%",
+        "pragmatic_ceiling": "실용주의가 당 노선이 될 수 없는 구조적 한계"
+      },
+      "mcp_note": "이재명 스타일의 실용주의는 중요한 전술이지만 민주당 전체의 '장르'가 될 순 없다. 당의 g/d/i 구조가 가치+정체성+연합에 의존하기 때문."
+    },
+    {
+      "id": "ljm_genre_limit",
+      "type": "structural_observation",
+      "description": "이재명은 특이 케이스. 그의 실용/중도 스타일이 민주당 전체의 기본 장르가 될 수 없는 구조적 이유.",
+      "rule": "pragmatic_capture 개인 high(8~9)지만 당 구조상 party_avg는 4~5. 개인과 당의 분리 필요.",
+      "cases": [
+        "이재명=실용축, 민주당=연합축 → 같은 축이 아님"
+      ],
+      "variables": {
+        "ljm_pragmatic": 8.5,
+        "dp_avg_pragmatic": 4.5,
+        "gap": 4.0
+      }
+    },
+    {
+      "id": "seoul_structural_fixture",
+      "type": "structural_analysis",
+      "description": "서울은 TK/호남 수준은 아니지만 '준-고정 구조'로 진화 중. 오세훈 5선, 보수 70% 지지율은 도덕적 예외가 아니라 구조적 정상 결과.",
+      "rule": "서울 R = 7~8 (incumbent_advantage + organization_power + media_story_power 결합). 부정부패/사고 g 이벤트 발생해도 F-R 비율이 완전히 뒤집힐 만큼까지 못 감.",
+      "cases": [
+        "오세훈 5선",
+        "보수 70% 지지율",
+        "부정부패·사고에도 불구하고 재선"
+      ],
+      "variables": {
+        "seoul_R_base": 7.5,
+        "seoul_incumbent_advantage": 8,
+        "seoul_organization_power": 7,
+        "seoul_media_story_power": 7,
+        "scandal_absorption_capacity": "높음 — 조직+미디어+정권프레임이 g 마이너스 상쇄",
+        "challenger_threshold": "130% 필요. 부정부패만으로는 부족, 실용+세대+경제 프레임까지 결합해야 clear_change 도달"
+      },
+      "mcp_comment": "서울은 '열심히 하면 이기는 필드'가 아니라 '챔피언 홈구장'. 도전자는 부정부패에만 기대지 말고 i/o를 130% 올려야 한다."
+    },
+    {
+      "id": "busan_sensitivity_city",
+      "type": "structural_shift",
+      "description": "부산은 더 이상 보수 고정 로컬이 아니다. 민주 고정도 아니다. g/i 변화에 민감한 '전환 가능 도시(swing city)'.",
+      "rule": "부산 regional_bossism 하락, generational_backlash + pragmatic_capture 상승. 같은 g 이벤트에도 TK/경남보다 민감도 2배.",
+      "cases": [
+        "부산 민주당 승(2026)",
+        "경남지사 패배(같은 부울경이지만 다른 결과)"
+      ],
+      "variables": {
+        "busan_regional_bossism": 4,
+        "busan_sensitivity": "high — g/i 변화에 2배 반응",
+        "gyeongnam_regional_bossism": 7,
+        "gyeongnam_sensitivity": "low — R 두꺼움"
+      },
+      "mcp_comment": "부울경 = 하나의 부등식이 아니다. 부산(민감도 high)과 경남(민감도 low)은 같은 g 이벤트에도 다른 결과를 낸다. 부산은 서울형 '민감 대도시'로 재분류."
+    },
+    {
+      "id": "bulgyeong_inequality",
+      "type": "regional_sensitivity",
+      "description": "부울경은 하나의 고정값이 아니라 도시별로 다른 R과 민감도를 가진 독립 fixture",
+      "rule": "부산: F_민주 - R_부산 > 0 (clear-change). 경남: F_민주 - R_경남 <= 0 (체제유지). 같은 g 이벤트여도 R 차이로 결과가 갈림.",
+      "cases": [
+        "부산 승(민감), 경남 패(R 두꺼움)"
+      ],
+      "variables": {
+        "busan_R": 5.5,
+        "gyeongnam_R": 7.5,
+        "ulsan_R": 6.5,
+        "formula": "R_경남 > R_부산 → 같은 g 이벤트에도 경남은 체제유지, 부산은 전환"
+      }
+    },
+    {
+      "id": "gyeonggi_incheon_sensitivity",
+      "type": "casting_vote_belt",
+      "description": "경기·인천 — 인구 절반의 캐스팅보트. R 전국 최저, g/i/o 민감도 전국 최고. 서울 준-고정과 대조되는 초-민감 벨트.",
+      "rule": "R=4.5 (서울 7.5 대비 -3.0). 부동산/경제 g 이벤트에 즉각 반응. 실용블록(pragmatic_mobility)이 가장 크게 작동하는 지역.",
+      "cases": [
+        "수도권 캐스팅보트",
+        "3블록 검증 최적 지역",
+        "민주당 무너지면 전국 무너지는 구조"
+      ],
+      "variables": {
+        "R": 4.5,
+        "regional_bossism": 3,
+        "generational_backlash_sensitivity": "highest",
+        "pragmatic_mobility_multiplier": 1.5,
+        "note": "경기·인천에서 민주당이 지면 전국이 진 것. 이 지역은 서울과 묶지 말고 독립 fixture로 볼 것."
+      }
+    }
+  ],
+  "meta": {
+    "model_type": "ideal_core + delta_constraints",
+    "core": "F=ma (g/d/i/o/R → m_eff × a)",
+    "delta_purpose": "실제 선거 결과에서 추출한 제약조건/실수요인/불가능 Zone을 이상적 모델 위에 얹음",
+    "created": "2026-06-04",
+    "source": "박씨 선거 해석 + MCP 모델링 세션"
+  }
+}

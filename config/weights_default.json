@@ -1,21 +1,34 @@
 {
   "schema_version": "1.0",
   "description": "F=ma 가중치 — 박씨 기준값. α+β+γ+δ = 1.0",
-  "alpha": 0.30,
-  "beta": 0.30,
-  "gamma": 0.20,
-  "delta": 0.20,
+  "alpha": 0.3,
+  "beta": 0.3,
+  "gamma": 0.2,
+  "delta": 0.2,
   "note_alpha": "g 경제계급격차",
   "note_beta": "d 정치박탈감",
   "note_gamma": "i 정체성공명도",
   "note_delta": "o 조직화능력",
   "hero_score_weights": {
-    "w1": 0.25, "w2": 0.25, "w3": 0.20, "w4": 0.20, "w5": 0.10
+    "w1": 0.25,
+    "w2": 0.25,
+    "w3": 0.2,
+    "w4": 0.2,
+    "w5": 0.1
   },
   "knockout_thresholds": {
     "weak_signal": 10,
     "visible_but_contestable": 20,
     "clear_change": 30,
     "knockout_frame_shift": 30
+  },
+  "gyeonggi_incheon_baseline": {
+    "R": 4.5,
+    "regional_bossism": 3,
+    "organization_power": 4,
+    "media_story_power": 6,
+    "generational_backlash": 8,
+    "type": "casting_vote_belt",
+    "note": "인구 절반의 캐스팅보트. R 전국 최저. g/i/o 변화에 가장 민감. 실용블록 이동이 가장 크게 작동. '여기서 지면 전국이 진 것'."
   }
 }

@@ -47,7 +47,9 @@
         "validate_fixtures",
         "reproducibility_test"
       ],
-      "gallery": "boards/election-gallery.html"
+      "gallery": "boards/election-gallery.html",
+      "tools": 10,
+      "delta_layers": 12
     }
   },
   "defaults": {

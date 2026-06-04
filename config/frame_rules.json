@@ -4,33 +4,60 @@
   "frames": [
     {
       "id": "리더십강화",
-      "emotion": ["trust", "hope"],
+      "emotion": [
+        "trust",
+        "hope"
+      ],
       "description": "일하는 대통령, 국정 리더십. 여당 기본 프레임."
     },
     {
       "id": "국정무능심판",
-      "emotion": ["anger", "disgust"],
+      "emotion": [
+        "anger",
+        "disgust"
+      ],
       "description": "위기 책임, 민생 실패. 야권 반격 프레임."
     },
     {
       "id": "정권안정선택",
-      "emotion": ["fear", "loss"],
+      "emotion": [
+        "fear",
+        "loss"
+      ],
       "description": "위기→힘 실어줘야. 보수 심리 활성화."
     },
     {
       "id": "지역인물선거",
-      "struct": ["regional_bossism"],
+      "struct": [
+        "regional_bossism"
+      ],
       "description": "생활정치, 지방권력 견제."
     },
     {
       "id": "개헌구조개혁",
-      "struct": ["pragmatic_capture"],
+      "struct": [
+        "pragmatic_capture"
+      ],
       "description": "지방분권·개헌 연결. 광역 확보 시그널."
     },
     {
       "id": "엘리트레거시",
-      "struct": ["elite_fragmentation"],
+      "struct": [
+        "elite_fragmentation"
+      ],
       "description": "86운동권·민주화 서사. 조국 vs 이재명 분기."
+    },
+    {
+      "id": "수도권캐스팅보트",
+      "description": "경기·인천 — 인구 절반의 캐스팅보트. R 전국 최저, 민감도 전국 최고. 부동산/경제 이슈에 즉각 반응.",
+      "emotion": [
+        "fear",
+        "hope"
+      ],
+      "struct": [
+        "generational_backlash",
+        "pragmatic_capture"
+      ]
     }
   ]
 }

@@ -2,27 +2,40 @@
   "schema_version": "1.0",
   "description": "히어로 아키타입 상수 — F=ma m_base, k_media 고정값",
   "jesus": {
-    "m_base": 0.03, "k_media": 0.001,
+    "m_base": 0.03,
+    "k_media": 0.001,
     "note": "장기 종교침투로 체제 우회. m_eff≈0 → 직접 F=ma 비적용."
   },
   "lula": {
-    "m_base": 1.0, "k_media": 0.60,
+    "m_base": 1.0,
+    "k_media": 0.6,
     "note": "집권 성공했으나 사법반격으로 1년 후 수감. F≈R 경계선."
   },
   "ljm": {
-    "m_base": 1.0, "k_media": 0.70,
+    "m_base": 1.0,
+    "k_media": 0.7,
     "note": "진행형. 선거가 a값을 테스트 중. F vs R 현재 경계."
   },
   "elite_left": {
-    "m_base": 1.0, "k_media": 0.55,
+    "m_base": 1.0,
+    "k_media": 0.55,
     "note": "86운동권·엘리트 레거시. o(조직화) 약함 — 재보선 불리."
   },
   "populist": {
-    "m_base": 1.0, "k_media": 0.85,
+    "m_base": 1.0,
+    "k_media": 0.85,
     "note": "k_media 높으나 경제위기 시 a 급락 위험."
   },
   "custom": {
-    "m_base": 1.0, "k_media": 0.5,
+    "m_base": 1.0,
+    "k_media": 0.5,
     "note": "사용자 정의 — 직접 m_base, k_media 입력"
+  },
+  "gyeonggi_incheon_note": {
+    "type": "casting_vote_belt",
+    "R": 4.5,
+    "sensitivity": "highest",
+    "description": "인구 절반 캐스팅보트. 서울 준-고정과 대비. R 전국 최저. 실용블록 시험장.",
+    "rule": "여기서 민주당이 지면 전국이 진 것. 서울과 묶지 말고 독립 fixture로 볼 것."
   }
 }
