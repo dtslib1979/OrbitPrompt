@@ -325,6 +325,55 @@ hero_score(개인)는 high지만, regional_bossism + far_right_drift + organizat
 '구조적 불가능 구간'으로 인정하면 박씨식 물리 서사가 된다.
 </div>
 
+
+<h2 style="margin-top:28px">🧩 델타 레이어 — 제약 조건 & 실수 가능성</h2>
+<p style="font-size:11px;color:var(--mt);margin-bottom:12px">이상적 모델(g/d/i/o/R → F=ma) 위에 실제 선거 결과에서 추출한 제약 조건을 얹은 레이어</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+
+<div class="card" style="border-color:rgba(224,80,96,.2)">
+  <div style="font-family:var(--mono);font-size:11px;color:var(--rd);font-weight:700">🔴 hard_constraint</div>
+  <div style="font-size:11px;color:var(--hi);margin:4px 0;font-weight:600">지역 구조적 불가능</div>
+  <div style="font-size:10.5px;color:var(--tx);line-height:1.5">F/R < 0.5 = 구조적 불가능 구간. 개인 능력치 무력화.<br>TK(김부겸) · 호남(보수후보) — 홈팀이 정해진 리그.</div>
+</div>
+
+<div class="card" style="border-color:rgba(200,148,26,.2)">
+  <div style="font-family:var(--mono);font-size:11px;color:var(--am);font-weight:700">🟡 soft_constraint</div>
+  <div style="font-size:11px;color:var(--hi);margin:4px 0;font-weight:600">도전자 130% 법칙</div>
+  <div style="font-size:10.5px;color:var(--tx);line-height:1.5">챔피언 o+R 30% 우위. 도전자 g/d/i/o 합계 30% 높아야 F 같음. 100%로는 절대 못 이김.</div>
+</div>
+
+<div class="card" style="border-color:rgba(200,148,26,.2)">
+  <div style="font-family:var(--mono);font-size:11px;color:var(--am);font-weight:700">🟡 structural_penalty</div>
+  <div style="font-size:11px;color:var(--hi);margin:4px 0;font-weight:600">진영 분열 패널티</div>
+  <div style="font-size:10.5px;color:var(--tx);line-height:1.5">elite_fragmentation > 7 → challenger_force -30%. 평택=진영분열로 패배.</div>
+</div>
+
+<div class="card" style="border-color:rgba(61,184,160,.2)">
+  <div style="font-family:var(--mono);font-size:11px;color:var(--cy);font-weight:700">🟢 structural_bonus</div>
+  <div style="font-size:11px;color:var(--hi);margin:4px 0;font-weight:600">현직 미디어 보너스</div>
+  <div style="font-size:10.5px;color:var(--tx);line-height:1.5">k_media +0.10, R +0.5. 서울(오세훈 역전승) · 부산(국힘 조직력).</div>
+</div>
+
+<div class="card" style="border-color:rgba(72,136,212,.2)">
+  <div style="font-family:var(--mono);font-size:11px;color:var(--bl);font-weight:700">🔵 signal</div>
+  <div style="font-size:11px;color:var(--hi);margin:4px 0;font-weight:600">서울 바로미터</div>
+  <div style="font-size:10.5px;color:var(--tx);line-height:1.5">서울시장 선거 = 전국 판세 m(질량). 서울 승리 진영이 판세 주도. m_factor = 1.3.</div>
+</div>
+
+<div class="card" style="border-color:rgba(160,96,216,.2)">
+  <div style="font-family:var(--mono);font-size:11px;color:var(--pu);font-weight:700">🟣 swing_factor</div>
+  <div style="font-size:11px;color:var(--hi);margin:4px 0;font-weight:600">실용 블록 유동성</div>
+  <div style="font-size:10.5px;color:var(--tx);line-height:1.5">pragmatic(이재명) 블록 ±15%p 변동 가능. 3블록 중 가장 불안정.</div>
+</div>
+
+</div>
+
+<div class="alert-box" style="border-color:rgba(160,96,216,.15)">
+<strong>🔑 MCP 10번째 도구: </strong><code style="font-family:var(--mono);color:var(--cy)">delta_layer_info()</code> — 이 델타 레이어 전체를 JSON으로 반환.<br>
+모델 구조: <strong>ideal core (F=ma) + delta constraints (6개 레이어)</strong>
+</div>
+
 <h2 style="margin-top:16px">📋 실행 명령</h2>
 <pre># 의존성
 pip install mcp httpx pydantic

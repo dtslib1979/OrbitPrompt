@@ -22,6 +22,7 @@ HEROES  = _load(ROOT / "config/hero_archetypes.json")
 WEIGHTS = _load(ROOT / "config/weights_default.json")
 FRMCF   = _load(ROOT / "config/frame_rules.json")
 FRAMES  = [f["id"] for f in FRMCF["frames"]]
+DELTA   = _load(ROOT / "config/delta_layer.json") if (ROOT / "config/delta_layer.json").exists() else {}
 FIX     = ROOT / "data/fixtures"
 PRMT    = ROOT / "prompts/election"
 
@@ -168,6 +169,11 @@ async def calc_political_force(p: ParamsModel) -> str:
         "model": res,
         "overthrow": ot
     }, ensure_ascii=False, indent=2)
+
+@mcp.tool(name="delta_layer_info", annotations={"readOnlyHint": True})
+async def delta_layer_info() -> str:
+    """[P0] Delta layer - constraints/error zones over ideal model"""
+    return json.dumps(DELTA, ensure_ascii=False, indent=2)
 
 @mcp.tool(name="compare_heroes", annotations={"readOnlyHint": True})
 async def compare_heroes(cases: list) -> str:
