@@ -110,7 +110,8 @@ const MAP = {
     {id:"election",  type:"archive", label:"🧪 Election",          title:"Election MCP v2.0 — F=ma Prediction", body:"F=ma political force model. LLM research agent + Python calculation. 9 MCP tools: calc_political_force, compare_heroes, research_election, tag_political_frame, classify_hero_type, scenario_analysis, generate_broadcast_script, validate_fixtures, reproducibility_test. 3 fixture regions: Pyeongtaek, Busan, Daegu.",  tags:["MCP","ELECTION","F=ma","POLITICS"],  href:"https://dtslib1979.github.io/OrbitPrompt/boards/election-gallery.html"},
   ],
   edges:[
-    {from:"hub",  to:"chalkboard", color:"#a855f7"},
+    {from:"hub",  to:"chalkboard", color:"#a855f7"},,
+    {id:"mcp-method",type:"archive",label:"🏗️ MCP Method",title:"PARKSY MCP Methodology — 5단계 개발법",body:"에이전트로 MCP를 만들고, MCP로 LLM을 족쇄 채운다. PARKSY 5단계 MCP 메소드. direction_acc 100% 증명.",tags:["METHOD","MCP","5단계"],href:"https://dtslib1979.github.io/OrbitPrompt/boards/mcp-methodology.html"},
     {from:"hub",  to:"pwa",        color:"#a855f7"},
     {from:"hub",  to:"instruction",color:"#a855f7"},
     {from:"hub",  to:"dataset",    color:"#a855f7"},
@@ -223,7 +224,8 @@ function tick(){
   alpha*=(1-ADEC);
   const a=alpha;
   for(let i=0;i<SN.length;i++) for(let j=i+1;j<SN.length;j++){
-    const A=SN[i,{from:"hub",  to:"election", color:"#a060d8"},
+    const A=SN[i,{from:"hub",  to:"election", color:"#a060d8"},,
+    {from:"hub",  to:"mcp-method", color:"#c8941a"},
     ],B=SN[j];
     const dx=(B.x-A.x)||.01, dy=(B.y-A.y)||.01;
     const d2=dx*dx+dy*dy, d=Math.sqrt(d2);

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#070709">
+<title>PARKSY MCP Methodology — MCP 개발법</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#070709;--s0:#0c0c0f;--s1:#111116;--s2:#18181f;--ln:#22222c;--dim:#2e2e3a;--mt:#4a4a5e;--bd:#7070a0;--tx:#b8b8d0;--hi:#e8e8f5;--wh:#f5f5ff;--rd:#e05060;--am:#c8941a;--cy:#3db8a0;--bl:#4888d4;--gn:#5a9e50;--pu:#a060d8;--og:#c07840;--mono:'JetBrains Mono',monospace;--sans:'Noto Sans KR',sans-serif}
+html{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:14px;line-height:1.6}
+body{max-width:860px;margin:0 auto;padding:28px 18px 56px}
+h1{font-family:var(--mono);font-size:22px;color:var(--wh);letter-spacing:-0.3px;margin-bottom:2px}
+.sub{font-family:var(--mono);font-size:10px;color:var(--mt);letter-spacing:1px;margin-bottom:20px;border-bottom:1px solid var(--ln);padding-bottom:14px}
+.badge{display:inline-block;font-family:var(--mono);font-size:8.5px;padding:2px 6px;border-radius:2px;letter-spacing:.3px;margin-right:3px}
+.badge.g{background:rgba(90,158,80,.1);color:var(--gn)}
+.badge.r{background:rgba(224,80,96,.1);color:var(--rd)}
+.badge.a{background:rgba(200,148,26,.1);color:var(--am)}
+.badge.p{background:rgba(160,96,216,.1);color:var(--pu)}
+.badge.b{background:rgba(72,136,212,.1);color:var(--bl)}
+.badge.c{background:rgba(61,184,160,.1);color:var(--cy)}
+.sec-title{font-size:11px;color:var(--cy);margin:18px 0 10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--ln)}
+.card{background:var(--s0);border:1px solid var(--ln);border-radius:5px;padding:14px;margin-bottom:10px}
+.card .ct{font-family:var(--mono);font-size:11px;color:var(--hi);font-weight:600;margin-bottom:5px}
+.card .cb{font-size:11.5px;color:var(--tx);line-height:1.6}
+.stage{display:flex;gap:12px;padding:14px;margin-bottom:8px;background:var(--s0);border-left:3px solid;border-radius:5px;border-right:1px solid var(--ln);border-top:1px solid var(--ln);border-bottom:1px solid var(--ln)}
+.stage.s1{border-left-color:var(--cy)}
+.stage.s2{border-left-color:var(--bl)}
+.stage.s3{border-left-color:var(--am)}
+.stage.s4{border-left-color:var(--rd)}
+.stage.s5{border-left-color:var(--pu)}
+.stage .sn{font-family:var(--mono);font-size:28px;font-weight:700;min-width:40px;text-align:center}
+.stage .sn.c{color:var(--cy)}
+.stage .sn.b{color:var(--bl)}
+.stage .sn.a{color:var(--am)}
+.stage .sn.r{color:var(--rd)}
+.stage .sn.p{color:var(--pu)}
+.stage .st{font-size:13px;font-weight:700;color:var(--hi);margin-bottom:2px}
+.stage .sd{font-size:11.5px;color:var(--tx);line-height:1.5}
+.stage .sex{font-size:11px;color:var(--mt);margin-top:4px;padding-top:4px;border-top:1px solid var(--ln)}
+pre.code{background:#050507;border:1px solid var(--ln);border-radius:3px;padding:10px 12px;font-family:var(--mono);font-size:9px;line-height:1.5;overflow-x:auto;margin:6px 0}
+pre.code .hl{color:var(--cy)}
+pre.code .kw{color:var(--bl)}
+pre.code .st{color:var(--og)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.g2{grid-template-columns:1fr}}
+.al{background:rgba(160,96,216,.04);border:1px solid rgba(160,96,216,.15);border-radius:5px;padding:12px 14px;font-size:11px;line-height:1.6;margin:12px 0}
+.al strong{color:var(--pu)}
+.tag{display:inline-block;background:var(--dim);color:var(--am);font-family:var(--mono);font-size:8.5px;padding:1px 5px;border-radius:2px;letter-spacing:.3px}
+.ftr{margin-top:24px;border-top:1px solid var(--ln);padding-top:10px;font-family:var(--mono);font-size:8.5px;color:var(--mt);display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px}
+</style>
+</head>
+<body>
+
+<div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--ln);padding-bottom:12px;margin-bottom:18px">
+  <div>
+    <h1>🏗️ PARKSY MCP METHODOLOGY</h1>
+    <div class="sub" style="border:none;padding:0;margin:4px 0 0">"에이전트로 MCP를 만들고, MCP로 LLM을 족쇄 채운다"</div>
+  </div>
+  <div style="text-align:right;font-family:var(--mono);font-size:8.5px;color:var(--mt);line-height:1.5">
+    <span class="badge g">direction_acc 100%</span><br>
+    <span class="badge p">v2.0</span>
+  </div>
+</div>
+
+<div class="al">
+<strong>🧠 이 방법론은 세상에 존재하지 않았다. 박씨가 처음 만들었다.</strong><br>
+기존 MCP 개발은 개발자가 혼자 설계하고 구현했다. PARKSY 방법론은 인간이 LLM과 대화하고, 에이전트가 MCP를 만들고, 완성된 MCP가 다시 LLM을 로데이터 생성기로 제한한다. 이 전 과정을 회의록+대화형 설계로 끝낸 개발법은 지금까지 없었다.
+</div>
+
+<!-- STEP 1 -->
+<div class="stage s1">
+  <div class="sn c">1</div>
+  <div style="flex:1">
+    <div class="st">도메인을 정하고 LLM이랑 존나 떠든다</div>
+    <div class="sd">네가 진짜 아는 도메인 하나 잡고, LLM과 대화하면서 네 머릿속 구조를 언어로 뽑아낸다. "이 판은 이렇게 돌아간다", "이 경우엔 무조건 이렇다"를 계속 말로 푼다. 이게 회의록이자 원본 철학이다.</div>
+    <div class="sex">💬 예: "도전자는 130% 해야 이긴다. TK/호남은 구조적 불가능. 이재명은 장르가 아니라 예외."</div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="stage s2">
+  <div class="sn b">2</div>
+  <div style="flex:1">
+    <div class="st">대화에서 축·규칙·예외를 뽑는다</div>
+    <div class="sd">LLM에게 "지금까지 한 말에서 공통 축, 수식, 법칙, 예외를 다 뽑아봐"라고 시킨다. g/d/i/o/R, F=ma, delta layer, 아키타입이 여기서 나온다.</div>
+    <div class="sex">📐 산출물: 변수 정의, 수식, 아키타입 분류, delta layer 초안</div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="stage s3">
+  <div class="sn a">3</div>
+  <div style="flex:1">
+    <div class="st">에이전트한테 MCP 서버를 만들라고 시킨다</div>
+    <div class="sd">"이 규칙들로 MCP 서버 만들어줘, 툴은 이렇게 쪼개줘"라고 시킨다. 에이전트가 server.py + config + docs + boards까지 한 번에 생성한다.</div>
+    <div class="sex">⚡ <strong>「나는 MCP로 에이전트를 만든 게 아니라, 에이전트로 MCP를 만들었다」</strong></div>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="stage s4">
+  <div class="sn r">4</div>
+  <div style="flex:1">
+    <div class="st">Python 래퍼로 LLM을 족쇄 채운다</div>
+    <div class="sd">LLM은 이제 자유롭게 대답하지 못한다. research_xxx로 로데이터만 가져오고, tag_xxx로 추정만 하고, 최종 판단은 calc_F가 한다. delta layer는 "아, 이 경우에는 예외야"라는 감각을 JSON으로 박아놓은 것이다.</div>
+    <div class="sex">🔒 추가할 때마다 config 수정만 하면 됨. 재학습 0회.</div>
+  </div>
+</div>
+
+<!-- STEP 5 -->
+<div class="stage s5">
+  <div class="sn p">5</div>
+  <div style="flex:1">
+    <div class="st">갤러리에 전시하고 STT로 연결한다</div>
+    <div class="sd">결과를 OrbitPrompt 보드/갤러리로 올려서 "이 인간 머릿속 판단 엔진이 이렇게 돈다"를 보여준다. STT까지 붙이면 말로 명령하고 결과를 눈으로 보는 구조가 완성된다.</div>
+    <div class="sex">🌐 boards/election-gallery.html → direction_acc 100% 증명</div>
+  </div>
+</div>
+
+<div class="sec-title">기존 방식과의 차이</div>
+<div class="g2">
+  <div class="card" style="border-color:rgba(74,74,94,.3)">
+    <div class="ct" style="color:var(--mt)">📦 기존 MCP 개발</div>
+    <div class="cb">
+    • 개발자가 혼자 설계<br>
+    • 직접 코딩<br>
+    • LLM은 도구 사용자<br>
+    • 수동 테스트<br>
+    • 별도 문서화 필요<br>
+    • 전시 없음
+    </div>
+  </div>
+  <div class="card" style="border-color:rgba(61,184,160,.2)">
+    <div class="ct" style="color:var(--cy)">⚡ PARKSY MCP 개발</div>
+    <div class="cb">
+    • 인간+LLM 대화로 공동 설계<br>
+    • 에이전트가 server.py 생성<br>
+    • LLM은 로데이터 생성기 (족쇄)<br>
+    • validate_fixtures 자동 측정<br>
+    • MCP가 명세서까지 생성<br>
+    • 갤러리에 자동 전시
+    </div>
+  </div>
+</div>
+
+<div class="sec-title">왜 이 방법론이 존재하지 않았는가</div>
+<div class="card">
+  <div class="cb">
+  AI 시대가 아니었다면 이 방법론은 태어나지도 않았다.<br><br>
+  <strong style="color:var(--hi)">근데 AI 시대라고 다 이렇게 사는 건 아니다.</strong><br>
+  ChatGPT 쓰는 99%의 사람은 <strong style="color:var(--mt)">남이 만든 도구 사용법을 익히는 중</strong>이고,<br>
+  박씨는 <strong style="color:var(--cy)">자기 사고방식을 복제하는 MCP를 만드는 중</strong>이다.<br><br>
+  이 차이는 운이 아니라 <strong style="color:var(--am)">판단</strong>이다.
+  </div>
+</div>
+
+<div class="sec-title">적용 대상</div>
+<div class="g2">
+  <div class="card"><div class="ct">🏭 제조 현장 관리자</div><div class="cb">"내 20년 현장 노하우를 MCP로"</div></div>
+  <div class="card"><div class="ct">📚 교육자·강사·코치</div><div class="cb">"내 커리큘럼을 MCP로"</div></div>
+  <div class="card"><div class="ct">⚖️ 법률·회계·컨설팅</div><div class="cb">"내 판단 전략을 MCP로"</div></div>
+  <div class="card"><div class="ct">🔬 의료·건축·전문직</div><div class="cb">"내 진단/설계 기준을 MCP로"</div></div>
+</div>
+
+<div class="al">
+<strong>🔑 핵심 문장 — 세상에 없는 방법론</strong><br><br>
+<strong style="color:var(--cy)">"에이전트로 MCP를 만들고, MCP로 LLM을 족쇄 채운다.</strong><br>
+이 전 과정을 회의록+대화형 설계로 끝낸 게 PARKSY MCP 개발법이다.<br>
+이 방법론은 세상에 존재하지 않았다. 박씨가 처음 만들었다."<br><br>
+<span class="tag">direction_acc 100% 증명 완료</span>
+<span class="tag" style="background:rgba(160,96,216,.1);color:var(--pu)">5단계 메소드</span>
+<span class="tag" style="background:rgba(61,184,160,.1);color:var(--cy)">Election MCP</span>
+</div>
+
+<div class="ftr">
+  <div>PARKSY MCP METHODOLOGY v2.0</div>
+  <div>2026-06-04 · OrbitPrompt</div>
+  <div><a href="../docs/MCP_DEVELOPMENT_METHODOLOGY.md" style="color:var(--cy);text-decoration:none">📄 문서 읽기</a></div>
+</div>
+
+</body>
+</html>

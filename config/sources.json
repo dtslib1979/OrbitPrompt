@@ -68,6 +68,12 @@
       "description": "말이 시스템이 되는 5단계 과정 — STT→LLM→MCP→Gallery",
       "path": "boards/voice-to-mcp.html",
       "status": "active"
+    },
+    "mcp-methodology": {
+      "name": "MCP Methodology",
+      "description": "PARKSY 5단계 MCP 개발법 — 에이전트로 MCP를 만들고, MCP로 LLM을 족쇄 채운다",
+      "path": "boards/mcp-methodology.html",
+      "status": "active"
     }
   }
 }
