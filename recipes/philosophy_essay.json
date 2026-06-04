@@ -1,0 +1,25 @@
+{
+  "recipe_name": "PARKSY 철학 에세이 — MCP 레시피 v1.0",
+  "description": "대화 로그 → 오디오 에세이 → @philosopher-parksy",
+  "chemistry": "6개 MCP → 1개 오디오 에세이",
+
+  "atoms": [
+    {"mcp": "parksy-logs",      "desc": "원자재 — 대화 로그"},
+    {"mcp": "tts-engine",       "desc": "GPT-SoVITS — 네 목소리"},
+    {"mcp": "web2video",        "desc": "인용구 이미지 생성"},
+    {"mcp": "ffmpeg",           "desc": "이미지+오디오→MP4"},
+    {"mcp": "distributor",      "desc": "YouTube 업로드"}
+  ],
+
+  "sequence": [
+    {"step": 1, "action": "parksy-logs에서 최신 로그 읽기"},
+    {"step": 2, "action": "LLM으로 핵심 철학 문단 추출 (300자)"},
+    {"step": 3, "action": "GPT-SoVITS TTS — 네 목소리 더빙"},
+    {"step": 4, "action": "web2video로 인용구 이미지 1장 생성"},
+    {"step": 5, "action": "FFmpeg 합성 — 이미지+오디오→MP4"},
+    {"step": 6, "action": "distributor → @philosopher-parksy"}
+  ],
+
+  "total_time": "약 3분",
+  "human_touch": "0초"
+}
