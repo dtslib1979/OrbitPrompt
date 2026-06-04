@@ -590,7 +590,52 @@ g(anger/disgust) 마이너스를 R+o+media가 상쇄하는 구조. 도전자는 
 누가 더 맞췄느냐가 아니라, 어느 추정이 어떤 구조적 전제에서 나왔는지를 보여준다.
 </div>
 
+
+
+<h2 style="margin-top:28px">🚀 MCP 연결 및 사용법 — 3-step</h2>
+<p style="font-size:11px;color:var(--mt);margin-bottom:12px">Claude Code / Cursor에서 MCP 서버에 연결하여 10개 도구를 직접 호출</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+  <div class="card" style="border-color:rgba(61,184,160,.25)">
+    <div style="font-family:var(--mono);font-size:24px;color:var(--cy);font-weight:700;margin-bottom:4px">1</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--hi);font-weight:600;margin-bottom:4px">서버 실행</div>
+    <div style="font-size:11px;color:var(--tx);line-height:1.5">
+    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">cd /mnt/e/mcp/election-mcp</code><br>
+    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">python3 server.py</code>
+    </div>
+  </div>
+  <div class="card" style="border-color:rgba(200,148,26,.25)">
+    <div style="font-family:var(--mono);font-size:24px;color:var(--am);font-weight:700;margin-bottom:4px">2</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--hi);font-weight:600;margin-bottom:4px">Claude Code 등록</div>
+    <div style="font-size:11px;color:var(--tx);line-height:1.5">
+    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">~/.claude.json</code>에 추가:<br>
+    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">"parksy_election": {<br>
+    &nbsp;&nbsp;"command": "python3",<br>
+    &nbsp;&nbsp;"args": ["server.py"]<br>
+    }</code>
+    </div>
+  </div>
+  <div class="card" style="border-color:rgba(160,96,216,.25)">
+    <div style="font-family:var(--mono);font-size:24px;color:var(--pu);font-weight:700;margin-bottom:4px">3</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--hi);font-weight:600;margin-bottom:4px">도구 호출</div>
+    <div style="font-size:11px;color:var(--tx);line-height:1.5">
+    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">research_election("부산", ...)</code><br>
+    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">calc_political_force(...)</code><br>
+    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">compare_heroes(...)</code>
+    </div>
+  </div>
+</div>
+
+<div class="alert-box" style="border-color:rgba(61,184,160,.15)">
+<strong>🔌 실제 워크플로우:</strong><br>
+1. Claude Code 열고 <strong>"오세훈 F 계산해줘"</strong> → MCP가 calc_political_force 호출<br>
+2. <strong>"서울 판세 분석해줘"</strong> → delta_layer_info + research_election<br>
+3. <strong>"이재명 vs 한동훈 비교"</strong> → compare_heroes + knockout 분석<br><br>
+<strong style="color:var(--cy)">P0 도구는 LLM 없이도 동작</strong> — calc_political_force / compare_heroes / delta_layer_info는 ANTHROPIC_API_KEY 불필요.
+</div>
+
 <h2 style="margin-top:16px">📋 실행 명령</h2>
+<p style="font-size:11px;color:var(--mt);margin-bottom:12px">상세 사용설명서: <a href="../docs/election-mcp-usermanual.md" style="color:var(--cy)">docs/election-mcp-usermanual.md</a> | 기술명세서: <a href="../docs/election-mcp-spec-100.md" style="color:var(--cy)">docs/election-mcp-spec-100.md</a></p>
 <pre># 의존성
 pip install mcp httpx pydantic
 export ANTHROPIC_API_KEY=sk-ant-...
