@@ -464,6 +464,57 @@ g(anger/disgust) 마이너스를 R+o+media가 상쇄하는 구조. 도전자는 
 <strong style="color:var(--cy)">delta_layer_info()</strong> → seoul_structural_fixture 레이어에서 확인 가능.
 </div>
 
+
+<h2 style="margin-top:28px">🌊 부울경 — 부등식이 아니라 민감도 문제</h2>
+<p style="font-size:11px;color:var(--mt);margin-bottom:12px">부산 승(민주), 경남 패(보수 유지) — 같은 g 이벤트, 다른 R</p>
+
+<div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <div class="card" style="border-color:rgba(72,136,212,.25)">
+    <div style="font-family:var(--mono);font-size:13px;color:var(--bl);font-weight:700;margin-bottom:4px">📍 부산 — 민감 도시</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--mt);margin-bottom:6px">swing_city · regional_bossism=4 · R=5.5</div>
+    <div style="font-size:12px;color:var(--tx);line-height:1.5">
+    • 더 이상 보수 고정 아님<br>
+    • 민주 고정도 아님<br>
+    • <strong style="color:var(--cy)">g/i 변화에 2배 민감</strong><br>
+    • 이번 승리 = '영구 전환'이 아니라<br>
+    &nbsp;&nbsp; '현재 g/i 정렬 결과'
+    </div>
+  </div>
+  <div class="card" style="border-color:rgba(224,80,96,.25)">
+    <div style="font-family:var(--mono);font-size:13px;color:var(--rd);font-weight:700;margin-bottom:4px">📍 경남 — 저민감도</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--mt);margin-bottom:6px">low_sensitivity · regional_bossism=7 · R=7.5</div>
+    <div style="font-size:12px;color:var(--tx);line-height:1.5">
+    • R이 부산보다 <strong style="color:var(--hi)">2.0 높음</strong><br>
+    • 같은 g 이벤트에도 안 넘어감<br>
+    • 경남지사 패배 = 개인因素<br>
+    &nbsp;&nbsp; 구조적 전환 아님<br>
+    • 부울경=하나가 아님을 증명
+    </div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0">
+  <div class="card" style="padding:10px;text-align:center">
+    <div style="font-family:var(--mono);font-size:11px;color:var(--hi)">부울경 부등식</div>
+    <div style="font-family:var(--mono);font-size:13px;color:var(--mt);margin-top:4px">F<sub>부산</sub> > R<sub>부산</sub> ✅<br>F<sub>경남</sub> ≤ R<sub>경남</sub> ❌</div>
+  </div>
+  <div class="card" style="padding:10px;text-align:center">
+    <div style="font-family:var(--mono);font-size:11px;color:var(--hi)">같은 g, 다른 R</div>
+    <div style="font-family:var(--mono);font-size:13px;color:var(--mt);margin-top:4px">g(정권심판)=동일<br>R_부산=5.5 vs R_경남=7.5</div>
+  </div>
+  <div class="card" style="padding:10px;text-align:center">
+    <div style="font-family:var(--mono);font-size:11px;color:var(--hi)">전망</div>
+    <div style="font-family:var(--mono);font-size:13px;color:var(--mt);margin-top:4px">부산=스윙지역<br>경남=보수견고</div>
+  </div>
+</div>
+
+<div class="alert-box" style="border-color:rgba(72,136,212,.15)">
+<strong>🔑 핵심:</strong> 부울경을 하나의 부등식으로 고정할 수 없다.<br>
+부산은 g/i 변화에 민감한 <strong>전환 가능 도시</strong>, 경남은 R이 두꺼운 <strong>저민감도 보수 지역</strong>.<br>
+같은 g 이벤트(정권심판, 부패, 경제)에도 R 차이로 결과가 다르게 나온다.<br><br>
+<strong style="color:var(--cy)">delta_layer_info()</strong> → busan_sensitivity_city + bulgyeong_inequality
+</div>
+
 <h2 style="margin-top:16px">📋 실행 명령</h2>
 <pre># 의존성
 pip install mcp httpx pydantic
