@@ -4,658 +4,195 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#070709">
-<title>PARKSY ELECTION MCP v2.0 — 선거 예측 시뮬레이션</title>
+<title>PARKSY ELECTION MCP — 정치 사고 모델</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#070709;--s0:#0c0c0f;--s1:#111116;--s2:#18181f;--ln:#22222c;--dim:#2e2e3a;--mt:#4a4a5e;--bd:#7070a0;--tx:#b8b8d0;--hi:#e8e8f5;--wh:#f5f5ff;--rd:#e05060;--am:#c8941a;--cy:#3db8a0;--bl:#4888d4;--gn:#5a9e50;--pu:#a060d8;--og:#c07840;--mono:'JetBrains Mono',monospace;--sans:'Noto Sans KR',sans-serif}
-html{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:14px;line-height:1.6}
-body{max-width:960px;margin:0 auto;padding:32px 20px 64px}
-h1{font-family:var(--mono);font-size:22px;color:var(--wh);letter-spacing:-0.5px;margin-bottom:2px}
-.sub{font-family:var(--mono);font-size:10px;color:var(--mt);letter-spacing:1.5px;margin-bottom:20px;border-bottom:1px solid var(--ln);padding-bottom:14px}
-.badge{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:3px;letter-spacing:.3px}
-.badge.green{background:rgba(90,158,80,.12);color:var(--gn)}
-.badge.red{background:rgba(224,80,96,.12);color:var(--rd)}
-.badge.yellow{background:rgba(200,148,26,.15);color:var(--am)}
-.badge.purple{background:rgba(160,96,216,.12);color:var(--pu)}
-.badge.blue{background:rgba(72,136,212,.12);color:var(--bl)}
-.badge.gray{background:rgba(74,74,94,.2);color:var(--mt)}
+html{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:14px;line-height:1.5}
+body{max-width:860px;margin:0 auto;padding:28px 18px 56px}
 
-h2{font-size:13px;color:var(--cy);margin:24px 0 12px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:8px}
-h2::after{content:'';flex:1;height:1px;background:var(--ln)}
+/* ── TOP BAR ─── */
+.top{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--ln);padding-bottom:12px;margin-bottom:18px}
+.top-l h1{font-family:var(--mono);font-size:18px;color:var(--wh);letter-spacing:-.3px}
+.top-l .sub{font-family:var(--mono);font-size:9px;color:var(--mt);letter-spacing:1px}
+.top-r{font-family:var(--mono);font-size:9px;color:var(--mt);text-align:right;line-height:1.6}
 
-.region-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
-@media(max-width:720px){.region-grid{grid-template-columns:1fr}}
+/* ── STATUS BAR ─── */
+.sb{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;padding:12px 14px;background:var(--s0);border:1px solid var(--ln);border-radius:5px}
+.si{text-align:center;min-width:60px}
+.si .n{font-family:var(--mono);font-size:20px;font-weight:700;display:block}
+.si .l{font-family:var(--mono);font-size:8.5px;color:var(--mt);text-transform:uppercase;letter-spacing:.5px}
+.si .n.g{color:var(--gn)}.si .n.a{color:var(--am)}.si .n.c{color:var(--cy)}.si .n.r{color:var(--rd)}
+.si .n.p{color:var(--pu)}.si .n.b{color:var(--bl)}
 
-.card{background:var(--s0);border:1px solid var(--ln);border-radius:6px;padding:16px}
-.card.r0{border-color:rgba(61,184,160,.15)}
-.card.r1{border-color:rgba(72,136,212,.15)}
-.card.r2{border-color:rgba(200,148,26,.15)}
-.region-name{font-family:var(--mono);font-size:12px;color:var(--hi);margin-bottom:8px;font-weight:700}
-.candidates{display:flex;flex-direction:column;gap:6px}
-.cand-row{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--s1);border-radius:4px;border:1px solid var(--ln);font-family:var(--mono);font-size:11px}
-.cand-win{background:rgba(90,158,80,.06);border-color:rgba(90,158,80,.2)}
-.cand-name{color:var(--hi);font-weight:600}
-.cand-f{color:var(--am)}
-.cand-r{color:var(--rd);font-size:10px}
-.cand-result{font-size:10px;padding:1px 5px;border-radius:2px}
+/* ── GRIDS ─── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr}}
 
-.verdict{display:inline-block;font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:2px}
-.verdict.ok{background:rgba(90,158,80,.1);color:var(--gn)}
-.verdict.fail{background:rgba(224,80,96,.1);color:var(--rd)}
-.verdict.wait{background:rgba(200,148,26,.1);color:var(--am)}
+/* ── CARD ─── */
+.card{background:var(--s0);border:1px solid var(--ln);border-radius:5px;padding:13px}
+.card.c0{border-left:2px solid var(--cy)}
+.card.c1{border-left:2px solid var(--bl)}
+.card.c2{border-left:2px solid var(--am)}
+.card.c3{border-left:2px solid var(--rd)}
+.card.c4{border-left:2px solid var(--pu)}
+.ct{font-family:var(--mono);font-size:10px;color:var(--hi);font-weight:600;margin-bottom:5px}
+.cb{font-size:11px;color:var(--tx);line-height:1.5}
 
-.flow{display:flex;align-items:center;gap:6px;padding:10px 0;font-family:var(--mono);font-size:10px;flex-wrap:wrap}
-.fbox{background:var(--s1);border:1px solid var(--dim);padding:5px 9px;border-radius:4px;text-align:center;font-size:10px}
-.arr{color:var(--dim);font-size:11px}
-.arr span{display:block;font-size:8px;color:var(--mt)}
+/* ── REGION ROW ─── */
+.rr{display:flex;align-items:center;padding:6px 0;font-family:var(--mono);font-size:11px;border-bottom:1px solid var(--ln);gap:8px}
+.rr:last-child{border-bottom:none}
+.rr .r{width:100px;font-weight:600;color:var(--hi)}
+.rr .v{width:50px;text-align:right;color:var(--am)}
+.rr .s{width:40px;text-align:center;font-size:9px}
+.rr .t{flex:1;text-align:right;font-size:9px;color:var(--mt)}
 
-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:10.5px;margin-top:8px}
-th{color:var(--mt);text-align:left;padding:5px 8px;border-bottom:1px solid var(--dim);font-weight:400;font-size:9.5px;text-transform:uppercase;letter-spacing:.5px}
-td{padding:5px 8px;border-bottom:1px solid var(--ln);color:var(--hi)}
-tr:last-child td{border-bottom:none}
+/* ── ALERT ─── */
+.al{background:rgba(160,96,216,.04);border:1px solid rgba(160,96,216,.15);border-radius:5px;padding:12px 14px;font-size:11px;line-height:1.6;margin-bottom:14px}
+.al strong{color:var(--pu)}
 
-.formula-box{background:#050507;border:1px solid var(--ln);border-radius:4px;padding:14px 16px;font-family:var(--mono);font-size:11px;line-height:1.8;margin-top:8px;overflow-x:auto}
-.formula-box .hl{color:var(--cy)}
-.formula-box .var{color:var(--am)}
-.formula-box .num{color:var(--gn)}
-.formula-box .cm{color:var(--mt);font-style:italic}
+/* ── DELTA ROW ─── */
+.dr{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.dt{border:1px solid var(--dim);padding:4px 8px;border-radius:3px;font-family:var(--mono);font-size:9px;color:var(--mt);cursor:default}
+.dt:hover{background:var(--s1);color:var(--hi)}
+.dt.t0{border-color:rgba(224,80,96,.2)}.dt.t1{border-color:rgba(200,148,26,.2)}
+.dt.t2{border-color:rgba(72,136,212,.2)}.dt.t3{border-color:rgba(61,184,160,.2)}
 
-.pred-table td{font-size:11px}
-.pred-table .p{color:var(--cy);font-weight:700}
-.pred-table .a{color:var(--mt)}
-.pred-table .match{color:var(--gn)}
-.pred-table .mismatch{color:var(--rd)}
+/* ── TAG ─── */
+.tag{display:inline-block;font-family:var(--mono);font-size:8px;padding:1px 5px;border-radius:2px;letter-spacing:.3px}
+.tag.g{background:rgba(90,158,80,.1);color:var(--gn)}
+.tag.r{background:rgba(224,80,96,.1);color:var(--rd)}
+.tag.a{background:rgba(200,148,26,.1);color:var(--am)}
+.tag.p{background:rgba(160,96,216,.1);color:var(--pu)}
+.tag.b{background:rgba(72,136,212,.1);color:var(--bl)}
+.tag.c{background:rgba(61,184,160,.1);color:var(--cy)}
 
-.status-bar{display:flex;gap:16px;flex-wrap:wrap;padding:10px 0}
-.stat-item{text-align:center}
-.stat-item .n{font-family:var(--mono);font-size:22px;font-weight:700;display:block}
-.stat-item .l{font-family:var(--mono);font-size:9px;color:var(--mt);text-transform:uppercase;letter-spacing:.5px}
+.sec-title{font-size:11px;color:var(--cy);margin:14px 0 8px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--ln)}
 
-.alert-box{border:1px solid rgba(200,148,26,.25);background:rgba(200,148,26,.04);border-radius:4px;padding:12px 14px;margin:16px 0;font-size:12px;line-height:1.6}
-.alert-box strong{color:var(--am)}
-.sys-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:640px){.sys-grid{grid-template-columns:1fr}}
-.sys-item{font-family:var(--mono);font-size:10px;padding:4px 0;display:flex;justify-content:space-between;border-bottom:1px solid var(--ln)}
-.sys-item .k{color:var(--mt)}.sys-item .v{color:var(--hi)}
-pre{font-family:var(--mono);font-size:10px;color:var(--hi);background:#050507;border:1px solid var(--ln);padding:12px;border-radius:3px;overflow-x:auto;margin-top:6px}
-.ftr{margin-top:28px;border-top:1px solid var(--ln);padding-top:14px;font-family:var(--mono);font-size:9px;color:var(--mt);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+pre.code{background:#050507;border:1px solid var(--ln);border-radius:3px;padding:10px 12px;font-family:var(--mono);font-size:9.5px;line-height:1.5;overflow-x:auto;margin:4px 0}
+
+.ftr{margin-top:20px;border-top:1px solid var(--ln);padding-top:10px;font-family:var(--mono);font-size:8.5px;color:var(--mt);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
 </style>
 </head>
 <body>
 
-<h1>🧪 PARKSY ELECTION MCP v2.0</h1>
-<div class="sub">F=ma 정치 변화력 모델 · 10개 MCP 도구 · 12개 델타 레이어 · direction_acc 100% · 2026-06-04</div>
-
-<div class="alert-box" style="border-color:rgba(160,96,216,.15);margin-top:0;margin-bottom:16px">
-<strong>🧠 PARKSY ELECTION MCP — AI 시대 유권자를 위한 정치 사고 모델</strong><br><br>
-정치도 이해하고, 정치철학도 같이 할 수 있다.<br>
-구조(g/d/i/o/R)를 보면서 시간을 아끼고, AI를 도구로 쓸 수 있게 해 준다.<br>
-결국 복잡한 건 아니다. <strong>MCP 하나를 내가 만들어서 띄워 놓고, 반복되는 선거를 같은 언어로 읽는 것</strong>이다.
-</div>
-
-
-<div class="flow">
-  <div class="fbox">SD 카드<br><span style="color:var(--mt);font-size:8px">/mnt/e/mcp/election-mcp/</span></div>
-  <div class="arr"><span>stdio</span>▶</div>
-  <div class="fbox">server.py<br><span style="color:var(--mt);font-size:8px">FastMCP 385줄</span></div>
-  <div class="arr"><span>tools/call</span>▶</div>
-  <div class="fbox">calc_F()<br><span style="color:var(--mt);font-size:8px">Python 수학</span></div>
-  <div class="arr"><span>result</span>▶</div>
-  <div class="fbox" style="border-color:rgba(90,158,80,.3)">갤러리<br><span style="color:var(--gn);font-size:8px">✅ 표시</span></div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     지역 예측
-     ═══════════════════════════════════════════════════════════════ -->
-<h2>📍 4개 지역 F=ma 예측 결과</h2>
-<p style="font-size:11px;color:var(--mt);margin-bottom:12px">MCP 서버 `calc_political_force` 도구로 계산 · 각 후보 g/d/i/o/R 입력 → Python이 F 산출</p>
-
-<div class="region-grid">
-
-  <!-- 평택을 -->
-  <div class="card r0">
-    <div class="region-name">📍 평택을 <span class="badge blue">2026 재보선</span></div>
-    <div style="font-size:10px;color:var(--mt);margin-bottom:8px">조직력(민주) vs 도전자(국힘)</div>
-    <div class="candidates">
-      <div class="cand-row cand-win">
-        <span class="cand-name"><span class="badge green" style="margin-right:4px">예측</span> 민주당</span>
-        <span><span class="cand-f">F=3.08</span> <span class="cand-r">R=6.0</span></span>
-      </div>
-      <div class="cand-row">
-        <span class="cand-name"><span style="color:var(--mt);font-size:10px;margin-right:4px">▼</span> 국힘</span>
-        <span><span class="cand-f">F=2.50</span> <span class="cand-r">R=5.0</span></span>
-      </div>
-    </div>
-    <div style="margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--mt)">
-      민주당 F 우세 (▲0.58) · m_eff=0.55 a=5.6<br>
-      <span class="verdict wait">개표 결과 대기 중</span>
-    </div>
+<div class="top">
+  <div class="top-l">
+    <h1>🧪 PARKSY ELECTION MCP</h1>
+    <div class="sub">F=ma POLITICAL FORCE · 10 TOOLS · 12 DELTA LAYERS</div>
   </div>
-
-  <!-- 부산 -->
-  <div class="card r1">
-    <div class="region-name">📍 부산광역시장 <span class="badge blue">2026 광역</span></div>
-    <div style="font-size:10px;color:var(--mt);margin-bottom:8px">지역 보스 vs 세대 반동</div>
-    <div class="candidates">
-      <div class="cand-row cand-win">
-        <span class="cand-name"><span class="badge green" style="margin-right:4px">예측</span> 국힘</span>
-        <span><span class="cand-f">F=3.54</span> <span class="cand-r">R=7.0</span></span>
-      </div>
-      <div class="cand-row">
-        <span class="cand-name"><span style="color:var(--mt);font-size:10px;margin-right:4px">▼</span> 민주당</span>
-        <span><span class="cand-f">F=2.50</span> <span class="cand-r">R=4.0</span></span>
-      </div>
-    </div>
-    <div style="margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--mt)">
-      국힘 F 우세 (▲1.04) · 조직력(o=8) 반영<br>
-      <span class="verdict wait">개표 결과 대기 중</span>
-    </div>
-  </div>
-
-  <!-- 대구 -->
-  <div class="card r2">
-    <div class="region-name">📍 대구광역시장 <span class="badge yellow">초박빙 예상</span></div>
-    <div style="font-size:10px;color:var(--mt);margin-bottom:8px">보수 텃밭 vs 민주당 반전 시도</div>
-    <div class="candidates">
-      <div class="cand-row cand-win">
-        <span class="cand-name"><span class="badge yellow" style="margin-right:4px">예측</span> 민주당</span>
-        <span><span class="cand-f">F=3.03</span> <span class="cand-r">R=5.0</span></span>
-      </div>
-      <div class="cand-row">
-        <span class="cand-name"><span style="color:var(--mt);font-size:10px;margin-right:4px">▼</span> 국힘</span>
-        <span><span class="cand-f">F=2.85</span> <span class="cand-r">R=6.0</span></span>
-      </div>
-    </div>
-    <div style="margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--mt)">
-      민주당 F 근소 우세 (▲0.18) · 사실상 동급<br>
-      <span class="verdict wait">개표 결과 대기 중</span>
-    </div>
-  </div>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     종합
-     ═══════════════════════════════════════════════════════════════ -->
-<div class="alert-box">
-<strong>✅ 검증 완료: direction_acc 100% (실제 과거 선거 데이터 기반)</strong><br>
-이 페이지는 MCP 서버의 <strong>calc_political_force</strong> 결정론적 수학을 기반으로 한다.
-LLM이 추정한 g/d/i/o/R → Python F 계산 → <strong>direction_acc 100% (4/4)</strong> 검증 완료.<br><strong>클래스 분류(cls_acc=25%)는 임계값 튜닝 필요 — Phase 3 작업.</strong>
-</div>
-
-<div class="status-bar">
-  <div class="stat-item"><div class="n" style="color:var(--cy)">3</div><div class="l">예측 지역</div></div>
-  <div class="stat-item"><div class="n" style="color:var(--gn)">100%</div><div class="l">direction_acc</div></div>
-  <div class="stat-item"><div class="n" style="color:var(--am)">25%</div><div class="l">cls_acc</div></div>
-  <div class="stat-item"><div class="n" style="color:var(--gn)">✅</div><div class="l">검증 완료</div></div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     모델 수식
-     ═══════════════════════════════════════════════════════════════ -->
-<h2>🧮 F=ma 정치 변화력 모델</h2>
-<div class="formula-box">
-<span class="cm"># 결정론적 수학 — 동일 입력 = 동일 출력 (LLM 개입 0)</span><br>
-<br>
-<span class="var">m_eff</span> = <span class="var">m</span> × <span class="var">k</span><br>
-<span class="var">a</span> = <span class="num">0.30</span>·<span class="var">g</span> + <span class="num">0.30</span>·<span class="var">d</span> + <span class="num">0.20</span>·<span class="var">i</span> + <span class="num">0.20</span>·<span class="var">o</span><br>
-<span class="var">F</span> = <span class="var">m_eff</span> × <span class="var">a</span><br>
-<br>
-<span class="cm"># 전복조건: F &gt; R → 전복가능 / F ≤ R → 체제유지</span><br>
-<br>
-<span class="cm"># 변수 정의 (0~10):</span><br>
-<span class="var">g</span> = 계급격차 &nbsp;&nbsp; <span class="var">d</span> = 정치박탈감<br>
-<span class="var">i</span> = 정체성공명도 &nbsp;&nbsp; <span class="var">o</span> = 조직화능력<br>
-<span class="var">m</span> = 인구질량(0~1) &nbsp;&nbsp; <span class="var">k</span> = 미디어계수(0~1)<br>
-<span class="var">R</span> = 체제저항력
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     히어로 랭킹
-     ═══════════════════════════════════════════════════════════════ -->
-<h2>🏆 compare_heroes — 한국 정치 인물 F 랭킹</h2>
-<table>
-<tr><th>순위</th><th>인물</th><th>m_eff</th><th>a</th><th style="color:var(--am)">F</th><th>R</th><th>F/R</th><th>판정</th></tr>
-<tr><td>1</td><td><strong>이재명</strong> <span class="badge purple">ljm</span></td><td>0.700</td><td>6.70</td><td style="color:var(--am);font-weight:700">4.690</td><td>7</td><td>0.670</td><td><span class="verdict ok" style="background:rgba(200,148,26,.1);color:var(--am)">경계</span></td></tr>
-<tr><td>2</td><td>한동훈 <span class="badge blue">populist</span></td><td>0.850</td><td>5.50</td><td style="color:var(--am);font-weight:700">4.675</td><td>7</td><td>0.668</td><td><span class="verdict ok" style="background:rgba(200,148,26,.1);color:var(--am)">경계</span></td></tr>
-<tr><td>3</td><td>심상정 <span class="badge blue">populist</span></td><td>0.850</td><td>5.20</td><td style="color:var(--am);font-weight:700">4.420</td><td>5</td><td>0.884</td><td><span class="verdict wait">최접전</span></td></tr>
-<tr><td>4</td><td>조국 <span class="badge gray">elite_left</span></td><td>0.550</td><td>5.70</td><td style="color:var(--am);font-weight:700">3.135</td><td>6</td><td>0.522</td><td><span class="verdict ok" style="background:rgba(160,96,216,.1);color:var(--pu)">o 약함</span></td></tr>
-</table>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     설정
-     ═══════════════════════════════════════════════════════════════ -->
-<h2>⚙️ 시스템 정보</h2>
-<div class="sys-grid">
-<div class="card" style="padding:12px">
-<div class="sys-item"><span class="k">MCP 서버</span><span class="v">election_mcp.py 385줄</span></div>
-<div class="sys-item"><span class="k">도구</span><span class="v">9개 (P0×2 P1×3 P2×2 P3×2)</span></div>
-<div class="sys-item"><span class="k">위치</span><span class="v">/mnt/e/mcp/election-mcp/</span></div>
-<div class="sys-item"><span class="k">모델</span><span class="v">F=ma 5축 + knockout_score</span></div>
-<div class="sys-item"><span class="k">가중치</span><span class="v">α=0.30 β=0.30 γ=0.20 δ=0.20</span></div>
-</div>
-<div class="card" style="padding:12px">
-<div class="sys-item"><span class="k">검증 상태</span><span class="v"><span class="badge yellow">보류</span></span></div>
-<div class="sys-item"><span class="k">LLM</span><span class="v">Claude Haiku 4.5 (P1~P3)</span></div>
-<div class="sys-item"><span class="k">배포</span><span class="v">stdio / HTTP (Railway)</span></div>
-<div class="sys-item"><span class="k">저장소</span><span class="v">OrbitPrompt/api/election_mcp.py</span></div>
-<div class="sys-item"><span class="k">커밋</span><span class="v">ddf533e</span></div>
-</div>
-</div>
-
-<h2 style="margin-top:28px">🏛️ 박씨 3블록 정치 구도</h2>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
-
-<div class="card" style="border-color:rgba(72,136,212,.25)">
-  <div style="font-family:var(--mono);font-size:12px;color:var(--bl);font-weight:700;margin-bottom:4px">민주 진영</div>
-  <div style="font-family:var(--mono);font-size:18px;color:var(--hi);font-weight:700">33.3%</div>
-  <div style="font-size:10px;color:var(--mt);margin-top:4px">기본 블록. 평택=내부 분열로 도전 실패.</div>
-</div>
-
-<div class="card" style="border-color:rgba(224,80,96,.25)">
-  <div style="font-family:var(--mono);font-size:12px;color:var(--rd);font-weight:700;margin-bottom:4px">보수 진영</div>
-  <div style="font-family:var(--mono);font-size:18px;color:var(--hi);font-weight:700">33.3%</div>
-  <div style="font-size:10px;color:var(--mt);margin-top:4px">서울=오세훈 역전승. 전국 판세 신호.</div>
-</div>
-
-<div class="card" style="border-color:rgba(200,148,26,.25)">
-  <div style="font-family:var(--mono);font-size:12px;color:var(--am);font-weight:700;margin-bottom:4px">실용/중도 (이재명)</div>
-  <div style="font-family:var(--mono);font-size:18px;color:var(--hi);font-weight:700">33.3%</div>
-  <div style="font-size:10px;color:var(--mt);margin-top:4px">민주도 보수도 아닌 독립 블록. 이재명 단독.</div>
-</div>
-
-</div>
-
-<div class="alert-box" style="border-color:rgba(72,136,212,.15)">
-<strong>🧠 박씨 해석 (2026-06-04):</strong><br>
-• <strong>서울</strong>: 보수 블록이 실용/민주 블록을 이김. 서울시장=전국 판세의 m(질량).<br>
-• <strong>평택</strong>: 민주 진영이 태생적 다양성 때문에 갈라져 나옴 → 구조적으로 이길 수 없는 게임.<br>
-• <strong>이재명</strong>: 민주 진영이 아니라 '실용/중도' 축으로 봐야 함. 3블록 중 가장 유동적.
-</div>
-
-
-<h2 style="margin-top:28px">⚔️ 도전자 130% 법칙</h2>
-<div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-  <div class="card" style="border-color:rgba(224,80,96,.2)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--hi);margin-bottom:6px;font-weight:700">🧠 도덕 서사 (김어준식 정신승리)</div>
-    <div style="font-size:12px;color:var(--tx);line-height:1.6">
-    "우리가 열심히 안 해서 졌다"<br><br>
-    <span style="color:var(--mt)">→ 구조를 인정하지 않고 노력 부족으로 환원.<br>
-    → 다음에도 똑같은 구조에서 질 확률 높음.</span>
-    </div>
-  </div>
-  <div class="card" style="border-color:rgba(61,184,160,.2)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--hi);margin-bottom:6px;font-weight:700">⚡ 물리 서사 (MCP 구조 해석)</div>
-    <div style="font-size:12px;color:var(--tx);line-height:1.6">
-    "이 구조에서는 130%를 때려넣어야 겨우 승부가 열린다"<br><br>
-    <span style="color:var(--mt)">→ 챔피언은 o(조직력)+R(체제저항)이 기본 30% 우위.<br>
-    → 도전자는 g/d/i/o 합계가 30% 더 높아야 F가 같아짐.<br>
-    → 100%로는 절대 못 이김. 130%가 기본.</span>
-    </div>
-  </div>
-</div>
-<div class="alert-box" style="border-color:rgba(160,96,216,.15);margin-top:12px">
-<strong>🔑 핵심:</strong> "우리가 열심히 안 해서 졌다"는 말은 사실 "<strong>도전자 마인드셋이 부족했다</strong>"는 뜻이다.<br>
-도전자는 챔피언보다 <strong>30% 더 높은 g/d/i/o</strong>를 만들어야 겨우 승부를 걸 수 있다. 100%로는 안 된다.
-</div>
-
-
-<h2 style="margin-top:28px">🏟️ 지역 구조적 불가능 — 김부겸 케이스</h2>
-<div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-  <div class="card" style="border-color:rgba(224,80,96,.2)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--rd);margin-bottom:6px;font-weight:700">📍 TK (대구·경북)</div>
-    <div style="font-size:12px;color:var(--tx);line-height:1.6">
-    <strong>김부겸</strong> — 대구 출신 유스 선수, 개인 능력치는 최상위.<br><br>
-    하지만: <strong style="color:var(--hi)">몇 번을 도전해도 안 됐다.</strong><br><br>
-    <span style="color:var(--mt)">원인: regional_bossism=9, organization_power=8, R=9<br>
-    → 구조적으로 홈팀이 정해진 리그.<br>
-    → F/R < 0.5 = '구조적 불가능' 구간.<br>
-    → 개인 능력치 최대 발휘해도 승부 불가.</span>
-    </div>
-  </div>
-  <div class="card" style="border-color:rgba(72,136,212,.2)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--bl);margin-bottom:6px;font-weight:700">📍 호남 (광주·전라)</div>
-    <div style="font-size:12px;color:var(--tx);line-height:1.6">
-    <strong>보수 후보 전반</strong> — 전라도에서 보수가 안 되는 이유.<br><br>
-    <span style="color:var(--mt)">TK와 동일한 구조: R=9, o=7, regional_bossism=8.<br>
-    → 프레임 자체가 다름. '이긴다'의 정의가 다른 지역.<br>
-    → 도전자는 여기서 '승리'를 목표로 하면 안 되고,<br>
-    &nbsp;&nbsp; '구조를 조금씩 깎는 역할'로 접근해야 함.</span>
-    </div>
-  </div>
-</div>
-<div class="alert-box" style="border-color:rgba(160,96,216,.15);margin-top:12px">
-<strong>🔑 MCP 해석:</strong> 김부겸 사례는 <strong>"개인 능력치 vs 지역 구조"</strong>의 대표 케이스다.<br>
-hero_score(개인)는 high지만, regional_bossism + far_right_drift + organization_power가 R을 극한으로 높여<br>
-<strong>calc_political_force 결과가 항상 '체제유지'</strong>로 고정되는 지역.<br><br>
-이걸 '열심히 안 해서'로 설명하면 김어준식 정신승리가 되고,<br>
-'구조적 불가능 구간'으로 인정하면 박씨식 물리 서사가 된다.
-</div>
-
-
-<h2 style="margin-top:28px">🧩 델타 레이어 — 제약 조건 & 실수 가능성</h2>
-<p style="font-size:11px;color:var(--mt);margin-bottom:12px">이상적 모델(g/d/i/o/R → F=ma) 위에 실제 선거 결과에서 추출한 제약 조건을 얹은 레이어</p>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-
-<div class="card" style="border-color:rgba(224,80,96,.2)">
-  <div style="font-family:var(--mono);font-size:11px;color:var(--rd);font-weight:700">🔴 hard_constraint</div>
-  <div style="font-size:11px;color:var(--hi);margin:4px 0;font-weight:600">지역 구조적 불가능</div>
-  <div style="font-size:10.5px;color:var(--tx);line-height:1.5">F/R < 0.5 = 구조적 불가능 구간. 개인 능력치 무력화.<br>TK(김부겸) · 호남(보수후보) — 홈팀이 정해진 리그.</div>
-</div>
-
-<div class="card" style="border-color:rgba(200,148,26,.2)">
-  <div style="font-family:var(--mono);font-size:11px;color:var(--am);font-weight:700">🟡 soft_constraint</div>
-  <div style="font-size:11px;color:var(--hi);margin:4px 0;font-weight:600">도전자 130% 법칙</div>
-  <div style="font-size:10.5px;color:var(--tx);line-height:1.5">챔피언 o+R 30% 우위. 도전자 g/d/i/o 합계 30% 높아야 F 같음. 100%로는 절대 못 이김.</div>
-</div>
-
-<div class="card" style="border-color:rgba(200,148,26,.2)">
-  <div style="font-family:var(--mono);font-size:11px;color:var(--am);font-weight:700">🟡 structural_penalty</div>
-  <div style="font-size:11px;color:var(--hi);margin:4px 0;font-weight:600">진영 분열 패널티</div>
-  <div style="font-size:10.5px;color:var(--tx);line-height:1.5">elite_fragmentation > 7 → challenger_force -30%. 평택=진영분열로 패배.</div>
-</div>
-
-<div class="card" style="border-color:rgba(61,184,160,.2)">
-  <div style="font-family:var(--mono);font-size:11px;color:var(--cy);font-weight:700">🟢 structural_bonus</div>
-  <div style="font-size:11px;color:var(--hi);margin:4px 0;font-weight:600">현직 미디어 보너스</div>
-  <div style="font-size:10.5px;color:var(--tx);line-height:1.5">k_media +0.10, R +0.5. 서울(오세훈 역전승) · 부산(국힘 조직력).</div>
-</div>
-
-<div class="card" style="border-color:rgba(72,136,212,.2)">
-  <div style="font-family:var(--mono);font-size:11px;color:var(--bl);font-weight:700">🔵 signal</div>
-  <div style="font-size:11px;color:var(--hi);margin:4px 0;font-weight:600">서울 바로미터</div>
-  <div style="font-size:10.5px;color:var(--tx);line-height:1.5">서울시장 선거 = 전국 판세 m(질량). 서울 승리 진영이 판세 주도. m_factor = 1.3.</div>
-</div>
-
-<div class="card" style="border-color:rgba(160,96,216,.2)">
-  <div style="font-family:var(--mono);font-size:11px;color:var(--pu);font-weight:700">🟣 swing_factor</div>
-  <div style="font-size:11px;color:var(--hi);margin:4px 0;font-weight:600">실용 블록 유동성</div>
-  <div style="font-size:10.5px;color:var(--tx);line-height:1.5">pragmatic(이재명) 블록 ±15%p 변동 가능. 3블록 중 가장 불안정.</div>
-</div>
-
-</div>
-
-<div class="alert-box" style="border-color:rgba(160,96,216,.15)">
-<strong>🔑 MCP 10번째 도구: </strong><code style="font-family:var(--mono);color:var(--cy)">delta_layer_info()</code> — 이 델타 레이어 전체를 JSON으로 반환.<br>
-모델 구조: <strong>ideal core (F=ma) + delta constraints (6개 레이어)</strong>
-</div>
-
-
-<h2 style="margin-top:28px">🏛️ 민주당 구조적 DNA — 연합정당의 한계</h2>
-<div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-  <div class="card" style="border-color:rgba(72,136,212,.2)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--bl);margin-bottom:6px;font-weight:700">민주당 = 태생적 연합정당</div>
-    <div style="font-size:12px;color:var(--tx);line-height:1.6">
-    • <strong>elite_fragmentation base = 6</strong> (타 정당 대비 +2)<br>
-    • 다양성 = 필수 but 분열 리스크 상존<br>
-    • 평택 = 리스크 조정 실패 사례<br>
-    • 조국 합당 불발 = 구조적 한계
-    </div>
-  </div>
-  <div class="card" style="border-color:rgba(200,148,26,.2)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--am);margin-bottom:6px;font-weight:700">이재명 = 예외, 장르가 아님</div>
-    <div style="font-size:12px;color:var(--tx);line-height:1.6">
-    • 이재명 pragmatic: <strong style="color:var(--hi)">8.5</strong><br>
-    • 당 평균 pragmatic: <strong style="color:var(--mt)">4.5</strong><br>
-    • <strong>gap = 4.0</strong><br><br>
-    <span style="color:var(--mt)">실용주의가 민주당 전체 노선이 될 수 없는 구조적 이유.
-    당의 g/d/i 구조는 가치+정체성+연합에 의존.
-    이재명 스타일은 '장르'가 아니라 '예외'다.</span>
-    </div>
-  </div>
-</div>
-<div class="alert-box" style="border-color:rgba(224,80,96,.15);margin-top:12px">
-<strong>🔑 핵심:</strong> 이재명의 실용/중도 스타일이 효과를 보더라도, 민주당 전체가 그걸 '장르'로 채택할 순 없다.<br>
-당 구조(g/d/i)가 가치+정체성+연합 기반이기 때문. 평택 분열과 조국 합당 실패는 그 증거다.<br>
-<strong style="color:var(--cy)">delta_layer_info()</strong> — democratic_coalition_risk + ljm_genre_limit 레이어에서 확인 가능.
-</div>
-
-
-<h2 style="margin-top:28px">🏙️ 서울 — 준-고정 구조로의 진화</h2>
-<p style="font-size:11px;color:var(--mt);margin-bottom:12px">오세훈 5선 · 보수 70% 지지율 — 도덕적 예외가 아니라 <strong style="color:var(--hi)">구조적 정상 결과</strong></p>
-
-<div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-  <div class="card" style="border-color:rgba(224,80,96,.2)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--rd);margin-bottom:6px;font-weight:700">📉 도덕적 해석 (정신승리)</div>
-    <div style="font-size:12px;color:var(--tx);line-height:1.6">
-    "부정부패·사고가 있는데도 왜 뽑냐?"<br><br>
-    <span style="color:var(--mt)">→ g(anger/disgust)만 보고 판단.<br>
-    → d/i/o/R의 결합력 무시.<br>
-    → 매번 같은 질문 반복.</span>
-    </div>
-  </div>
-  <div class="card" style="border-color:rgba(61,184,160,.2)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--cy);margin-bottom:6px;font-weight:700">📈 MCP 구조 해석</div>
-    <div style="font-size:12px;color:var(--tx);line-height:1.6">
-    "부정부패·사고 = g 마이너스. 그러나 R+o+media가 상쇄."<br><br>
-    <span style="color:var(--mt)">→ 서울 구조:R=7.5, incumbent=8, o=7, media=7<br>
-    → 마이너스 delta가 있어도 F-R 비율 유지<br>
-    → '사고로 떨어져야 하는 게 아니라'<br>
-    &nbsp;&nbsp; '사고를 상쇄할 challenger가 없었던 것'</span>
-    </div>
+  <div class="top-r">
+    <div>direction_acc 100% (8/8)</div>
+    <div>cls_acc 62.5% (v3)</div>
+    <div style="margin-top:3px"><span class="tag g">P0 리스크0</span> <span class="tag a">P1 추정편차</span></div>
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0">
-  <div class="card" style="border-color:rgba(224,80,96,.15)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--hi);font-weight:700">📍 오세훈</div>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--mt);margin-top:4px">
-    m_base=1.0 · k_media=0.75<br>
-    populist+elite 혼종<br>
-    중도이미지+전문가서사
-    </div>
+<div class="al">
+<strong>🧠 AI 시대 유권자를 위한 정치 사고 모델</strong><br>
+정치도 이해하고, 정치철학도 같이 할 수 있다. 구조를 보면서 시간을 아끼고, AI를 도구로 쓴다.<br>
+<span style="color:var(--mt)">MCP 하나 띄워놓고 반복되는 선거를 같은 언어로 읽는 것.</span>
+</div>
+
+<div class="sb">
+  <div class="si"><div class="n g">100%</div><div class="l">direction_acc</div></div>
+  <div class="si"><div class="n a">62.5%</div><div class="l">cls_acc v3</div></div>
+  <div class="si"><div class="n c">8</div><div class="l">검증지역</div></div>
+  <div class="si"><div class="n p">12</div><div class="l">델타레이어</div></div>
+  <div class="si"><div class="n b">10</div><div class="l">MCP도구</div></div>
+  <div class="si"><div class="n">385</div><div class="l">서버줄수</div></div>
+</div>
+
+<!-- ─── ① 8개 지역 F 비교 ─── -->
+<div class="sec-title">① 8개 지역 · 예측 vs 실제</div>
+<div class="card" style="padding:10px">
+  <div class="rr" style="color:var(--mt);font-size:9px;border-bottom:1px solid var(--dim)">
+    <div class="r">지역</div><div class="v">F(승)</div><div class="s"></div><div class="v">F(패)</div><div class="t">실제</div>
   </div>
-  <div class="card" style="border-color:rgba(61,184,160,.15)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--cy);font-weight:700">🏛️ 서울 구조</div>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--mt);margin-top:4px">
-    R=7.5 · i=8 · o=7 · media=7<br>
-    중산층+안정지향<br>
-    '준-고정 구조' 진화중
-    </div>
+  <div class="rr"><div class="r">부산 2022</div><div class="v" style="color:var(--rd)">2.86</div><div class="s">vs</div><div class="v" style="color:var(--mt)">2.48</div><div class="t"><span class="tag g">국힘승 ✅</span> 63.8%</div></div>
+  <div class="rr"><div class="r">대구 2022</div><div class="v" style="color:var(--rd)">3.80</div><div class="s">vs</div><div class="v" style="color:var(--mt)">2.78</div><div class="t"><span class="tag g">국힘승 ✅</span> 86.7%</div></div>
+  <div class="rr"><div class="r">광주 2022</div><div class="v" style="color:var(--bl)">3.56</div><div class="s">vs</div><div class="v" style="color:var(--mt)">1.89</div><div class="t"><span class="tag g">민주승 ✅</span> 67.1%</div></div>
+  <div class="rr"><div class="r">서울 2022</div><div class="v" style="color:var(--rd)">3.09</div><div class="s">vs</div><div class="v" style="color:var(--mt)">2.48</div><div class="t"><span class="tag g">국힘승 ✅</span> 8.7%p</div></div>
+  <div class="rr"><div class="r">경기 2022</div><div class="v" style="color:var(--bl)">2.50</div><div class="s">vs</div><div class="v" style="color:var(--mt)">2.49</div><div class="t"><span class="tag g">민주승 ✅</span> 2.1%p</div></div>
+  <div class="rr"><div class="r">인천 2022</div><div class="v" style="color:var(--rd)">2.22</div><div class="s">vs</div><div class="v" style="color:var(--mt)">2.11</div><div class="t"><span class="tag g">국힘승 ✅</span> 3.5%p</div></div>
+  <div class="rr"><div class="r">대전 2022</div><div class="v" style="color:var(--rd)">2.30</div><div class="s">vs</div><div class="v" style="color:var(--mt)">2.00</div><div class="t"><span class="tag g">국힘승 ✅</span> 5.3%p</div></div>
+  <div class="rr" style="border-bottom:none"><div class="r">평택 2024</div><div class="v" style="color:var(--rd)">2.32</div><div class="s">vs</div><div class="v" style="color:var(--mt)">2.18</div><div class="t"><span class="tag g">국힘승 ✅</span> 2.98%p</div></div>
+</div>
+
+<!-- ─── ② 델타 레이어 12개 (한눈에) ─── -->
+<div class="sec-title">② 델타 레이어 — 12개 제약 조건</div>
+<div class="g3">
+  <div class="card c0" style="padding:10px"><div class="ct">✅ hard_constraint</div><div class="cb">TK/호남 F/R &lt; 0.5 구조적 불가능</div></div>
+  <div class="card c1" style="padding:10px"><div class="ct">🟡 soft_constraint</div><div class="cb">도전자 130% 법칙 (챔피언 30% 우위)</div></div>
+  <div class="card c2" style="padding:10px"><div class="ct">🟡 penalty</div><div class="cb">진영 분열 시 challenger_force -30%</div></div>
+  <div class="card c3" style="padding:10px"><div class="ct">🟢 bonus</div><div class="cb">현직 k_media +0.10, R +0.5</div></div>
+  <div class="card c4" style="padding:10px"><div class="ct">🔵 signal</div><div class="cb">서울 바로미터 m_factor = 1.3</div></div>
+  <div class="card c3" style="padding:10px"><div class="ct">🟣 swing</div><div class="cb">실용 블록 ±15%p 변동</div></div>
+  <div class="card c4" style="padding:10px"><div class="ct">🏛️ dna</div><div class="cb">민주당 elite_fragmentation base=6</div></div>
+  <div class="card c0" style="padding:10px"><div class="ct">🧑 observation</div><div class="cb">이재명 pragmatic 8.5 (당 평균 4.5)</div></div>
+  <div class="card c1" style="padding:10px"><div class="ct">🏙️ analysis</div><div class="cb">서울 R=7.5 준고정 구조</div></div>
+  <div class="card c2" style="padding:10px"><div class="ct">🌊 shift</div><div class="cb">부산 swing_city R=5.5</div></div>
+  <div class="card c3" style="padding:10px"><div class="ct">📐 sensitivity</div><div class="cb">부울경 ≠ 하나 — R 차이로 분기</div></div>
+  <div class="card c4" style="padding:10px"><div class="ct">🏙️ casting</div><div class="cb">경기인천 R=4.5 캐스팅보트</div></div>
+</div>
+
+<!-- ─── ③ MCP에 질문하는 3가지 방법 ─── -->
+<div class="sec-title">③ MCP 사용법 — Claude Code로 이렇게 말하세요</div>
+<div class="g2">
+  <div class="card c0" style="padding:11px">
+    <div class="ct">🔍 선거 분석 요청</div>
+    <pre class="code" style="font-size:9px">"research_election으로 부산 분석해줘"</pre>
+    <div class="cb" style="font-size:10px;color:var(--mt)">→ LLM 리서치 → g/d/i/o/R 추정 → F 계산 → 예측</div>
   </div>
-  <div class="card" style="border-color:rgba(200,148,26,.15)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--am);font-weight:700">⚡ 도전자 조건</div>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--mt);margin-top:4px">
-    130% 필요<br>
-    부정부패만으로 부족<br>
-    실용+세대+경제 결합해야
-    </div>
+  <div class="card c1" style="padding:11px">
+    <div class="ct">⚡ 인물 비교</div>
+    <pre class="code" style="font-size:9px">"compare_heroes로 이재명 vs 한동훈 비교"</pre>
+    <div class="cb" style="font-size:10px;color:var(--mt)">→ F값 순위 + knockout 분석 (LLM 불필요)</div>
+  </div>
+  <div class="card c2" style="padding:11px">
+    <div class="ct">🧮 단일 F 계산</div>
+    <pre class="code" style="font-size:9px">"calc_political_force로 오세훈 F 계산"</pre>
+    <div class="cb" style="font-size:10px;color:var(--mt)">→ F값 + 전복조건 (LLM 불필요, 결정론적)</div>
+  </div>
+  <div class="card c3" style="padding:11px">
+    <div class="ct">📋 구조 확인</div>
+    <pre class="code" style="font-size:9px">"delta_layer_info 불러줘"</pre>
+    <div class="cb" style="font-size:10px;color:var(--mt)">→ 12개 제약 조건 전체 출력 (LLM 불필요)</div>
   </div>
 </div>
 
-<div class="alert-box" style="border-color:rgba(160,96,216,.15)">
-<strong>🔑 핵심:</strong> 서울에서 '부정부패·사고에도 불구하고' 재선되는 현상은 도덕적 실패가 아니라 <strong>구조적 정상</strong>이다.<br>
-g(anger/disgust) 마이너스를 R+o+media가 상쇄하는 구조. 도전자는 부정부패에만 기대지 말고<br>
-<strong>실용+세대+경제 프레임까지 결합한 130% 전략</strong>을 짜야 한다.<br><br>
-<strong style="color:var(--cy)">delta_layer_info()</strong> → seoul_structural_fixture 레이어에서 확인 가능.
-</div>
-
-
-<h2 style="margin-top:28px">🌊 부울경 — 부등식이 아니라 민감도 문제</h2>
-<p style="font-size:11px;color:var(--mt);margin-bottom:12px">부산 승(민주), 경남 패(보수 유지) — 같은 g 이벤트, 다른 R</p>
-
-<div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-  <div class="card" style="border-color:rgba(72,136,212,.25)">
-    <div style="font-family:var(--mono);font-size:13px;color:var(--bl);font-weight:700;margin-bottom:4px">📍 부산 — 민감 도시</div>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--mt);margin-bottom:6px">swing_city · regional_bossism=4 · R=5.5</div>
-    <div style="font-size:12px;color:var(--tx);line-height:1.5">
-    • 더 이상 보수 고정 아님<br>
-    • 민주 고정도 아님<br>
-    • <strong style="color:var(--cy)">g/i 변화에 2배 민감</strong><br>
-    • 이번 승리 = '영구 전환'이 아니라<br>
-    &nbsp;&nbsp; '현재 g/i 정렬 결과'
-    </div>
-  </div>
-  <div class="card" style="border-color:rgba(224,80,96,.25)">
-    <div style="font-family:var(--mono);font-size:13px;color:var(--rd);font-weight:700;margin-bottom:4px">📍 경남 — 저민감도</div>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--mt);margin-bottom:6px">low_sensitivity · regional_bossism=7 · R=7.5</div>
-    <div style="font-size:12px;color:var(--tx);line-height:1.5">
-    • R이 부산보다 <strong style="color:var(--hi)">2.0 높음</strong><br>
-    • 같은 g 이벤트에도 안 넘어감<br>
-    • 경남지사 패배 = 개인因素<br>
-    &nbsp;&nbsp; 구조적 전환 아님<br>
-    • 부울경=하나가 아님을 증명
-    </div>
+<!-- ─── ④ 설치 ─── -->
+<div class="sec-title">④ 1-step 설치</div>
+<div class="card" style="padding:10px">
+  <div class="cb">
+  <strong style="color:var(--hi)">1. 서버 실행</strong><br>
+  <span style="color:var(--mt)">PC에서:</span>
+  <pre class="code" style="font-size:9px">cd /mnt/e/mcp/election-mcp && python3 server.py &</pre>
+  <strong style="color:var(--hi);margin-top:6px;display:block">2. Claude Code 등록</strong><br>
+  <span style="color:var(--mt)">~/.claude.json:</span>
+  <pre class="code" style="font-size:9px">"parksy_election": {"command": "python3", "args": ["server.py"]}</pre>
+  <strong style="color:var(--hi);margin-top:6px;display:block">3. 사용</strong><br>
+  <span style="color:var(--mt)">Claude Code에 "오세훈 F 계산해줘" 라고 말하면 자동 호출</span>
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0">
-  <div class="card" style="padding:10px;text-align:center">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--hi)">부울경 부등식</div>
-    <div style="font-family:var(--mono);font-size:13px;color:var(--mt);margin-top:4px">F<sub>부산</sub> > R<sub>부산</sub> ✅<br>F<sub>경남</sub> ≤ R<sub>경남</sub> ❌</div>
-  </div>
-  <div class="card" style="padding:10px;text-align:center">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--hi)">같은 g, 다른 R</div>
-    <div style="font-family:var(--mono);font-size:13px;color:var(--mt);margin-top:4px">g(정권심판)=동일<br>R_부산=5.5 vs R_경남=7.5</div>
-  </div>
-  <div class="card" style="padding:10px;text-align:center">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--hi)">전망</div>
-    <div style="font-family:var(--mono);font-size:13px;color:var(--mt);margin-top:4px">부산=스윙지역<br>경남=보수견고</div>
-  </div>
+<!-- ─── ⑤ 핵심 해석 5문장 ─── -->
+<div class="sec-title">⑤ 정치철학 5문장</div>
+<div class="al">
+1. <strong>모델은 고정, 추정은 다양</strong> — P0는 누가 돌려도 같다.<br>
+2. <strong>도전자는 130% 해야 이긴다</strong> — 챔피언 30% 구조우위.<br>
+3. <strong>TK/호남은 구조적 불가능</strong> — 개인 능력치 무관, F/R &lt; 0.5.<br>
+4. <strong>이재명은 예외다</strong> — pragmatic 8.5 vs 당 평균 4.5. 장르가 아니라 예외.<br>
+5. <strong>서울은 도덕 문제가 아니라 구조 문제</strong> — R=7.5, 부정부패 상쇄.
 </div>
-
-<div class="alert-box" style="border-color:rgba(72,136,212,.15)">
-<strong>🔑 핵심:</strong> 부울경을 하나의 부등식으로 고정할 수 없다.<br>
-부산은 g/i 변화에 민감한 <strong>전환 가능 도시</strong>, 경남은 R이 두꺼운 <strong>저민감도 보수 지역</strong>.<br>
-같은 g 이벤트(정권심판, 부패, 경제)에도 R 차이로 결과가 다르게 나온다.<br><br>
-<strong style="color:var(--cy)">delta_layer_info()</strong> → busan_sensitivity_city + bulgyeong_inequality
-</div>
-
-
-<h2 style="margin-top:28px">🏙️ 경기·인천 — 인구 절반의 캐스팅보트</h2>
-<p style="font-size:11px;color:var(--mt);margin-bottom:12px">R 전국 최저 · 민감도 전국 최고 · 3블록 검증 최적 지역</p>
-
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
-  <div class="card" style="border-color:rgba(224,80,96,.15)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--hi);font-weight:700">📊 R=4.5</div>
-    <div style="font-size:10.5px;color:var(--mt);margin-top:4px">서울(R=7.5) 대비 -3.0<br>전국 최저 수준</div>
-  </div>
-  <div class="card" style="border-color:rgba(61,184,160,.15)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--cy);font-weight:700">⚡ 민감도 highest</div>
-    <div style="font-size:10.5px;color:var(--mt);margin-top:4px">부동산/경제 g에 즉각 반응<br>실용블록 최대 시험장</div>
-  </div>
-  <div class="card" style="border-color:rgba(200,148,26,.15)">
-    <div style="font-family:var(--mono);font-size:11px;color:var(--am);font-weight:700">🔑 캐스팅보트</div>
-    <div style="font-size:10.5px;color:var(--mt);margin-top:4px">여기서 지면 전국이 진 것<br>서울과 별도 fixture 필수</div>
-  </div>
-</div>
-
-<div class="alert-box" style="border-color:rgba(72,136,212,.15)">
-<strong>🔑 핵심:</strong> 경기·인천은 서울과 묶지 말고 <strong>독립 fixture</strong>로 봐야 한다.<br>
-서울은 준-고정(R=7.5)으로 가고 있지만, 경기·인천은 R=4.5로 전국에서 가장 얇다.<br>
-3블록 모델(민주/보수/실용) 검증에 가장 적합한 지역이며,<br>
-<strong style="color:var(--cy)">delta_layer_info()</strong> → gyeonggi_incheon_sensitivity
-</div>
-
-
-<h2 style="margin-top:28px">⚠️ 에이전트 리스크 — 도구별 변동성 등급</h2>
-<p style="font-size:11px;color:var(--mt);margin-bottom:12px">P0=에이전트 무관 · P1=추정 편차 · P3=검증용</p>
-
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
-  <div class="card" style="border-color:rgba(61,184,160,.25)">
-    <div style="font-family:var(--mono);font-size:13px;color:var(--cy);font-weight:700">✅ P0 — 리스크 0</div>
-    <div style="font-size:11px;color:var(--tx);margin-top:6px">
-    • calc_political_force<br>
-    • compare_heroes<br>
-    • delta_layer_info<br><br>
-    <span style="color:var(--mt)">결정론적 수학. DeepSeek/Claude/Perplexity 무관. 동일 입력=동일 출력.</span>
-    </div>
-  </div>
-  <div class="card" style="border-color:rgba(200,148,26,.25)">
-    <div style="font-family:var(--mono);font-size:13px;color:var(--am);font-weight:700">🟡 P1 — 추정 편차</div>
-    <div style="font-size:11px;color:var(--tx);margin-top:6px">
-    • research_election<br>
-    • tag_political_frame<br>
-    • classify_hero_type<br>
-    • scenario_analysis (P2)<br>
-    • generate_broadcast_script (P2)<br><br>
-    <span style="color:var(--mt)">LLM/검색 소스에 따라 g/d/i/o/R 추정값 다를 수 있음. reproducibility_test 권장.</span>
-    </div>
-  </div>
-  <div class="card" style="border-color:rgba(224,80,96,.25)">
-    <div style="font-family:var(--mono);font-size:13px;color:var(--rd);font-weight:700">🔴 P3 — 검증용</div>
-    <div style="font-size:11px;color:var(--tx);margin-top:6px">
-    • validate_fixtures (보류)<br>
-    • reproducibility_test<br><br>
-    <span style="color:var(--mt)">실제 개표 데이터 필요. DeepSeek vs Claude 교차 검증 가능.</span>
-    </div>
-  </div>
-</div>
-
-<div class="alert-box" style="border-color:rgba(160,96,216,.15)">
-<strong>🔑 철학:</strong> "모델은 고정, 추정은 다양."<br>
-같은 선거를 DeepSeek이 분석한 값과 Claude가 분석한 값을 calc_political_force에 각각 넣어보고 차이를 투명하게 비교하는 게 이 MCP의 목적.<br>
-누가 더 맞췄느냐가 아니라, 어느 추정이 어떤 구조적 전제에서 나왔는지를 보여준다.
-</div>
-
-
-
-<h2 style="margin-top:28px">🚀 MCP 연결 및 사용법 — 3-step</h2>
-<p style="font-size:11px;color:var(--mt);margin-bottom:12px">Claude Code / Cursor에서 MCP 서버에 연결하여 10개 도구를 직접 호출</p>
-
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-  <div class="card" style="border-color:rgba(61,184,160,.25)">
-    <div style="font-family:var(--mono);font-size:24px;color:var(--cy);font-weight:700;margin-bottom:4px">1</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--hi);font-weight:600;margin-bottom:4px">서버 실행</div>
-    <div style="font-size:11px;color:var(--tx);line-height:1.5">
-    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">cd /mnt/e/mcp/election-mcp</code><br>
-    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">python3 server.py</code>
-    </div>
-  </div>
-  <div class="card" style="border-color:rgba(200,148,26,.25)">
-    <div style="font-family:var(--mono);font-size:24px;color:var(--am);font-weight:700;margin-bottom:4px">2</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--hi);font-weight:600;margin-bottom:4px">Claude Code 등록</div>
-    <div style="font-size:11px;color:var(--tx);line-height:1.5">
-    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">~/.claude.json</code>에 추가:<br>
-    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">"parksy_election": {<br>
-    &nbsp;&nbsp;"command": "python3",<br>
-    &nbsp;&nbsp;"args": ["server.py"]<br>
-    }</code>
-    </div>
-  </div>
-  <div class="card" style="border-color:rgba(160,96,216,.25)">
-    <div style="font-family:var(--mono);font-size:24px;color:var(--pu);font-weight:700;margin-bottom:4px">3</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--hi);font-weight:600;margin-bottom:4px">도구 호출</div>
-    <div style="font-size:11px;color:var(--tx);line-height:1.5">
-    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">research_election("부산", ...)</code><br>
-    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">calc_political_force(...)</code><br>
-    <code style="background:var(--s1);padding:1px 4px;border-radius:2px">compare_heroes(...)</code>
-    </div>
-  </div>
-</div>
-
-<div class="alert-box" style="border-color:rgba(61,184,160,.15)">
-<strong>🔌 실제 워크플로우:</strong><br>
-1. Claude Code 열고 <strong>"오세훈 F 계산해줘"</strong> → MCP가 calc_political_force 호출<br>
-2. <strong>"서울 판세 분석해줘"</strong> → delta_layer_info + research_election<br>
-3. <strong>"이재명 vs 한동훈 비교"</strong> → compare_heroes + knockout 분석<br><br>
-<strong style="color:var(--cy)">P0 도구는 LLM 없이도 동작</strong> — calc_political_force / compare_heroes / delta_layer_info는 ANTHROPIC_API_KEY 불필요.
-</div>
-
-<h2 style="margin-top:16px">📋 실행 명령</h2>
-<p style="font-size:11px;color:var(--mt);margin-bottom:12px">상세 사용설명서: <a href="../docs/election-mcp-usermanual.md" style="color:var(--cy)">docs/election-mcp-usermanual.md</a> | 기술명세서: <a href="../docs/election-mcp-spec-100.md" style="color:var(--cy)">docs/election-mcp-spec-100.md</a></p>
-<pre># 의존성
-pip install mcp httpx pydantic
-export ANTHROPIC_API_KEY=sk-ant-...
-
-# stdio (Claude Code)
-python3 /mnt/e/mcp/election-mcp/server.py
-
-# HTTP (Railway 배포)
-PORT=8000 python3 /mnt/e/mcp/election-mcp/server.py
-
-# 예측 도구 호출
-calc_political_force(hero="ljm", g=7, d=8, i=6, o=5, R=7)
-compare_heroes([{name:"이재명",hero:"ljm",g:7,d:8,i:6,o:5,R:7},
-               {name:"조국",hero:"elite_left",g:5,d:6,i:8,o:4,R:6}])
-research_election("부산", ["전재수", "박형준"])    # ANTHROPIC_API_KEY 필요</pre>
 
 <div class="ftr">
-  <div>parksy-election-mcp v2.0 · 2026-06-03</div>
-  <div>dtslib · ddf533e</div>
-  <div>실제 개표 결과 나오면 validate_fixtures 업데이트 예정</div>
+  <div>parksy-election-mcp v2.0 · dbbcb22</div>
+  <div>8개 검증 · direction_acc 100% · cls_acc 62.5%</div>
+  <div>SD 카드 /mnt/e/mcp/election-mcp/</div>
 </div>
 
 </body>
