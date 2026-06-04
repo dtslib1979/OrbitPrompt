@@ -62,6 +62,12 @@
       "description": "F=ma 선거 시뮬레이션 갤러리 — 3개 지역 검증 + 5인 히어로 비교",
       "path": "boards/election-gallery.html",
       "status": "active"
+    },
+    "voice-to-mcp": {
+      "name": "Voice to MCP Pipeline",
+      "description": "말이 시스템이 되는 5단계 과정 — STT→LLM→MCP→Gallery",
+      "path": "boards/voice-to-mcp.html",
+      "status": "active"
     }
   }
 }

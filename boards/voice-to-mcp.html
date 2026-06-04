@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Voice to MCP — 말이 시스템이 되는 과정</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+KR:wght@300;400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#070709;--s0:#0c0c0f;--ln:#22222c;--mt:#4a4a5e;--tx:#b8b8d0;--hi:#e8e8f5;--am:#c8941a;--cy:#3db8a0;--bl:#4888d4;--pu:#a060d8;--mono:'JetBrains Mono',monospace;--sans:'Noto Sans KR',sans-serif}
+html{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:14px}
+body{max-width:720px;margin:0 auto;padding:40px 20px 60px}
+h1{font-family:var(--mono);font-size:22px;color:var(--hi);text-align:center;margin-bottom:4px;letter-spacing:-.3px}
+.sub{font-family:var(--mono);font-size:10px;color:var(--mt);text-align:center;letter-spacing:1.5px;margin-bottom:32px;border-bottom:1px solid var(--ln);padding-bottom:16px}
+.step{display:flex;align-items:center;gap:14px;padding:16px;margin-bottom:8px;background:var(--s0);border:1px solid var(--ln);border-radius:6px;transition:.2s}
+.step:hover{border-color:var(--am)}
+.step .num{font-family:var(--mono);font-size:24px;font-weight:700;min-width:40px;text-align:center}
+.step .num.n1{color:var(--cy)}.step .num.n2{color:var(--bl)}.step .num.n3{color:var(--am)}.step .num.n4{color:var(--pu)}.step .num.n5{color:var(--hi)}
+.step .body{flex:1}
+.step .body .title{font-size:15px;font-weight:700;color:var(--hi);margin-bottom:2px}
+.step .body .desc{font-size:12px;color:var(--mt);line-height:1.4}
+.arrow{text-align:center;color:var(--ln);font-size:18px;padding:2px 0}
+.case{margin-top:32px;padding:16px;background:rgba(160,96,216,.04);border:1px solid rgba(160,96,216,.15);border-radius:6px;text-align:center}
+.case strong{color:var(--pu)}
+.ftr{margin-top:40px;border-top:1px solid var(--ln);padding-top:14px;font-family:var(--mono);font-size:9px;color:var(--mt);text-align:center}
+</style>
+</head>
+<body>
+
+<h1>🗣️ 말이 시스템이 되는 과정</h1>
+<div class="sub">VOICE → STT → LLM → MCP → GALLERY</div>
+
+<div class="step">
+  <div class="num n1">🎤</div>
+  <div class="body">
+    <div class="title">전문가가 자기 경험을 말한다</div>
+    <div class="desc">"이재명은 실용/중도 축으로 봐야 해. 민주당이랑은 달라." — 박씨의 정치 토크</div>
+  </div>
+</div>
+<div class="arrow">↓</div>
+<div class="step">
+  <div class="num n2">📝</div>
+  <div class="body">
+    <div class="title">STT가 발화를 기록한다</div>
+    <div class="desc">Whisper / Termux STT → 텍스트 변환 → parksy-logs에 저장</div>
+  </div>
+</div>
+<div class="arrow">↓</div>
+<div class="step">
+  <div class="num n3">🧠</div>
+  <div class="body">
+    <div class="title">LLM이 규칙과 구조를 해석한다</div>
+    <div class="desc">"g/d/i/o/R 추정 → delta layer 매핑 → 이재명은 예외(장르 아님)"</div>
+  </div>
+</div>
+<div class="arrow">↓</div>
+<div class="step">
+  <div class="num n4">⚡</div>
+  <div class="body">
+    <div class="title">MCP가 실행 가능한 판단 엔진으로 고정한다</div>
+    <div class="desc">server.py 385줄 → calc_political_force → F=4.69, R=7, 체제유지</div>
+  </div>
+</div>
+<div class="arrow">↓</div>
+<div class="step">
+  <div class="num n5">🌐</div>
+  <div class="body">
+    <div class="title">결과는 갤러리에 전시된다</div>
+    <div class="desc">boards/election-gallery.html → direction_acc 100% → 누구나 볼 수 있음</div>
+  </div>
+</div>
+
+<div class="case">
+  <strong>🧪 실제 사례:</strong> 중년의 정치 토크가 <strong>Election MCP</strong>가 되었다.<br>
+  당신의 현장 경험도 하나의 판단 엔진이 될 수 있습니다.<br><br>
+  <a href="election-gallery.html" style="color:var(--cy);font-family:var(--mono);font-size:12px">Election MCP 갤러리 보기 →</a>
+</div>
+
+<div class="ftr">
+  <div>Voice to MCP — OrbitPrompt · 2026-06-04</div>
+  <div style="margin-top:4px">PARKSY 프로그래밍 철학: "MCP 하나를 내가 만들어서 띄워 놓고, 반복되는 선거를 같은 언어로 읽는다"</div>
+</div>
+
+</body>
+</html>
