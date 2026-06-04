@@ -541,6 +541,47 @@ g(anger/disgust) 마이너스를 R+o+media가 상쇄하는 구조. 도전자는 
 <strong style="color:var(--cy)">delta_layer_info()</strong> → gyeonggi_incheon_sensitivity
 </div>
 
+
+<h2 style="margin-top:28px">⚠️ 에이전트 리스크 — 도구별 변동성 등급</h2>
+<p style="font-size:11px;color:var(--mt);margin-bottom:12px">P0=에이전트 무관 · P1=추정 편차 · P3=검증용</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+  <div class="card" style="border-color:rgba(61,184,160,.25)">
+    <div style="font-family:var(--mono);font-size:13px;color:var(--cy);font-weight:700">✅ P0 — 리스크 0</div>
+    <div style="font-size:11px;color:var(--tx);margin-top:6px">
+    • calc_political_force<br>
+    • compare_heroes<br>
+    • delta_layer_info<br><br>
+    <span style="color:var(--mt)">결정론적 수학. DeepSeek/Claude/Perplexity 무관. 동일 입력=동일 출력.</span>
+    </div>
+  </div>
+  <div class="card" style="border-color:rgba(200,148,26,.25)">
+    <div style="font-family:var(--mono);font-size:13px;color:var(--am);font-weight:700">🟡 P1 — 추정 편차</div>
+    <div style="font-size:11px;color:var(--tx);margin-top:6px">
+    • research_election<br>
+    • tag_political_frame<br>
+    • classify_hero_type<br>
+    • scenario_analysis (P2)<br>
+    • generate_broadcast_script (P2)<br><br>
+    <span style="color:var(--mt)">LLM/검색 소스에 따라 g/d/i/o/R 추정값 다를 수 있음. reproducibility_test 권장.</span>
+    </div>
+  </div>
+  <div class="card" style="border-color:rgba(224,80,96,.25)">
+    <div style="font-family:var(--mono);font-size:13px;color:var(--rd);font-weight:700">🔴 P3 — 검증용</div>
+    <div style="font-size:11px;color:var(--tx);margin-top:6px">
+    • validate_fixtures (보류)<br>
+    • reproducibility_test<br><br>
+    <span style="color:var(--mt)">실제 개표 데이터 필요. DeepSeek vs Claude 교차 검증 가능.</span>
+    </div>
+  </div>
+</div>
+
+<div class="alert-box" style="border-color:rgba(160,96,216,.15)">
+<strong>🔑 철학:</strong> "모델은 고정, 추정은 다양."<br>
+같은 선거를 DeepSeek이 분석한 값과 Claude가 분석한 값을 calc_political_force에 각각 넣어보고 차이를 투명하게 비교하는 게 이 MCP의 목적.<br>
+누가 더 맞췄느냐가 아니라, 어느 추정이 어떤 구조적 전제에서 나왔는지를 보여준다.
+</div>
+
 <h2 style="margin-top:16px">📋 실행 명령</h2>
 <pre># 의존성
 pip install mcp httpx pydantic
