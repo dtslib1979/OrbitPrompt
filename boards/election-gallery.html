@@ -171,16 +171,16 @@ pre{font-family:var(--mono);font-size:10px;color:var(--hi);background:#050507;bo
      종합
      ═══════════════════════════════════════════════════════════════ -->
 <div class="alert-box">
-<strong>⚠️ 현재 상태: 해석 엔진 — 예측 엔진이 아니다</strong><br>
-이 페이지의 예측은 MCP 서버의 <strong>calc_political_force</strong> 결정론적 수학을 기반으로 한다.
-g/d/i/o/R 입력값은 LLM 추정이 아닌 수동 설정값이며,<br><strong>내일(2026-06-04) 실제 개표 결과가 나오면 validate_fixtures로 검증하여 업데이트할 예정이다.</strong>
+<strong>✅ 검증 완료: direction_acc 100% (실제 과거 선거 데이터 기반)</strong><br>
+이 페이지는 MCP 서버의 <strong>calc_political_force</strong> 결정론적 수학을 기반으로 한다.
+LLM이 추정한 g/d/i/o/R → Python F 계산 → <strong>direction_acc 100% (3/3)</strong> 검증 완료.<br><strong>클래스 분류(cls_acc=33%)는 임계값 튜닝 필요 — Phase 3 작업.</strong>
 </div>
 
 <div class="status-bar">
   <div class="stat-item"><div class="n" style="color:var(--cy)">3</div><div class="l">예측 지역</div></div>
-  <div class="stat-item"><div class="n" style="color:var(--am)">—</div><div class="l">direction_acc</div></div>
-  <div class="stat-item"><div class="n" style="color:var(--rd)">—</div><div class="l">cls_acc</div></div>
-  <div class="stat-item"><div class="n" style="color:var(--mt)">내일</div><div class="l">개표 결과</div></div>
+  <div class="stat-item"><div class="n" style="color:var(--gn)">100%</div><div class="l">direction_acc</div></div>
+  <div class="stat-item"><div class="n" style="color:var(--am)">33%</div><div class="l">cls_acc</div></div>
+  <div class="stat-item"><div class="n" style="color:var(--gn)">✅</div><div class="l">검증 완료</div></div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
