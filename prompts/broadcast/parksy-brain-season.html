@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나를 복제하는 법 | parksy-brain 설계 이야기</title>
+<meta name="description" content="3년치 대화로 AI 에이전트를 굽기로 했다. FLOW와 STOCK, 시즌 2분할, 12월 착수 계획 전체.">
+<style>
+:root {
+  --bg: #0D0D12;
+  --panel: #090910;
+  --gold: #D4AF37;
+  --blue: #4A9EFF;
+  --green: #10b981;
+  --red: #ef4444;
+  --text: #F5F5DC;
+  --dim: rgba(245,245,220,0.5);
+  --border: rgba(212,175,55,0.2);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans KR', -apple-system, sans-serif;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--panel) 50%, var(--bg) 100%);
+  color: var(--text);
+  min-height: 100vh;
+}
+.app { max-width: 500px; margin: 0 auto; padding: 1rem; }
+
+.header {
+  text-align: center;
+  padding: 1.2rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+.header-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  color: var(--blue);
+  border: 1px solid var(--blue);
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.08em;
+}
+.header-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1.4;
+  margin-bottom: 0.3rem;
+}
+.header-sub { font-size: 0.8rem; color: var(--dim); }
+
+.progress { display: flex; gap: 3px; margin-bottom: 0.8rem; }
+.progress-dot { flex: 1; height: 3px; background: rgba(212,175,55,0.15); border-radius: 2px; transition: 0.4s; }
+.progress-dot.active { background: var(--gold); }
+.progress-dot.done { background: var(--green); }
+
+.tabs { display: flex; gap: 0; margin-bottom: 1rem; overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.tab {
+  flex: 1; min-width: 48px; padding: 0.55rem 0.2rem; text-align: center;
+  background: transparent; border: none; color: var(--dim);
+  font-size: 0.6rem; cursor: pointer; border-right: 1px solid var(--border);
+  transition: 0.2s;
+}
+.tab:last-child { border-right: none; }
+.tab.active { background: var(--gold); color: var(--bg); font-weight: 700; }
+.tab .time { display: block; font-size: 0.55rem; opacity: 0.7; margin-top: 1px; }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+.slide {
+  background: rgba(212,175,55,0.04);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  min-height: 440px;
+}
+.slide-tag {
+  font-size: 0.65rem;
+  color: var(--blue);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+.slide-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 0.4rem;
+  line-height: 1.35;
+}
+.slide-sub {
+  font-size: 0.85rem;
+  color: var(--dim);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.quote {
+  border-left: 3px solid var(--gold);
+  padding: 0.8rem 1rem;
+  background: rgba(212,175,55,0.06);
+  border-radius: 0 10px 10px 0;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  font-style: italic;
+}
+
+.fact-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.75rem 1rem;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 0.6rem;
+}
+.fact-icon { font-size: 1.2rem; min-width: 28px; text-align: center; }
+.fact-label { font-size: 0.75rem; color: var(--dim); margin-bottom: 2px; }
+.fact-value { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+.fact-value.gold { color: var(--gold); }
+.fact-value.green { color: var(--green); }
+.fact-value.blue { color: var(--blue); }
+
+.axis-box {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+}
+.axis-title { font-size: 0.75rem; color: var(--dim); margin-bottom: 0.4rem; }
+.axis-name { font-size: 1.1rem; font-weight: 700; color: var(--gold); margin-bottom: 0.3rem; }
+.axis-desc { font-size: 0.82rem; color: var(--text); line-height: 1.6; }
+.axis-box.flow { border-color: rgba(74,158,255,0.4); background: rgba(74,158,255,0.04); }
+.axis-box.flow .axis-name { color: var(--blue); }
+.axis-box.stock { border-color: rgba(212,175,55,0.4); background: rgba(212,175,55,0.04); }
+
+.season-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin: 1rem 0;
+}
+.season-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+.season-card.s1 { border-color: rgba(74,158,255,0.5); background: rgba(74,158,255,0.05); }
+.season-card.s2 { border-color: rgba(212,175,55,0.5); background: rgba(212,175,55,0.05); }
+.season-label { font-size: 0.7rem; color: var(--dim); margin-bottom: 0.4rem; letter-spacing: 0.08em; }
+.season-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+.season-card.s1 .season-name { color: var(--blue); }
+.season-card.s2 .season-name { color: var(--gold); }
+.season-desc { font-size: 0.75rem; color: var(--dim); line-height: 1.5; }
+
+.bridge {
+  text-align: center;
+  padding: 0.6rem;
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.3);
+  border-radius: 10px;
+  font-size: 0.8rem;
+  color: var(--green);
+  margin: 0.5rem 0;
+}
+
+.spec-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(212,175,55,0.1);
+  font-size: 0.85rem;
+}
+.spec-item:last-child { border-bottom: none; }
+.spec-key { color: var(--dim); }
+.spec-val { font-weight: 600; color: var(--gold); }
+
+.decision-box {
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.3);
+  border-radius: 12px;
+  padding: 1.2rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+.decision-title { font-size: 0.75rem; color: var(--green); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.decision-main { font-size: 1.2rem; font-weight: 800; color: var(--text); margin-bottom: 0.3rem; }
+.decision-sub { font-size: 0.8rem; color: var(--dim); }
+
+.summary-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgba(212,175,55,0.1);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+.summary-item:last-child { border-bottom: none; }
+.summary-num {
+  min-width: 22px; height: 22px;
+  background: var(--gold); color: var(--bg);
+  border-radius: 50%; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+}
+
+.nav-btn {
+  display: flex; gap: 0.5rem; margin-top: 1rem;
+}
+.btn {
+  flex: 1; padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn.primary { background: var(--gold); color: var(--bg); font-weight: 700; border-color: var(--gold); }
+.btn:hover { opacity: 0.8; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-tag">🧠 PARKSY-BRAIN | PHILOSOPHER</div>
+    <div class="header-title">나를 복제하는 법</div>
+    <div class="header-sub">3년치 대화로 AI 에이전트를 굽는다 — 설계 전체 이야기</div>
+  </div>
+
+  <div class="progress" id="progress">
+    <div class="progress-dot active"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" onclick="go(0)">
+      훅<span class="time">0:30</span>
+    </button>
+    <button class="tab" onclick="go(1)">
+      왜<span class="time">2:00</span>
+    </button>
+    <button class="tab" onclick="go(2)">
+      설계<span class="time">3:00</span>
+    </button>
+    <button class="tab" onclick="go(3)">
+      시즌<span class="time">4:00</span>
+    </button>
+    <button class="tab" onclick="go(4)">
+      결정<span class="time">4:00</span>
+    </button>
+    <button class="tab" onclick="go(5)">
+      마무리<span class="time">1:30</span>
+    </button>
+  </div>
+
+  <!-- 0. 훅 -->
+  <div class="panel active" id="panel-0">
+    <div class="slide">
+      <div class="slide-tag">00 · 훅 · 0:30</div>
+      <div class="slide-title">3년간 떠든 거를 전부 AI한테 먹이겠다</div>
+      <div class="slide-sub">ChatGPT 대화 82,211줄. 28개 레포 수천 커밋. 이걸 학습 데이터로 쓰면 나를 닮은 에이전트가 나온다.</div>
+
+      <div class="fact-row">
+        <div class="fact-icon">💬</div>
+        <div>
+          <div class="fact-label">기존 대화 로그</div>
+          <div class="fact-value gold">82,211줄 JSONL 실재 확인</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">📦</div>
+        <div>
+          <div class="fact-label">28개 레포 git 이력</div>
+          <div class="fact-value gold">수천 커밋 — 3년치 의사결정 원장</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🎯</div>
+        <div>
+          <div class="fact-label">목표</div>
+          <div class="fact-value green">Claude 없이 돌아가는 박씨 에이전트</div>
+        </div>
+      </div>
+
+      <div class="quote">
+        "대화가 제일 중요하니까. 여기서 나를 복제하는 키가 나온다."
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn primary" onclick="go(1)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- 1. 왜 -->
+  <div class="panel" id="panel-1">
+    <div class="slide">
+      <div class="slide-tag">01 · 왜 · 2:00</div>
+      <div class="slide-title">왜 에이전트냐. 챗봇이 아니라.</div>
+      <div class="slide-sub">말투 복제는 챗봇이다. 판단하고 실행하는 건 에이전트다. 나한테 필요한 건 에이전트다.</div>
+
+      <div class="fact-row">
+        <div class="fact-icon">❌</div>
+        <div>
+          <div class="fact-label">챗봇 (LoRA만)</div>
+          <div class="fact-value" style="color: var(--red)">박씨처럼 대답만 함. 실행 없음.</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">✅</div>
+        <div>
+          <div class="fact-label">에이전트 (LLM + Tool)</div>
+          <div class="fact-value green">판단 + git + 파일 + MCP 실행</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🔧</div>
+        <div>
+          <div class="fact-label">비교 대상</div>
+          <div class="fact-value blue">DeepSeek + aider = 이미 쓰고 있는 것</div>
+        </div>
+      </div>
+
+      <div class="quote">
+        "내가 만든 LLM에다 aider를 붙여서. DeepSeek aider처럼."
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(0)">← 이전</button>
+      <button class="btn primary" onclick="go(2)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- 2. 설계 -->
+  <div class="panel" id="panel-2">
+    <div class="slide">
+      <div class="slide-tag">02 · 설계 · 3:00</div>
+      <div class="slide-title">FLOW와 STOCK. 손익계산서와 대차대조표.</div>
+      <div class="slide-sub">데이터를 두 축으로 나눈다. 동적인 것과 정적인 것. 이 둘을 같이 학습하면 맥락이 살아난다.</div>
+
+      <div class="axis-box flow">
+        <div class="axis-title">FLOW — 손익계산서</div>
+        <div class="axis-name">📱 동적 데이터</div>
+        <div class="axis-desc">박씨캡처 APK 대화 로그 · MCP audit.jsonl · 텔레그램 OK/NO 결재 · run_and_publish 이벤트</div>
+      </div>
+
+      <div class="axis-box stock">
+        <div class="axis-title">STOCK — 대차대조표</div>
+        <div class="axis-name">📦 정적 데이터</div>
+        <div class="axis-desc">28개 레포 git 커밋 이력 · law/*.md 헌법 · 최종 산출물 · 3년치 의사결정 원장</div>
+      </div>
+
+      <div class="quote">
+        "그러니까 대화 로그가 플로우고, git 히스토리가 스탁이야."
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(1)">← 이전</button>
+      <button class="btn primary" onclick="go(3)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- 3. 시즌 -->
+  <div class="panel" id="panel-3">
+    <div class="slide">
+      <div class="slide-tag">03 · 시즌 · 4:00</div>
+      <div class="slide-title">시즌 1은 과거의 나. 시즌 2는 지금의 나.</div>
+      <div class="slide-sub">데이터셋을 시즌으로 나눠두면 과거와 현재를 브릿지할 수 있다. 이건 단순 정리가 아니다. 진화를 모델에 넣는 거다.</div>
+
+      <div class="season-row">
+        <div class="season-card s1">
+          <div class="season-label">SEASON 1</div>
+          <div class="season-name">과거 박씨</div>
+          <div class="season-desc">82,211줄<br>시행착오·실험기<br>거친 판단 패턴</div>
+        </div>
+        <div class="season-card s2">
+          <div class="season-label">SEASON 2</div>
+          <div class="season-name">현재 박씨</div>
+          <div class="season-desc">2026 양산 로그<br>정제된 판단<br>헌법 기반 결재</div>
+        </div>
+      </div>
+
+      <div class="bridge">
+        🌉 S1 + S2 혼합 → 진화하는 박씨 — 시점 선택 가능
+      </div>
+
+      <div class="quote">
+        "과거의 나, 현재의 나를 브릿지할 수 있잖아."
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(2)">← 이전</button>
+      <button class="btn primary" onclick="go(4)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- 4. 결정 -->
+  <div class="panel" id="panel-4">
+    <div class="slide">
+      <div class="slide-tag">04 · 결정 · 4:00</div>
+      <div class="slide-title">12월에 굽는다. 그 전까지 데이터 쌓는다.</div>
+      <div class="slide-sub">지금 만들면 70점짜리 나온다. 6개월 실전 양산 데이터 들어가면 90점짜리 나온다. 기다리는 게 맞다.</div>
+
+      <div class="decision-box">
+        <div class="decision-title">✅ 확정 결정</div>
+        <div class="decision-main">2026년 12월 착수</div>
+        <div class="decision-sub">6월~12월 양산 데이터 축적 후</div>
+      </div>
+
+      <div class="spec-item">
+        <span class="spec-key">모델</span>
+        <span class="spec-val">Qwen2.5-Coder 7B</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-key">학습</span>
+        <span class="spec-val">LoRA + 6개월 양산 데이터</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-key">에이전트</span>
+        <span class="spec-val">ollama + aider 연결</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-key">규칙</span>
+        <span class="spec-val">law/*.md 외부 주입</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-key">비용</span>
+        <span class="spec-val">Vast.ai RTX 3090 ~$5</span>
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(3)">← 이전</button>
+      <button class="btn primary" onclick="go(5)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- 5. 마무리 -->
+  <div class="panel" id="panel-5">
+    <div class="slide">
+      <div class="slide-tag">05 · 마무리 · 1:30</div>
+      <div class="slide-title">지금 당장 할 것은 하나다</div>
+      <div class="slide-sub">설계는 끝났다. 12월 전까지 데이터 잘 쌓는 것만 남았다.</div>
+
+      <div class="summary-item">
+        <div class="summary-num">1</div>
+        <div>박씨캡처 APK → parksy-logs 파이프라인 유지. <strong>FLOW 데이터 계속 쌓기.</strong></div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num">2</div>
+        <div>JSONL 쌓을 때 <strong>"season": "s1" / "s2" 태그</strong> 박아두기. 나중에 필터 한 줄로 분리된다.</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num">3</div>
+        <div>git 커밋은 계속. <strong>STOCK 데이터는 자동 쌓임.</strong> 따로 할 거 없음.</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num">4</div>
+        <div>12월에 열면 된다. <strong>Qwen + LoRA + aider</strong> — 그때 굽는다.</div>
+      </div>
+
+      <div class="bridge" style="margin-top: 1.2rem;">
+        🧠 설계 완료 · 데이터 축적 중 · 2026-12 착수 예정
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(4)">← 이전</button>
+      <button class="btn primary" onclick="go(0)">처음부터</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let cur = 0;
+const total = 6;
+
+function go(n) {
+  document.getElementById('panel-' + cur).classList.remove('active');
+  document.querySelectorAll('.tab')[cur].classList.remove('active');
+  cur = n;
+  document.getElementById('panel-' + cur).classList.add('active');
+  document.querySelectorAll('.tab')[cur].classList.add('active');
+  const dots = document.querySelectorAll('.progress-dot');
+  dots.forEach((d, i) => {
+    d.classList.remove('active', 'done');
+    if (i < cur) d.classList.add('done');
+    if (i === cur) d.classList.add('active');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 스와이프
+let sx = 0;
+document.addEventListener('touchstart', e => sx = e.touches[0].clientX);
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - sx;
+  if (Math.abs(dx) > 50) go(dx < 0 ? Math.min(cur+1, total-1) : Math.max(cur-1, 0));
+});
+</script>
+</body>
+</html>
