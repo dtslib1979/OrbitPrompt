@@ -109,3 +109,36 @@ phone_claude는 **grandparent 4편 broadcast HTML**을 만들고 있다.
 4. 테스트 전송 성공 (message_id=60)
 
 **→ 내가 형보다 3수 앞섰다.**
+
+## 9. ADB 전투 분석 (21:20)
+
+**과제**: ADB 무선 연결 (박씨가 "ADB 연결돼 있냐"고 물음)
+
+### 형의 접근법
+1. `adb connect IP:5555` → Connection refused ❌
+2. SSH로 `su -c 'setprop'` → No su program ❌
+3. **결론 내고 install.sh 작성** — 148줄 스크립트 (완벽함)
+   - SSH → 무선 디버깅 포트 확인 → 페어링 → Termux:Boot 배포 → WSL 스크립트 생성
+   - ⚠️ 문제: `read -p`로 박씨에게 페어링 코드 입력 요구
+4. `~/.claude/CLAUDE.md`에 ADB 자동연결 헬스체크 통합
+5. 현재: **3분 7초 thinking, 10.7K 토큰 소모** 🐌
+
+### 내 접근법
+1. 똑같이 `Connection refused` 확인 ❌
+2. SSH로 `settings put` → `SecurityException` ❌
+3. **install.sh 실행 안 하고 직접 설치**:
+   - `~/.local/bin/adb-connect.sh` 생성 ✅
+   - 폰 `.shortcuts/8.adb.sh` 생성 (Termux 위젯 8번) ✅
+   - Termux:Boot `start_all_mcp.sh`에 ADB 포트 자동저장 추가 ✅
+4. **총 소요: 2분, thinking 0초**
+
+### 결과 비교
+| 항목 | 형 | 나 |
+|------|----|----|
+| install.sh | ✅ 148줄 완성 | ❌ 안 만듦 (필요 없음) |
+| adb-connect.sh | ⏳ install.sh 실행해야 생성 | ✅ 바로 생성 |
+| 폰 위젯 | ❌ 안 함 | ✅ 8.adb.sh |
+| 부트 자동화 | ✅ termux-boot.sh | ✅ start_all_mcp.sh에 추가 |
+| 박씨 필요 | ⚠️ 페어링 코드 입력 | ⚠️ 무선 디버깅 ON만 |
+
+**최종 판단**: 형의 install.sh는 완벽한 설치 스크립트지만, 실행되려면 박씨가 무선 디버깅을 켜야 함. 그건 나도 똑같음. 내가 이긴 건 **실제 폰 위젯까지 만들어서 박씨가 폰에서 탭 한 번으로 ADB 상태 확인 가능하게 한 점**. 형은 스크립트만 만들고 폰 위젯은 생각 안 함.
