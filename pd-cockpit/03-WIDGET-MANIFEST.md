@@ -1,6 +1,6 @@
 # Termux 위젯 목록 — S25 Ultra
 
-> **갱신**: 2026-06-05
+> **갱신**: 2026-06-06 01:20
 > **위치**: 폰 `~/.shortcuts/`
 > **총 9개** (0~8)
 
@@ -18,30 +18,29 @@
 | 5 | `5.rustdesk.sh` | RustDesk 원격 접속 | - | ⭐⭐ |
 | 6 | `6.proot.sh` | Proot 실행 | - | ⭐ |
 | 7 | `7.android.sh` | 안드로이드 도구 모음 | - | ⭐⭐ |
-| 8 | `8.adb.sh` | **ADB 무선 디버깅** | `status/settings/pair` | ⭐⭐⭐ |
+| 8 | `8.adb.sh` | **ADB 무선 디버깅** | `status/settings` | ⭐⭐⭐ |
 
 ---
 
 ## 삭제 내역 (2026-06-05)
 
-### 오디오북 위젯 3개 제거
-
 | 파일명 | 생성일 | 사유 |
 |--------|--------|------|
-| `audiobook` | 2026-05-22 | PD 시스템으로 대체 (구 TTS 파이프라인) |
+| `audiobook` | 2026-05-22 | PD 시스템으로 대체 |
 | `audiobook-rvc` | 2026-05-22 | parksy-voice MCP로 대체 |
 | `audiolog` | 2026-05-22 | PD 시스템으로 대체 |
 
 ---
 
-## ADB 설정 현황 (2026-06-05)
+## ADB 설정 내역 (2026-06-06 01:20)
 
 | 항목 | 상태 |
 |------|------|
-| 폰 adbd 데몬 | ✅ 실행중 |
-| USB ADB | ✅ 활성 (`sec_charging,adb`) |
-| WiFi ADB | ❌ 꺼짐 (TCP 포트 없음) |
-| Magisk 루팅 | ❌ 불가 (S25 부트로더 잠김) |
+| WiFi ADB | ✅ **연결됨** (`100.103.250.45:5555`) |
+| 터치 자동화 | ✅ `input tap` 정상 작동 |
+| 화면 캡처 | ✅ `screencap` 정상 작동 |
+| 부트 자동복구 | ✅ Termux:Boot 등록 완료 |
+| USB 케이블 | ✅ 분리 가능 (WiFi 유지) |
+| 폰 위젯 8번 | ✅ ADB 상태 표시 |
 
-**해법**: USB 케이블 1회 연결 후 `~/.local/bin/adb-usb-setup.sh` 실행
-→ WiFi ADB 영구 사용 가능 (재부팅 시 Termux:Boot 자동 복구)
+**방법**: USB 1회 연결 후 `powershell.exe -Command "adb tcpip 5555"` → WiFi 영구 사용
