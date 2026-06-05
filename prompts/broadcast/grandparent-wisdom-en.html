@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Wisdom No Book Can Teach | Grandparent Wisdom Series</title>
+<meta name="description" content="Wisdom is what you carry after the search fails. Grandparents have it because they ran out of options and survived anyway.">
+<style>
+:root {
+  --bg: #0D0D12;
+  --panel: #090910;
+  --gold: #D4AF37;
+  --blue: #4A9EFF;
+  --green: #10b981;
+  --warm: #F59E0B;
+  --text: #F5F5DC;
+  --dim: rgba(245,245,220,0.5);
+  --border: rgba(212,175,55,0.2);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--panel) 50%, var(--bg) 100%);
+  color: var(--text);
+  min-height: 100vh;
+}
+.app { max-width: 500px; margin: 0 auto; padding: 1rem; }
+.header { text-align: center; padding: 1.2rem 0; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+.header-tag { display: inline-block; font-size: 0.65rem; color: var(--warm); border: 1px solid var(--warm); border-radius: 4px; padding: 2px 8px; margin-bottom: 0.5rem; letter-spacing: 0.08em; }
+.header-title { font-size: 1.3rem; font-weight: 800; color: var(--gold); line-height: 1.4; margin-bottom: 0.3rem; }
+.header-sub { font-size: 0.8rem; color: var(--dim); }
+.progress { display: flex; gap: 3px; margin-bottom: 0.8rem; }
+.progress-dot { flex: 1; height: 3px; background: rgba(212,175,55,0.15); border-radius: 2px; transition: 0.4s; }
+.progress-dot.active { background: var(--gold); }
+.progress-dot.done { background: var(--green); }
+.tabs { display: flex; gap: 0; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.tab { flex: 1; min-width: 48px; padding: 0.55rem 0.2rem; text-align: center; background: transparent; border: none; color: var(--dim); font-size: 0.6rem; cursor: pointer; border-right: 1px solid var(--border); transition: 0.2s; }
+.tab:last-child { border-right: none; }
+.tab.active { background: var(--gold); color: var(--bg); font-weight: 700; }
+.tab .time { display: block; font-size: 0.55rem; opacity: 0.7; margin-top: 1px; }
+.panel { display: none; }
+.panel.active { display: block; }
+.slide { background: rgba(212,175,55,0.04); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; min-height: 440px; }
+.slide-tag { font-size: 0.65rem; color: var(--warm); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.slide-title { font-size: 1.4rem; font-weight: 800; color: var(--gold); margin-bottom: 0.4rem; line-height: 1.35; }
+.slide-sub { font-size: 0.85rem; color: var(--dim); margin-bottom: 1.5rem; line-height: 1.6; }
+.quote { border-left: 3px solid var(--warm); padding: 0.8rem 1rem; background: rgba(245,158,11,0.06); border-radius: 0 10px 10px 0; margin: 1rem 0; font-size: 0.95rem; line-height: 1.7; font-style: italic; }
+.fact-row { display: flex; align-items: center; gap: 0.8rem; padding: 0.75rem 1rem; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.6rem; }
+.fact-icon { font-size: 1.2rem; min-width: 28px; text-align: center; }
+.fact-label { font-size: 0.75rem; color: var(--dim); margin-bottom: 2px; }
+.fact-value { font-size: 0.95rem; font-weight: 600; }
+.fact-value.gold { color: var(--gold); }
+.fact-value.green { color: var(--green); }
+.fact-value.warm { color: var(--warm); }
+.cpm-box { border: 1px solid rgba(74,158,255,0.4); border-radius: 12px; padding: 1rem; margin-bottom: 0.7rem; background: rgba(74,158,255,0.04); }
+.cpm-label { font-size: 0.7rem; color: var(--blue); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+.cpm-text { font-size: 0.9rem; color: var(--text); line-height: 1.5; font-weight: 600; }
+.cpm-desc { font-size: 0.78rem; color: var(--dim); margin-top: 0.2rem; }
+.q-box { border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 1rem; margin-bottom: 0.7rem; background: rgba(245,158,11,0.04); }
+.q-label { font-size: 0.7rem; color: var(--warm); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+.q-text { font-size: 0.9rem; color: var(--text); line-height: 1.6; font-style: italic; }
+.concept-item { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.65rem 0; border-bottom: 1px solid rgba(212,175,55,0.1); font-size: 0.85rem; line-height: 1.6; }
+.concept-item:last-child { border-bottom: none; }
+.concept-dot { min-width: 8px; height: 8px; border-radius: 50%; background: var(--warm); margin-top: 0.4rem; flex-shrink: 0; }
+.concept-key { font-weight: 700; color: var(--gold); margin-right: 0.3rem; }
+.bridge { text-align: center; padding: 0.6rem; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3); border-radius: 10px; font-size: 0.8rem; color: var(--green); margin: 0.7rem 0; }
+.summary-item { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.7rem 0; border-bottom: 1px solid rgba(212,175,55,0.1); font-size: 0.88rem; line-height: 1.6; }
+.summary-item:last-child { border-bottom: none; }
+.summary-num { min-width: 22px; height: 22px; background: var(--gold); color: var(--bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
+.nav-btn { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.btn { flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 10px; background: transparent; color: var(--text); font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
+.btn.primary { background: var(--gold); color: var(--bg); font-weight: 700; border-color: var(--gold); }
+.btn:hover { opacity: 0.8; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-tag">👴 DTSLIB GLOBAL | TRACK A — HIGH CPM</div>
+    <div class="header-title">The Wisdom No Book Can Teach</div>
+    <div class="header-sub">Grandparents ran out of options — and survived anyway. That's why they know.</div>
+  </div>
+
+  <div class="progress" id="progress">
+    <div class="progress-dot active"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" onclick="go(0)">Hook<span class="time">0:30</span></button>
+    <button class="tab" onclick="go(1)">Why<span class="time">2:00</span></button>
+    <button class="tab" onclick="go(2)">Frame<span class="time">3:00</span></button>
+    <button class="tab" onclick="go(3)">Ask<span class="time">4:00</span></button>
+    <button class="tab" onclick="go(4)">Types<span class="time">3:00</span></button>
+    <button class="tab" onclick="go(5)">Content<span class="time">1:30</span></button>
+  </div>
+
+  <!-- 0. Hook -->
+  <div class="panel active" id="panel-0">
+    <div class="slide">
+      <div class="slide-tag">00 · HOOK · 0:30</div>
+      <div class="slide-title">Knowledge can be Googled. Wisdom can't.</div>
+      <div class="slide-sub">There is a difference between information and wisdom. One you can search. The other only comes after the search fails — and you keep going anyway.</div>
+
+      <div class="fact-row">
+        <div class="fact-icon">🔍</div>
+        <div>
+          <div class="fact-label">Knowledge</div>
+          <div class="fact-value warm">Can be searched. Can be taught. Can be forgotten.</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🌳</div>
+        <div>
+          <div class="fact-label">Wisdom</div>
+          <div class="fact-value gold">Earned. Lived. Can only be carried — not downloaded.</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">👴</div>
+        <div>
+          <div class="fact-label">Grandparents have it because</div>
+          <div class="fact-value green">They ran out of options. And survived anyway.</div>
+        </div>
+      </div>
+
+      <div class="quote">
+        "What's the best advice you ever ignored — and then had to learn the hard way?"
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn primary" onclick="go(1)">Next →</button>
+    </div>
+  </div>
+
+  <!-- 1. Why -->
+  <div class="panel" id="panel-1">
+    <div class="slide">
+      <div class="slide-tag">01 · WHY · 2:00</div>
+      <div class="slide-title">Why Grandparents — and Why Now</div>
+      <div class="slide-sub">Global audiences over 55 are the fastest-growing YouTube demographic. They watch longer, subscribe more, and trust less. Grandparent wisdom content hits all three.</div>
+
+      <div class="fact-row">
+        <div class="fact-icon">📈</div>
+        <div>
+          <div class="fact-label">55+ YouTube Growth</div>
+          <div class="fact-value gold">Fastest-growing demographic 2024–2026</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">💰</div>
+        <div>
+          <div class="fact-label">CPM Range (Finance/Health angle)</div>
+          <div class="fact-value green">$8–$22 USD — Track A premium</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🌍</div>
+        <div>
+          <div class="fact-label">Universal appeal</div>
+          <div class="fact-value warm">Every culture has grandparents. Zero translation needed.</div>
+        </div>
+      </div>
+
+      <div class="quote">
+        "What do you know now that would have saved you years of struggle?"
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(0)">← Back</button>
+      <button class="btn primary" onclick="go(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- 2. Frame -->
+  <div class="panel" id="panel-2">
+    <div class="slide">
+      <div class="slide-tag">02 · FRAME · 3:00</div>
+      <div class="slide-title">PHL Filter: What Did They Know That No Book Told Them?</div>
+      <div class="slide-sub">One filter. Every grandparent story passes through it. What they know that no one taught them — that's the content.</div>
+
+      <div class="fact-row">
+        <div class="fact-icon">📥</div>
+        <div>
+          <div class="fact-label">Input</div>
+          <div class="fact-value warm">A grandparent's decision — any culture, any context</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🔬</div>
+        <div>
+          <div class="fact-label">Filter</div>
+          <div class="fact-value gold">What did they know that no book told them?</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">📤</div>
+        <div>
+          <div class="fact-label">Output</div>
+          <div class="fact-value green">The principle behind the decision — one line</div>
+        </div>
+      </div>
+
+      <div class="bridge">
+        🌐 Works in English, Korean, Japanese, Spanish — universally
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(1)">← Back</button>
+      <button class="btn primary" onclick="go(3)">Next →</button>
+    </div>
+  </div>
+
+  <!-- 3. Ask -->
+  <div class="panel" id="panel-3">
+    <div class="slide">
+      <div class="slide-tag">03 · ASK · 4:00</div>
+      <div class="slide-title">Three Questions That Always Work</div>
+      <div class="slide-sub">Grandparents don't announce their wisdom. You have to ask. These three questions unlock it every time — in any language.</div>
+
+      <div class="q-box">
+        <div class="q-label">OPENING</div>
+        <div class="q-text">"What's the best advice you ever ignored — and then had to learn the hard way?"</div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-label">DEPTH</div>
+        <div class="q-text">"What do you know now that would have saved you years of struggle?"</div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-label">CLOSE</div>
+        <div class="q-text">"What do you want the next generation to stop doing?"</div>
+      </div>
+
+      <div class="bridge">
+        💡 These 3 questions → any grandparent interview → instant wisdom content
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(2)">← Back</button>
+      <button class="btn primary" onclick="go(4)">Next →</button>
+    </div>
+  </div>
+
+  <!-- 4. Types -->
+  <div class="panel" id="panel-4">
+    <div class="slide">
+      <div class="slide-tag">04 · TYPES · 3:00</div>
+      <div class="slide-title">Four Types of Grandparent Wisdom</div>
+      <div class="slide-sub">Every episode fits one of these four. Know which type you're making before you start.</div>
+
+      <div class="concept-item">
+        <div class="concept-dot"></div>
+        <div><span class="concept-key">Earned</span>Can only come from lived experience, not study. The story is the proof.</div>
+      </div>
+      <div class="concept-item">
+        <div class="concept-dot"></div>
+        <div><span class="concept-key">Contrast</span>Knowing what NOT to do is often more valuable than knowing what to do.</div>
+      </div>
+      <div class="concept-item">
+        <div class="concept-dot"></div>
+        <div><span class="concept-key">Quiet</span>Grandparents rarely announce it. You have to ask. The asking is the content.</div>
+      </div>
+      <div class="concept-item">
+        <div class="concept-dot"></div>
+        <div><span class="concept-key">Transferable</span>The specific story carries the universal lesson. One grandmother's story = every grandmother's story.</div>
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(3)">← Back</button>
+      <button class="btn primary" onclick="go(5)">Next →</button>
+    </div>
+  </div>
+
+  <!-- 5. Content -->
+  <div class="panel" id="panel-5">
+    <div class="slide">
+      <div class="slide-tag">05 · CONTENT ANGLES · 1:30</div>
+      <div class="slide-title">Four High-CPM Angles — Make Now</div>
+      <div class="slide-sub">Track A global. Materials ready. Shoot immediately.</div>
+
+      <div class="summary-item">
+        <div class="summary-num">1</div>
+        <div><strong>"The One Financial Rule That Kept My Family Safe"</strong> — Finance angle. CPM $15–$22.</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num">2</div>
+        <div><strong>"What I Learned From 40 Years of Marriage"</strong> — Relationship angle. High retention, evergreen.</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num">3</div>
+        <div><strong>"How I Rebuilt My Life After Losing Everything"</strong> — Resilience angle. Cross-cultural. Viral potential.</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num">4</div>
+        <div><strong>"The Health Habits I Wish I'd Started Sooner"</strong> — Health angle. CPM $18–$25. Highest CPM bracket.</div>
+      </div>
+
+      <div class="bridge" style="margin-top: 1.2rem;">
+        🌍 Track A Global · Materials Ready · CPM $8–$25 · Produce Now
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(4)">← Back</button>
+      <button class="btn primary" onclick="go(0)">Start Over</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let cur = 0;
+const total = 6;
+function go(n) {
+  document.getElementById('panel-' + cur).classList.remove('active');
+  document.querySelectorAll('.tab')[cur].classList.remove('active');
+  cur = n;
+  document.getElementById('panel-' + cur).classList.add('active');
+  document.querySelectorAll('.tab')[cur].classList.add('active');
+  const dots = document.querySelectorAll('.progress-dot');
+  dots.forEach((d, i) => {
+    d.classList.remove('active', 'done');
+    if (i < cur) d.classList.add('done');
+    if (i === cur) d.classList.add('active');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+let sx = 0;
+document.addEventListener('touchstart', e => sx = e.touches[0].clientX);
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - sx;
+  if (Math.abs(dx) > 50) go(dx < 0 ? Math.min(cur+1, total-1) : Math.max(cur-1, 0));
+});
+</script>
+</body>
+</html>

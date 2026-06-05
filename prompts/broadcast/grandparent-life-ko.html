@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>70살에 알게 된 것 | 인생 — 할머니·할아버지가 아는 것</title>
+<meta name="description" content="인생은 풀어야 할 문제가 아니다. 전해야 할 이야기다. 할머니·할아버지가 몸으로 증명한 것들.">
+<style>
+:root {
+  --bg: #0D0D12;
+  --panel: #090910;
+  --gold: #D4AF37;
+  --blue: #4A9EFF;
+  --green: #10b981;
+  --red: #ef4444;
+  --warm: #F59E0B;
+  --text: #F5F5DC;
+  --dim: rgba(245,245,220,0.5);
+  --border: rgba(212,175,55,0.2);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans KR', -apple-system, sans-serif;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--panel) 50%, var(--bg) 100%);
+  color: var(--text);
+  min-height: 100vh;
+}
+.app { max-width: 500px; margin: 0 auto; padding: 1rem; }
+
+.header {
+  text-align: center;
+  padding: 1.2rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+.header-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  color: var(--warm);
+  border: 1px solid var(--warm);
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.08em;
+}
+.header-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1.4;
+  margin-bottom: 0.3rem;
+}
+.header-sub { font-size: 0.8rem; color: var(--dim); }
+
+.progress { display: flex; gap: 3px; margin-bottom: 0.8rem; }
+.progress-dot { flex: 1; height: 3px; background: rgba(212,175,55,0.15); border-radius: 2px; transition: 0.4s; }
+.progress-dot.active { background: var(--gold); }
+.progress-dot.done { background: var(--green); }
+
+.tabs { display: flex; gap: 0; margin-bottom: 1rem; overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.tab {
+  flex: 1; min-width: 48px; padding: 0.55rem 0.2rem; text-align: center;
+  background: transparent; border: none; color: var(--dim);
+  font-size: 0.6rem; cursor: pointer; border-right: 1px solid var(--border);
+  transition: 0.2s;
+}
+.tab:last-child { border-right: none; }
+.tab.active { background: var(--gold); color: var(--bg); font-weight: 700; }
+.tab .time { display: block; font-size: 0.55rem; opacity: 0.7; margin-top: 1px; }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+.slide {
+  background: rgba(212,175,55,0.04);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  min-height: 440px;
+}
+.slide-tag { font-size: 0.65rem; color: var(--warm); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.slide-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 0.4rem;
+  line-height: 1.35;
+}
+.slide-sub {
+  font-size: 0.85rem;
+  color: var(--dim);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.quote {
+  border-left: 3px solid var(--warm);
+  padding: 0.8rem 1rem;
+  background: rgba(245,158,11,0.06);
+  border-radius: 0 10px 10px 0;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  font-style: italic;
+}
+
+.fact-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.75rem 1rem;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 0.6rem;
+}
+.fact-icon { font-size: 1.2rem; min-width: 28px; text-align: center; }
+.fact-label { font-size: 0.75rem; color: var(--dim); margin-bottom: 2px; }
+.fact-value { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+.fact-value.gold { color: var(--gold); }
+.fact-value.green { color: var(--green); }
+.fact-value.warm { color: var(--warm); }
+
+.q-box {
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 0.7rem;
+  background: rgba(245,158,11,0.04);
+}
+.q-label { font-size: 0.7rem; color: var(--warm); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+.q-text { font-size: 0.9rem; color: var(--text); line-height: 1.6; font-style: italic; }
+
+.concept-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid rgba(212,175,55,0.1);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.concept-item:last-child { border-bottom: none; }
+.concept-dot {
+  min-width: 8px; height: 8px; border-radius: 50%;
+  background: var(--warm); margin-top: 0.4rem; flex-shrink: 0;
+}
+.concept-key { font-weight: 700; color: var(--gold); margin-right: 0.3rem; }
+
+.bridge {
+  text-align: center;
+  padding: 0.6rem;
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.3);
+  border-radius: 10px;
+  font-size: 0.8rem;
+  color: var(--green);
+  margin: 0.7rem 0;
+}
+
+.phl-box {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(245,158,11,0.25);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  font-family: monospace;
+  font-size: 0.8rem;
+  margin: 1rem 0;
+  line-height: 1.8;
+  color: var(--dim);
+}
+.phl-box .kw { color: var(--warm); font-weight: 700; }
+
+.summary-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgba(212,175,55,0.1);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+.summary-item:last-child { border-bottom: none; }
+.summary-num {
+  min-width: 22px; height: 22px;
+  background: var(--gold); color: var(--bg);
+  border-radius: 50%; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+}
+
+.nav-btn { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.btn {
+  flex: 1; padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn.primary { background: var(--gold); color: var(--bg); font-weight: 700; border-color: var(--gold); }
+.btn:hover { opacity: 0.8; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-tag">👵 DTSlib 글로벌 | PHILOSOPHER-PARKSY</div>
+    <div class="header-title">70살에 알게 된 것</div>
+    <div class="header-sub">인생은 풀어야 할 문제가 아니다 — 전해야 할 이야기다</div>
+  </div>
+
+  <div class="progress" id="progress">
+    <div class="progress-dot active"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" onclick="go(0)">훅<span class="time">0:30</span></button>
+    <button class="tab" onclick="go(1)">증거<span class="time">2:00</span></button>
+    <button class="tab" onclick="go(2)">프레임<span class="time">3:00</span></button>
+    <button class="tab" onclick="go(3)">질문<span class="time">4:00</span></button>
+    <button class="tab" onclick="go(4)">개념<span class="time">3:00</span></button>
+    <button class="tab" onclick="go(5)">마무리<span class="time">1:30</span></button>
+  </div>
+
+  <!-- 0. 훅 -->
+  <div class="panel active" id="panel-0">
+    <div class="slide">
+      <div class="slide-tag">00 · 훅 · 0:30</div>
+      <div class="slide-title">할머니한테 물어봐야 나오는 것들이 있다</div>
+      <div class="slide-sub">검색하면 나오는 정보가 있고, 살아봐야 나오는 것이 있다. 그 차이가 뭔지 아는 사람이 있다면, 그게 바로 할머니·할아버지다.</div>
+
+      <div class="fact-row">
+        <div class="fact-icon">📖</div>
+        <div>
+          <div class="fact-label">인생에 대한 진실</div>
+          <div class="fact-value warm">문제가 아니라 — 이야기다</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">👵</div>
+        <div>
+          <div class="fact-label">할머니·할아버지는</div>
+          <div class="fact-value gold">그 증거를 몸으로 가지고 있다</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🌀</div>
+        <div>
+          <div class="fact-label">인생의 구조</div>
+          <div class="fact-value green">직선이 아니라 — 나선형</div>
+        </div>
+      </div>
+
+      <div class="quote">
+        "지혜가 깊을수록 말은 단순해진다."
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn primary" onclick="go(1)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- 1. 증거 -->
+  <div class="panel" id="panel-1">
+    <div class="slide">
+      <div class="slide-tag">01 · 증거 · 2:00</div>
+      <div class="slide-title">살아있는 다리</div>
+      <div class="slide-sub">할머니·할아버지는 과거와 미래를 잇는 살아있는 다리다. 이 사람들이 사라지면 어디에도 없는 것들이 함께 사라진다.</div>
+
+      <div class="fact-row">
+        <div class="fact-icon">⏳</div>
+        <div>
+          <div class="fact-label">시간</div>
+          <div class="fact-value gold">더 깊은 이해로 돌아오는 나선</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">💔</div>
+        <div>
+          <div class="fact-label">상실</div>
+          <div class="fact-value warm">잃은 것도 얻은 것만큼 우리를 만든다</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🔗</div>
+        <div>
+          <div class="fact-label">연결</div>
+          <div class="fact-value green">살아있는 다리 — 과거에서 미래로</div>
+        </div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🌿</div>
+        <div>
+          <div class="fact-label">단순함</div>
+          <div class="fact-value warm">깊을수록 말은 짧아진다</div>
+        </div>
+      </div>
+
+      <div class="quote">
+        "젊은 사람에게 꼭 전해주고 싶은 순간이 있다면요?"
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(0)">← 이전</button>
+      <button class="btn primary" onclick="go(2)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- 2. 프레임 -->
+  <div class="panel" id="panel-2">
+    <div class="slide">
+      <div class="slide-tag">02 · 프레임 · 3:00</div>
+      <div class="slide-title">PHL 필터: 뭘 선택했나, 뭘 잃었나, 뭘 지켰나</div>
+      <div class="slide-sub">어떤 인생 이야기든 이 세 가지 필터를 통과하면 핵심이 나온다. 한 문장으로.</div>
+
+      <div class="phl-box">
+        <span class="kw">입력:</span>  할머니·할아버지의 인생 이야기<br>
+        <span class="kw">필터:</span> 무엇을 선택했나?<br>
+               무엇을 잃었나?<br>
+               무엇을 지켰나?<br>
+        <span class="kw">출력:</span> 인생을 바꾼 그 순간 — 한 문장으로
+      </div>
+
+      <div class="bridge">
+        📌 어떤 문화권이든, 어떤 언어든 — 이 프레임은 작동한다
+      </div>
+
+      <div class="quote">
+        "당신 인생이 책 한 권이라면 제목이 뭘까요?"
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(1)">← 이전</button>
+      <button class="btn primary" onclick="go(3)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- 3. 질문 -->
+  <div class="panel" id="panel-3">
+    <div class="slide">
+      <div class="slide-tag">03 · 질문 · 4:00</div>
+      <div class="slide-title">물어봐야 나온다. 세 가지 질문.</div>
+      <div class="slide-sub">할머니·할아버지는 선언하지 않는다. 물어봐야 나온다. 이 세 개만 기억해 두면 어디서든 쓸 수 있다.</div>
+
+      <div class="q-box">
+        <div class="q-label">시작 질문</div>
+        <div class="q-text">"젊은 사람에게 꼭 전해주고 싶은 순간이 있다면요?"</div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-label">깊이 질문</div>
+        <div class="q-text">"70살에 알게 된 것 중, 30살에 알았으면 좋았을 게 뭔가요?"</div>
+      </div>
+
+      <div class="q-box">
+        <div class="q-label">마무리 질문</div>
+        <div class="q-text">"당신 인생이 책 한 권이라면 제목이 뭘까요?"</div>
+      </div>
+
+      <div class="bridge">
+        💡 이 질문 구조 — 어떤 grandparent 인터뷰에도 그대로 쓴다
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(2)">← 이전</button>
+      <button class="btn primary" onclick="go(4)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- 4. 개념 -->
+  <div class="panel" id="panel-4">
+    <div class="slide">
+      <div class="slide-tag">04 · 개념 · 3:00</div>
+      <div class="slide-title">인생을 이해하는 네 가지 렌즈</div>
+      <div class="slide-sub">이 네 개가 할머니·할아버지 콘텐츠의 뼈대다. 모든 에피소드는 이 렌즈 중 하나를 통과한다.</div>
+
+      <div class="concept-item">
+        <div class="concept-dot"></div>
+        <div><span class="concept-key">시간</span>인생은 직선이 아니라 나선형. 같은 자리로 돌아오지만 더 깊은 이해로 온다.</div>
+      </div>
+      <div class="concept-item">
+        <div class="concept-dot"></div>
+        <div><span class="concept-key">상실</span>잃은 것도 얻은 것만큼 우리를 만든다. 손해와 실패가 결국 자산이 된다.</div>
+      </div>
+      <div class="concept-item">
+        <div class="concept-dot"></div>
+        <div><span class="concept-key">연결</span>할머니·할아버지는 과거와 미래를 잇는 살아있는 다리. 이 분들이 사라지면 같이 사라지는 것들이 있다.</div>
+      </div>
+      <div class="concept-item">
+        <div class="concept-dot"></div>
+        <div><span class="concept-key">단순함</span>지혜가 깊을수록 말은 단순해진다. 복잡한 설명이 필요 없다.</div>
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(3)">← 이전</button>
+      <button class="btn primary" onclick="go(5)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- 5. 마무리 -->
+  <div class="panel" id="panel-5">
+    <div class="slide">
+      <div class="slide-tag">05 · 마무리 · 1:30</div>
+      <div class="slide-title">콘텐츠로 만들 수 있는 각도</div>
+      <div class="slide-sub">이 재료로 지금 당장 만들 수 있는 것들. 한국 로컬 프리미엄 Track B 기준.</div>
+
+      <div class="summary-item">
+        <div class="summary-num">1</div>
+        <div>박씨 직접 판서 — <strong>인생 나선형을 시각화</strong>. QSketch 스킬셋 연결.</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num">2</div>
+        <div><strong>어르신 한마디 시리즈</strong> — 한 문장 인생 명언 + 박씨 해설. 쇼츠 최적.</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num">3</div>
+        <div><strong>인생 책 제목 챌린지</strong> — 시청자도 댓글로 참여. 인터랙션 극대화.</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num">4</div>
+        <div>70살에 알게 된 것 <strong>3가지 시리즈</strong> — 주 1편 정기 방송.</div>
+      </div>
+
+      <div class="bridge" style="margin-top: 1.2rem;">
+        👵 재료 완성 · Track B 한국 로컬 프리미엄 · 즉시 제작 가능
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(4)">← 이전</button>
+      <button class="btn primary" onclick="go(0)">처음부터</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let cur = 0;
+const total = 6;
+function go(n) {
+  document.getElementById('panel-' + cur).classList.remove('active');
+  document.querySelectorAll('.tab')[cur].classList.remove('active');
+  cur = n;
+  document.getElementById('panel-' + cur).classList.add('active');
+  document.querySelectorAll('.tab')[cur].classList.add('active');
+  const dots = document.querySelectorAll('.progress-dot');
+  dots.forEach((d, i) => {
+    d.classList.remove('active', 'done');
+    if (i < cur) d.classList.add('done');
+    if (i === cur) d.classList.add('active');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+let sx = 0;
+document.addEventListener('touchstart', e => sx = e.touches[0].clientX);
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - sx;
+  if (Math.abs(dx) > 50) go(dx < 0 ? Math.min(cur+1, total-1) : Math.max(cur-1, 0));
+});
+</script>
+</body>
+</html>

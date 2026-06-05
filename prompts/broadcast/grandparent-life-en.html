@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What 70 Years Taught Me | Life — What Grandparents Know</title>
+<meta name="description" content="Life is not a problem to be solved. It is a story to be told. Grandparents carry the proof. High-CPM global content blueprint.">
+<style>
+:root {
+  --bg: #0D0D12; --panel: #090910; --gold: #D4AF37; --blue: #4A9EFF;
+  --green: #10b981; --warm: #F59E0B; --text: #F5F5DC;
+  --dim: rgba(245,245,220,0.5); --border: rgba(212,175,55,0.2);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Segoe UI', sans-serif; background: linear-gradient(180deg, var(--bg) 0%, var(--panel) 50%, var(--bg) 100%); color: var(--text); min-height: 100vh; }
+.app { max-width: 500px; margin: 0 auto; padding: 1rem; }
+.header { text-align: center; padding: 1.2rem 0; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+.header-tag { display: inline-block; font-size: 0.65rem; color: var(--warm); border: 1px solid var(--warm); border-radius: 4px; padding: 2px 8px; margin-bottom: 0.5rem; letter-spacing: 0.08em; }
+.header-title { font-size: 1.3rem; font-weight: 800; color: var(--gold); line-height: 1.4; margin-bottom: 0.3rem; }
+.header-sub { font-size: 0.8rem; color: var(--dim); }
+.progress { display: flex; gap: 3px; margin-bottom: 0.8rem; }
+.progress-dot { flex: 1; height: 3px; background: rgba(212,175,55,0.15); border-radius: 2px; transition: 0.4s; }
+.progress-dot.active { background: var(--gold); } .progress-dot.done { background: var(--green); }
+.tabs { display: flex; gap: 0; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.tab { flex: 1; min-width: 48px; padding: 0.55rem 0.2rem; text-align: center; background: transparent; border: none; color: var(--dim); font-size: 0.6rem; cursor: pointer; border-right: 1px solid var(--border); transition: 0.2s; }
+.tab:last-child { border-right: none; } .tab.active { background: var(--gold); color: var(--bg); font-weight: 700; }
+.tab .time { display: block; font-size: 0.55rem; opacity: 0.7; margin-top: 1px; }
+.panel { display: none; } .panel.active { display: block; }
+.slide { background: rgba(212,175,55,0.04); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; min-height: 440px; }
+.slide-tag { font-size: 0.65rem; color: var(--warm); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.slide-title { font-size: 1.4rem; font-weight: 800; color: var(--gold); margin-bottom: 0.4rem; line-height: 1.35; }
+.slide-sub { font-size: 0.85rem; color: var(--dim); margin-bottom: 1.5rem; line-height: 1.6; }
+.quote { border-left: 3px solid var(--warm); padding: 0.8rem 1rem; background: rgba(245,158,11,0.06); border-radius: 0 10px 10px 0; margin: 1rem 0; font-size: 0.95rem; line-height: 1.7; font-style: italic; }
+.fact-row { display: flex; align-items: center; gap: 0.8rem; padding: 0.75rem 1rem; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.6rem; }
+.fact-icon { font-size: 1.2rem; min-width: 28px; text-align: center; }
+.fact-label { font-size: 0.75rem; color: var(--dim); margin-bottom: 2px; }
+.fact-value { font-size: 0.95rem; font-weight: 600; }
+.fact-value.gold { color: var(--gold); } .fact-value.green { color: var(--green); } .fact-value.warm { color: var(--warm); }
+.angle-card { border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 0.9rem 1rem; margin-bottom: 0.6rem; }
+.angle-num { font-size: 0.7rem; color: var(--blue); letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+.angle-title { font-size: 0.95rem; font-weight: 700; color: var(--gold); margin-bottom: 0.2rem; }
+.angle-cpm { font-size: 0.78rem; color: var(--green); }
+.q-box { border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 1rem; margin-bottom: 0.7rem; background: rgba(245,158,11,0.04); }
+.q-label { font-size: 0.7rem; color: var(--warm); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+.q-text { font-size: 0.9rem; color: var(--text); line-height: 1.6; font-style: italic; }
+.phl-box { background: rgba(0,0,0,0.4); border: 1px solid rgba(245,158,11,0.25); border-radius: 12px; padding: 1rem 1.2rem; font-family: monospace; font-size: 0.8rem; margin: 1rem 0; line-height: 1.8; color: var(--dim); }
+.phl-box .kw { color: var(--warm); font-weight: 700; }
+.bridge { text-align: center; padding: 0.6rem; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3); border-radius: 10px; font-size: 0.8rem; color: var(--green); margin: 0.7rem 0; }
+.summary-item { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.7rem 0; border-bottom: 1px solid rgba(212,175,55,0.1); font-size: 0.88rem; line-height: 1.6; }
+.summary-item:last-child { border-bottom: none; }
+.summary-num { min-width: 22px; height: 22px; background: var(--gold); color: var(--bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
+.nav-btn { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.btn { flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 10px; background: transparent; color: var(--text); font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
+.btn.primary { background: var(--gold); color: var(--bg); font-weight: 700; border-color: var(--gold); }
+.btn:hover { opacity: 0.8; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-tag">👴 DTSLIB GLOBAL | TRACK A — HIGH CPM</div>
+    <div class="header-title">What 70 Years Taught Me</div>
+    <div class="header-sub">Life is not a problem to be solved. It is a story to be told.</div>
+  </div>
+
+  <div class="progress" id="progress">
+    <div class="progress-dot active"></div><div class="progress-dot"></div>
+    <div class="progress-dot"></div><div class="progress-dot"></div>
+    <div class="progress-dot"></div><div class="progress-dot"></div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" onclick="go(0)">Hook<span class="time">0:30</span></button>
+    <button class="tab" onclick="go(1)">Proof<span class="time">2:00</span></button>
+    <button class="tab" onclick="go(2)">Frame<span class="time">3:00</span></button>
+    <button class="tab" onclick="go(3)">Ask<span class="time">4:00</span></button>
+    <button class="tab" onclick="go(4)">Angles<span class="time">3:00</span></button>
+    <button class="tab" onclick="go(5)">Plan<span class="time">1:30</span></button>
+  </div>
+
+  <!-- 0 -->
+  <div class="panel active" id="panel-0">
+    <div class="slide">
+      <div class="slide-tag">00 · HOOK · 0:30</div>
+      <div class="slide-title">Your grandparent holds something no search engine can find.</div>
+      <div class="slide-sub">There are things you can Google. Then there are things that only come from someone who has lived them. Your grandparent is one of those sources.</div>
+      <div class="fact-row">
+        <div class="fact-icon">📖</div>
+        <div><div class="fact-label">Life, as grandparents know it</div><div class="fact-value warm">Not a problem to be solved — a story to be told</div></div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🔗</div>
+        <div><div class="fact-label">What they are</div><div class="fact-value gold">Living bridges between past and future</div></div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🌀</div>
+        <div><div class="fact-label">The structure of life</div><div class="fact-value green">Not a line — a spiral. Same place, deeper understanding.</div></div>
+      </div>
+      <div class="quote">"Tell me one moment you wish you could give to someone younger."</div>
+    </div>
+    <div class="nav-btn"><button class="btn primary" onclick="go(1)">Next →</button></div>
+  </div>
+
+  <!-- 1 -->
+  <div class="panel" id="panel-1">
+    <div class="slide">
+      <div class="slide-tag">01 · PROOF · 2:00</div>
+      <div class="slide-title">Four Things Grandparents Carry That No One Else Does</div>
+      <div class="slide-sub">These are the four lenses. Every episode is built on one of them. Know which one before you start.</div>
+      <div class="fact-row">
+        <div class="fact-icon">⏳</div>
+        <div><div class="fact-label">Time</div><div class="fact-value gold">Life is a spiral — not a line. They've been here before, deeper.</div></div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">💔</div>
+        <div><div class="fact-label">Loss</div><div class="fact-value warm">What they lost shapes them as much as what they gained.</div></div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🔗</div>
+        <div><div class="fact-label">Continuity</div><div class="fact-value green">Living link between past and future. When they're gone, it's gone.</div></div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-icon">🌿</div>
+        <div><div class="fact-label">Simplicity</div><div class="fact-value warm">The older the wisdom, the shorter the sentence.</div></div>
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(0)">← Back</button>
+      <button class="btn primary" onclick="go(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="panel" id="panel-2">
+    <div class="slide">
+      <div class="slide-tag">02 · FRAME · 3:00</div>
+      <div class="slide-title">PHL Filter: What Did They Choose? Lose? Keep?</div>
+      <div class="slide-sub">One filter extracts the story from any life. Apply it to any grandparent. One sentence comes out. That's your content.</div>
+      <div class="phl-box">
+        <span class="kw">INPUT:</span>  A grandparent's life story (any language, any culture)<br>
+        <span class="kw">FILTER:</span> What did they choose?<br>
+                What did they lose?<br>
+                What did they keep?<br>
+        <span class="kw">OUTPUT:</span> The moment that changed everything — one sentence
+      </div>
+      <div class="bridge">🌐 Any culture. Any language. This filter always works.</div>
+      <div class="quote">"If your life were a book, what would the title be?"</div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(1)">← Back</button>
+      <button class="btn primary" onclick="go(3)">Next →</button>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="panel" id="panel-3">
+    <div class="slide">
+      <div class="slide-tag">03 · ASK · 4:00</div>
+      <div class="slide-title">Three Questions. Any Grandparent. Every Time.</div>
+      <div class="slide-sub">You don't need a script. You need these three. The conversation starts, and the content comes.</div>
+      <div class="q-box">
+        <div class="q-label">OPENING</div>
+        <div class="q-text">"Tell me one moment you wish you could give to someone younger."</div>
+      </div>
+      <div class="q-box">
+        <div class="q-label">DEPTH</div>
+        <div class="q-text">"What did you know at 70 that you didn't know at 30?"</div>
+      </div>
+      <div class="q-box">
+        <div class="q-label">CLOSE</div>
+        <div class="q-text">"If your life were a book, what would the title be?"</div>
+      </div>
+      <div class="bridge">💡 3 questions → any grandparent → episode content. Repeatable forever.</div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(2)">← Back</button>
+      <button class="btn primary" onclick="go(4)">Next →</button>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="panel" id="panel-4">
+    <div class="slide">
+      <div class="slide-tag">04 · ANGLES · 3:00</div>
+      <div class="slide-title">Four High-CPM Angles — Start Here</div>
+      <div class="slide-sub">Track A global. Each angle targets a different high-CPM advertiser bracket.</div>
+      <div class="angle-card">
+        <div class="angle-num">ANGLE 01 · FINANCE</div>
+        <div class="angle-title">"What 70 Years Taught Me About Money"</div>
+        <div class="angle-cpm">CPM $15–$22 · Finance advertisers · High retention</div>
+      </div>
+      <div class="angle-card">
+        <div class="angle-num">ANGLE 02 · RELATIONSHIPS</div>
+        <div class="angle-title">"The Marriage Advice No One Tells You"</div>
+        <div class="angle-cpm">CPM $10–$18 · Evergreen · High share rate</div>
+      </div>
+      <div class="angle-card">
+        <div class="angle-num">ANGLE 03 · RESILIENCE</div>
+        <div class="angle-title">"I Survived [War/Loss] — Here's What I Learned"</div>
+        <div class="angle-cpm">CPM $8–$15 · Cross-cultural · Viral potential</div>
+      </div>
+      <div class="angle-card">
+        <div class="angle-num">ANGLE 04 · HEALTH</div>
+        <div class="angle-title">"Lessons From My Garden: 50 Years of Growing"</div>
+        <div class="angle-cpm">CPM $18–$25 · Health/lifestyle · Highest bracket</div>
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(3)">← Back</button>
+      <button class="btn primary" onclick="go(5)">Next →</button>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="panel" id="panel-5">
+    <div class="slide">
+      <div class="slide-tag">05 · PRODUCTION PLAN · 1:30</div>
+      <div class="slide-title">Materials Ready. Produce Now.</div>
+      <div class="slide-sub">Topic files complete. Questions ready. Channel live. All four angles can start immediately.</div>
+      <div class="summary-item">
+        <div class="summary-num">1</div>
+        <div>Episode 1: <strong>Finance angle</strong> — "What 70 Years Taught Me About Money." Script from PHL filter.</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num">2</div>
+        <div>Episode 2: <strong>Resilience angle</strong> — universal survival story. Cross-cultural clip package.</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num">3</div>
+        <div>Shorts cut: <strong>One sentence per grandparent</strong> — "If my life were a book, the title would be..." → Vertical 60s.</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num">4</div>
+        <div>Series: <strong>Weekly "Grandparent Wisdom"</strong> — same 3 questions, different guest, every week.</div>
+      </div>
+      <div class="bridge" style="margin-top: 1.2rem;">
+        🌍 Track A Global · CPM $8–$25 · Materials Ready · Produce Now
+      </div>
+    </div>
+    <div class="nav-btn">
+      <button class="btn" onclick="go(4)">← Back</button>
+      <button class="btn primary" onclick="go(0)">Start Over</button>
+    </div>
+  </div>
+
+</div>
+<script>
+let cur = 0; const total = 6;
+function go(n) {
+  document.getElementById('panel-' + cur).classList.remove('active');
+  document.querySelectorAll('.tab')[cur].classList.remove('active');
+  cur = n;
+  document.getElementById('panel-' + cur).classList.add('active');
+  document.querySelectorAll('.tab')[cur].classList.add('active');
+  const dots = document.querySelectorAll('.progress-dot');
+  dots.forEach((d, i) => { d.classList.remove('active','done'); if(i<cur)d.classList.add('done'); if(i===cur)d.classList.add('active'); });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+let sx = 0;
+document.addEventListener('touchstart', e => sx = e.touches[0].clientX);
+document.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - sx; if(Math.abs(dx)>50)go(dx<0?Math.min(cur+1,total-1):Math.max(cur-1,0)); });
+</script>
+</body>
+</html>
