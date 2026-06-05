@@ -1,0 +1,55 @@
+name: PD 작전채널 알림
+
+on:
+  push:
+    branches: ["main", "master"]
+
+jobs:
+  pd-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Extract commit info
+        id: info
+        run: |
+          SHA="${{ github.sha }}"
+          SHORT="${SHA:0:7}"
+          MSG=$(git log --format="%s" -1 "$SHA" | head -c 200)
+          REPO="${{ github.repository }}"
+          ACTOR="${{ github.actor }}"
+          URL="https://github.com/${REPO}/commit/${SHA}"
+          echo "short=$SHORT" >> $GITHUB_OUTPUT
+          echo "message=$MSG" >> $GITHUB_OUTPUT
+          echo "repo=$REPO" >> $GITHUB_OUTPUT
+          echo "actor=$ACTOR" >> $GITHUB_OUTPUT
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null | head -10 | sed 's/^/  └ /')
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Send Telegram notification
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+        run: |
+          MSG="${{ steps.info.outputs.message }}"
+          SHORT="${{ steps.info.outputs.short }}"
+          REPO="${{ steps.info.outputs.repo }}"
+          ACTOR="${{ steps.info.outputs.actor }}"
+          URL="${{ steps.info.outputs.url }}"
+          FILES="${{ steps.info.outputs.files }}"
+
+          TEXT="📦 **${REPO}** · 새 커밋
+        └ \`${SHORT}\` ${MSG}
+        └ 작성자: ${ACTOR}
+        └ [커밋 보기](${URL})
+        └ 파일:
+        ${FILES}"
+
+          curl -s -X POST "https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg text "$TEXT" --arg cid "${TG_CHAT_ID}" '{chat_id: $cid, text: $text, parse_mode: "Markdown", disable_web_page_preview: true}')"

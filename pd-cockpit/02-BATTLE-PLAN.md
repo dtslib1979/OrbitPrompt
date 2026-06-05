@@ -74,3 +74,8 @@ Stage 3: parksy-brain-season 배포
 |------|------|------|------|------|
 | 06-05 | - | PD 칵핏 생성 | ✅ 완료 | phone_claude 경쟁 우위 확보 |
 | 06-05 | - | RIVALRY 분석 | ✅ 완료 | 상대 분석 완료 |
+| 06-05 | - | generators.json parksy-brain-season 등록 | ✅ 완료 | 형보다 먼저 |
+| 06-05 | - | prompts/index.json 갱신 | ✅ 완료 | 형보다 먼저 |
+| 06-05 | - | pd-bot.py 생성 | ✅ 완료 | TG 발송 테스트 완료 |
+| 06-05 | - | pd-notify.yml (GitHub Actions) | ✅ 완료 | push → TG 자동 알림 |
+| 06-05 | - | CLAUDE.md PD 칵핏 자동로드 등록 | ✅ 완료 | 매 세션 리마인더 |
