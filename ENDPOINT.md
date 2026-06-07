@@ -108,3 +108,45 @@ dtslib-branch (출판/브랜치)
 2. parksy-logs brain_delta/ 와 연결 (capture→classify 자동화)
 3. eae-univ broadcast/episodes 와 연결 (classify→publish)
 4. PD 시스템에 ENDPOINT 참조 추가
+
+---
+
+## 5. 판단 매트릭스 (결정 테이블)
+
+11개 규칙, if-elif 순서, 4개 충돌 해결 포함.
+
+```json
+// judge_rules.json — ENDPOINT JUDGE v0.1
+{
+  "priority_rules": [
+    {"order": 1, "P0_keyword": "시작해/만들어/구현", "result": "P0"},
+    {"order": 2, "P3_keyword": "나중에/검토/고려", "result": "P3"},
+    {"order": 3, "DEFAULT": "any", "result": "P2"}
+  ],
+  "conflict_resolution": [
+    "P0 AND P3 → P0 우선",
+    "idea AND decision → decision 우선",
+    "mass AND aristocrat → aristocrat 우선"
+  ],
+  "decision_table": [
+    ["decision/P0/any   → execute/pd-system     ✅ 인간승인"],
+    ["idea/P0/any       → execute/pd-system     ✅ 인간승인"],
+    ["content/P0/mass   → execute/dtslib-branch ❌ 자동"],
+    ["content/P0/arist  → execute/orbitprompt   ✅ 인간승인"],
+    ["idea/P1/mass      → execute/eae-univ      ❌ 자동"],
+    ["any/P2/mass       → execute/dtslib-branch ❌ 자동"],
+    ["any/P2/arist      → hold/brain_delta      ❌ 보류"],
+    ["any/P3/any        → hold/brain_delta      ❌ 보류"],
+    ["noise/any/any     → discard/events        ❌ 폐기"]
+  ]
+}
+```
+
+실행:
+```bash
+python3 engine/endpoint_classifier.py "오복집 컨셉 검토"
+# → idea/P3/aristocrat/hold/dtslib-branch
+
+python3 engine/endpoint_classifier.py "쇼츠 하나 만들어"
+# → decision/P0/mass/execute/pd-system
+```
