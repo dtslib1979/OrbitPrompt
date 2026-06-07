@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "football-philosophy": {
+      "command": "python3",
+      "args": ["football-model/mcp/server.py"],
+      "description": "Φ-I-C-K-P-7AXIS — OrbitPrompt 철학 기반 축구 예측 MCP"
+    }
+  }
+}

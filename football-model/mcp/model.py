@@ -1,176 +1,233 @@
 #!/usr/bin/env python3
 """
-model.py — Φ-I-C-K-P 모형 (실제 데이터 기반)
-DB에 수집된 실제 데이터로 5변수 계산
-fallback: team_data.py 하드코딩값
+model.py — Φ-I-C-K-P-7AXIS 엔진
+
+5변수(Φ-I-C-K-P) + OrbitPrompt 7축 철학 통합
+= 12개 차원의 팀 평가 모델
+
+철학 레이어 (7축):
+  Meta     — 자기 스타일 인식도
+  Reverse  — 약점 보완 능력
+  Modular  — 전술 패턴 반복성
+  Language — 팀 정체성 선명도
+  Zoom     — 빅매치 디테일
+  Spiral   — 대회 성장 곡선
+  Quantum  — 이변 잠재력
 """
-import sys
+
+import json, sys, os, random
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, os.path.dirname(__file__))
+from team_data import TEAMS, WEIGHTS, calc_strength
 
-import db
-from team_data import TEAMS as FALLBACK_TEAMS  # fallback용
-
-# WC 우승 이력 보너스 (실제 역사)
-WC_CHAMP_BONUS = {
-    "Brazil": 10, "Germany": 8, "Argentina": 8,
-    "France": 5,  "Italy": 8,   "Spain": 5,
-    "England": 5, "Uruguay": 5,
+# ═══════════════════════════════════════════════
+# 7-AXIS 철학 데이터 (OrbitPrompt 철학 기반)
+# ═══════════════════════════════════════════════
+PHI7 = {
+    # 각 축 0~100. 0=전혀 해당 안 됨, 100=완벽함
+    # 축구팀 7축 평가 — 박씨 직관 + 데이터 교차검증
+    "Argentina":   {"meta":85,"reverse":78,"modular":82,"lang":90,"zoom":88,"spiral":75,"quantum":65},
+    "France":      {"meta":88,"reverse":72,"modular":85,"lang":80,"zoom":92,"spiral":82,"quantum":70},
+    "Brazil":      {"meta":92,"reverse":65,"modular":75,"lang":95,"zoom":85,"spiral":78,"quantum":80},
+    "England":     {"meta":70,"reverse":82,"modular":88,"lang":72,"zoom":75,"spiral":68,"quantum":55},
+    "Spain":       {"meta":85,"reverse":75,"modular":90,"lang":82,"zoom":78,"spiral":72,"quantum":60},
+    "Portugal":    {"meta":78,"reverse":70,"modular":75,"lang":75,"zoom":82,"spiral":65,"quantum":68},
+    "Netherlands": {"meta":82,"reverse":80,"modular":85,"lang":78,"zoom":80,"spiral":70,"quantum":72},
+    "Germany":     {"meta":75,"reverse":85,"modular":92,"lang":75,"zoom":72,"spiral":65,"quantum":58},
+    "Belgium":     {"meta":72,"reverse":68,"modular":78,"lang":68,"zoom":70,"spiral":62,"quantum":55},
+    "Croatia":     {"meta":80,"reverse":85,"modular":75,"lang":78,"zoom":82,"spiral":72,"quantum":78},
+    "Uruguay":     {"meta":78,"reverse":82,"modular":72,"lang":75,"zoom":80,"spiral":68,"quantum":75},
+    "Switzerland": {"meta":72,"reverse":85,"modular":82,"lang":65,"zoom":75,"spiral":62,"quantum":58},
+    "Mexico":      {"meta":75,"reverse":70,"modular":72,"lang":82,"zoom":78,"spiral":65,"quantum":72},
+    "Morocco":     {"meta":68,"reverse":82,"modular":70,"lang":72,"zoom":85,"spiral":88,"quantum":90},
+    "Japan":       {"meta":82,"reverse":78,"modular":85,"lang":85,"zoom":75,"spiral":80,"quantum":85},
+    "USA":         {"meta":72,"reverse":75,"modular":78,"lang":70,"zoom":82,"spiral":78,"quantum":80},
+    "South Korea": {"meta":78,"reverse":75,"modular":72,"lang":85,"zoom":80,"spiral":72,"quantum":82},
+    "Australia":   {"meta":70,"reverse":72,"modular":75,"lang":68,"zoom":75,"spiral":70,"quantum":72},
+    "Senegal":     {"meta":68,"reverse":75,"modular":72,"lang":72,"zoom":80,"spiral":78,"quantum":85},
+    "Colombia":    {"meta":72,"reverse":70,"modular":75,"lang":78,"zoom":85,"spiral":72,"quantum":80},
+    "Sweden":      {"meta":70,"reverse":78,"modular":80,"lang":62,"zoom":72,"spiral":65,"quantum":58},
+    "Iran":        {"meta":75,"reverse":82,"modular":85,"lang":72,"zoom":68,"spiral":62,"quantum":65},
+    "Ecuador":     {"meta":65,"reverse":70,"modular":68,"lang":72,"zoom":78,"spiral":68,"quantum":75},
+    "Czech":       {"meta":68,"reverse":72,"modular":78,"lang":62,"zoom":70,"spiral":62,"quantum":58},
+    "Norway":      {"meta":65,"reverse":68,"modular":72,"lang":62,"zoom":72,"spiral":62,"quantum":65},
+    "Canada":      {"meta":62,"reverse":65,"modular":68,"lang":65,"zoom":75,"spiral":72,"quantum":72},
+    "Tunisia":     {"meta":68,"reverse":72,"modular":70,"lang":68,"zoom":70,"spiral":65,"quantum":68},
+    "Austria":     {"meta":65,"reverse":68,"modular":72,"lang":60,"zoom":68,"spiral":62,"quantum":55},
+    "Turkiye":     {"meta":72,"reverse":68,"modular":65,"lang":72,"zoom":78,"spiral":68,"quantum":75},
+    "Egypt":       {"meta":68,"reverse":72,"modular":70,"lang":65,"zoom":72,"spiral":65,"quantum":68},
+    "Algeria":     {"meta":62,"reverse":68,"modular":68,"lang":68,"zoom":72,"spiral":65,"quantum":70},
+    "Paraguay":    {"meta":65,"reverse":70,"modular":68,"lang":62,"zoom":68,"spiral":62,"quantum":62},
+    "Scotland":    {"meta":62,"reverse":65,"modular":72,"lang":68,"zoom":65,"spiral":60,"quantum":58},
+    "Qatar":       {"meta":58,"reverse":62,"modular":65,"lang":55,"zoom":62,"spiral":55,"quantum":52},
+    "Saudi":       {"meta":55,"reverse":62,"modular":65,"lang":58,"zoom":65,"spiral":60,"quantum":62},
+    "Ghana":       {"meta":65,"reverse":68,"modular":65,"lang":68,"zoom":72,"spiral":65,"quantum":72},
+    "Panama":      {"meta":55,"reverse":58,"modular":62,"lang":55,"zoom":60,"spiral":55,"quantum":58},
+    "South Africa":{"meta":62,"reverse":65,"modular":62,"lang":65,"zoom":68,"spiral":62,"quantum":65},
+    "Bosnia":      {"meta":58,"reverse":62,"modular":62,"lang":58,"zoom":65,"spiral":58,"quantum":60},
+    "DR Congo":    {"meta":55,"reverse":58,"modular":60,"lang":55,"zoom":65,"spiral":60,"quantum":65},
+    "Haiti":       {"meta":48,"reverse":52,"modular":50,"lang":48,"zoom":48,"spiral":45,"quantum":48},
+    "Jordan":      {"meta":52,"reverse":55,"modular":52,"lang":52,"zoom":55,"spiral":50,"quantum":52},
+    "Uzbekistan":  {"meta":52,"reverse":55,"modular":55,"lang":52,"zoom":55,"spiral":52,"quantum":55},
+    "Cape Verde":  {"meta":48,"reverse":52,"modular":50,"lang":48,"zoom":55,"spiral":50,"quantum":52},
+    "Iraq":        {"meta":52,"reverse":58,"modular":55,"lang":52,"zoom":58,"spiral":52,"quantum":58},
+    "New Zealand": {"meta":48,"reverse":55,"modular":52,"lang":45,"zoom":52,"spiral":48,"quantum":50},
+    "Curacao":     {"meta":42,"reverse":45,"modular":42,"lang":40,"zoom":45,"spiral":42,"quantum":45},
 }
 
-# UEFA 소속 보정 (인프라 우위)
-UEFA_TEAMS = {
-    "France","Spain","England","Germany","Netherlands","Portugal","Belgium",
-    "Croatia","Switzerland","Austria","Serbia","Scotland","Turkey","Hungary",
-    "Denmark","Czech Republic","Ukraine","Greece","Bosnia","Sweden","Norway",
-    "Poland","Romania","Slovakia",
+# 7축 가중치 (팀 성격에 따라 중요도 다름)
+AXIS_WEIGHTS = {
+    "meta": 1.2, "reverse": 1.1, "modular": 1.0,
+    "lang": 1.0, "zoom": 1.2, "spiral": 1.3, "quantum": 1.5
 }
 
+def calc_phi7(name: str) -> dict:
+    """팀 7축 프로필 반환"""
+    return PHI7.get(name, {k: 50 for k in AXIS_WEIGHTS})
 
-def calc_phi(fifa_rank: int, name: str) -> float:
-    """φ(철학): FIFA 랭킹 + 월드컵 역사"""
-    base = max(20.0, 95.0 - (fifa_rank - 1) * 1.6)
-    bonus = WC_CHAMP_BONUS.get(name, 0)
-    return min(100.0, round(base + bonus, 1))
+def calc_phi7_score(name: str) -> float:
+    """7축 종합 점수 (0~100)"""
+    p = calc_phi7(name)
+    if not p: return 50
+    raw = sum(p[k] * AXIS_WEIGHTS[k] for k in AXIS_WEIGHTS)
+    max_possible = 100 * sum(AXIS_WEIGHTS.values())
+    return round(raw / max_possible * 100, 1)
 
+# ═══════════════════════════════════════════════
+# Φ-I-C-K-P-7AXIS 통합 점수
+# ═══════════════════════════════════════════════
+PHI5_WEIGHTS = {"phi": 1.0, "infra": 1.2, "ctx": 0.8, "k": 1.3, "p": 1.5}
+PHI7_WEIGHT = 0.3  # 7축 비중 (30%)
 
-def calc_infra(elo: float, name: str) -> float:
-    """I(인프라): 실제 ELO 레이팅 + 리그 계수"""
-    base = max(20.0, (elo - 1350) / 5.5)
-    if name in UEFA_TEAMS:
-        base += 8
-    return min(100.0, round(base, 1))
+def calc_phi5(name: str) -> float:
+    """Φ-I-C-K-P 5변수 점수 (team_data.py 기반)"""
+    return calc_strength(name)
 
-
-def calc_ctx(stats: dict, name: str) -> float:
-    """C(맥락): 최근 N년 승률 + 홈어드밴티지"""
-    played = stats.get("played", 0)
-    if played == 0:
-        return 50.0
-    wins   = stats.get("wins", 0)
-    draws  = stats.get("draws", 0)
-    pts    = wins * 3 + draws
-    max_pts = played * 3
-    win_rate = pts / max_pts if max_pts > 0 else 0.5
-    base = 20.0 + win_rate * 80.0
-    # 홈 어드밴티지 (WC26 개최국)
-    if name in ("USA", "Mexico", "Canada"):
-        base += 5
-    return min(100.0, round(base, 1))
-
-
-def calc_k(stats: dict, elo: float, fifa_rank: int) -> float:
-    """K(전략): 골득실 + ELO 대비 FIFA 랭킹 효율"""
-    played = stats.get("played", 0)
-    if played > 0:
-        gd = (stats.get("gf", 0) - stats.get("ga", 0)) / played
-        gd_score = min(100.0, max(0.0, 50.0 + gd * 15.0))
-    else:
-        gd_score = 50.0
-    rank_score = max(20.0, 100.0 - fifa_rank * 1.5)
-    return round((gd_score + rank_score) / 2, 1)
-
-
-def calc_p(elo: float, stats: dict) -> float:
-    """P(슈퍼스타): ELO 절대값 반영"""
-    played = stats.get("played", 0)
-    win_rate = (stats.get("wins", 0) / played) if played > 0 else 0.5
-    base = max(15.0, (elo - 1380) / 5.0)
-    return min(100.0, round(base * (0.7 + win_rate * 0.6), 1))
-
-
-WEIGHTS = {"phi": 1.0, "infra": 1.2, "ctx": 0.8, "k": 1.3, "p": 1.5}
-WEIGHT_SUM = sum(WEIGHTS.values())
-
-
-def calc_strength(name: str, teams_data: dict = None) -> float:
-    """
-    Φ-I-C-K-P 종합 강도 계산
-    teams_data: DB에서 가져온 딕셔너리. None이면 DB 조회 후 fallback.
-    """
-    if teams_data and name in teams_data:
-        d = teams_data[name]
-        stats = {"wins": d.get("wins",0), "draws": d.get("draws",0),
-                 "losses": d.get("losses",0), "gf": d.get("gf",0),
-                 "ga": d.get("ga",0), "played": d.get("played",0)}
-        elo       = d.get("elo") or 1500
-        fifa_rank = d.get("fifa_rank") or 50
-    else:
-        # DB 직접 조회
-        row = db.get_team(name)
-        if row:
-            stats = {"wins": row.get("wins",0), "draws": row.get("draws",0),
-                     "losses": row.get("losses",0), "gf": row.get("goals_for",0),
-                     "ga": row.get("goals_against",0), "played": row.get("matches_played",0)}
-            elo       = row.get("elo") or 1500
-            fifa_rank = row.get("fifa_rank") or 50
-        elif name in FALLBACK_TEAMS:
-            # fallback: team_data.py 하드코딩값
-            fd = FALLBACK_TEAMS[name]
-            return round(
-                (fd["phi"]*WEIGHTS["phi"] + fd["infra"]*WEIGHTS["infra"] +
-                 fd["ctx"]*WEIGHTS["ctx"] + fd["k"]*WEIGHTS["k"] + fd["p"]*WEIGHTS["p"])
-                / WEIGHT_SUM, 1)
-        else:
-            return 40.0  # 완전 미지 팀
-
-    phi   = calc_phi(fifa_rank, name)
-    infra = calc_infra(elo, name)
-    ctx   = calc_ctx(stats, name)
-    k     = calc_k(stats, elo, fifa_rank)
-    p     = calc_p(elo, stats)
-
-    strength = (phi*WEIGHTS["phi"] + infra*WEIGHTS["infra"] + ctx*WEIGHTS["ctx"] +
-                k*WEIGHTS["k"] + p*WEIGHTS["p"]) / WEIGHT_SUM
-    return round(strength, 1)
-
-
-def get_team_profile(name: str, teams_data: dict = None) -> dict:
-    """팀 전체 프로필 반환"""
-    if teams_data and name in teams_data:
-        d = teams_data[name]
-        stats = {"wins": d.get("wins",0), "draws": d.get("draws",0),
-                 "losses": d.get("losses",0), "gf": d.get("gf",0),
-                 "ga": d.get("ga",0), "played": d.get("played",0)}
-        elo       = d.get("elo") or 1500
-        fifa_rank = d.get("fifa_rank") or 50
-        fifa_pts  = d.get("fifa_points") or 0
-    else:
-        row = db.get_team(name)
-        if not row:
-            return {"error": f"{name} not in DB — fetch_data 먼저"}
-        stats = {"wins": row.get("wins",0), "draws": row.get("draws",0),
-                 "losses": row.get("losses",0), "gf": row.get("goals_for",0),
-                 "ga": row.get("goals_against",0), "played": row.get("matches_played",0)}
-        elo       = row.get("elo") or 1500
-        fifa_rank = row.get("fifa_rank") or 50
-        fifa_pts  = row.get("fifa_points") or 0
-
-    phi   = calc_phi(fifa_rank, name)
-    infra = calc_infra(elo, name)
-    ctx   = calc_ctx(stats, name)
-    k     = calc_k(stats, elo, fifa_rank)
-    p     = calc_p(elo, stats)
-    strength = round((phi*WEIGHTS["phi"] + infra*WEIGHTS["infra"] + ctx*WEIGHTS["ctx"] +
-                      k*WEIGHTS["k"] + p*WEIGHTS["p"]) / WEIGHT_SUM, 1)
-    played = stats.get("played", 0)
+def calc_phi_12(name: str) -> dict:
+    """통합 12차원 점수"""
+    phi5 = TEAMS.get(name, {})
+    phi7 = calc_phi7(name)
+    strength_5 = calc_phi5(name)
+    strength_7 = calc_phi7_score(name)
+    combined = round(strength_5 * (1 - PHI7_WEIGHT) + strength_7 * PHI7_WEIGHT, 1)
+    
     return {
-        "name": name,
-        "fifa_rank": fifa_rank, "fifa_points": fifa_pts,
-        "elo": elo,
-        "recent_record": f"W{stats.get('wins',0)}-D{stats.get('draws',0)}-L{stats.get('losses',0)} ({played}경기)",
-        "phi": phi, "infra": infra, "ctx": ctx, "k": k, "p": p,
-        "strength": strength,
+        "team": name,
+        "phi5_factors": phi5,
+        "phi7_factors": phi7,
+        "phi5_strength": strength_5,
+        "phi7_strength": strength_7,
+        "phi12_strength": combined,
+        "active": "phi12"
     }
 
+def predict_win_prob(name_a: str, name_b: str, use_phi12: bool = True) -> dict:
+    """Φ-I-C-K-P-7AXIS 승률 예측"""
+    if use_phi12:
+        a = calc_phi_12(name_a)["phi12_strength"]
+        b = calc_phi_12(name_b)["phi12_strength"]
+    else:
+        a = calc_phi5(name_a)
+        b = calc_phi5(name_b)
+    
+    diff = a - b
+    prob_a = 1.0 / (1.0 + 10 ** (-diff / 20.0))
+    prob_b = 1.0 - prob_a
+    
+    return {
+        "team_a": name_a, "team_b": name_b,
+        "strength_a": a, "strength_b": b,
+        "win_prob_a": round(prob_a * 100, 1),
+        "win_prob_b": round(prob_b * 100, 1),
+        "predicted_winner": name_a if prob_a > 0.5 else name_b,
+        "model": "phi12" if use_phi12 else "phi5",
+        "confidence": "high" if abs(prob_a - prob_b) > 0.2 else "medium" if abs(prob_a - prob_b) > 0.1 else "low"
+    }
+
+def predict_with_baseline(name_a: str, name_b: str) -> dict:
+    """3레이어 비교: Φ12 vs Φ5 vs ELO-only"""
+    # Φ-I-C-K-P-7AXIS
+    a12 = calc_phi_12(name_a)["phi12_strength"]
+    b12 = calc_phi_12(name_b)["phi12_strength"]
+    diff12 = a12 - b12
+    p12 = 1.0 / (1.0 + 10 ** (-diff12 / 20.0))
+    
+    # Φ-I-C-K-P 5변수 (ELO 보정)
+    a5 = calc_phi5(name_a)
+    b5 = calc_phi5(name_b)
+    diff5 = a5 - b5
+    p5 = 1.0 / (1.0 + 10 ** (-diff5 / 20.0))
+    
+    # ELO-only (baseline)
+    from team_data import ELO_RATING
+    elo_a = ELO_RATING.get(name_a, 1500)
+    elo_b = ELO_RATING.get(name_b, 1500)
+    diff_elo = elo_a - elo_b
+    p_elo = 1.0 / (1.0 + 10 ** (-diff_elo / 400.0))
+    
+    return {
+        "team_a": name_a, "team_b": name_b,
+        "phi12": {"winner": name_a if p12 > 0.5 else name_b, "prob": round(max(p12, 1-p12)*100, 1)},
+        "phi5": {"winner": name_a if p5 > 0.5 else name_b, "prob": round(max(p5, 1-p5)*100, 1)},
+        "elo_baseline": {"winner": name_a if p_elo > 0.5 else name_b, "prob": round(max(p_elo, 1-p_elo)*100, 1)},
+        "agreement": "unanimous" if (p12>0.5)==(p5>0.5)==(p_elo>0.5) else "split",
+        "phi7_profile": calc_phi7(name_a)
+    }
+
+def content_script(matchup: dict) -> str:
+    """예측 결과 → 유튜브 대본 자동 생성"""
+    a, b = matchup["team_a"], matchup["team_b"]
+    w12 = matchup["phi12"]["winner"]
+    w5 = matchup["phi5"]["winner"]
+    w_elo = matchup["elo_baseline"]["winner"]
+    
+    lines = [
+        f"🎯 Φ-I-C-K-P-7AXIS 예측: {a} vs {b}",
+        "",
+        "【3레이어 비교】",
+        f"  Φ-I-C-K-P-7AXIS (12차원): {w12} 승 (확률 {matchup['phi12']['prob']}%)",
+        f"  Φ-I-C-K-P 5변수:       {w5} 승 (확률 {matchup['phi5']['prob']}%)",
+        f"  ELO 기준선:            {w_elo} 승 (확률 {matchup['elo_baseline']['prob']}%)",
+    ]
+    
+    if matchup["agreement"] == "unanimous":
+        lines.append(f"\n✅ 세 모델 모두 {w12} 승을 예측 — 합의됨")
+    else:
+        lines.append(f"\n⚠️ 모델 간 이견 발생 — 이변 가능성")
+    
+    p7 = matchup.get("phi7_profile", {})
+    if p7:
+        lines.append(f"\n【{a} 7축 철학 분석】")
+        for axis, val in sorted(p7.items(), key=lambda x: -x[1]):
+            emoji = {"meta":"🧠","reverse":"🔄","modular":"🧩","lang":"💬","zoom":"🔍","spiral":"📈","quantum":"⚡"}
+            lines.append(f"  {emoji.get(axis,'')} {axis.capitalize()}: {val}/100")
+    
+    lines.append(f"\n#WorldCup2026 #PhiICKP #축구예측")
+    return "\n".join(lines)
 
 if __name__ == "__main__":
-    db.init()
-    teams_data = db.get_all_teams()
-    if not teams_data:
-        print("⚠️  DB 비어있음 — server.py fetch_data 먼저 실행")
+    if "--compare" in sys.argv:
+        i = sys.argv.index("--compare")
+        r = predict_with_baseline(sys.argv[i+1], sys.argv[i+2])
+        print(json.dumps(r, indent=2, ensure_ascii=False))
+    elif "--phi12" in sys.argv:
+        i = sys.argv.index("--phi12")
+        r = calc_phi_12(sys.argv[i+1])
+        print(json.dumps(r, indent=2, ensure_ascii=False))
+    elif "--script" in sys.argv:
+        i = sys.argv.index("--script")
+        r = predict_with_baseline(sys.argv[i+1], sys.argv[i+2])
+        print(content_script(r))
+    elif "--list" in sys.argv:
+        sr = sorted(TEAMS.keys(), key=lambda n: calc_phi_12(n)["phi12_strength"], reverse=True)
+        print(f"{'Team':20s} {'Φ5':>7s} {'Φ7':>7s} {'Φ12':>7s}")
+        print("-" * 45)
+        for n in sr:
+            r = calc_phi_12(n)
+            print(f"{n:20s} {r['phi5_strength']:>6.1f} {r['phi7_strength']:>6.1f} {r['phi12_strength']:>6.1f}")
     else:
-        print("📊 강도 순위 (실제 데이터 기반):")
-        scores = [(t, calc_strength(t, teams_data)) for t in teams_data]
-        for t, s in sorted(scores, key=lambda x: -x[1])[:15]:
-            print(f"  {t:20s} {s:.1f}")
+        print("사용법:")
+        print("  --compare A B   3레이어 비교")
+        print("  --phi12 A       Φ12 통합 점수")
+        print("  --script A B   유튜브 대본 생성")
+        print("  --list         전체 팀 순위")
