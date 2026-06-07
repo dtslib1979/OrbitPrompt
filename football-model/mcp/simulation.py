@@ -60,25 +60,32 @@ def run_one():
             else:w.append(t1 if sim(calc_strength(t1),calc_strength(t2))==1 else t2)
         return w
     
-    r16w=ko(r32)
-    qfw=ko([(r16w[i*2],r16w[i*2+1]) for i in range(8)])
-    sfw=ko([(qfw[i*2],qfw[i*2+1]) for i in range(4)])
-    fw=ko([(sfw[i*2],sfw[i*2+1]) for i in range(2)])
-    
-    # Track results
+    r32w=ko(r32)                              # R32: 16경기 → 16승자
+    r16w=ko([(r32w[i*2],r32w[i*2+1]) for i in range(8)])  # R16: 8경기 → 8승자
+    qfw=ko([(r16w[i*2],r16w[i*2+1]) for i in range(4)])   # QF: 4경기 → 4승자
+    sfw=ko([(qfw[i*2],qfw[i*2+1]) for i in range(2)])     # SF: 2경기 → 2승자
+
+    # 결승
+    finalists=[sfw[0],sfw[1]]
+    champion=None
+    if sfw[0] and sfw[1]:
+        champion=sfw[0] if sim(calc_strength(sfw[0]),calc_strength(sfw[1]))==1 else sfw[1]
+    elif sfw[0]: champion=sfw[0]
+    elif sfw[1]: champion=sfw[1]
+
     track={t:{"32":0,"16":0,"8":0,"4":0,"2":0,"1":0} for tl in GROUPS.values() for t in tl}
     for g in results:
         track[results[g][0]]["32"]+=1
         track[results[g][1]]["32"]+=1
-    for t in r16w:
+    for t in r32w:
         if t: track[t]["16"]+=1
-    for t in qfw:
+    for t in r16w:
         if t: track[t]["8"]+=1
-    for t in sfw:
+    for t in qfw:
         if t: track[t]["4"]+=1
-    for t in fw:
+    for t in finalists:
         if t: track[t]["2"]+=1
-    if fw[0]: track[fw[0]]["1"]+=1
+    if champion: track[champion]["1"]+=1
     
     return track
 
