@@ -1,0 +1,604 @@
+{
+  "model": "Φ-I-C-K-P-7AXIS v2.0",
+  "generated": "2026-06-07",
+  "data_sources": [
+    "FIFA Ranking 2026-04",
+    "ELO Rating",
+    "martj42 CSV 5319 matches"
+  ],
+  "simulation": "Monte Carlo 10,000 runs",
+  "ranking": [
+    {
+      "team": "Argentina",
+      "phi12": 88.9,
+      "phi5": 98.7,
+      "phi7": 66.1
+    },
+    {
+      "team": "Spain",
+      "phi12": 85.6,
+      "phi5": 97.2,
+      "phi7": 58.7
+    },
+    {
+      "team": "England",
+      "phi12": 84.6,
+      "phi5": 95.9,
+      "phi7": 58.2
+    },
+    {
+      "team": "France",
+      "phi12": 84.5,
+      "phi5": 98.1,
+      "phi7": 52.8
+    },
+    {
+      "team": "Brazil",
+      "phi12": 84.4,
+      "phi5": 96.3,
+      "phi7": 56.6
+    },
+    {
+      "team": "Netherlands",
+      "phi12": 81.8,
+      "phi5": 93.9,
+      "phi7": 53.4
+    },
+    {
+      "team": "Portugal",
+      "phi12": 80.3,
+      "phi5": 93.4,
+      "phi7": 49.8
+    },
+    {
+      "team": "Germany",
+      "phi12": 79.7,
+      "phi5": 89.8,
+      "phi7": 56.0
+    },
+    {
+      "team": "Belgium",
+      "phi12": 79.4,
+      "phi5": 90.0,
+      "phi7": 54.6
+    },
+    {
+      "team": "Croatia",
+      "phi12": 75.7,
+      "phi5": 88.1,
+      "phi7": 46.8
+    },
+    {
+      "team": "Morocco",
+      "phi12": 73.4,
+      "phi5": 76.1,
+      "phi7": 67.0
+    },
+    {
+      "team": "Japan",
+      "phi12": 72.6,
+      "phi5": 74.7,
+      "phi7": 67.8
+    },
+    {
+      "team": "Uruguay",
+      "phi12": 72.4,
+      "phi5": 83.6,
+      "phi7": 46.4
+    },
+    {
+      "team": "Switzerland",
+      "phi12": 69.0,
+      "phi5": 81.1,
+      "phi7": 40.9
+    },
+    {
+      "team": "Senegal",
+      "phi12": 67.8,
+      "phi5": 70.3,
+      "phi7": 62.0
+    },
+    {
+      "team": "USA",
+      "phi12": 66.9,
+      "phi5": 73.4,
+      "phi7": 51.6
+    },
+    {
+      "team": "Mexico",
+      "phi12": 66.8,
+      "phi5": 78.3,
+      "phi7": 40.0
+    },
+    {
+      "team": "Colombia",
+      "phi12": 66.5,
+      "phi5": 69.9,
+      "phi7": 58.6
+    },
+    {
+      "team": "Iran",
+      "phi12": 62.3,
+      "phi5": 62.5,
+      "phi7": 62.0
+    },
+    {
+      "team": "South Korea",
+      "phi12": 60.8,
+      "phi5": 65.7,
+      "phi7": 49.2
+    },
+    {
+      "team": "Australia",
+      "phi12": 60.4,
+      "phi5": 64.3,
+      "phi7": 51.3
+    },
+    {
+      "team": "Sweden",
+      "phi12": 60.1,
+      "phi5": 64.2,
+      "phi7": 50.4
+    },
+    {
+      "team": "Austria",
+      "phi12": 58.6,
+      "phi5": 56.4,
+      "phi7": 63.6
+    },
+    {
+      "team": "Norway",
+      "phi12": 58.0,
+      "phi5": 61.5,
+      "phi7": 49.8
+    },
+    {
+      "team": "Turkiye",
+      "phi12": 55.4,
+      "phi5": 53.5,
+      "phi7": 60.0
+    },
+    {
+      "team": "Tunisia",
+      "phi12": 52.7,
+      "phi5": 51.5,
+      "phi7": 55.5
+    },
+    {
+      "team": "Algeria",
+      "phi12": 52.2,
+      "phi5": 46.4,
+      "phi7": 65.8
+    },
+    {
+      "team": "Czech Republic",
+      "phi12": 51.9,
+      "phi5": 55.7,
+      "phi7": 42.9
+    },
+    {
+      "team": "Ecuador",
+      "phi12": 51.8,
+      "phi5": 59.1,
+      "phi7": 34.7
+    },
+    {
+      "team": "Egypt",
+      "phi12": 51.0,
+      "phi5": 48.3,
+      "phi7": 57.4
+    },
+    {
+      "team": "Canada",
+      "phi12": 48.8,
+      "phi5": 51.8,
+      "phi7": 41.7
+    },
+    {
+      "team": "Qatar",
+      "phi12": 46.6,
+      "phi5": 42.5,
+      "phi7": 56.2
+    },
+    {
+      "team": "Scotland",
+      "phi12": 42.4,
+      "phi5": 42.2,
+      "phi7": 42.8
+    },
+    {
+      "team": "Paraguay",
+      "phi12": 41.6,
+      "phi5": 43.4,
+      "phi7": 37.4
+    },
+    {
+      "team": "Saudi Arabia",
+      "phi12": 39.8,
+      "phi5": 37.8,
+      "phi7": 44.3
+    },
+    {
+      "team": "Panama",
+      "phi12": 39.3,
+      "phi5": 36.0,
+      "phi7": 47.1
+    },
+    {
+      "team": "Ghana",
+      "phi12": 38.7,
+      "phi5": 39.4,
+      "phi7": 37.2
+    },
+    {
+      "team": "Jordan",
+      "phi12": 35.6,
+      "phi5": 24.1,
+      "phi7": 62.5
+    },
+    {
+      "team": "South Africa",
+      "phi12": 34.2,
+      "phi5": 26.9,
+      "phi7": 51.2
+    },
+    {
+      "team": "Uzbekistan",
+      "phi12": 34.1,
+      "phi5": 29.4,
+      "phi7": 45.1
+    },
+    {
+      "team": "Iraq",
+      "phi12": 34.0,
+      "phi5": 29.1,
+      "phi7": 45.3
+    },
+    {
+      "team": "Haiti",
+      "phi12": 33.4,
+      "phi5": 25.8,
+      "phi7": 51.3
+    },
+    {
+      "team": "Curacao",
+      "phi12": 32.8,
+      "phi5": 21.1,
+      "phi7": 60.0
+    },
+    {
+      "team": "DR Congo",
+      "phi12": 31.8,
+      "phi5": 27.3,
+      "phi7": 42.2
+    },
+    {
+      "team": "Bosnia",
+      "phi12": 31.5,
+      "phi5": 30.6,
+      "phi7": 33.5
+    },
+    {
+      "team": "Cape Verde",
+      "phi12": 31.4,
+      "phi5": 26.7,
+      "phi7": 42.5
+    },
+    {
+      "team": "New Zealand",
+      "phi12": 31.3,
+      "phi5": 26.2,
+      "phi7": 43.3
+    }
+  ],
+  "matchups": [
+    {
+      "team_a": "Brazil",
+      "team_b": "Argentina",
+      "phi12": {
+        "winner": "Argentina",
+        "prob": 62.7
+      },
+      "phi5": {
+        "winner": "Argentina",
+        "prob": 56.9
+      },
+      "elo_baseline": {
+        "winner": "Argentina",
+        "prob": 51.4
+      },
+      "agreement": "unanimous",
+      "phi7_profile": {
+        "meta": 57.8,
+        "reverse": 63.6,
+        "modular": 71.2,
+        "lang": 55.9,
+        "zoom": 56.2,
+        "spiral": 46.9,
+        "quantum": 50.0
+      }
+    },
+    {
+      "team_a": "France",
+      "team_b": "Germany",
+      "phi12": {
+        "winner": "France",
+        "prob": 63.5
+      },
+      "phi5": {
+        "winner": "France",
+        "prob": 72.2
+      },
+      "elo_baseline": {
+        "winner": "France",
+        "prob": 59.2
+      },
+      "agreement": "unanimous",
+      "phi7_profile": {
+        "meta": 60.0,
+        "reverse": 66.0,
+        "modular": 72.2,
+        "lang": 58.8,
+        "zoom": 47.1,
+        "spiral": 24.1,
+        "quantum": 50.0
+      }
+    },
+    {
+      "team_a": "South Korea",
+      "team_b": "Japan",
+      "phi12": {
+        "winner": "Japan",
+        "prob": 79.6
+      },
+      "phi5": {
+        "winner": "Japan",
+        "prob": 73.8
+      },
+      "elo_baseline": {
+        "winner": "Japan",
+        "prob": 55.7
+      },
+      "agreement": "unanimous",
+      "phi7_profile": {
+        "meta": 59.4,
+        "reverse": 65.4,
+        "modular": 70.7,
+        "lang": 57.3,
+        "zoom": 30.0,
+        "spiral": 20,
+        "quantum": 50.0
+      }
+    },
+    {
+      "team_a": "USA",
+      "team_b": "Mexico",
+      "phi12": {
+        "winner": "USA",
+        "prob": 50.3
+      },
+      "phi5": {
+        "winner": "Mexico",
+        "prob": 63.7
+      },
+      "elo_baseline": {
+        "winner": "Mexico",
+        "prob": 54.3
+      },
+      "agreement": "split",
+      "phi7_profile": {
+        "meta": 52.3,
+        "reverse": 57.6,
+        "modular": 71.4,
+        "lang": 50.8,
+        "zoom": 28.6,
+        "spiral": 20,
+        "quantum": 79.5
+      }
+    },
+    {
+      "team_a": "England",
+      "team_b": "Spain",
+      "phi12": {
+        "winner": "Spain",
+        "prob": 52.9
+      },
+      "phi5": {
+        "winner": "Spain",
+        "prob": 53.7
+      },
+      "elo_baseline": {
+        "winner": "Spain",
+        "prob": 51.4
+      },
+      "agreement": "unanimous",
+      "phi7_profile": {
+        "meta": 62.7,
+        "reverse": 69.0,
+        "modular": 73.7,
+        "lang": 61.0,
+        "zoom": 57.9,
+        "spiral": 40.4,
+        "quantum": 50.0
+      }
+    },
+    {
+      "team_a": "Portugal",
+      "team_b": "Netherlands",
+      "phi12": {
+        "winner": "Netherlands",
+        "prob": 54.3
+      },
+      "phi5": {
+        "winner": "Netherlands",
+        "prob": 51.4
+      },
+      "elo_baseline": {
+        "winner": "Netherlands",
+        "prob": 51.4
+      },
+      "agreement": "unanimous",
+      "phi7_profile": {
+        "meta": 66.2,
+        "reverse": 72.8,
+        "modular": 81.1,
+        "lang": 65.2,
+        "zoom": 42.9,
+        "spiral": 20,
+        "quantum": 20
+      }
+    },
+    {
+      "team_a": "Argentina",
+      "team_b": "Brazil",
+      "phi12": {
+        "winner": "Argentina",
+        "prob": 62.7
+      },
+      "phi5": {
+        "winner": "Argentina",
+        "prob": 56.9
+      },
+      "elo_baseline": {
+        "winner": "Argentina",
+        "prob": 51.4
+      },
+      "agreement": "unanimous",
+      "phi7_profile": {
+        "meta": 77.9,
+        "reverse": 85.7,
+        "modular": 84.1,
+        "lang": 73.1,
+        "zoom": 70.0,
+        "spiral": 34.1,
+        "quantum": 50.0
+      }
+    },
+    {
+      "team_a": "France",
+      "team_b": "England",
+      "phi12": {
+        "winner": "England",
+        "prob": 50.3
+      },
+      "phi5": {
+        "winner": "France",
+        "prob": 56.3
+      },
+      "elo_baseline": {
+        "winner": "France",
+        "prob": 55.0
+      },
+      "agreement": "split",
+      "phi7_profile": {
+        "meta": 60.0,
+        "reverse": 66.0,
+        "modular": 72.2,
+        "lang": 58.8,
+        "zoom": 47.1,
+        "spiral": 24.1,
+        "quantum": 50.0
+      }
+    }
+  ],
+  "mc_10000": {
+    "France": {
+      "win": 22.7,
+      "final": 39.4,
+      "sf": 61.5,
+      "qf": 94.4,
+      "r32": 100.0
+    },
+    "Argentina": {
+      "win": 17.8,
+      "final": 30.9,
+      "sf": 48.2,
+      "qf": 70.8,
+      "r32": 100.0
+    },
+    "Spain": {
+      "win": 14.0,
+      "final": 26.1,
+      "sf": 45.5,
+      "qf": 64.0,
+      "r32": 100.0
+    },
+    "England": {
+      "win": 11.2,
+      "final": 22.1,
+      "sf": 40.1,
+      "qf": 79.0,
+      "r32": 99.9
+    },
+    "Brazil": {
+      "win": 10.5,
+      "final": 19.5,
+      "sf": 40.8,
+      "qf": 57.0,
+      "r32": 100.0
+    },
+    "Portugal": {
+      "win": 8.9,
+      "final": 20.5,
+      "sf": 41.0,
+      "qf": 90.4,
+      "r32": 100.0
+    },
+    "Netherlands": {
+      "win": 5.0,
+      "final": 10.6,
+      "sf": 25.7,
+      "qf": 39.6,
+      "r32": 99.7
+    },
+    "Belgium": {
+      "win": 4.3,
+      "final": 12.2,
+      "sf": 34.4,
+      "qf": 87.2,
+      "r32": 100.0
+    },
+    "Germany": {
+      "win": 3.7,
+      "final": 10.7,
+      "sf": 32.4,
+      "qf": 90.3,
+      "r32": 100.0
+    },
+    "Croatia": {
+      "win": 1.5,
+      "final": 5.3,
+      "sf": 16.6,
+      "qf": 43.2,
+      "r32": 99.8
+    },
+    "Switzerland": {
+      "win": 0.2,
+      "final": 0.9,
+      "sf": 3.9,
+      "qf": 15.8,
+      "r32": 100.0
+    },
+    "Uruguay": {
+      "win": 0.2,
+      "final": 1.1,
+      "sf": 4.6,
+      "qf": 13.4,
+      "r32": 99.7
+    },
+    "South Korea": {
+      "win": 0.0,
+      "final": 0.0,
+      "sf": 0.2,
+      "qf": 5.2,
+      "r32": 81.3
+    },
+    "Japan": {
+      "win": 0.0,
+      "final": 0.0,
+      "sf": 0.2,
+      "qf": 1.2,
+      "r32": 81.6
+    }
+  }
+}
