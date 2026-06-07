@@ -1,63 +1,47 @@
 #!/usr/bin/env python3
 """
 football-mcp-server.py — Φ-I-C-K-P 축구 예측 MCP 서버
-API: /predict, /strength, /montecarlo, /matchup
+역할: 실제 데이터 기반 예측 (FIFA 랭킹 + ELO)
+용도: DeepSeek Aider가 Bash로 직접 호출
 """
-import sys, json, os, asyncio
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent))
+import sys, json, os
+sys.path.insert(0, os.path.dirname(__file__))
 from simulation import win_prob, predict_match, monte_carlo
-from team_data import TEAMS, all_strengths, calc_strength
+from team_data import TEAMS, WEIGHTS, calc_strength, all_strengths
 
-try:
-    from mcp import Server, Tool
-    from mcp.server.stdio import stdio_server
-    MCP_MODE = True
-except:
-    MCP_MODE = False
+def predict(team1: str, team2: str) -> dict:
+    """Φ-I-C-K-P 예측 (실제 데이터 기반)"""
+    result = predict_match(team1, team2)
+    result["source"] = "FIFA Ranking 2026-04 + ELO Rating"
+    return result
 
-async def main():
-    if not MCP_MODE:
-        # FastAPI 모드
-        print("⚽ Φ-I-C-K-P 축구 예측 MCP 서버")
-        import uvicorn
-        from fastapi import FastAPI
-        from fastapi.middleware.cors import CORSMiddleware
-        
-        app = FastAPI(title="Football MCP")
-        app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
-        
-        @app.get("/predict")
-        async def api_predict(t1: str = "Brazil", t2: str = "France"):
-            return predict_match(t1, t2)
-        
-        @app.get("/strength")
-        async def api_strength():
-            s = all_strengths()
-            ranked = sorted(s.items(), key=lambda x: -x[1])
-            return {"teams": [{"name": n, "strength": v} for n, v in ranked]}
-        
-        @app.get("/team")
-        async def api_team(name: str = "Brazil"):
-            if name in TEAMS:
-                return {"name": name, **TEAMS[name], "strength": calc_strength(name)}
-            return {"error": "team not found"}
-        
-        @app.get("/montecarlo")
-        async def api_mc(n: int = 1000):
-            result = monte_carlo(n)
-            return result
-        
-        port = int(os.environ.get("PORT", "8100"))
-        print(f"  포트: {port}")
-        uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
-    else:
-        print("⚽ MCP stdio 모드")
-        server = Server("football-mcp")
-        # (MCP tools would go here)
-        async with stdio_server() as (read, write):
-            await server.run(read, write, server.create_initialization_options())
+def strength(team: str = "") -> dict:
+    """팀 강점 조회"""
+    if team:
+        if team in TEAMS:
+            return {"name": team, **TEAMS[team], "strength": calc_strength(team)}
+        return {"error": f"'{team}' not found"}
+    return {"teams": all_strengths()}
+
+def all_teams() -> list:
+    """전체 팀 목록"""
+    return sorted(TEAMS.keys())
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    cmd = sys.argv[1] if len(sys.argv) > 1 else "help"
+    if cmd == "predict" and len(sys.argv) >= 4:
+        result = predict(sys.argv[2], sys.argv[3])
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+    elif cmd == "strength":
+        team = sys.argv[2] if len(sys.argv) > 2 else ""
+        result = strength(team)
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+    elif cmd == "list":
+        for t in all_teams():
+            print(f"  {t:20s} {calc_strength(t):.1f}")
+    else:
+        print("⚽ Φ-I-C-K-P 축구 예측 MCP")
+        print("  predict [A] [B]  → 승률 예측")
+        print("  strength [team]  → 팀 강점")
+        print("  list             → 전체 팀 목록")
+        print("  데이터 출처: FIFA 랭킹 2026-04 + ELO Rating")
