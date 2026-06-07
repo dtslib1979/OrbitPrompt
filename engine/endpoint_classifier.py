@@ -62,19 +62,33 @@ def classify(text: str) -> dict:
     lane = "mass"
     if match_kw(t, ARISTO_KW): lane = "aristocrat"
     
-    # 4. 결정 테이블 조회
+    # 4. 결정 테이블 조회 (순서: exact match > partial > any)
     action, route, human = "hold", "brain_delta", False
-    for dtype, pri, ln, act, rte, hum in DECISION_TABLE:
-        if (dtype == input_type or dtype == "any") and \
-           (pri == priority or pri == "any") and \
-           (ln == lane or ln == "any"):
-            action, route, human = act, rte, hum
-            break
-    
-    # 5. 라우팅 상세
-    if match_kw(t, ROUTE_EAE): route = "eae-univ"
-    elif match_kw(t, ROUTE_BRANCH): route = "dtslib-branch"
-    elif match_kw(t, ROUTE_PD): route = "pd-system"
+
+    # 4a. noise는 즉시 discard (any/P2/mass가 매칭되는 걸 방지)
+    if input_type == "noise":
+        action, route, human = "discard", "events", False
+    else:
+        # 정확한 매칭 우선 (dtype == input_type), 그 다음 any
+        for dtype, pri, ln, act, rte, hum in DECISION_TABLE:
+            dm = (dtype == input_type)  # exact type match 우선
+            da = (dtype == "any")       # any은 fallback
+            pm = (pri == priority or pri == "any")
+            lm = (ln == lane or ln == "any")
+            if (dm or da) and pm and lm:
+                # exact match가 있으면 그것을 우선
+                if dm:
+                    action, route, human = act, rte, hum
+                    break
+                elif da and action == "hold":
+                    # any는 fallback, hold 상태에서만 덮어씀
+                    action, route, human = act, rte, hum
+
+    # 5. 라우팅 상세 (noise는 오버라이드 금지)
+    if input_type != "noise":
+        if match_kw(t, ROUTE_EAE): route = "eae-univ"
+        elif match_kw(t, ROUTE_BRANCH): route = "dtslib-branch"
+        elif match_kw(t, ROUTE_PD): route = "pd-system"
     
     return {
         "input_type": input_type,
