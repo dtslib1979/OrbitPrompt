@@ -1,0 +1,27 @@
+{
+  "schema": "ENDPOINT JUDGE v0.1",
+  "description": "판단 결정 테이블 — if-elif 순서로 평가",
+  "priority_rules": [
+    {"order": 1, "condition": "P0_keyword MATCH", "result": "P0"},
+    {"order": 2, "condition": "P3_keyword MATCH", "result": "P3"},
+    {"order": 3, "condition": "DEFAULT", "result": "P2"}
+  ],
+  "conflict_resolution": [
+    {"conflict": "P0 AND P3 동시", "rule": "P0 우선"},
+    {"conflict": "idea AND decision 동시", "rule": "decision 우선"},
+    {"conflict": "mass AND aristocrat 동시", "rule": "aristocrat 우선"}
+  ],
+  "decision_table": [
+    {"type":"decision","pri":"P0","lane":"any","action":"execute","route":"pd-system","human":true},
+    {"type":"idea","pri":"P0","lane":"any","action":"execute","route":"pd-system","human":true},
+    {"type":"content","pri":"P0","lane":"mass","action":"execute","route":"dtslib-branch","human":false},
+    {"type":"content","pri":"P0","lane":"aristocrat","action":"execute","route":"orbitprompt","human":true},
+    {"type":"idea","pri":"P1","lane":"mass","action":"execute","route":"eae-univ","human":false},
+    {"type":"idea","pri":"P1","lane":"aristocrat","action":"execute","route":"orbitprompt","human":true},
+    {"type":"decision","pri":"P1","lane":"any","action":"execute","route":"pd-system","human":true},
+    {"type":"any","pri":"P2","lane":"mass","action":"execute","route":"dtslib-branch","human":false},
+    {"type":"any","pri":"P2","lane":"aristocrat","action":"hold","route":"brain_delta","human":false},
+    {"type":"any","pri":"P3","lane":"any","action":"hold","route":"brain_delta","human":false},
+    {"type":"noise","pri":"any","lane":"any","action":"discard","route":"events","human":false}
+  ]
+}
