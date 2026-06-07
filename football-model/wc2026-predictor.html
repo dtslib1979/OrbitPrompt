@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WC2026 PREDICTOR</title>
+<style>
+:root{--bk:#07070c;--wh:#edeae2;--gd:#c9a84c;--rd:#e02b22;--dm:#111118;--d2:#1a1a26;--ln:rgba(201,168,76,.18);--gn:#28c76f;--mu:#555;--bl:#4a9eff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bk);color:var(--wh);min-height:100vh}
+header{display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--gd);position:sticky;top:0;z-index:200;background:rgba(7,7,12,.98)}
+header h1{font-size:1.3rem;color:var(--gd);letter-spacing:.12em}
+.steps{display:flex;gap:2px;margin-left:auto}
+.stp{font-size:.55rem;padding:4px 8px;border:1px solid #222;color:#333;cursor:pointer}
+.stp.done{border-color:rgba(201,168,76,.3);color:rgba(201,168,76,.4)}
+.stp.active{background:var(--gd);color:var(--bk);border-color:var(--gd)}
+.sec{display:none}
+.sec.on{display:block}
+.btn{font-size:.7rem;padding:7px 16px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.btn-g{background:var(--gd);color:var(--bk)}
+.btn-o{background:transparent;border:1px solid var(--gd);color:var(--gd)}
+.grp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.gc{background:var(--dm);border:1px solid var(--ln)}
+.gc-hdr{display:flex;align-items:center;padding:5px 8px;background:rgba(201,168,76,.04);border-bottom:1px solid var(--ln);font-size:.7rem}
+.gc-lbl{color:var(--gd);margin-right:4px}
+.rslots{padding:2px 6px}
+.rrow{display:flex;align-items:center;gap:4px;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.rnum{font-size:.7rem;width:12px;color:var(--gd);text-align:center}
+.rdrop{flex:1;background:var(--d2);border:1px solid #222;padding:3px 5px;cursor:pointer;min-height:22px;font-size:.6rem}
+.rdrop:hover{border-color:var(--gd)}
+.rdrop.filled{color:var(--wh);border-color:rgba(201,168,76,.3)}
+.pbar{height:2px;background:#0d0d0d;margin-bottom:10px}
+.pfill{height:100%;background:linear-gradient(90deg,var(--rd),var(--gd));transition:width .4s}
+.btn-row{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.back{color:#555;text-decoration:none;font-size:.6rem;margin-bottom:6px;display:inline-block}
+.back:hover{color:var(--gd)}
+.ttag{font-size:.45rem;letter-spacing:.25em;color:var(--rd);margin-bottom:2px}
+.tmain{font-size:clamp(1rem,2vw,1.5rem);margin-bottom:10px}
+.chips{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
+.chip{font-size:.45rem;padding:2px 5px;border:1px solid var(--ln);color:#555}
+.chip strong{color:var(--gd)}
+.rg2{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px}
+.rc2{background:var(--dm);border:1px solid var(--ln);padding:8px 10px;position:relative}
+.rc2::after{content:attr(data-g);position:absolute;right:2px;top:-2px;font-size:2rem;color:rgba(201,168,76,.05)}
+.r2lbl{font-size:.85rem;color:var(--gd);margin-bottom:4px}
+.r2team{display:flex;align-items:center;gap:4px;padding:2px 0;font-size:.58rem;border-bottom:1px solid rgba(255,255,255,.04)}
+.abdg{font-size:.38rem;padding:1px 3px;letter-spacing:.04em;margin-left:auto}
+.b1{color:var(--gd);background:rgba(201,168,76,.1)}
+.b2{color:var(--gn);background:rgba(40,199,111,.1)}
+.b3{color:var(--bl);background:rgba(74,158,255,.1)}
+#bwrap{width:100%;overflow:auto;background:var(--dm);border:1px solid var(--ln);padding:10px;min-height:300px}
+.champ{text-align:center;padding:30px 20px;border:1px solid var(--gd)}
+.cflag{font-size:3rem;display:block}
+.cname{font-size:clamp(1.5rem,4vw,2.5rem);color:var(--gd)}
+.spanel{background:var(--dm);border:1px solid var(--ln);padding:12px;margin-top:14px}
+.sprow{display:flex;justify-content:space-between;padding:4px 0;font-size:.6rem;border-bottom:1px solid rgba(255,255,255,.04)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gd);color:var(--bk);padding:8px 20px;z-index:999;opacity:0;transition:opacity .3s;font-size:.8rem}
+.toast.show{opacity:1}
+main{padding:16px}
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500}
+.mbg.open{display:flex;align-items:center;justify-content:center}
+.mbox{background:var(--dm);border:1px solid var(--gd);width:min(350px,85vw);max-height:65vh}
+</style>
+</head><body>
+<a href="../" class="back">← OrbitPrompt</a>
+<header><h1>WC2026</h1>
+<div class="steps">
+<div class="stp active" id="stp1">01 GROUP</div>
+<div class="stp" id="stp2">02 ADV</div>
+<div class="stp" id="stp3">03 BRACKET</div>
+<div class="stp" id="stp4">04 WINNER</div>
+</div></header>
+<main>
+<div class="sec on" id="sec1">
+<div class="ttag">STEP 01</div>
+<div class="tmain">Predict Group Standings</div>
+<div class="chips"><div class="chip">Done: <strong id="dcnt">0</strong>/12</div><div class="chip">Click slot → pick team</div></div>
+<div class="pbar"><div class="pfill" id="pfill" style="width:0%"></div></div>
+<div class="grp-grid" id="grp-grid"></div>
+<div class="btn-row">
+<button class="btn btn-g" id="btn1n" onclick="gS2()" disabled>Next →</button>
+<button class="btn btn-o" onclick="autoFill()">Auto fill</button>
+<button class="btn btn-o" onclick="clearAll()">Reset</button>
+</div>
+</div>
+<div class="sec" id="sec2">
+<div class="ttag">STEP 02</div>
+<div class="tmain">Round of 32</div>
+<div class="rg2" id="rg2"></div>
+<div class="btn-row">
+<button class="btn btn-g" onclick="gS3()">Bracket →</button>
+<button class="btn btn-o" onclick="gS1()">← Back</button>
+</div>
+</div>
+<div class="sec" id="sec3">
+<div class="ttag">STEP 03</div>
+<div class="tmain">Knockout Bracket <span style="color:var(--gd)">· click team = winner</span></div>
+<div class="chips"><div class="chip" id="rinfo">Loading</div></div>
+<div id="bwrap"><svg id="bsvg"></svg></div>
+<div class="btn-row">
+<button class="btn btn-g" id="btn3n" onclick="gS4()" disabled>See Winner →</button>
+<button class="btn btn-o" onclick="autoSim()">Auto simulate</button>
+<button class="btn btn-o" onclick="gS2()">← Back</button>
+</div>
+</div>
+<div class="sec" id="sec4">
+<div class="ttag">STEP 04</div>
+<div class="tmain">Champion</div>
+<div id="champ-area"></div>
+<div class="btn-row">
+<button class="btn btn-g" onclick="location.reload()">Restart</button>
+<button class="btn btn-o" onclick="gS3()">← Bracket</button>
+</div>
+</div>
+</main>
+<div class="toast" id="toast"></div>
+<div class="mbg" id="mbg"><div class="mbox"></div></div>
+<script>
+// Full WC2026 predictor logic here
+console.log('WC2026 Predictor loaded');
+<script>
+// World Cup 2026 Group Data
+const GD={
+  A:[{n:'Mexico',f:'🇲🇽',fr:13},{n:'South Africa',f:'🇿🇦',fr:59},{n:'South Korea',f:'🇰🇷',fr:23},{n:'Czech Republic',f:'🇨🇿',fr:37}],
+  B:[{n:'Canada',f:'🇨🇦',fr:49},{n:'Bosnia',f:'🇧🇦',fr:64},{n:'Qatar',f:'🇶🇦',fr:37},{n:'Switzerland',f:'🇨🇭',fr:17}],
+  C:[{n:'Brazil',f:'🇧🇷',fr:5},{n:'Morocco',f:'🇲🇦',fr:14},{n:'Haiti',f:'🇭🇹',fr:87},{n:'Scotland',f:'🏴',fr:42}],
+  D:[{n:'USA',f:'🇺🇸',fr:16},{n:'Paraguay',f:'🇵🇾',fr:61},{n:'Australia',f:'🇦🇺',fr:24},{n:'Turkiye',f:'🇹🇷',fr:29}],
+  E:[{n:'Germany',f:'🇩🇪',fr:12},{n:'Curacao',f:'🇨🇼',fr:77},{n:'Ivory Coast',f:'🇨🇮',fr:45},{n:'Ecuador',f:'🇪🇨',fr:40}],
+  F:[{n:'Netherlands',f:'🇳🇱',fr:7},{n:'Japan',f:'🇯🇵',fr:15},{n:'Sweden',f:'🇸🇪',fr:26},{n:'Tunisia',f:'🇹🇳',fr:32}],
+  G:[{n:'Belgium',f:'🇧🇪',fr:11},{n:'Egypt',f:'🇪🇬',fr:36},{n:'Iran',f:'🇮🇷',fr:27},{n:'New Zealand',f:'🇳🇿',fr:91}],
+  H:[{n:'Spain',f:'🇪🇸',fr:1},{n:'Cape Verde',f:'🇨🇻',fr:76},{n:'Saudi Arabia',f:'🇸🇦',fr:56},{n:'Uruguay',f:'🇺🇾',fr:20}],
+  I:[{n:'France',f:'🇫🇷',fr:3},{n:'Senegal',f:'🇸🇳',fr:19},{n:'Iraq',f:'🇮🇶',fr:68},{n:'Norway',f:'🇳🇴',fr:31}],
+  J:[{n:'Argentina',f:'🇦🇷',fr:2},{n:'Algeria',f:'🇩🇿',fr:48},{n:'Austria',f:'🇦🇹',fr:28},{n:'Jordan',f:'🇯🇴',fr:82}],
+  K:[{n:'Portugal',f:'🇵🇹',fr:6},{n:'DR Congo',f:'🇨🇩',fr:55},{n:'Uzbekistan',f:'🇺🇿',fr:71},{n:'Colombia',f:'🇨🇴',fr:25}],
+  L:[{n:'England',f:'🏴',fr:4},{n:'Croatia',f:'🇭🇷',fr:10},{n:'Ghana',f:'🇬🇭',fr:60},{n:'Panama',f:'🇵🇦',fr:54}],
+};
+
+// State
+const P={}; Object.keys(GD).forEach(g=>{P[g]=[null,null,null,null];});
+let MR={}, champion=null, mGrp=null, mSlot=null, third8=[], wcMap={};
+
+// R32 bracket matches
+const R32=[
+  {id:'M73',t1:'2A',t2:'2B'},{id:'M74',t1:'1E',t2:'3W0'},{id:'M75',t1:'1F',t2:'2C'},{id:'M76',t1:'1C',t2:'2F'},
+  {id:'M77',t1:'1I',t2:'3W1'},{id:'M78',t1:'2E',t2:'2I'},{id:'M79',t1:'1A',t2:'3W2'},{id:'M80',t1:'1L',t2:'3W3'},
+  {id:'M81',t1:'1D',t2:'3W4'},{id:'M82',t1:'1G',t2:'3W5'},{id:'M83',t1:'2K',t2:'2L'},{id:'M84',t1:'1H',t2:'2J'},
+  {id:'M85',t1:'1B',t2:'3W6'},{id:'M86',t1:'1J',t2:'2H'},{id:'M87',t1:'1K',t2:'3W7'},{id:'M88',t1:'2D',t2:'2G'},
+];
+
+const WC_HOSTS=['E','I','A','L','D','G','B','K'];
+
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),1500);
+}
+
+// Group rendering
+function renderAll(){
+  document.getElementById('grp-grid').innerHTML=Object.keys(GD).map(g=>{
+    const done=P[g].every(s=>s!==null);
+    return '<div class="gc" id="gc-'+g+'"><div class="gc-hdr"><span class="gc-lbl">Group '+g+'</span></div><div class="rslots">'+
+      [0,1,2,3].map(i=>{
+        const t=P[g][i];
+        return '<div class="rrow"><div class="rnum">'+(i+1)+'</div>'+
+          '<div class="rdrop '+(t?'filled':'')+'" onclick="openM(\''+g+'\','+i+')">'+
+          (t?'<span>'+t.f+' '+t.n+'</span><span onclick="event.stopPropagation();P[\''+g+\']['+i+']=null;reGC(\''+g+'\')" style="color:#555;cursor:pointer">✕</span>':'<span style="color:#222">— select</span>')+
+          '</div></div>';
+      }).join('')+'</div></div>';
+  }).join('');
+  updateProgress();
+}
+
+function updateProgress(){
+  const done=Object.keys(P).filter(g=>P[g].every(s=>s!==null)).length;
+  document.getElementById('dcnt').textContent=done;
+  document.getElementById('pfill').style.width=(done/12*100)+'%';
+  document.getElementById('btn1n').disabled=done<12;
+}
+
+function reGC(g){
+  const el=document.getElementById('gc-'+g);
+  if(el)el.outerHTML=renderGroup(g);
+  updateProgress();
+}
+
+function renderGroup(g){
+  const done=P[g].every(s=>s!==null);
+  return '<div class="gc" id="gc-'+g+'"><div class="gc-hdr"><span class="gc-lbl">Group '+g+'</span></div><div class="rslots">'+
+    [0,1,2,3].map(i=>{
+      const t=P[g][i];
+      return '<div class="rrow"><div class="rnum">'+(i+1)+'</div>'+
+        '<div class="rdrop '+(t?'filled':'')+'" onclick="openM(\''+g+'\','+i+')">'+
+        (t?'<span>'+t.f+' '+t.n+'</span><span onclick="event.stopPropagation();P[\''+g+\']['+i+']=null;reGC(\''+g+'\')" style="color:#555;cursor:pointer">✕</span>':'<span style="color:#222">—</span>')+
+        '</div></div>';
+    }).join('')+'</div></div>';
+}
+
+// Modal
+function openM(g,slot){
+  mGrp=g;mSlot=slot;
+  document.getElementById('mbg').innerHTML='<div class="mbox" style="padding:16px"><div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>Group '+g+' — Pos '+(slot+1)+'</span><span onclick="document.getElementById(\'mbg\').classList.remove(\'open\')" style="cursor:pointer;color:#555">✕</span></div>'+
+    GD[g].map(t=>'<div onclick="selectT(\''+g+'\',\''+t.n+'\')" style="padding:6px 8px;cursor:pointer;border-bottom:1px solid #222;font-size:.65rem">'+t.f+' '+t.n+' <span style="color:#555">FR#'+t.fr+'</span></div>').join('')+'</div>';
+  document.getElementById('mbg').classList.add('open');
+}
+
+function selectT(g,name){
+  const t=GD[g].find(x=>x.n===name);
+  if(t&&!P[g].some(x=>x?.n===name)){P[g][mSlot]=t;reGC(g);}
+  document.getElementById('mbg').classList.remove('open');
+}
+
+function autoFill(){
+  Object.keys(GD).forEach(g=>{P[g]=[...GD[g]].sort((a,b)=>a.fr-b.fr);});
+  renderAll();
+}
+
+function clearAll(){
+  Object.keys(GD).forEach(g=>{P[g]=[null,null,null,null];});
+  MR={};champion=null;
+  renderAll();
+}
+
+// Step 2
+function gS2(){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.getElementById('sec2').classList.add('on');
+  setStep(2);
+  // calc third placed
+  const raw=[...Object.keys(P)].map(g=>({g,t:P[g][2]})).filter(x=>x.t).sort((a,b)=>a.t.fr-b.t.fr).slice(0,8);
+  let pool=[...raw];
+  WC_HOSTS.forEach((hg,i)=>{
+    let idx=pool.findIndex(x=>x.g!==hg);
+    if(idx===-1)idx=0;
+    wcMap['3W'+i]=pool.length?pool.splice(idx,1)[0].t:null;
+  });
+  document.getElementById('rg2').innerHTML=Object.keys(P).map(g=>{
+    const t8=new Set(raw.map(x=>x.t?.n));
+    return '<div class="rc2" data-g="'+g+'"><div class="r2lbl">Group '+g+'</div>'+
+      P[g].map((t,i)=>{
+        const is3=i===2&&t8.has(t.n);
+        const badge=i===0?'<span class="abdg b1">1st</span>':i===1?'<span class="abdg b2">2nd</span>':is3?'<span class="abdg b3">3rd</span>':'';
+        return '<div class="r2team"><span style="font-size:.7rem">'+t.f+'</span><span style="flex:1">'+t.n+'</span>'+badge+'</div>';
+      }).join('')+'</div>';
+  }).join('');
+}
+
+// Step 3 - SVG bracket
+function gS3(){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.getElementById('sec3').classList.add('on');
+  setStep(3);
+  drawBracket();
+}
+
+function resolveSlot(src){
+  if(src.startsWith('1'))return P[src[1]]?.[0]||null;
+  if(src.startsWith('2'))return P[src[1]]?.[1]||null;
+  if(src.startsWith('3W'))return wcMap[src]||null;
+  return null;
+}
+
+function drawBracket(){
+  const svg=document.getElementById('bsvg');
+  const NW=130, NH=22, VG=4, SL=NH*2+VG+16, CG=35, N=16;
+  const H=N*SL+30;
+  const cx=[10,10+NW+CG,10+(NW+CG)*2,10+(NW+CG)*3,10+(NW+CG)*4];
+  const W=cx[4]+NW+100;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  svg.innerHTML='';
+
+  const yR32=Array.from({length:16},(_,i)=>20+i*SL);
+  const yR16=Array.from({length:8},(_,i)=>(yR32[i*2]+yR32[i*2+1])/2);
+  const yQF=Array.from({length:4},(_,i)=>(yR16[i*2]+yR16[i*2+1])/2);
+  const ySF=Array.from({length:2},(_,i)=>(yQF[i*2]+yQF[i*2+1])/2);
+  const yFIN=(ySF[0]+ySF[1])/2;
+
+  // Round labels
+  ['R32','R16','QF','SF','FINAL'].forEach((r,i)=>{
+    const el=document.createElementNS('http://www.w3.org/2000/svg','text');
+    el.setAttribute('x',cx[i]+NW/2);el.setAttribute('y',10);
+    el.setAttribute('fill',i===4?'#c9a84c':'rgba(224,43,34,0.5)');
+    el.setAttribute('font-size','7');el.setAttribute('text-anchor','middle');
+    el.setAttribute('font-family','monospace');
+    el.textContent=r;
+    svg.appendChild(el);
+  });
+
+  const labels=['M73-M88','R16','QF','SF','🏆'];
+  
+  function addMatch(x,y,mid,t1,t2,isFinal){
+    [t1,t2].forEach((t,si)=>{
+      const ty=y+si*(NH+VG);
+      const w=MR[mid];
+      const isW=w&&t&&w.n===t.n;
+      const fill=isW?'rgba(40,199,111,0.15)':'#0e0e18';
+      const stroke=isW?'rgba(40,199,111,0.5)':isFinal?'rgba(201,168,76,0.3)':'rgba(201,168,76,0.1)';
+      const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+      r.setAttribute('x',x);r.setAttribute('y',ty);
+      r.setAttribute('width',NW);r.setAttribute('height',NH);
+      r.setAttribute('fill',fill);r.setAttribute('stroke',stroke);r.setAttribute('rx','1');
+      svg.appendChild(r);
+      if(t){
+        const el=document.createElementNS('http://www.w3.org/2000/svg','text');
+        el.setAttribute('x',x+4);el.setAttribute('y',ty+NH/2+1);
+        el.setAttribute('fill',isW?'#28c76f':'#edeae2');
+        el.setAttribute('font-size','7.5');el.setAttribute('dominant-baseline','middle');
+        el.textContent=t.f+' '+t.n;
+        svg.appendChild(el);
+        // click rect
+        const hit=document.createElementNS('http://www.w3.org/2000/svg','rect');
+        hit.setAttribute('x',x);hit.setAttribute('y',ty);
+        hit.setAttribute('width',NW);hit.setAttribute('height',NH);
+        hit.setAttribute('fill','transparent');hit.setAttribute('cursor','pointer');
+        hit.addEventListener('click',()=>{
+          Object.keys(MR).forEach(k=>{if(k!==mid&&MR[k]&&matchOrd(k)>matchOrd(mid))delete MR[k];});
+          MR[mid]=t;
+          if(mid==='FINAL'){champion=t;document.getElementById('btn3n').disabled=false;}
+          else document.getElementById('btn3n').disabled=true;
+          drawBracket();
+        });
+        svg.appendChild(hit);
+      } else {
+        const el=document.createElementNS('http://www.w3.org/2000/svg','text');
+        el.setAttribute('x',x+NW/2);el.setAttribute('y',ty+NH/2+1);
+        el.setAttribute('fill','#1c1c2e');el.setAttribute('font-size','6');
+        el.setAttribute('text-anchor','middle');el.setAttribute('dominant-baseline','middle');
+        el.textContent='TBD';svg.appendChild(el);
+      }
+    });
+    // connector line
+    const cy=mCY(y+NH);
+    // divider line
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',x+2);ln.setAttribute('y1',y+NH);
+    ln.setAttribute('x2',x+NW-2);ln.setAttribute('y2',y+NH);
+    ln.setAttribute('stroke','rgba(255,255,255,0.04)');ln.setAttribute('stroke-width','0.5');
+    svg.appendChild(ln);
+  }
+  
+  function mCY(y){return y+NH+VG/2;}
+  function matchOrd(id){
+    if(id==='FINAL')return 5;
+    if(id.startsWith('SF'))return 4;
+    if(id.startsWith('QF'))return 3;
+    if(id.startsWith('R16'))return 2;
+    return 1;
+  }
+
+  // Draw R32
+  R32.forEach((m,i)=>{
+    addMatch(cx[0],yR32[i],m.id,resolveSlot(m.t1),resolveSlot(m.t2));
+  });
+  // Draw R16
+  for(let i=0;i<8;i++){
+    addMatch(cx[1],yR16[i],'R16_'+i,MR[R32[i*2].id],MR[R32[i*2+1].id]);
+  }
+  // Draw QF
+  for(let i=0;i<4;i++){
+    addMatch(cx[2],yQF[i],'QF_'+i,MR['R16_'+i*2],MR['R16_'+(i*2+1)]);
+  }
+  // Draw SF
+  for(let i=0;i<2;i++){
+    addMatch(cx[3],ySF[i],'SF_'+i,MR['QF_'+i*2],MR['QF_'+(i*2+1)]);
+  }
+  // Draw FINAL
+  addMatch(cx[4],yFIN,'FINAL',MR['SF_0'],MR['SF_1'],true);
+
+  // Update info
+  const doneR32=R32.filter(m=>MR[m.id]).length;
+  const doneR16=[...Array(8)].filter((_,i)=>MR['R16_'+i]).length;
+  document.getElementById('rinfo').textContent=
+    MR['FINAL']?'Tournament complete!':
+    doneR16===8?'QF:'+[...Array(4)].filter((_,i)=>MR['QF_'+i]).length+'/4':
+    doneR32===16?'R16:'+doneR16+'/8':
+    'R32:'+doneR32+'/16';
+}
+
+function autoSim(){
+  const sim=(id,t1,t2)=>{
+    if(t1&&t2){
+      const s1=Math.max(0,100-t1.fr)+Math.random()*20;
+      const s2=Math.max(0,100-t2.fr)+Math.random()*20;
+      MR[id]=s1>s2?t1:t2;
+    } else if(t1)MR[id]=t1;
+    else if(t2)MR[id]=t2;
+  };
+  R32.forEach(m=>sim(m.id,resolveSlot(m.t1),resolveSlot(m.t2)));
+  for(let i=0;i<8;i++)sim('R16_'+i,MR[R32[i*2].id],MR[R32[i*2+1].id]);
+  for(let i=0;i<4;i++)sim('QF_'+i,MR['R16_'+i*2],MR['R16_'+(i*2+1)]);
+  for(let i=0;i<2;i++)sim('SF_'+i,MR['QF_'+i*2],MR['QF_'+(i*2+1)]);
+  sim('FINAL',MR['SF_0'],MR['SF_1']);
+  champion=MR['FINAL'];
+  drawBracket();
+  if(champion)document.getElementById('btn3n').disabled=false;
+}
+
+// Step 4
+function gS4(){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.getElementById('sec4').classList.add('on');
+  setStep(4);
+  const c=champion||MR['FINAL'];
+  if(!c)return;
+  document.getElementById('champ-area').innerHTML=
+    '<div class="champ"><div style="font-size:.55rem;letter-spacing:.3em;color:#e02b22">🏆 2026 CHAMPION</div>'+
+    '<div class="cflag">'+c.f+'</div><div class="cname">'+c.n+'</div></div>';
+}
+
+function setStep(n){
+  ['stp1','stp2','stp3','stp4'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.classList.remove('active','done');
+    if(i+1<n)el.classList.add('done');
+    else if(i+1===n)el.classList.add('active');
+  });
+}
+
+function gS1(){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.getElementById('sec1').classList.add('on');
+  setStep(1);
+  renderAll();
+}
+
+renderAll();
+</script>
+</body></html>
