@@ -20,3 +20,9 @@ tmp/
 temp/
 *.tmp
 **/__pycache__
+
+# ML 모델 바이너리 & 학습 데이터
+engine/training_data/*.pkl
+engine/training_data/*.bin
+engine/training_data/*.txt
+football-model/mcp/football.db
