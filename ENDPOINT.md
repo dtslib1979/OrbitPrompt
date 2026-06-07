@@ -150,3 +150,14 @@ python3 engine/endpoint_classifier.py "오복집 컨셉 검토"
 python3 engine/endpoint_classifier.py "쇼츠 하나 만들어"
 # → decision/P0/mass/execute/pd-system
 ```
+
+---
+
+## v0.4 — NPU 연동 완료
+
+| 항목 | 상태 |
+|------|:----:|
+| ONNX 모델 | 237KB, sklearn→ONNX 변환 |
+| NNAPI | ✅ InferenceSession 정상 |
+| 분류 결과 | discard 87.7%, execute 10.8%, hold 1.5% |
+| 추론 위치 | S25 Ultra Hexagon NPU |
