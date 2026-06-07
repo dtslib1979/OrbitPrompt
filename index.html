@@ -441,6 +441,28 @@ body::before {
   <!-- WING A: GALLERY (전시관)                    -->
   <!-- ════════════════════════════════════════════ -->
   <div class="wing-panel active" id="wingGallery">
+
+  <!-- Category Filter -->
+  <div class="category-filter" style="display:flex;gap:4px;padding:0 28px;margin-bottom:20px;flex-wrap:wrap;">
+    <button class="cat-btn active" data-cat="all">전체 <span class="cat-count" id="catAll"></span></button>
+    <button class="cat-btn" data-cat="철학/헌법">철학/헌법 <span class="cat-count" id="cat철학"></span></button>
+    <button class="cat-btn" data-cat="분석모델">분석 모델 <span class="cat-count" id="cat분석"></span></button>
+    <button class="cat-btn" data-cat="콘텐츠">콘텐츠 <span class="cat-count" id="cat콘텐츠"></span></button>
+    <button class="cat-btn" data-cat="Generator">Generator <span class="cat-count" id="catGen"></span></button>
+    <button class="cat-btn" data-cat="인프라/도구">인프라/도구 <span class="cat-count" id="cat인프라"></span></button>
+  </div>
+  <style>
+  .cat-btn{
+    font-family:var(--f-sans);font-size:.65rem;letter-spacing:.08em;
+    padding:5px 12px;border:1px solid rgba(255,255,255,.06);background:transparent;
+    color:rgba(255,255,255,.35);cursor:pointer;transition:all .15s;border-radius:3px;
+  }
+  .cat-btn:hover{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.12);}
+  .cat-btn.active{color:var(--gallery-gold);border-color:rgba(212,175,55,.3);background:rgba(212,175,55,.04);}
+  .cat-count{font-size:.55rem;color:rgba(255,255,255,.15);margin-left:3px;}
+  .cat-btn.active .cat-count{color:rgba(212,175,55,.4);}
+  </style>
+
     <div class="gallery-hero">
       <p class="gallery-hero-sub" style="font-size:15px;color:rgba(255,255,255,.75);line-height:1.9;margin-bottom:0;max-width:540px;margin-left:auto;margin-right:auto;">
         당신 머릿속 20년 판단 기준은 평생 간다.<br>그걸 밖으로 꺼내서, 시스템으로 남기는 게 OrbitPrompt다.
@@ -725,6 +747,7 @@ body::before {
   /* ======== MODULES DATA ======== */
   const MODULES = [
     {
+      category: '분석모델',
       id: 'football',
       icon: '⚽',
       domain: '축구',
@@ -744,6 +767,7 @@ body::before {
       corner: '축구'
     },
     {
+      category: '분석모델',
       id: 'election-mcp',
       icon: '🧪',
       domain: '정치철학',
@@ -763,6 +787,7 @@ body::before {
       corner: '정치'
     },
     {
+      category: '철학/헌법',
       id: 'mcp-methodology',
       icon: '🏗️',
       domain: '방법론',
@@ -781,6 +806,7 @@ body::before {
       corner: '방법론'
     },
     {
+      category: '콘텐츠',
       id: 'empty-1',
       icon: '◇',
       domain: '준비중',
@@ -799,6 +825,7 @@ body::before {
       corner: ''
     },
     {
+      category: '철학/헌법',
       id: 'empty-2',
       icon: '◇',
       domain: '준비중',
@@ -815,6 +842,7 @@ body::before {
       corner: ''
     },
     {
+      category: '분석모델',
       id: 'finance-ratio',
       icon: '📊',
       domain: '금융',
@@ -863,12 +891,21 @@ body::before {
     const live = MODULES.filter(m => m.status === 'live');
     const planned = MODULES.filter(m => m.status !== 'live');
 
-    exhibitGrid.innerHTML = [...live, ...planned].map(m => {
+    // Category counts
+  const cats = {};
+  MODULES.forEach(m => { const c = m.category || '기타'; cats[c] = (cats[c] || 0) + 1; });
+  document.getElementById('catAll').textContent = '(' + MODULES.length + ')';
+  Object.keys(cats).forEach(c => {
+    const el = document.getElementById('cat' + c.replace(/[\/]/g,'').slice(0,2));
+    if (el) el.textContent = '(' + cats[c] + ')';
+  });
+
+  exhibitGrid.innerHTML = [...live, ...planned].map(m => {
       const isLive = m.status === 'live';
       const tag = isLive ? 'a' : 'div';
       const href = isLive ? ' href="' + m.path + '"' : '';
 
-      return '<' + tag + href + ' class="exhibit' + (!isLive ? ' empty' : '') + '">' +
+      return '<' + tag + href + ' data-category="' + (m.category || '') + '" class="exhibit' + (!isLive ? ' empty' : '') + '">' +
         '<div class="exhibit-visual">' +
           '<span class="exhibit-icon">' + m.icon + '</span>' +
           '<span class="exhibit-status-badge ' + m.status + '">' + (isLive ? '● Published' : '○ Planned') + '</span>' +
@@ -901,6 +938,23 @@ body::before {
 
   if (window.GalleryStore) {
     GalleryStore.modules = MODULES;
+
+  /* Category Filter */
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cat = btn.dataset.cat;
+      document.querySelectorAll('.exhibit').forEach(el => {
+        if (cat === 'all' || el.dataset.category === cat) {
+          el.style.display = '';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    });
+  });
+
   }
 
   /* ======== INIT DATA SECTIONS ======== */
