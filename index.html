@@ -445,10 +445,13 @@ body::before {
   <!-- Category Filter -->
   <div class="category-filter" style="display:flex;gap:4px;padding:0 28px;margin-bottom:20px;flex-wrap:wrap;">
     <button class="cat-btn active" data-cat="all">전체 <span class="cat-count" id="catAll"></span></button>
-    <button class="cat-btn" data-cat="THINK">🎯 THINK <span class="cat-count" id="catTHINK"></span></button>
-    <button class="cat-btn" data-cat="MAKE">✍️ MAKE <span class="cat-count" id="catMAKE"></span></button>
-    <button class="cat-btn" data-cat="DRAW">🔬 DRAW <span class="cat-count" id="catDRAW"></span></button>
-    <button class="cat-btn" data-cat="FRAME">📐 FRAME <span class="cat-count" id="catFRAME"></span></button>
+    <button class="cat-btn" data-cat="Meta">🧠 Meta <span class="cat-count" id="catMeta"></span></button>
+    <button class="cat-btn" data-cat="Reverse">🔄 Reverse <span class="cat-count" id="catReverse"></span></button>
+    <button class="cat-btn" data-cat="Modular">🧩 Modular <span class="cat-count" id="catModular"></span></button>
+    <button class="cat-btn" data-cat="Language">💬 Language <span class="cat-count" id="catLanguage"></span></button>
+    <button class="cat-btn" data-cat="Zoom">🔍 Zoom <span class="cat-count" id="catZoom"></span></button>
+    <button class="cat-btn" data-cat="Spiral">📈 Spiral <span class="cat-count" id="catSpiral"></span></button>
+    <button class="cat-btn" data-cat="Quantum">⚡ Quantum <span class="cat-count" id="catQuantum"></span></button>
   </div>
   <style>
   .cat-btn{
@@ -747,7 +750,7 @@ body::before {
   /* ======== MODULES DATA ======== */
   const MODULES = [
     {
-      category: 'THINK',
+      category: 'Quantum',
       id: 'football',
       icon: '⚽',
       domain: '축구',
@@ -769,7 +772,7 @@ body::before {
       corner: '축구'
     },
     {
-      category: 'THINK',
+      category: 'Zoom',
       id: 'election-mcp',
       icon: '🧪',
       domain: '정치철학',
@@ -789,7 +792,7 @@ body::before {
       corner: '정치'
     },
     {
-      category: 'THINK',
+      category: 'Zoom',
       id: 'political-phi7',
       icon: '🏛️',
       domain: '정치',
@@ -808,7 +811,7 @@ body::before {
       corner: '정치'
     },
     {
-      category: 'THINK',
+      category: 'Quantum',
       id: 'wc2026-mcp',
       icon: '🏆',
       domain: '축구',
@@ -827,7 +830,7 @@ body::before {
       corner: '축구'
     },
     {
-      category: 'FRAME',
+      category: 'Meta',
       id: 'mcp-methodology',
       icon: '🏗️',
       domain: '방법론',
@@ -846,7 +849,7 @@ body::before {
       corner: '방법론'
     },
     {
-      category: 'MAKE',
+      category: 'Language',
       id: 'empty-1',
       icon: '◇',
       domain: '준비중',
@@ -865,7 +868,7 @@ body::before {
       corner: ''
     },
     {
-      category: 'FRAME',
+      category: 'Spiral',
       id: 'empty-2',
       icon: '◇',
       domain: '준비중',
@@ -882,7 +885,7 @@ body::before {
       corner: ''
     },
     {
-      category: 'THINK',
+      category: 'Modular',
       id: 'finance-ratio',
       icon: '📊',
       domain: '금융',
@@ -899,7 +902,24 @@ body::before {
       year: '2026',
       medium: 'MCP Analysis Engine',
       corner: '금융'
-    }
+    },
+    {
+      category: 'Reverse',
+      id: 'empty-3',
+      icon: '◇',
+      domain: '준비중',
+      number: '05',
+      title: '실패·케이스스터디',
+      desc: '예측 대비 실제 결과 비교. 역방향 설계와 학습 아카이브.',
+      tags: [],
+      score: 0,
+      maxScore: 100,
+      status: 'planned',
+      path: '',
+      year: '',
+      medium: '',
+      corner: ''
+    },
   ];
 
   /* ======== WING SWITCHING ======== */
