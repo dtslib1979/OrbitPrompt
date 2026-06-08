@@ -1,153 +1,123 @@
 #!/usr/bin/env python3
 """
-server.py — Φ7 철학 카운터 MCP
+server.py — Φ7 철학 카운터 MCP v1.0 (만점판)
 
-에코 3부작(라 필로소피아)을 마스터 테이블로 삼아,
-철학자 1명과 박씨 철학을 Φ7 5축으로 비교해서 리포트를 뽑는다.
-
-툴:
-  1. phi7_compare   — 철학자 1명 Φ7 5축 비교
-  2. identity_diff  — 비교 결과 → ID-MANIFEST 반영안
-  3. counter_md     — 전체 결과 → counter.md 자동 생성
-  4. rank           — 가장 비슷한 철학자 순위
+변경:
+  1. 수동 점수 제거 → 특징 기반 동적 유사도 계산
+  2. 진짜 발견 엔진 — 예상치 못한 연결을 찾아냄
+  3. 11명 철학자 DB (키르케고르/아렌트/마르크스 추가)
+  4. ID-MANIFEST 실제 업데이트 제안 생성
+  5. 실행 즉시 rank 결과로 검증 가능
 """
 import sys, json, os
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(__file__))
-from phi7_engine import compare_phi7, batch_compare, find_most_similar, PARKSY_PHI7
-from philosopher_data import PHILOSOPHERS, PHI7_AXES, list_philosophers
+from phi7_engine import (
+    analyze_philosopher, rank_by_similarity,
+    get_identity_update, generate_counter_md
+)
+from philosopher_data import list_philosophers, PHILOSOPHERS
 
-VERSION = "0.1.0"
+VERSION = "1.0.0"
 MCP_NAME = "phi7_philosophy_counter"
 
-# --- 툴 4개 ---
+def tool_analyze(key):
+    """툴 1: 철학자 1명 전체 분석"""
+    if key not in PHILOSOPHERS:
+        return {"error": f"'{key}' 없음", "available": list_philosophers()}
+    r = analyze_philosopher(key)
+    r["_meta"] = {"version": VERSION, "tool": "analyze", "timestamp": datetime.now().isoformat()}
+    return r
 
-def tool_phi7_compare(philosopher_key):
-    """툴 1: 철학자 1명 Φ7 5축 비교"""
-    result = compare_phi7(philosopher_key)
-    if "error" in result:
-        return result
+def tool_discover():
+    """툴 2: 예상치 못한 발견 찾기"""
+    results = rank_by_similarity()
+    all_discoveries = []
+    for r in results[:5]:
+        rr = analyze_philosopher(r["key"])
+        if rr["discoveries"]:
+            all_discoveries.append({
+                "philosopher": rr["philosopher"],
+                "similarity": rr["summary"]["overall_similarity"],
+                "discoveries": rr["discoveries"]
+            })
     return {
-        "tool": "phi7_compare",
+        "tool": "discover",
         "version": VERSION,
-        "result": result
-    }
-
-def tool_identity_diff(philosopher_key):
-    """툴 2: 비교 결과 → ID-MANIFEST 업데이트 제안"""
-    result = compare_phi7(philosopher_key)
-    if "error" in result:
-        return result
-    
-    p_name = result["philosopher"]
-    diffs = result["differences"]
-    sims = result["similarities"]
-    
-    id_updates = []
-    id_updates.append(f"### {p_name} 비교 — ID 반영안\n")
-    id_updates.append(f"**날짜:** {datetime.now().strftime('%Y-%m-%d')}\n")
-    
-    if sims:
-        id_updates.append("\n[확인/강화]")
-        for s in sims[:3]:
-            id_updates.append(f"- {s.strip()}")
-    
-    if diffs:
-        id_updates.append("\n[차이 인지]")
-        for d in diffs[:3]:
-            id_updates.append(f"- {d.strip()}")
-    
-    id_updates.append(f"\n[메모]\n{result.get('notes', '')}")
-    
-    return {
-        "tool": "identity_diff",
-        "version": VERSION,
-        "philosopher": p_name,
-        "id_update_suggestion": "\n".join(id_updates),
-        "current_id_lines": [
-            f"비교 대상: {p_name}",
-            f"닮은 축: {len(sims)}개",
-            f"다른 축: {len(diffs)}개",
-            f"반영 우선순위: {'높음' if len(diffs) > 2 else '중간' if len(diffs) > 0 else '낮음'}"
-        ]
-    }
-
-def tool_counter_md(philosopher_key):
-    """툴 3: 카운터 마크다운 생성 (chan-dae-counter.md 포맷)"""
-    result = compare_phi7(philosopher_key)
-    if "error" in result:
-        return result
-    
-    p = result["philosopher"]
-    comp = result["phi7_comparison"]
-    
-    lines = []
-    lines.append(f"\n---\n")
-    lines.append(f"## 2026-06-08 #{'0' + str(len(PHILOSOPHERS))[:2]} — {p} Φ7 비교")
-    lines.append(f"\n### Φ7 5축 비교: 박씨 vs {p}\n")
-    
-    for ax_key, ax_data in comp.items():
-        lines.append(f"**[{ax_data['axis_name']}]**")
-        lines.append(f"- {p}: {ax_data['philosopher_score']}/100")
-        lines.append(f"- 박씨: {ax_data['parksy_score']}/100")
-        lines.append(f"- 차이: {ax_data['diff']:+.1f}")
-        lines.append(f"- 판정: {ax_data['verdict']}")
-        lines.append("")
-    
-    lines.append("### 종합\n")
-    lines.append(f"- 닮은 축: {result['summary']['total_similar_axes']}개")
-    lines.append(f"- 다른 축: {result['summary']['total_different_axes']}개")
-    lines.append(f"- 메모: {result['notes']}")
-    lines.append("")
-    
-    return {
-        "tool": "counter_md",
-        "version": VERSION,
-        "philosopher": p,
-        "markdown": "\n".join(lines),
-        "ready_to_commit": True,
-        "target_file": "dtslib-branch/비즈니스-소설/chan-dae-counter.md"
+        "total_discoveries": sum(len(d["discoveries"]) for d in all_discoveries),
+        "discoveries": all_discoveries,
+        "_meta": {"version": VERSION, "timestamp": datetime.now().isoformat()}
     }
 
 def tool_rank():
-    """툴 4: 유사도 순위"""
-    rankings = find_most_similar()
-    result = []
-    for i, (diff, key, name) in enumerate(rankings, 1):
-        result.append({
-            "rank": i,
-            "philosopher": name,
-            "similarity_score": round(100 - diff, 1),
-            "assessment": "매우 유사" if diff < 10 else "유사" if diff < 20 else "차이 있음" if diff < 35 else "매우 다름"
-        })
+    """툴 3: 유사도 순위"""
+    results = rank_by_similarity()
     return {
         "tool": "rank",
         "version": VERSION,
-        "ranking": result,
-        "note": "점수가 높을수록 박씨 철학과 비슷함"
+        "ranking": results,
+        "_meta": {"version": VERSION, "timestamp": datetime.now().isoformat()}
     }
 
-# --- MCP 서버 ---
+def tool_id_update(key):
+    """툴 4: ID-MANIFEST 업데이트 제안"""
+    if key not in PHILOSOPHERS:
+        return {"error": f"'{key}' 없음", "available": list_philosophers()}
+    r = get_identity_update(key)
+    r["_meta"] = {"version": VERSION, "tool": "id_update", "timestamp": datetime.now().isoformat()}
+    return r
+
+def tool_counter(key):
+    """툴 5: counter.md 자동 생성"""
+    if key not in PHILOSOPHERS:
+        return {"error": f"'{key}' 없음", "available": list_philosophers()}
+    r = generate_counter_md(key)
+    r["_meta"] = {"version": VERSION, "tool": "counter_md", "timestamp": datetime.now().isoformat()}
+    return r
+
+def tool_map():
+    """툴 6: 철학적 계보 지도"""
+    results = rank_by_similarity()
+    tiers = {"S": [], "A": [], "B": [], "C": []}
+    for r in results:
+        if r["similarity"] >= 70: tiers["S"].append(r)
+        elif r["similarity"] >= 55: tiers["A"].append(r)
+        elif r["similarity"] >= 40: tiers["B"].append(r)
+        else: tiers["C"].append(r)
+    return {
+        "tool": "map",
+        "version": VERSION,
+        "tiers": {
+            "S (매우 유사)": [{"name": r["name"], "sim": r["similarity"]} for r in tiers["S"]],
+            "A (유사)": [{"name": r["name"], "sim": r["similarity"]} for r in tiers["A"]],
+            "B (차이 있음)": [{"name": r["name"], "sim": r["similarity"]} for r in tiers["B"]],
+            "C (매우 다름)": [{"name": r["name"], "sim": r["similarity"]} for r in tiers["C"]]
+        },
+        "_meta": {"version": VERSION, "timestamp": datetime.now().isoformat()}
+    }
 
 WELCOME = f"""
 ╔══════════════════════════════════════════════╗
 ║  {MCP_NAME} v{VERSION}                       ║
-║  Φ7 철학 카운터 — ID 엔진 튜닝 시리즈      ║
-║  에코 3부작을 마스터 테이블로              ║
+║  Φ7 철학 카운터 — 만점판                     ║
 ╚══════════════════════════════════════════════╝
 
-툴:
-  phi7_compare — 철학자 1명 Φ7 5축 비교
-  identity_diff — ID-MANIFEST 반영안 생성
-  counter_md   — chan-dae-counter.md 포맷 출력
-  rank         — 가장 비슷한 철학자 순위
+툴 6개:
+  analyze   — 철학자 1명 전체 분석 (동적 점수)
+  discover  — 예상치 못한 철학적 발견
+  rank      — 유사도 순위
+  id_update — ID-MANIFEST 반영안 생성
+  counter   — counter.md 자동 생성
+  map       — 철학적 계보 지도 (S/A/B/C)
+
+철학자 11명:
+  {', '.join(list_philosophers())}
 
 사용법:
-  echo '{{"tool":"phi7_compare","params":{{"philosopher":"gattari"}}}}' | python3 server.py
-
-철학자 목록:
-  {', '.join(list_philosophers())}
+  echo '{{"tool":"analyze","params":{{"philosopher":"kierkegaard"}}}}' | python3 server.py
+  echo '{{"tool":"discover","params":{{}}}}' | python3 server.py
+  echo '{{"tool":"rank","params":{{}}}}' | python3 server.py
 """
 
 def main():
@@ -160,26 +130,22 @@ def main():
     tool = req.get("tool", "")
     params = req.get("params", {})
     
-    if tool == "phi7_compare":
-        r = tool_phi7_compare(params.get("philosopher", ""))
-        print(json.dumps(r, ensure_ascii=False, indent=2))
-    
-    elif tool == "identity_diff":
-        r = tool_identity_diff(params.get("philosopher", ""))
-        print(json.dumps(r, ensure_ascii=False, indent=2))
-    
-    elif tool == "counter_md":
-        r = tool_counter_md(params.get("philosopher", ""))
-        print(json.dumps(r, ensure_ascii=False, indent=2))
-    
+    if tool == "analyze":
+        print(json.dumps(tool_analyze(params.get("philosopher", "")), ensure_ascii=False, indent=2))
+    elif tool == "discover":
+        print(json.dumps(tool_discover(), ensure_ascii=False, indent=2))
     elif tool == "rank":
-        r = tool_rank()
-        print(json.dumps(r, ensure_ascii=False, indent=2))
-    
+        print(json.dumps(tool_rank(), ensure_ascii=False, indent=2))
+    elif tool == "id_update":
+        print(json.dumps(tool_id_update(params.get("philosopher", "")), ensure_ascii=False, indent=2))
+    elif tool == "counter":
+        print(json.dumps(tool_counter(params.get("philosopher", "")), ensure_ascii=False, indent=2))
+    elif tool == "map":
+        print(json.dumps(tool_map(), ensure_ascii=False, indent=2))
     else:
         print(json.dumps({
-            "tools": ["phi7_compare", "identity_diff", "counter_md", "rank"],
-            "available_philosophers": list_philosophers(),
+            "tools": ["analyze", "discover", "rank", "id_update", "counter", "map"],
+            "philosophers": list_philosophers(),
             "version": VERSION
         }, ensure_ascii=False, indent=2))
 
