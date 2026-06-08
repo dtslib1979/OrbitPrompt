@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OrbitPrompt — 왜 필요한가</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080808;
+    --gold: #d4af37;
+    --gold2: rgba(212,175,55,.45);
+    --ink1: rgba(255,255,255,.88);
+    --ink2: rgba(255,255,255,.55);
+    --ink3: rgba(255,255,255,.2);
+    --line: rgba(255,255,255,.07);
+  }
+
+  html { background: var(--bg); color: var(--ink1); font-family: 'Inter', sans-serif; }
+
+  body { min-height: 100vh; }
+
+  /* ── nav ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 0 28px;
+    height: 52px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    background: rgba(8,8,8,.92);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: .14em;
+    color: var(--gold2); text-decoration: none;
+  }
+  .nav-back {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: .1em;
+    color: var(--ink3); text-decoration: none;
+    transition: color .2s;
+  }
+  .nav-back:hover { color: var(--ink2); }
+
+  /* ── main ── */
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 120px 28px 120px;
+  }
+
+  /* ── overture ── */
+  .overture {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: .18em;
+    color: var(--gold2);
+    margin-bottom: 32px;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 6vw, 58px);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -.02em;
+    color: var(--ink1);
+    margin-bottom: 48px;
+  }
+  h1 em { font-style: italic; color: var(--gold); }
+
+  /* ── body text ── */
+  .body-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--ink2);
+  }
+  .body-text p { margin-bottom: 28px; }
+  .body-text strong { color: var(--ink1); font-weight: 500; }
+
+  /* ── divider ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 56px 0;
+  }
+
+  /* ── route diagram ── */
+  .route {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink2);
+    background: rgba(255,255,255,.025);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 28px 32px;
+    margin: 40px 0;
+    line-height: 2;
+    letter-spacing: .04em;
+  }
+  .route .arrow { color: var(--gold2); }
+
+  /* ── section heading ── */
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: -.01em;
+    color: var(--ink1);
+    margin-bottom: 24px;
+  }
+
+  /* ── pull quote ── */
+  blockquote {
+    border-left: 2px solid var(--gold2);
+    padding: 4px 0 4px 28px;
+    margin: 40px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-style: italic;
+    color: var(--ink1);
+    line-height: 1.6;
+    letter-spacing: -.01em;
+  }
+
+  /* ── table ── */
+  .role-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 36px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  .role-table td {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink2);
+    vertical-align: top;
+  }
+  .role-table td:first-child {
+    color: var(--gold2);
+    width: 120px;
+    letter-spacing: .04em;
+  }
+
+  /* ── cta ── */
+  .cta-wrap {
+    margin-top: 80px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .cta-primary {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid var(--gold2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: .12em;
+    color: var(--gold);
+    text-decoration: none;
+    transition: background .2s;
+  }
+  .cta-primary:hover { background: rgba(212,175,55,.06); }
+  .cta-secondary {
+    display: inline-block;
+    padding: 14px 28px;
+    border: 1px solid var(--line);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: .12em;
+    color: var(--ink3);
+    text-decoration: none;
+    transition: color .2s, border-color .2s;
+  }
+  .cta-secondary:hover { color: var(--ink2); border-color: rgba(255,255,255,.15); }
+
+  /* ── footer ── */
+  footer {
+    margin-top: 120px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink3);
+    letter-spacing: .08em;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">ORBITPROMPT</a>
+  <a class="nav-back" href="/">← 갤러리로</a>
+</nav>
+
+<main>
+
+  <p class="overture">WHY · 존재 이유</p>
+
+  <h1>철학을 하는 사람은 많다.<br>코드를 만드는 사람도 많다.<br>AI를 쓰는 사람은 <em>더 많다.</em></h1>
+
+  <div class="body-text">
+    <p>그런데 이 셋이 한 루프 안에서 돌아가는 케이스는 드물다.</p>
+    <p>대부분은 철학은 철학대로, 코드는 코드대로, AI는 AI대로 따로 소비한다. 연결이 안 되니까 삶이 안 바뀐다.</p>
+    <p><strong>OrbitPrompt는 그 연결을 플랫폼으로 고정한 것이다.</strong></p>
+  </div>
+
+  <div class="route">
+    철학 <span class="arrow">→</span> 프레임 <span class="arrow">→</span> MCP <span class="arrow">→</span> 지표 <span class="arrow">→</span> 백서 <span class="arrow">→</span> 삶
+  </div>
+
+  <div class="body-text">
+    <p>이 루트를 누구나 자기 도메인에서 밟아볼 수 있게 만드는 래퍼. 달러가 아니어도 된다. 축구, 정치, 도시, 관계 — 어떤 도메인이든 이 루트 위에 올리면 같다.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h2>스텝스톤의 의미</h2>
+
+  <div class="body-text">
+    <p>이 프로젝트를 만든 사람은 평범한 아저씨다.</p>
+    <p>학자도 아니고 개발자도 아니다. 그런데 하루에 — 달러 패권을 순환기 의학으로 읽고, 한 끼 지수를 설계하고, DSI로 검증하고, 허생 프로젝트로 닫았다.</p>
+    <p>이 루트를 <strong>몸으로 밟은 첫 번째 케이스가 평범한 아저씨</strong>라는 것. 특별한 배경이 필요하지 않다는 증거. AI 시대에 장벽이 무너진 게 말이 아니라 실물로 증명된 것.</p>
+  </div>
+
+  <blockquote>"나도 내 버전으로 해볼 수 있겠다"</blockquote>
+
+  <div class="body-text">
+    <p>그 생각이 드는 순간, 이 래퍼는 제 역할을 한 것이다.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h2>OrbitPrompt가 하는 일</h2>
+
+  <table class="role-table">
+    <tr>
+      <td>만드는 것</td>
+      <td>MCP — 철학을 실행 가능한 도구로</td>
+    </tr>
+    <tr>
+      <td>검증하는 것</td>
+      <td>백테스트 / 지표 — 프레임이 실제로 맞는지</td>
+    </tr>
+    <tr>
+      <td>유통하는 것</td>
+      <td>백서 / 갤러리 — 루트를 남이 따라올 수 있게</td>
+    </tr>
+    <tr>
+      <td>넘기는 것</td>
+      <td>오픈소스 템플릿 — 내 도메인으로 복제 가능하게</td>
+    </tr>
+  </table>
+
+  <div class="body-text">
+    <p>달러 시스템 MCP는 이 루트가 완주된 첫 번째 샘플이다.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h2>AI 미셔너리</h2>
+
+  <div class="body-text">
+    <p>선교사는 기술을 파는 게 아니라 <strong>세계를 보는 방식</strong>을 전달한다.</p>
+    <p>직접 올라간 사람이, 올라가는 법을 보여주는 사람이 되는 것. 방향 잡는 법을 가르치는 것. AI 시대에 도구는 있는데 방향이 없는 사람들한테.</p>
+    <p>그게 허생 프로젝트의 끝이고, OrbitPrompt가 존재하는 이유다.</p>
+  </div>
+
+  <div class="cta-wrap">
+    <a class="cta-primary" href="dollar-system-mcp/WHITEPAPER.md">백서 읽기 →</a>
+    <a class="cta-secondary" href="/">갤러리 보기</a>
+  </div>
+
+  <footer>
+    OrbitPrompt · 2026 · github.com/dtslib1979/OrbitPrompt
+  </footer>
+
+</main>
+
+</body>
+</html>
