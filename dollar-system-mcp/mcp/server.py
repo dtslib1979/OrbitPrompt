@@ -3,10 +3,10 @@
 import sys, json, os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from dollar_engine import analyze_rate, structure_critique, phi7_map, timeline, compare_rates, drivers, predict
+from dollar_engine import analyze_rate, structure_critique, phi7_map, timeline, compare_rates, drivers, predict, calc_dsi
 
-VERSION = "2.0.0"
-TOOLS = ["analyze", "structure", "phi7_map", "timeline", "compare", "drivers", "predict", "version"]
+VERSION = "2.1.0"
+TOOLS = ["analyze", "structure", "phi7_map", "timeline", "compare", "drivers", "predict", "calc_dsi", "version"]
 
 def handle(req):
     tool = req.get("tool", "")
@@ -29,12 +29,14 @@ def handle(req):
     elif tool == "predict":
         days = int(p.get("days", 30))
         return {"tool": "predict", "result": predict(days)}
+    elif tool == "calc_dsi":
+        return {"tool": "calc_dsi", "result": calc_dsi()}
     elif tool == "version":
         return {
             "name": "달러 시스템 MCP",
             "version": VERSION,
             "tools": TOOLS,
-            "desc": "달러 패권 구조를 Φ7 7축으로 해석 + yfinance 실시간 예측 엔진"
+            "desc": "달러 패권 구조를 Φ7 7축으로 해석 + yfinance 실시간 예측 + DSI 스트레스 지수"
         }
     else:
         return {
