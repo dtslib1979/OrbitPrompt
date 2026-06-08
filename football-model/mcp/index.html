@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Φ-I-C-K-P-7AXIS — WC2026 축구 예측 MCP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050505;--surface:#0a0a0f;--card:#0f0f15;--border:rgba(255,255,255,0.07);--text:#e8e8f0;--muted:rgba(255,255,255,0.5);--f-sans:'Inter',sans-serif;--f-mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f-sans);background:var(--bg);color:var(--text);line-height:1.8}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(5,5,5,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:52px;display:flex;align-items:center;gap:1.5rem}
+nav a{color:var(--muted);font-size:.8rem;text-decoration:none;transition:color .2s}
+nav a:hover{color:var(--text)}
+.container{max-width:860px;margin:0 auto;padding:90px 24px 80px}
+h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:600;margin-bottom:8px}
+.hero-label{font-family:var(--f-mono);font-size:.6rem;color:var(--muted);letter-spacing:.15em;margin-bottom:16px}
+.sub{color:var(--muted);font-size:.9rem;margin-bottom:32px;line-height:1.7}
+.section{margin-top:48px}
+h2{font-size:1.1rem;font-weight:600;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:12px}
+.card-title{font-weight:600;color:#fff;margin-bottom:4px}
+.card-desc{font-size:.82rem;color:var(--muted);line-height:1.6}
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);overflow-x:auto;margin:12px 0}
+.tag{display:inline-block;padding:2px 8px;background:rgba(168,85,247,0.1);color:#a855f7;border-radius:3px;font-size:.7rem;margin:2px}
+.status{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(16,185,129,0.1);color:#10b981;border-radius:4px;font-size:.75rem;font-weight:500;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:16px 0}
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:.7rem;background:rgba(255,255,255,0.05);color:var(--muted)}
+</style>
+</head>
+<body>
+<nav>
+<a href="../../index.html">← OrbitPrompt</a>
+<a href="../index.html" style="color:#a855f7;">축구 모델</a>
+<a href="../wc2026-predictor.html">WC2026 예측기</a>
+<a href="../case-study-wc2026.html">케이스 스터디</a>
+</nav>
+<div class="container">
+<div class="hero-label">Φ-I-C-K-P-7AXIS · MCP</div>
+<h1>WC2026 축구 예측 MCP</h1>
+<div class="sub">3332경기 실데이터 + Φ12 12차원 모델 + 7드라이버 + 10,000회 MC 시뮬레이션.<br>Python MCP server.py — pip 없이 바로 실행.</div>
+
+<div class="status">● Published — GitHub 공개</div>
+
+<div class="section">
+<h2>구조</h2>
+<div class="code-block">
+mcp/
+├── server.py           ★ MCP 서버 (stdio protocol)
+├── model.py            Φ-I-C-K-P-7AXIS (12차원)
+├── phi7_driver.py      7드라이버 (실제 경기 데이터)
+├── scraper.py          경기 데이터 수집 (GitHub CSV)
+├── simulation.py       MC 시뮬레이션 (10,000회)
+├── team_data.py        팀 데이터 + ELO
+├── db.py               SQLite 저장소
+└── README.md           문서
+</div>
+</div>
+
+<div class="section">
+<h2>툴</h2>
+<div class="grid">
+<div class="card"><div class="card-title">🎯 predict</div><div class="card-desc">두 팀 승률 예측 (Φ12)</div></div>
+<div class="card"><div class="card-title">⚖️ compare</div><div class="card-desc">3레이어 비교 (Φ12 vs Φ5 vs ELO)</div></div>
+<div class="card"><div class="card-title">🧠 philosophy</div><div class="card-desc">팀 7축 철학 프로필</div></div>
+<div class="card"><div class="card-title">📝 script</div><div class="card-desc">예측 리포트 자동 생성</div></div>
+<div class="card"><div class="card-title">🏆 rank</div><div class="card-desc">32개 팀 Φ12 순위</div></div>
+</div>
+</div>
+
+<div class="section">
+<h2>사용법</h2>
+<div class="code-block">echo '{"tool":"predict","params":{"team_a":"Korea","team_b":"Japan"}}' | python3 server.py</div>
+</div>
+
+<div class="section">
+<h2>성능</h2>
+<div class="grid">
+<div class="card"><div class="card-title">📊 데이터</div><div class="card-desc">3,332경기 · FIFA 랭킹 · ELO K=32</div></div>
+<div class="card"><div class="card-title">🎲 시뮬레이션</div><div class="card-desc">10,000회 Monte Carlo</div></div>
+<div class="card"><div class="card-title">📈 레이어</div><div class="card-desc">Φ12 · Φ5 · ELO baseline 비교</div></div>
+</div>
+</div>
+
+<div class="section">
+<h2>7드라이버</h2>
+<div class="grid">
+<div class="card"><span class="badge">Meta</span><div class="card-desc" style="margin-top:4px;">전술 일관성</div></div>
+<div class="card"><span class="badge">Reverse</span><div class="card-desc" style="margin-top:4px;">회복력 (패배 후 승률)</div></div>
+<div class="card"><span class="badge">Modular</span><div class="card-desc" style="margin-top:4px;">선취점 후 승률</div></div>
+<div class="card"><span class="badge">Language</span><div class="card-desc" style="margin-top:4px;">감독 재임·정체성</div></div>
+<div class="card"><span class="badge">Zoom</span><div class="card-desc" style="margin-top:4px;">빅매치 승률</div></div>
+<div class="card"><span class="badge">Spiral</span><div class="card-desc" style="margin-top:4px;">성장 곡선</div></div>
+<div class="card"><span class="badge">Quantum</span><div class="card-desc" style="margin-top:4px;">이변 가능성 (ELO upset)</div></div>
+</div>
+</div>
+
+<div class="section" style="margin-top:40px;padding:20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);text-align:center;">
+<div style="font-size:.8rem;color:var(--muted);">Φ-I-C-K-P-7AXIS 철학 모델 · OrbitPrompt → football-model/mcp/</div>
+</div>
+</div>
+</body>
+</html>
