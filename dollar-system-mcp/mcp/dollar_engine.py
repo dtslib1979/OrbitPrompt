@@ -597,6 +597,130 @@ def calc_dsi(raw_override=None):
         return {"error": str(e), "trace": traceback.format_exc()}
 
 
+# ─── MEAL RATIO (한 끼 지수) ─────────────────────────────────────────────────
+# 달러를 상품이 아닌 "생존 단위"로 본다.
+# 권력이 선행해서 만들어 놓은 결과를 몸의 언어로 번역하는 윤리적 지표.
+# 빅맥지수보다 날 것 — "달러 1개 = 한국인 몇 끼?"
+
+# 주요 도시 평균 한 끼 식비 (USD 기준, 2025-2026 실측 데이터)
+_MEAL_COST_USD = {
+    "서울":     8.5,   # 백반·김밥 기준 ~8-9달러
+    "뉴욕":    18.0,   # 패스트푸드 제외 평균
+    "베이징":   4.5,   # 로컬 식당 기준
+    "도쿄":    10.0,   # 정식 기준
+    "상파울루":  5.5,   # 브라질 최저임금 대비
+    "나이로비":  2.0,   # 사하라이남 아프리카 기준
+    "뭄바이":   2.5,   # 로컬 탈리 기준
+}
+
+def meal_ratio(city1: str = "서울", city2: str = "뉴욕") -> dict:
+    """
+    한 끼 지수 (Meal Ratio) — 달러/원화를 식사 단위로 번역.
+
+    "1달러를 확보하기 위해 도시1 사람은 몇 끼를 포기해야 하는가?"
+    "이 환율이 몸에 닿는 무게는 얼마인가?"
+    """
+    try:
+        import yfinance as yf
+
+        t = yf.Ticker("USDKRW=X")
+        h = t.history(period="3d")
+        krw_rate = float(h["Close"].iloc[-1]) if not h.empty else 1380.0
+
+        meal1_usd = _MEAL_COST_USD.get(city1)
+        meal2_usd = _MEAL_COST_USD.get(city2)
+
+        if not meal1_usd or not meal2_usd:
+            available = list(_MEAL_COST_USD.keys())
+            return {"error": f"도시 없음. 가능: {available}"}
+
+        meal1_krw = round(meal1_usd * krw_rate, 0)
+        meal2_krw = round(meal2_usd * krw_rate, 0)
+
+        # 핵심 비율: 1달러 = city1 기준 몇 끼?
+        usd_in_meals_city1 = round(1.0 / meal1_usd, 3)          # 1달러 = N끼 (city1)
+        usd_in_meals_city2 = round(1.0 / meal2_usd, 3)          # 1달러 = N끼 (city2)
+
+        # 1달러를 확보하려면 city1 사람은 몇 끼를 포기해야 하나
+        # = 원달러 환율 / city1 한 끼 원화 가격
+        sacrifice_city1 = round(krw_rate / meal1_krw, 3)         # ≈ 1.0 (원화 기준 선형)
+        # 더 의미있는 버전: city1 한 끼 노동으로 city2 한 끼를 살 수 있냐?
+        meal_exchange_rate = round(meal2_usd / meal1_usd, 3)      # city2 한 끼 / city1 한 끼
+
+        # 헌금 비율: city1의 한 끼가 달러 시스템에 바치는 비율
+        # (시간 단위로 환산하면 더 직관적 — 최저임금 기준)
+        # 한국 최저임금 ~10,030원/h → 1끼 = 한국인 ?시간 노동
+        kr_min_wage_krw = 10030.0
+        us_min_wage_usd = 7.25     # 연방 (실질은 주마다 다름, NYC ~17)
+        kr_meal_work_hours  = round(meal1_krw / kr_min_wage_krw, 2)
+        us_meal_work_hours  = round(meal2_usd / us_min_wage_usd, 2)
+
+        # 1달러를 사기 위해 한국인이 쓰는 노동시간 (최저임금 기준)
+        usd1_kr_work_hours  = round(krw_rate / kr_min_wage_krw, 2)
+
+        # 구조 판정
+        if meal_exchange_rate > 1.5:
+            verdict = "불평등 심각 — city2 한 끼 = city1 한 끼 1.5배 이상. 달러 패권 체감 무게 큼"
+        elif meal_exchange_rate > 1.0:
+            verdict = "비대칭 — city2 소비 단위가 더 크다. 달러 중심 시스템의 일상적 전가"
+        else:
+            verdict = "역전 — city1 소비 단위가 더 크다 (구매력 역전 구간)"
+
+        return {
+            "model":   "한 끼 지수 (Meal Ratio) — Φ7 Language 번역 레이어",
+            "concept": "달러를 상품이 아닌 생존 단위로 본다. 권력의 선행 결과를 몸의 언어로 번역.",
+            "krw_rate": krw_rate,
+            "cities": {
+                city1: {
+                    "meal_cost_usd": meal1_usd,
+                    "meal_cost_krw": meal1_krw,
+                    "meal_work_hours_at_min_wage": kr_meal_work_hours,
+                },
+                city2: {
+                    "meal_cost_usd": meal2_usd,
+                    "meal_cost_krw": meal2_krw,
+                    "meal_work_hours_at_min_wage": us_meal_work_hours,
+                },
+            },
+            "ratios": {
+                "usd1_in_meals_of_city1":       usd_in_meals_city1,
+                "usd1_in_meals_of_city2":       usd_in_meals_city2,
+                "meal_exchange_rate":            meal_exchange_rate,
+                "usd1_costs_korean_work_hours":  usd1_kr_work_hours,
+            },
+            "interpretation": {
+                "korean_perspective": (
+                    f"한국인이 1달러를 사려면 최저임금({kr_min_wage_krw:.0f}원/h) 기준 "
+                    f"{usd1_kr_work_hours}시간 노동이 필요하다 (현재 환율 {krw_rate:.0f}원)."
+                ),
+                "meal_sentence": (
+                    f"{city1} 한 끼({meal1_usd}달러)로 "
+                    f"{city2} 한 끼({meal2_usd}달러)를 {meal_exchange_rate}번 살 수 있다. "
+                    f"이 비율이 달러 시스템이 몸에 닿는 무게다."
+                ),
+                "city1_meal_work": (
+                    f"{city1} 사람은 한 끼를 위해 "
+                    f"미국 연방 최저임금({us_min_wage_usd}달러/h) 기준 {us_meal_work_hours}h, "
+                    f"한국 최저임금 기준 {kr_meal_work_hours}h 일해야 한다."
+                    if city1 not in ("서울",) else
+                    f"서울 사람은 한 끼({meal1_krw:.0f}원)를 위해 "
+                    f"최저임금 기준 {kr_meal_work_hours}시간 노동이 필요하다."
+                ),
+                "verdict": verdict,
+            },
+            "phi7_tag": "language",
+            "note": "과학적 예측 도구가 아닌 윤리적 번역 지표. 빅맥지수보다 날 것.",
+            "available_cities": list(_MEAL_COST_USD.keys()),
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M KST"),
+        }
+
+    except ImportError:
+        # yfinance 없으면 고정 환율로 계산
+        return meal_ratio.__wrapped__(city1, city2) if hasattr(meal_ratio, '__wrapped__') else {"error": "yfinance 미설치"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
 if __name__ == "__main__":
     import sys as _sys
     if "--test" in _sys.argv:

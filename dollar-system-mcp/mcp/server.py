@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mcp.server.fastmcp import FastMCP
 from dollar_engine import (
     analyze_rate, structure_critique, phi7_map, timeline,
-    compare_rates, drivers, predict, calc_dsi,
+    compare_rates, drivers, predict, calc_dsi, meal_ratio,
 )
 
 VERSION = "2.2.0"
@@ -138,6 +138,27 @@ def dsi() -> dict:
 
 
 @mcp.tool()
+def meal_index(city1: str = "서울", city2: str = "뉴욕") -> dict:
+    """
+    한 끼 지수 (Meal Ratio) — 달러를 상품이 아닌 생존 단위로 번역.
+
+    "1달러를 확보하기 위해 city1 사람은 몇 끼를 포기해야 하는가?"
+    "이 환율이 몸에 닿는 무게는 얼마인가?"
+
+    빅맥지수보다 날 것 — 권력이 선행해서 만들어 놓은 결과를
+    윤리적/직관적 언어로 번역하는 Φ7 Language 레이어.
+
+    Args:
+        city1: 기준 도시. 가능: 서울 / 뉴욕 / 베이징 / 도쿄 / 상파울루 / 나이로비 / 뭄바이
+        city2: 비교 도시. 기본값 뉴욕.
+
+    Returns:
+        한 끼 비용(USD/KRW), 노동시간 환산, meal_exchange_rate, 윤리적 판정
+    """
+    return meal_ratio(city1, city2)
+
+
+@mcp.tool()
 def version() -> dict:
     """
     달러 시스템 MCP 버전 및 툴 목록 조회.
@@ -157,6 +178,7 @@ def version() -> dict:
             "get_drivers — yfinance 실시간 4개 드라이버",
             "forecast  — 선형회귀 + DXY 보정 환율 예측",
             "dsi       — DSI 스트레스 지수 + BS_INDEX + 백테스트",
+            "meal_index — 한 끼 지수: 달러를 생존 단위로 번역",
             "version   — 버전 조회",
         ],
         "desc": "미국 자본주의 바이탈사인 — 달러 패권 구조를 Φ7 7축으로 해석 + yfinance 실시간 예측 + DSI 스트레스 지수",
