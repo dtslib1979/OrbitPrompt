@@ -445,11 +445,11 @@ body::before {
   <!-- Category Filter -->
   <div class="category-filter" style="display:flex;gap:4px;padding:0 28px;margin-bottom:20px;flex-wrap:wrap;">
     <button class="cat-btn active" data-cat="all">전체 <span class="cat-count" id="catAll"></span></button>
-    <button class="cat-btn" data-cat="철학/헌법">철학/헌법 <span class="cat-count" id="cat철학"></span></button>
-    <button class="cat-btn" data-cat="분석모델">분석 모델 <span class="cat-count" id="cat분석"></span></button>
+    <button class="cat-btn" data-cat="철학/방법론">철학/방법론 <span class="cat-count" id="cat철학"></span></button>
+    <button class="cat-btn" data-cat="축구">축구 <span class="cat-count" id="cat축구"></span></button>
+	    <button class="cat-btn" data-cat="정치">정치 <span class="cat-count" id="cat정치"></span></button>
+	    <button class="cat-btn" data-cat="금융">금융 <span class="cat-count" id="cat금융"></span></button>
     <button class="cat-btn" data-cat="콘텐츠">콘텐츠 <span class="cat-count" id="cat콘텐츠"></span></button>
-    <button class="cat-btn" data-cat="Generator">Generator <span class="cat-count" id="catGen"></span></button>
-    <button class="cat-btn" data-cat="인프라/도구">인프라/도구 <span class="cat-count" id="cat인프라"></span></button>
   </div>
   <style>
   .cat-btn{
@@ -748,7 +748,7 @@ body::before {
   /* ======== MODULES DATA ======== */
   const MODULES = [
     {
-      category: '분석모델',
+      category: '축구',
       id: 'football',
       icon: '⚽',
       domain: '축구',
@@ -770,7 +770,7 @@ body::before {
       corner: '축구'
     },
     {
-      category: '분석모델',
+      category: '정치',
       id: 'election-mcp',
       icon: '🧪',
       domain: '정치철학',
@@ -790,7 +790,45 @@ body::before {
       corner: '정치'
     },
     {
-      category: '철학/헌법',
+      category: '정치',
+      id: 'political-phi7',
+      icon: '🏛️',
+      domain: '정치',
+      number: '02b',
+      title: 'Φ7 정치 MCP — Φ-I-C-K-P-7AXIS',
+      desc: '정치인 7축 프로필·두 정치인 비교·정책 영향 예측·전략 리포트. 보좌관이 상대 의원 분석용 B2B 도구. Φ드라이버 7축이 전부 — 일반 LLM 래퍼 없음.',
+      tags: ['Φ7', 'MCP', 'B2B', '보좌관', '7축'],
+      score: 87,
+      maxScore: 100,
+      status: 'live',
+      fromLog: '2026-06-08',
+      path: 'https://github.com/dtslib1979/dtslib-branch/tree/main/mcp/',
+      whitepaper: 'https://github.com/dtslib1979/dtslib-branch/blob/main/mcp/README.md',
+      year: '2026',
+      medium: 'MCP 정치 분석 엔진',
+      corner: '정치'
+    },
+    {
+      category: '축구',
+      id: 'wc2026-mcp',
+      icon: '🏆',
+      domain: '축구',
+      number: '01b',
+      title: 'WC2026 Φ-I-C-K-P 예측 MCP',
+      desc: '3332경기 실데이터 + Φ12 12차원 모델 + 7드라이버 + 10,000회 MC 시뮬레이션. Wikipedia FIFA 랭킹 + ELO 실제 계산. 3레이어 비교(Φ12 vs Φ5 vs ELO). Python MCP server.py 구현 완료.',
+      tags: ['MCP', 'MC 10K', 'Φ12', '7드라이버', 'ELO'],
+      score: 93,
+      maxScore: 100,
+      status: 'live',
+      fromLog: '2026-06-08',
+      path: 'football-model/mcp/server.py',
+      whitepaper: 'football-model/mcp/README.md',
+      year: '2026',
+      medium: 'MCP 축구 예측 엔진',
+      corner: '축구'
+    },
+    {
+      category: '철학/방법론',
       id: 'mcp-methodology',
       icon: '🏗️',
       domain: '방법론',
@@ -828,7 +866,7 @@ body::before {
       corner: ''
     },
     {
-      category: '철학/헌법',
+      category: '철학/방법론',
       id: 'empty-2',
       icon: '◇',
       domain: '준비중',
@@ -845,7 +883,7 @@ body::before {
       corner: ''
     },
     {
-      category: '분석모델',
+      category: '금융',
       id: 'finance-ratio',
       icon: '📊',
       domain: '금융',
