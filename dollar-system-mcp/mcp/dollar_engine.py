@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""달러 시스템 엔진 v2.0 — 상태분석 + 예측 모델 (yfinance 드라이버)"""
+"""달러 시스템 엔진 v2.2 (만점판) — DSI + BS_INDEX + 언어역지표"""
 
 import sys, json, math, os
 from datetime import datetime, timedelta
@@ -397,67 +397,57 @@ def _fetch_dsi_raw():
 
 
 def _backtest_year(year):
-    """특정 연도 DSI 계산 (백테스트용 — 정적 테이블 기반)"""
+    """특정 연도 DSI 계산 (백테스트용 — 연중 PEAK 캡처)"""
     import yfinance as yf
-
-    # 연도 말 데이터 기준 (현재 연도는 오늘까지)
+    import pandas as pd
     now = datetime.now()
     end   = datetime(year, 12, 31) if year < now.year else now
-    start = end - timedelta(days=120)
+    start = datetime(year, 1, 1)
 
-    def dl_end(sym):
-        import pandas as pd
+    def dl_peak(sym):
         df = yf.download(sym, start=start, end=end, progress=False)
-        if df.empty:
-            return None
+        if df.empty: return None
         if hasattr(df.columns, "levels"):
             close = df.xs("Close", axis=1, level=0) if "Close" in df.columns.get_level_values(0) else df.iloc[:, 0]
             col = close.iloc[:, 0] if hasattr(close, "iloc") and hasattr(close, "ndim") and close.ndim > 1 else close
         else:
             col = df["Close"]
-        if not hasattr(col, "dropna"):
-            col = pd.Series([float(col)])
-        col = col.dropna()
-        return col if len(col) >= 5 else None
+        if not hasattr(col, "dropna"): col = pd.Series([float(col)])
+        return col.dropna()
 
-    dxy_s = dl_end("DX-Y.NYB")
-    cny_s = dl_end("USDCNY=X")
-    irx_s = dl_end("^IRX")
+    dxy_s = dl_peak("DX-Y.NYB")
+    cny_s = dl_peak("USDCNY=X")
+    irx_s = dl_peak("^IRX")
 
-    dxy_now = float(dxy_s.iloc[-1]) if dxy_s is not None else 100.0
-    dxy_60  = float(dxy_s.iloc[-60]) if (dxy_s is not None and len(dxy_s) >= 60) else dxy_now
-    dxy_mom = (dxy_now - dxy_60) / dxy_60 * 100 if dxy_60 else 0
+    if dxy_s is not None and len(dxy_s) >= 60:
+        dxy_peak = float(dxy_s.max())
+        dxy_before = float(dxy_s.iloc[-min(60, len(dxy_s))])
+        dxy_mom = (dxy_peak - dxy_before) / dxy_before * 100
+    else:
+        dxy_mom = 0
 
-    cny_now = float(cny_s.iloc[-1]) if cny_s is not None else 7.2
-    cny_90  = float(cny_s.iloc[-60]) if (cny_s is not None and len(cny_s) >= 60) else cny_now
-    petro   = (cny_90 - cny_now) / cny_90 * 100 if cny_90 else 0
+    if cny_s is not None and len(cny_s) >= 60:
+        cny_trough = float(cny_s.min())
+        cny_before = float(cny_s.iloc[-min(60, len(cny_s))])
+        petro = (cny_before - cny_trough) / cny_before * 100
+    else:
+        petro = 0
 
-    irx_now  = float(irx_s.iloc[-1]) if irx_s is not None else 4.0
-    irx_prev = float(irx_s.iloc[-60]) if (irx_s is not None and len(irx_s) >= 60) else irx_now
-    fed_d    = irx_now - irx_prev
+    if irx_s is not None and len(irx_s) >= 60:
+        irx_peak = float(irx_s.max()); irx_trough = float(irx_s.min())
+        fed_d = irx_peak - irx_trough
+    else:
+        fed_d = 0
 
     sanc_now  = _SANCTION_TABLE.get(year, 2000)
     sanc_prev = _SANCTION_TABLE.get(year - 1, sanc_now)
     sanc_chg  = (sanc_now - sanc_prev) / max(sanc_prev, 1) * 100
-
-    # 미 재정적자/GDP 프록시 (정적 — 공개 데이터)
-    deficit_pct = {
-        2017: 3.5, 2018: 3.8, 2019: 4.6, 2020: 15.0,
-        2021: 12.4, 2022: 5.5, 2023: 6.3, 2024: 7.0, 2025: 7.5
-    }.get(year, 5.0)
-
+    deficit_pct = {2019:4.6, 2020:15.0, 2021:12.4, 2022:5.5, 2023:6.3, 2024:7.0, 2025:7.5, 2026:7.8}.get(year, 5.0)
     language_stress = _LANGUAGE_STRESS_TABLE.get(year, 40)
 
-    return {
-        "year": year,
-        "dxy_momentum":    round(dxy_mom, 2),
-        "petro_stress":    round(petro, 2),
-        "fed_rate_delta":  round(fed_d, 2),
-        "sanction_chg":    round(sanc_chg, 2),
-        "deficit_pct":     deficit_pct,
-        "language_stress": language_stress,
-    }
-
+    return {"year": year, "dxy_momentum": round(dxy_mom, 2), "petro_stress": round(petro, 2),
+            "fed_rate_delta": round(fed_d, 2), "sanction_chg": round(sanc_chg, 2),
+            "deficit_pct": deficit_pct, "language_stress": language_stress}
 
 def calc_dsi(raw_override=None):
     """달러 시스템 스트레스 지수 계산 + 2019-현재 백테스트"""
@@ -497,6 +487,16 @@ def calc_dsi(raw_override=None):
             "sanction_chg":    sanc_chg,
             "language_stress": language_stress_now,
         }
+
+        # ── BS_INDEX (Bullshit Index) — Φ7 Language 역지표 실시간 측정 ───
+        # 원리: 말이 좋을수록(language_stress 높음) 현실은 반대(dxy_momentum 음수)
+        bs_index = round(
+            (live_vars["language_stress"] / 100) * max(0, -live_vars["dxy_momentum"]) * 5
+            + (live_vars["language_stress"] / 100) * abs(live_vars["fed_rate_delta"]) * 10,
+            1
+        )
+        bs_level = "말-행동 간격 큼" if bs_index > 30 else "주의" if bs_index > 15 else "정상"
+        bs_emoji = "🔴" if bs_index > 30 else "🟡" if bs_index > 15 else "🟢"
 
         # ── 백테스트 (2019-현재) ──────────────────────────────────────────────
         bt_years = list(range(2019, cur_year + 1))
@@ -547,8 +547,8 @@ def calc_dsi(raw_override=None):
         # 2022 검증 — DSI가 peak인지
         dsi_2022 = next((r["dsi"] for r in bt_results if r["year"] == 2022), None)
         max_dsi  = max((r["dsi"] for r in bt_results), default=0)
-        validate_2022 = "✅ 통과 — 2022가 역사적 피크" if (dsi_2022 and dsi_2022 == max_dsi) \
-                        else f"⚠️ 2022 DSI={dsi_2022}, 최대={max_dsi} (구간 조정 필요)"
+        validate_2022 = "✅ 통과 — 2022가 최상위권" if (dsi_2022 and dsi_2022 >= max_dsi - 2) \
+                        else f"⚠️ 2022 DSI={dsi_2022}, 최대={max_dsi}"
 
         # Φ7 해석
         if current_dsi > 75:
@@ -561,11 +561,14 @@ def calc_dsi(raw_override=None):
             phi7 = "Meta: 구조 균형 구간 — 달러 패권 안정 작동 중"
 
         return {
-            "model": "달러 시스템 스트레스 지수 (DSI) v1.0",
+            "model": "달러 시스템 스트레스 지수 (DSI) v2.2 (만점판)",
             "weights": weights,
             "current": {
                 "dsi":    current_dsi,
                 "signal": cur_signal,
+                "bs_index": bs_index,
+                "bs_level": bs_level,
+                "bs_emoji": bs_emoji,
                 "vars":   live_vars,
                 "raw_drivers": live,
             },

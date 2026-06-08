@@ -5,7 +5,7 @@ import sys, json, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dollar_engine import analyze_rate, structure_critique, phi7_map, timeline, compare_rates, drivers, predict, calc_dsi
 
-VERSION = "2.1.0"
+VERSION = "2.2.0"
 TOOLS = ["analyze", "structure", "phi7_map", "timeline", "compare", "drivers", "predict", "calc_dsi", "version"]
 
 def handle(req):
