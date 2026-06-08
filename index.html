@@ -445,11 +445,10 @@ body::before {
   <!-- Category Filter -->
   <div class="category-filter" style="display:flex;gap:4px;padding:0 28px;margin-bottom:20px;flex-wrap:wrap;">
     <button class="cat-btn active" data-cat="all">전체 <span class="cat-count" id="catAll"></span></button>
-    <button class="cat-btn" data-cat="철학/방법론">철학/방법론 <span class="cat-count" id="cat철학"></span></button>
-    <button class="cat-btn" data-cat="축구">축구 <span class="cat-count" id="cat축구"></span></button>
-	    <button class="cat-btn" data-cat="정치">정치 <span class="cat-count" id="cat정치"></span></button>
-	    <button class="cat-btn" data-cat="금융">금융 <span class="cat-count" id="cat금융"></span></button>
-    <button class="cat-btn" data-cat="콘텐츠">콘텐츠 <span class="cat-count" id="cat콘텐츠"></span></button>
+    <button class="cat-btn" data-cat="THINK">🎯 THINK <span class="cat-count" id="catTHINK"></span></button>
+    <button class="cat-btn" data-cat="MAKE">✍️ MAKE <span class="cat-count" id="catMAKE"></span></button>
+    <button class="cat-btn" data-cat="DRAW">🔬 DRAW <span class="cat-count" id="catDRAW"></span></button>
+    <button class="cat-btn" data-cat="FRAME">📐 FRAME <span class="cat-count" id="catFRAME"></span></button>
   </div>
   <style>
   .cat-btn{
@@ -748,7 +747,7 @@ body::before {
   /* ======== MODULES DATA ======== */
   const MODULES = [
     {
-      category: '축구',
+      category: 'THINK',
       id: 'football',
       icon: '⚽',
       domain: '축구',
@@ -770,7 +769,7 @@ body::before {
       corner: '축구'
     },
     {
-      category: '정치',
+      category: 'THINK',
       id: 'election-mcp',
       icon: '🧪',
       domain: '정치철학',
@@ -790,7 +789,7 @@ body::before {
       corner: '정치'
     },
     {
-      category: '정치',
+      category: 'THINK',
       id: 'political-phi7',
       icon: '🏛️',
       domain: '정치',
@@ -809,7 +808,7 @@ body::before {
       corner: '정치'
     },
     {
-      category: '축구',
+      category: 'THINK',
       id: 'wc2026-mcp',
       icon: '🏆',
       domain: '축구',
@@ -828,7 +827,7 @@ body::before {
       corner: '축구'
     },
     {
-      category: '철학/방법론',
+      category: 'FRAME',
       id: 'mcp-methodology',
       icon: '🏗️',
       domain: '방법론',
@@ -847,7 +846,7 @@ body::before {
       corner: '방법론'
     },
     {
-      category: '콘텐츠',
+      category: 'MAKE',
       id: 'empty-1',
       icon: '◇',
       domain: '준비중',
@@ -866,7 +865,7 @@ body::before {
       corner: ''
     },
     {
-      category: '철학/방법론',
+      category: 'FRAME',
       id: 'empty-2',
       icon: '◇',
       domain: '준비중',
@@ -883,7 +882,7 @@ body::before {
       corner: ''
     },
     {
-      category: '금융',
+      category: 'THINK',
       id: 'finance-ratio',
       icon: '📊',
       domain: '금융',
@@ -937,7 +936,7 @@ body::before {
   MODULES.forEach(m => { const c = m.category || '기타'; cats[c] = (cats[c] || 0) + 1; });
   document.getElementById('catAll').textContent = '(' + MODULES.length + ')';
   Object.keys(cats).forEach(c => {
-    const el = document.getElementById('cat' + c.replace(/[\/]/g,'').slice(0,2));
+    const el = document.getElementById('cat' + c);
     if (el) el.textContent = '(' + cats[c] + ')';
   });
 
