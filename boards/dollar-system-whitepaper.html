@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>달러 시스템 백서 — Parksy</title>
+  <meta name="description" content="달러 시스템, 원·달러 환율, 기축통화, 자기 책임 서사를 하나의 구조로 묶어 해석한 Parksy 화이트페이퍼." />
+  <meta property="og:title" content="달러 시스템 백서 — Parksy" />
+  <meta property="og:description" content="달러 시스템은 설계가 아니라 땜빵이다. 원·달러 환율 상승을 권력, 가격, 자기 책임의 구조로 읽는 편집형 백서." />
+  <meta property="og:type" content="article" />
+  <meta name="theme-color" content="#0f0f0b" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --color-bg: #f4f1ea;
+      --color-surface: #faf8f2;
+      --color-surface-2: #f0ece4;
+      --color-surface-offset: #e7e1d5;
+      --color-border: rgba(34,31,24,.14);
+      --color-divider: rgba(34,31,24,.10);
+      --color-text: #1e1c17;
+      --color-text-muted: #666055;
+      --color-text-faint: #918979;
+      --color-text-inverse: #f7f3ec;
+      --color-primary: #b99946;
+      --color-primary-2: #6d8376;
+      --color-danger: #8c3a2c;
+      --shadow-sm: 0 1px 2px rgba(20,18,12,.08);
+      --shadow-md: 0 18px 48px rgba(20,18,12,.10);
+    }
+    [data-theme="dark"] {
+      --color-bg: #0f0f0b;
+      --color-surface: #151510;
+      --color-surface-2: #1b1a14;
+      --color-surface-offset: #232119;
+      --color-border: rgba(232,224,205,.14);
+      --color-divider: rgba(232,224,205,.10);
+      --color-text: #ece5d4;
+      --color-text-muted: #b5ab95;
+      --color-text-faint: #7f7767;
+      --color-text-inverse: #171611;
+      --color-primary: #cfaa56;
+      --color-primary-2: #91a99a;
+      --color-danger: #d06b57;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.18);
+      --shadow-md: 0 18px 48px rgba(0,0,0,.28);
+    }
+    :root {
+      --font-display: 'Instrument Serif', Georgia, serif;
+      --font-body: 'IBM Plex Sans KR', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --text-xs: clamp(.75rem,.72rem + .1vw,.83rem);
+      --text-sm: clamp(.875rem,.84rem + .14vw,.98rem);
+      --text-base: clamp(1rem,.98rem + .18vw,1.08rem);
+      --text-lg: clamp(1.15rem,1.08rem + .45vw,1.45rem);
+      --text-xl: clamp(1.55rem,1.3rem + 1vw,2.25rem);
+      --text-2xl: clamp(2.3rem,1.6rem + 3vw,4.8rem);
+      --content: 1180px;
+      --prose: 70ch;
+      --radius-lg: 1.25rem;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100dvh;
+      background: radial-gradient(circle at 20% 0%, rgba(207,170,86,.10), transparent 30%), radial-gradient(circle at 100% 20%, rgba(145,169,154,.08), transparent 28%), var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: 1.75;
+      letter-spacing: -0.01em;
+    }
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(18px);
+      background: color-mix(in srgb, var(--color-bg) 82%, transparent);
+      border-bottom: 1px solid var(--color-divider);
+    }
+    .header-inner {
+      width: min(calc(100% - 2rem), var(--content));
+      margin: 0 auto; min-height: 4.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand-kicker, .nav a, .theme-toggle, .meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: var(--text-xs);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .brand-kicker { color: var(--color-primary); }
+    .nav { display: flex; gap: 1rem; color: var(--color-text-muted); }
+    .nav a:hover { color: var(--color-text); }
+    .theme-toggle {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .6rem .8rem; border: 1px solid var(--color-border); border-radius: 999px;
+      font-family: 'IBM Plex Mono', monospace; font-size: var(--text-xs);
+    }
+    main {
+      width: min(calc(100% - 2rem), var(--content));
+      margin: 0 auto; padding: 5rem 0 6rem; position: relative; z-index: 1;
+    }
+    h1 {
+      font-family: var(--font-display); font-weight: 400;
+      font-size: var(--text-2xl); line-height: .98; letter-spacing: -.04em;
+    }
+    .section {
+      padding: 4rem 0; border-bottom: 1px solid var(--color-divider);
+    }
+    .section:last-child { border-bottom: 0; }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.9rem, 1.4rem + 1.6vw, 3rem);
+      line-height: 1.02; letter-spacing: -.03em;
+    }
+    .prose { max-width: var(--prose); display: grid; gap: 1.25rem; }
+    .prose p { color: var(--color-text-muted); }
+    .prose strong { color: var(--color-text); font-weight: 600; }
+    .thesis {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--color-surface-offset) 88%, transparent), color-mix(in srgb, var(--color-surface) 88%, transparent));
+      border: 1px solid var(--color-border); border-left: 3px solid var(--color-primary);
+      border-radius: var(--radius-lg); padding: 2rem;
+      font-size: var(--text-lg); line-height: 1.7;
+    }
+    .equation {
+      background: #0a0a08; border: 1px solid var(--color-border);
+      border-radius: .75rem; padding: 1.25rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: var(--text-sm);
+      color: var(--color-primary); overflow-x: auto; line-height: 1.8;
+    }
+    .cards-2, .cards-3 {
+      display: grid; gap: 1rem; margin-top: 1.5rem;
+    }
+    .cards-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .cards-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .card {
+      background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+      border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+      padding: 1.25rem;
+    }
+    .card .meta { color: var(--color-primary); margin-bottom: .75rem; }
+    .card p, .card li { color: var(--color-text-muted); }
+    .card ul { list-style: none; display: grid; gap: .65rem; }
+    .card li::before { content: "— "; color: var(--color-primary); }
+    table {
+      width: 100%; border-collapse: collapse; margin-top: 1.5rem;
+      background: color-mix(in srgb, var(--color-surface) 76%, transparent);
+      border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+      overflow: hidden; display: block; overflow-x: auto;
+    }
+    th, td { text-align: left; vertical-align: top; padding: 1rem; border-bottom: 1px solid var(--color-divider); min-width: 180px; }
+    th { color: var(--color-primary); font-family: 'IBM Plex Mono', monospace; font-size: var(--text-xs); letter-spacing: .1em; text-transform: uppercase; }
+    td { color: var(--color-text-muted); }
+    td:first-child { color: var(--color-text); }
+    .closing {
+      margin-top: 1.5rem; padding: 2rem;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--color-surface-offset) 88%, transparent), color-mix(in srgb, var(--color-surface) 88%, transparent));
+      border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+    }
+    .closing p {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 1.25rem + 1.2vw, 2.35rem);
+      line-height: 1.15; letter-spacing: -.03em;
+    }
+    .footer {
+      width: min(calc(100% - 2rem), var(--content));
+      margin: 0 auto 3rem; padding-top: 2rem;
+      border-top: 1px solid var(--color-divider);
+      display: flex; justify-content: space-between;
+      color: var(--color-text-faint);
+      font-family: 'IBM Plex Mono', monospace; font-size: var(--text-xs);
+      letter-spacing: .12em; text-transform: uppercase;
+    }
+    @media (max-width: 1020px) { .cards-3 { grid-template-columns: 1fr; } .cards-2 { grid-template-columns: 1fr; } }
+    @media (max-width: 760px) { .nav { display: none; } }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-kicker">Parksy White Paper</div>
+      </div>
+      <nav class="nav" aria-label="섹션 이동">
+        <a href="#thesis">출발점</a>
+        <a href="#debate">논쟁</a>
+        <a href="#dollar-krw">원·달러</a>
+        <a href="#conclusion">최종 명제</a>
+      </nav>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="테마 전환"><span>Light</span></button>
+    </div>
+  </header>
+
+  <main>
+    <h1>달러 시스템은<br>설계가 아니라<br>누적된 땜빵이다</h1>
+    <p style="color:var(--color-text-muted);font-size:var(--text-lg);max-width:44rem;margin:1.5rem 0 3rem;">
+      이 문서는 달러 기축체제, 원·달러 환율, 사제적 해석권, 자기 명의·자기 계산, 그리고 한국이 떠안는 비용 구조를 하나의 연쇄로 묶는다.
+    </p>
+
+    <div class="thesis">
+      <div>달러 = 성서. 미국 = 사제. 환율 = 교독문.</div>
+      <div>원·달러 환율 상승 = 한국에 적용된 수수료와 이자율의 인상.</div>
+      <div>서류상으론 자기 명의, 자기 계산. 설계는 위에서, 책임은 아래에서.</div>
+    </div>
+
+    <section class="section" id="thesis">
+      <h2 class="section-title">출발점 — 교과서와 Parksy 프레임의 충돌</h2>
+      <div class="prose">
+        <p>표면 설명은 익숙하다. 미·한 금리차, 한국 자산 매력 저하, 위험 회피 국면의 달러 쏠림. 숫자만 보면 이 설명은 대체로 맞다. 하지만 이 문서는 그 설명을 <strong>최종 결과에 붙는 주석</strong>으로 본다.</p>
+        <p>이 시각에서 핵심은 '누가 가격을 정했는가'가 아니라, <strong>누가 정한 가격을 나중에 자연스럽다고 읽게 만드는가</strong>다. 환율 뉴스는 흔히 설명인 척하지만, 실제로는 이미 정해진 결과를 제도 언어로 봉합하는 작업에 가깝다.</p>
+      </div>
+    </section>
+
+    <section class="section" id="debate">
+      <h2 class="section-title">논쟁과 반론 — 닫힌 음모론이 아니라 열린 구조론으로</h2>
+      <div class="prose">
+        <p>좋은 프레임은 자기 강화적 신앙이 아니라 반례를 통과해야 한다. 그래서 이 백서는 Parksy 프레임의 강점뿐 아니라, 반드시 맞아야 할 반론도 같이 내장한다.</p>
+      </div>
+      <div class="cards-3">
+        <div class="card"><div class="meta">Critique 01</div><h3>역인과 오류</h3><p>원·엔·대만달러가 동시에 움직인다고 해서 모든 걸 미국의 직접 가격 지정으로만 볼 수는 없다.</p></div>
+        <div class="card"><div class="meta">Critique 02</div><h3>달러 약세 반례</h3><p>달러가 약해지고 원화가 강해졌던 구간도 있었다. 전가 구조가 영구적인 단방향 법칙은 아니다.</p></div>
+        <div class="card"><div class="meta">Critique 03</div><h3>완전 독점 가정의 문제</h3><p>CIPS, SPFS, 루피 결제, 블록 경제의 확장처럼 이탈 사례도 실존한다. 달러는 절대 신이 아니라, 탈출 비용이 비싼 시스템이다.</p></div>
+      </div>
+      <p style="color:var(--color-text-muted);margin-top:1.5rem;font-size:var(--text-lg);">
+        강한 버전은 '누가 설계했는가'가 아니라 '누더기 시스템이 어떻게 사후 정당화를 생산하는가'에 있다.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">프레임 통합 — 사제, 법관, 금융공학, 해석권</h2>
+      <div class="prose">
+        <p>사제가 라틴어 성서를 독점했고, 법조 엘리트가 난해한 법 언어를 독점했고, 금융 엘리트가 파생과 국제금융의 언어를 독점한다. 쉬운 번역본이 싫은 이유는 늘 같다. <strong>해석권을 잃기 때문</strong>이다.</p>
+      </div>
+      <table>
+        <tr><th>영역</th><th>독점된 텍스트</th><th>권력 형태</th><th>결과</th></tr>
+        <tr><td>종교</td><td>라틴어 성서</td><td>교독권</td><td>평신도는 믿고 따른다</td></tr>
+        <tr><td>법</td><td>난해한 법률 문장</td><td>판단권</td><td>전문가 번역본으로만 이해</td></tr>
+        <tr><td>금융</td><td>파생·금리·신용 언어</td><td>가격 결정권</td><td>손실은 자기 책임으로</td></tr>
+        <tr><td>달러 체제</td><td>기축통화 서사</td><td>국제 결제 해석권</td><td>결과를 시장이라 부름</td></tr>
+      </table>
+    </section>
+
+    <section class="section" id="dollar-krw">
+      <h2 class="section-title">원·달러 환율은 왜 한국에서 계속 오르는가</h2>
+      <div class="equation">
+        f(미국 정책) → 환율 상승<br>
+        g(환율 상승) → 원인 역산 및 사후 할당<br><br>
+        문제: 두 흐름이 실제 현장에서 자주 섞인다
+      </div>
+      <div class="prose">
+        <p>원·달러 환율 상승 = <strong>한국이 못해서가 아니라, 달러 시스템이 한국에 더 많은 비용을 읽게 만드는 교독 비율의 변화</strong>다.</p>
+      </div>
+    </section>
+
+    <section class="section" id="conclusion">
+      <h2 class="section-title">최종 명제 — 달러 시스템은 설계가 아니라 런타임이다</h2>
+      <div class="thesis">
+        <div>브레턴우즈는 설계였다.</div>
+        <div>닉슨쇼크는 버그였다.</div>
+        <div>페트로달러는 워크어라운드였다.</div>
+        <div>QE와 제재 무기화는 추가 패치였다.</div>
+        <div>지금의 달러 시스템은 완성된 설계가 아니라, 버그가 스펙이 된 상태다.</div>
+      </div>
+      <div class="equation">
+        브레턴우즈()<br>
+        → 금태환 붕괴()<br>
+        → 페트로달러 워크어라운드()<br>
+        → QE × n<br>
+        → 제재 무기화()<br>
+        → "이게 원래 스펙입니다" 문서화
+      </div>
+      <div class="closing">
+        <p>
+          사제가 성서를 설계한 게 아니라,<br>
+          성서가 사제를 만들어냈다.<br><br>
+          원·달러 환율 상승은 한국의 무능에 대한 점수표가 아니라,<br>
+          누적된 땜빵 시스템이 그때그때 내놓는 청구서다.<br><br>
+          그리고 그 청구서의 이름란에는 언제나<br>
+          자기 명의, 자기 계산이 적힌다.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>PARKSY × PERPLEXITY</span>
+    <span>Debate White Paper</span>
+    <span>2026.06.08</span>
+  </footer>
+
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const btn = document.querySelector('[data-theme-toggle]');
+      let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      root.setAttribute('data-theme', theme);
+      btn.innerHTML = theme === 'dark' ? '<span>Light</span>' : '<span>Dark</span>';
+      btn.addEventListener('click', () => {
+        theme = theme === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', theme);
+        btn.innerHTML = theme === 'dark' ? '<span>Light</span>' : '<span>Dark</span>';
+      });
+    })();
+  </script>
+</body>
+</html>
