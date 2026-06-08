@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Φ-I-C-K-P-7AXIS 정치 MCP v1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0806;--surface:#0f0d0a;--card:#14110e;--border:rgba(255,255,255,0.06);--text:#e8e4dc;--muted:rgba(232,228,220,0.5);--gold:#c8973a;--f-sans:'Inter',sans-serif;--f-mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f-sans);background:var(--bg);color:var(--text);line-height:1.8}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,8,6,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:52px;display:flex;align-items:center;gap:1.5rem}
+nav a{color:var(--muted);font-size:.8rem;text-decoration:none;transition:color .2s}
+nav a:hover{color:var(--text)}
+.container{max-width:860px;margin:0 auto;padding:90px 24px 80px}
+h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:600;margin-bottom:8px}
+.hero-label{font-family:var(--f-mono);font-size:.6rem;color:var(--gold);letter-spacing:.15em;margin-bottom:16px}
+.sub{color:var(--muted);font-size:.9rem;margin-bottom:32px;line-height:1.7}
+.section{margin-top:48px}
+h2{font-size:1.1rem;font-weight:600;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:12px}
+.card-title{font-weight:600;color:#fff;margin-bottom:4px}
+.card-desc{font-size:.82rem;color:var(--muted);line-height:1.6}
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);overflow-x:auto;margin:12px 0}
+.tag{display:inline-block;padding:2px 8px;background:rgba(200,151,58,0.1);color:var(--gold);border-radius:3px;font-size:.7rem;margin:2px}
+.status{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(16,185,129,0.1);color:#10b981;border-radius:4px;font-size:.75rem;font-weight:500;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:.7rem;background:rgba(255,255,255,0.05);color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:16px 0}
+th{background:var(--surface);color:var(--muted);padding:10px 12px;text-align:left;font-weight:400;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--muted)}
+tr:hover td{background:rgba(200,151,58,.03)}
+</style>
+</head>
+<body>
+<nav>
+<a href="../index.html" style="color:var(--gold);">← OrbitPrompt</a>
+<a href="../football-model/mcp/">WC2026 MCP</a>
+<a href="../boards/election-gallery.html">Election MCP</a>
+</nav>
+<div class="container">
+<div class="hero-label">Φ-I-C-K-P-7AXIS · 정치 MCP · v1.0</div>
+<h1>정치인 7축 분석 엔진</h1>
+<div class="sub">형(Claude) 구조 + DeepSeek 데이터 엔진 = 통합 v1.0<br>데이터 기반 7축 자동 계산 · 4명 정치인 · 4개 툴</div>
+<div class="status">● v1.0 통합 — OrbitPrompt/political-mcp/</div>
+
+<div class="section">
+<h2>툴</h2>
+<div class="grid">
+<div class="card"><div class="card-title">🔍 analyze_politician</div><div class="card-desc">정치인 7축 Φ드라이버 해부 — 등급·강점·취약점</div></div>
+<div class="card"><div class="card-title">⚖️ compare_policy</div><div class="card-desc">두 정치인 Φ12 비교 — 축별 gap 분석</div></div>
+<div class="card"><div class="card-title">🎲 simulate_election</div><div class="card-desc">3개 시나리오 시뮬레이션 — 현상/역풍/기회</div></div>
+<div class="card"><div class="card-title">🏆 rank_politicians</div><div class="card-desc">전체 순위 — Φ12 + 등급 + 강/약축</div></div>
+</div>
+</div>
+
+<div class="section">
+<h2>정치인 랭킹</h2>
+<table>
+<tr><th>순위</th><th>이름</th><th>정당</th><th>Φ12</th><th>등급</th><th>최강축</th><th>최약축</th></tr>
+<tr><td>1</td><td>이재명</td><td>더불어민주당</td><td>88.6</td><td>S</td><td>발언일관성</td><td>변수중첩</td></tr>
+<tr><td>2</td><td>박찬대</td><td>더불어민주당</td><td>80.9</td><td>S</td><td>발언일관성</td><td>프레이밍</td></tr>
+<tr><td>3</td><td>조국</td><td>조국혁신당</td><td>65.7</td><td>A</td><td>발언일관성</td><td>위기대응</td></tr>
+<tr><td>4</td><td>한동훈</td><td>국민의힘</td><td>56.6</td><td>B</td><td>프레이밍</td><td>위기대응</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>사용법</h2>
+<div class="code-block">echo '{"tool":"analyze_politician","params":{"name":"박찬대"}}' | python3 server.py</div>
+<div class="code-block">echo '{"tool":"compare_policy","params":{"politician_a":"박찬대","politician_b":"이재명"}}' | python3 server.py</div>
+<div class="code-block">echo '{"tool":"simulate_election","params":{"candidate":"박찬대","region":"인천 연수구을"}}' | python3 server.py</div>
+</div>
+
+<div class="section">
+<h2>설계 철학</h2>
+<div class="card"><div class="card-desc" style="color:var(--text);">
+<strong style="color:var(--gold);">슬롯형 모델</strong> — 박찬대는 Episode 02 샘플 슬롯. 이름/도시/의제는 언제든 교체.<br><br>
+<strong style="color:var(--gold);">역방향 유통</strong> — GitHub 공개 후 찾아오게 만든다. 보좌관이 DM 보내는 구조.<br><br>
+<strong style="color:var(--gold);">데이터 기반</strong> — 모든 7축 점수는 정치인 데이터(발언·법안·경력)에서 자동 계산.
+</div></div>
+</div>
+
+<div class="section" style="margin-top:40px;padding:20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);text-align:center;">
+<div style="font-size:.8rem;color:var(--muted);">Φ-I-C-K-P-7AXIS · OrbitPrompt 철학 · 삼각 실행 루프<br>형(Claude) + DeepSeek = v1.0 통합</div>
+</div>
+</div>
+</body>
+</html>
