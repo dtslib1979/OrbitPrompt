@@ -22,7 +22,7 @@ from dollar_engine import (
 
 VERSION = "2.2.0"
 
-mcp = FastMCP("dollar-system-mcp")
+mcp = FastMCP("parksy-dollar")
 
 
 @mcp.tool()
