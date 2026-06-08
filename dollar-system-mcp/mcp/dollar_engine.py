@@ -638,33 +638,37 @@ def meal_ratio(city1: str = "서울", city2: str = "뉴욕") -> dict:
         meal2_krw = round(meal2_usd * krw_rate, 0)
 
         # 핵심 비율: 1달러 = city1 기준 몇 끼?
-        usd_in_meals_city1 = round(1.0 / meal1_usd, 3)          # 1달러 = N끼 (city1)
-        usd_in_meals_city2 = round(1.0 / meal2_usd, 3)          # 1달러 = N끼 (city2)
+        usd_in_meals_city1 = round(1.0 / meal1_usd, 2)          # 1달러 = N끼 (city1)
+        usd_in_meals_city2 = round(1.0 / meal2_usd, 2)          # 1달러 = N끼 (city2)
 
-        # 1달러를 확보하려면 city1 사람은 몇 끼를 포기해야 하나
-        # = 원달러 환율 / city1 한 끼 원화 가격
-        sacrifice_city1 = round(krw_rate / meal1_krw, 3)         # ≈ 1.0 (원화 기준 선형)
-        # 더 의미있는 버전: city1 한 끼 노동으로 city2 한 끼를 살 수 있냐?
-        meal_exchange_rate = round(meal2_usd / meal1_usd, 3)      # city2 한 끼 / city1 한 끼
+        # 1달러 = city1 노동 몇 분? (최저시급 기준)
+        kr_min_wage_krw_real = 10030.0
+        us_min_wage_usd_real = 7.25
+        sacrifice_minutes_city1 = round(60 * krw_rate / kr_min_wage_krw_real, 0) if kr_min_wage_krw_real > 0 else 0
+        sacrifice_minutes_city2 = round(60 * 1.0 / us_min_wage_usd_real, 0) if us_min_wage_usd_real > 0 else 0
+
+        # city1 한 끼로 city2 한 끼를 몇 % 먹을 수 있는가?
+        # (더 직관적: 0.47이면 "뉴욕 한 끼 먹으려면 서울 두 끼 값이 든다")
+        meal_ratio_value = round(meal1_usd / meal2_usd, 3)       # city1 / city2 = 구매력 비율
 
         # 헌금 비율: city1의 한 끼가 달러 시스템에 바치는 비율
         # (시간 단위로 환산하면 더 직관적 — 최저임금 기준)
         # 한국 최저임금 ~10,030원/h → 1끼 = 한국인 ?시간 노동
-        kr_min_wage_krw = 10030.0
-        us_min_wage_usd = 7.25     # 연방 (실질은 주마다 다름, NYC ~17)
-        kr_meal_work_hours  = round(meal1_krw / kr_min_wage_krw, 2)
-        us_meal_work_hours  = round(meal2_usd / us_min_wage_usd, 2)
+        kr_meal_work_hours  = round(meal1_krw / kr_min_wage_krw_real, 2)
+        us_meal_work_hours  = round(meal2_usd / us_min_wage_usd_real, 2)
 
         # 1달러를 사기 위해 한국인이 쓰는 노동시간 (최저임금 기준)
-        usd1_kr_work_hours  = round(krw_rate / kr_min_wage_krw, 2)
+        usd1_kr_work_hours  = round(krw_rate / kr_min_wage_krw_real, 2)
 
         # 구조 판정
-        if meal_exchange_rate > 1.5:
-            verdict = "불평등 심각 — city2 한 끼 = city1 한 끼 1.5배 이상. 달러 패권 체감 무게 큼"
-        elif meal_exchange_rate > 1.0:
-            verdict = "비대칭 — city2 소비 단위가 더 크다. 달러 중심 시스템의 일상적 전가"
+        if meal_ratio_value < 0.5:
+            verdict = f"불평등 심각 — {city1} 한 끼로 {city2} 한 끼의 절반도 못 삼. 달러 패권 체감 무게 큼"
+        elif meal_ratio_value < 0.8:
+            verdict = f"비대칭 — {city1}의 한 끼 가치가 {city2}에 미치지 못함. 달러 중심 시스템의 일상적 전가"
+        elif meal_ratio_value < 1.0:
+            verdict = f"약세 — {city1} 소비력이 {city2}보다 다소 낮음"
         else:
-            verdict = "역전 — city1 소비 단위가 더 크다 (구매력 역전 구간)"
+            verdict = f"역전 — {city1} 소비 단위가 더 크다 (구매력 역전 구간)"
 
         return {
             "model":   "한 끼 지수 (Meal Ratio) — Φ7 Language 번역 레이어",
@@ -683,24 +687,26 @@ def meal_ratio(city1: str = "서울", city2: str = "뉴욕") -> dict:
                 },
             },
             "ratios": {
-                "usd1_in_meals_of_city1":       usd_in_meals_city1,
-                "usd1_in_meals_of_city2":       usd_in_meals_city2,
-                "meal_exchange_rate":            meal_exchange_rate,
+                "usd1_in_meals_of_city1":        usd_in_meals_city1,
+                "usd1_in_meals_of_city2":        usd_in_meals_city2,
+                "city1_buys_how_much_of_city2":  meal_ratio_value,
+                "city2_buys_how_much_of_city1":  round(1/meal_ratio_value, 2) if meal_ratio_value > 0 else 0,
                 "usd1_costs_korean_work_hours":  usd1_kr_work_hours,
+                "usd1_city1_sacrifice_minutes":  sacrifice_minutes_city1,
+                "usd1_city2_sacrifice_minutes":  sacrifice_minutes_city2,
             },
             "interpretation": {
                 "korean_perspective": (
-                    f"한국인이 1달러를 사려면 최저임금({kr_min_wage_krw:.0f}원/h) 기준 "
+                    f"한국인이 1달러를 사려면 최저임금({kr_min_wage_krw_real:.0f}원/h) 기준 "
                     f"{usd1_kr_work_hours}시간 노동이 필요하다 (현재 환율 {krw_rate:.0f}원)."
                 ),
                 "meal_sentence": (
-                    f"{city1} 한 끼({meal1_usd}달러)로 "
-                    f"{city2} 한 끼({meal2_usd}달러)를 {meal_exchange_rate}번 살 수 있다. "
-                    f"이 비율이 달러 시스템이 몸에 닿는 무게다."
+                    f"{city1} 한 끼(${meal1_usd}) = {city2} 한 끼의 {meal_ratio_value*100:.0f}%. "
+                    f"뉴욕에서 밥 한 끼 먹으려면 서울에서 {1/meal_ratio_value:.1f}끼 값이 든다."
                 ),
                 "city1_meal_work": (
                     f"{city1} 사람은 한 끼를 위해 "
-                    f"미국 연방 최저임금({us_min_wage_usd}달러/h) 기준 {us_meal_work_hours}h, "
+                    f"미국 연방 최저임금({us_min_wage_usd_real}달러/h) 기준 {us_meal_work_hours}h, "
                     f"한국 최저임금 기준 {kr_meal_work_hours}h 일해야 한다."
                     if city1 not in ("서울",) else
                     f"서울 사람은 한 끼({meal1_krw:.0f}원)를 위해 "
