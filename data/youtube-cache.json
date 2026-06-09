@@ -1,15 +1,16 @@
 {
-  "updated": "2026-06-09T09:12:00Z",
-  "handle": "@EAE-University",
+  "updated": "2026-06-09T21:00:00Z",
+  "handle": "@philosopher-parksy",
   "repo": "OrbitPrompt",
-  "channelId": "UCogemhYGCnbVp13ARqFYM8A",
-  "account": "c",
-  "note": "v2: OrbitPrompt 레포 연결 확정. Φ7 드라이버 + 박씨캡쳐. eae-univ(@BeingEduartEngineer-4)와 별개.",
-  "name": "EAE Univ.",
+  "channelId": "UCJaGuXjxoNjFMqfYUSFjZVg",
+  "account": "a",
+  "note": "v3: @philosopher-parksy 1:1 확정. Φ7 드라이버 채널. 플레이리스트 @EAE-University에서 이전 필요.",
+  "name": "philosopher-parksy",
   "stats": {
-    "subscriberCount": 11,
-    "viewCount": 13142,
-    "videoCount": 87
+    "subscriberCount": 0,
+    "viewCount": 0,
+    "videoCount": 0,
+    "note": "stats 미확인 — YouTube Studio에서 갱신 필요"
   },
   "playlists": {
     "phi7": [
@@ -17,87 +18,82 @@
         "driver": "Quantum",
         "index": 1,
         "title": "⚡ Quantum — 예측·도박",
-        "id": "PLp4XpLOr--JQxgr-vICqgqMlKwDWfpsRO",
-        "itemCount": 8,
-        "description": "Φ7 퀀텀 드라이버. 예측 모델, 시뮬레이션."
+        "id": "",
+        "itemCount": 0,
+        "description": "Φ7 퀀텀 드라이버. 예측 모델, 시뮬레이션.",
+        "migrate_from": "PLp4XpLOr--JQxgr-vICqgqMlKwDWfpsRO"
       },
       {
         "driver": "Spiral",
         "index": 2,
         "title": "📈 Spiral — 로드맵·성장",
-        "id": "PLp4XpLOr--JSOaxjTAP-VpLbKJXSva6_4",
+        "id": "",
         "itemCount": 0,
-        "description": "Φ7 스파이럴 드라이버. 반복 상승, 발전 궤적."
+        "description": "Φ7 스파이럴 드라이버. 반복 상승, 발전 궤적.",
+        "migrate_from": "PLp4XpLOr--JSOaxjTAP-VpLbKJXSva6_4"
       },
       {
         "driver": "Zoom",
         "index": 3,
         "title": "🔍 Zoom — 정치·경제·도시",
-        "id": "PLp4XpLOr--JT4lC_x8Z2dHOUZkAuaXnxx",
+        "id": "",
         "itemCount": 0,
-        "description": "Φ7 줌 드라이버. 개인→국가→글로벌 스케일."
+        "description": "Φ7 줌 드라이버. 개인→국가→글로벌 스케일.",
+        "migrate_from": "PLp4XpLOr--JT4lC_x8Z2dHOUZkAuaXnxx"
       },
       {
         "driver": "Language",
         "index": 4,
         "title": "💬 Language — 말하기·언어",
-        "id": "PLp4XpLOr--JQDLj6gv6qcgeQ0c3ghwAvY",
+        "id": "",
         "itemCount": 0,
-        "description": "Φ7 랭귀지 드라이버. 언어 해석권, 번역 레이어."
+        "description": "Φ7 랭귀지 드라이버. 언어 해석권, 번역 레이어.",
+        "migrate_from": "PLp4XpLOr--JQDLj6gv6qcgeQ0c3ghwAvY"
       },
       {
         "driver": "Modular",
         "index": 5,
         "title": "🧩 Modular — 도구·템플릿",
-        "id": "PLp4XpLOr--JSvpeAi-13S-B7r4GbqbSO6",
-        "itemCount": 5,
-        "description": "Φ7 모듈러 드라이버. 재사용 가능한 도구, 생성기."
+        "id": "",
+        "itemCount": 0,
+        "description": "Φ7 모듈러 드라이버. 재사용 가능한 도구, 생성기.",
+        "migrate_from": "PLp4XpLOr--JSvpeAi-13S-B7r4GbqbSO6"
       },
       {
         "driver": "Reverse",
         "index": 6,
         "title": "🔄 Reverse — 케이스스터디",
-        "id": "PLp4XpLOr--JQj2kaQM8nw5Rltw-NGXM-7",
+        "id": "",
         "itemCount": 0,
-        "description": "Φ7 리버스 드라이버. 실패에서 배우기, 역방향 설계."
+        "description": "Φ7 리버스 드라이버. 실패에서 배우기, 역방향 설계.",
+        "migrate_from": "PLp4XpLOr--JQj2kaQM8nw5Rltw-NGXM-7"
       },
       {
         "driver": "Meta",
         "index": 7,
         "title": "🧠 Meta — 철학·방법론",
-        "id": "PLp4XpLOr--JTOkln3NH5oI0yv1U25bTM9",
-        "itemCount": 3,
-        "description": "Φ7 메타 드라이버. 철학 백서, 방법론, PHL 스펙."
+        "id": "",
+        "itemCount": 0,
+        "description": "Φ7 메타 드라이버. 철학 백서, 방법론, PHL 스펙.",
+        "migrate_from": "PLp4XpLOr--JTOkln3NH5oI0yv1U25bTM9"
       }
     ],
     "content": [
       {
         "key": "parksy-capture",
         "title": "📱 박씨캡쳐 — AI 대화 무손실 캡처 앱",
-        "id": "PLp4XpLOr--JQI_EYELt3Pu9O9sFhZJ0t0",
+        "id": "",
         "itemCount": 0,
         "description": "Parksy Capture APK 11+ 버전 튜토리얼 시리즈. Φ7 Language 드라이버 하드웨어 인터페이스.",
         "phi7_link": "Language",
+        "migrate_from": "PLp4XpLOr--JQI_EYELt3Pu9O9sFhZJ0t0",
         "source_files": [
           "eae-univ/broadcast/parksy-capture-01-purpose.html",
           "eae-univ/broadcast/parksy-capture-02-usage.html",
           "eae-univ/broadcast/parksy-capture-03-install.html",
           "OrbitPrompt/boards/parksy-capture-tutorial.html"
         ],
-        "gene_card": "dtslib-papyrus/genes/apk-card-parksy-capture.json",
-        "status": "empty"
-      }
-    ],
-    "archive": [
-      {
-        "title": "📚 습작 — 시범작·로고모음 (2026-06-08 이전)",
-        "id": "PLp4XpLOr--JThzBx90hGUVpliO8A1YnjM",
-        "itemCount": 11
-      },
-      {
-        "title": "📚 습작 — 연습작·실험작 (2026-06-08 이전)",
-        "id": "PLp4XpLOr--JROHtUiI3C3MhaFosDQCJfc",
-        "itemCount": 87
+        "status": "migrate_pending"
       }
     ]
   }
