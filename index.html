@@ -1,1362 +1,538 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="당신 머릿속 20년 판단 기준은 평생 간다.">
-  <meta name="theme-color" content="#08080e">
-  <title>OrbitPrompt</title>
-  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/orbit-theme.css">
-  <link rel="stylesheet" href="assets/css/ecosystem.css">
-  <script src="assets/js/gallery-store.js"></script>
-  <style>
-/* ── GALLERY THEME — PREMIUM DARK ──────────── */
-:root {
-  --gallery-bg:    #07070d;
-  --gallery-wall:  #0b0b14;
-  --gallery-panel: #0e0e1a;
-  --gallery-gold:  #d4af37;
-  --gallery-brass: #b8982a;
-  --f-serif:       'Cormorant Garamond', Georgia, serif;
-  --f-sans:        'Inter', system-ui, sans-serif;
-  --f-display:     'Plus Jakarta Sans', sans-serif;
-  --wall-shadow:   0 0 120px rgba(212,175,55,.03);
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="철학을 코드로 — OrbitPrompt 사고 시스템">
+<title>OrbitPrompt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070d;
+  --gold:#d4af37;
+  --gold2:rgba(212,175,55,.45);
+  --gold3:rgba(212,175,55,.12);
+  --ink1:rgba(255,255,255,.92);
+  --ink2:rgba(255,255,255,.55);
+  --ink3:rgba(255,255,255,.2);
+  --ink4:rgba(255,255,255,.08);
+  --purple:rgba(168,85,247,.85);
+  --cyan:rgba(34,211,238,.8);
+  --green:rgba(74,222,128,.8);
+  --line:rgba(255,255,255,.06);
+}
+html,body{background:var(--bg);color:var(--ink1);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:52px;padding:0 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(7,7,13,.94);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+.nav-logo{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--gold2);text-decoration:none}
+.nav-links{display:flex;gap:20px;align-items:center}
+.nav-link{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--ink3);text-decoration:none;transition:color .2s}
+.nav-link:hover{color:var(--ink2)}
+.nav-link.hot{color:rgba(212,175,55,.55)}
+.nav-link.hot:hover{color:var(--gold)}
+
+/* ── HERO ── */
+.hero{
+  padding:110px 24px 48px;
+  text-align:center;
+  max-width:600px;margin:0 auto;
+}
+.hero-kicker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.22em;
+  color:var(--gold2);margin-bottom:18px;
+}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(32px,6vw,54px);
+  font-weight:400;line-height:1.18;
+  letter-spacing:-.02em;
+  color:var(--ink1);margin-bottom:18px;
+}
+.hero-title em{font-style:italic;color:var(--gold)}
+.hero-sub{
+  font-size:13px;color:var(--ink2);
+  line-height:1.85;letter-spacing:.02em;
 }
 
-/* ── TOP NAV ───────────────────────────────── */
-.gallery-nav {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  padding: 0 28px;
-  height: 56px;
-  background: rgba(7,7,13,.94);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255,255,255,.04);
+/* ── MAP CONTAINER ── */
+#mapWrap{
+  position:relative;
+  width:100%;max-width:1080px;
+  margin:0 auto;
+  padding:0 0 40px;
 }
-.nav-brand {
-  font-family: var(--f-display);
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
-  text-decoration: none;
-  letter-spacing: -.02em;
-}
-.nav-brand-accent { color: var(--gallery-gold); }
-.nav-right { margin-left: auto; display: flex; gap: 16px; align-items: center; }
-.nav-link {
-  font-family: var(--f-sans);
-  font-size: 12px;
-  color: rgba(255,255,255,.3);
-  text-decoration: none;
-  transition: color .2s;
-  font-weight: 500;
-}
-.nav-link:hover { color: rgba(255,255,255,.6); }
-
-/* ── AMBIENT TEXTURE ───────────────────────── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(212,175,55,.03) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(168,85,247,.02) 0%, transparent 70%),
-    repeating-linear-gradient(0deg, transparent, transparent 200px, rgba(255,255,255,.003) 200px, rgba(255,255,255,.003) 201px);
-  pointer-events: none;
-  z-index: 0;
+#nodeMap{
+  width:100%;height:auto;
+  display:block;cursor:default;
+  overflow:visible;
 }
 
-/* ── WING TABS ─────────────────────────────── */
-.wing-nav {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  padding: 12px 20px;
-  margin-bottom: 0;
-  background: rgba(7,7,13,.94);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255,255,255,.04);
-  position: sticky;
-  top: 56px;
-  z-index: 99;
+/* ── SVG NODE STYLES ── */
+.edge{stroke-width:1;fill:none;transition:stroke-opacity .25s}
+.edge-center{stroke:rgba(212,175,55,.18)}
+.edge-phi{stroke:rgba(212,175,55,.14)}
+.edge-mod{stroke:rgba(168,85,247,.14)}
+.edge-mcp{stroke:rgba(34,211,238,.14)}
+.edge-gen{stroke:rgba(74,222,128,.14)}
+.edge-arch{stroke:rgba(255,255,255,.1)}
+
+.hub-group{cursor:pointer}
+.hub-circle{transition:all .3s}
+.hub-group:hover .hub-circle{filter:brightness(1.3)}
+
+.leaf-group{cursor:pointer}
+.leaf-group:hover .leaf-circle{filter:brightness(1.4)}
+.leaf-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;
+  fill:rgba(255,255,255,.5);
+  text-anchor:middle;
+  transition:fill .2s;
+  pointer-events:none;
 }
-.wing-btn {
-  font-family: var(--f-sans);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 8px 24px;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  color: rgba(255,255,255,.35);
-  cursor: pointer;
-  transition: all .3s cubic-bezier(.4,0,.2,1);
-  letter-spacing: .06em;
+.leaf-group:hover .leaf-label{fill:rgba(255,255,255,.88)}
+.hub-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.1em;
+  fill:rgba(255,255,255,.4);
+  text-anchor:middle;
+  pointer-events:none;
+  text-transform:uppercase;
 }
-.wing-btn:hover { color: rgba(255,255,255,.7); background: rgba(255,255,255,.03); }
-.wing-btn.active {
-  color: var(--gallery-gold);
-  background: rgba(212,175,55,.08);
-  border-color: rgba(212,175,55,.15);
-}
-.wing-btn .wing-count {
-  font-size: 9px;
-  color: inherit;
-  opacity: .5;
-  margin-left: 4px;
+.center-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;letter-spacing:.14em;
+  fill:var(--gold);text-anchor:middle;
+  pointer-events:none;
 }
 
-.wing-panel { display: none; }
-.wing-panel.active { display: block; animation: fadeUp .5s ease; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-
-/* ── WING A: GALLERY HERO ──────────────────── */
-.gallery-hero {
-  padding: 100px 20px 56px;
-  text-align: center;
-  max-width: 620px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
+/* ── WHY CARD ── */
+.why-card{
+  max-width:520px;margin:0 auto 64px;
+  padding:0 24px;
 }
-.gallery-hero::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: rgba(212,175,55,.2);
+.why-card a{
+  display:block;text-decoration:none;
+  border:1px solid rgba(212,175,55,.2);
+  border-radius:3px;
+  padding:28px 32px;
+  background:rgba(212,175,55,.02);
+  transition:background .25s,border-color .25s;
 }
-.gallery-hero-label {
-  font-family: var(--f-serif);
-  font-size: 14px;
-  font-style: italic;
-  color: rgba(212,175,55,.5);
-  margin-bottom: 16px;
-  letter-spacing: .08em;
+.why-card a:hover{background:rgba(212,175,55,.05);border-color:rgba(212,175,55,.38)}
+.why-card-kicker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;letter-spacing:.2em;
+  color:rgba(212,175,55,.5);margin-bottom:12px;
 }
-.gallery-hero-title {
-  font-family: var(--f-serif);
-  font-size: clamp(34px, 7vw, 60px);
-  font-weight: 400;
-  color: #fff;
-  line-height: 1.15;
-  margin-bottom: 20px;
-  letter-spacing: -.02em;
+.why-card-body{
+  font-family:'Cormorant Garamond',serif;
+  font-size:19px;color:var(--ink1);
+  letter-spacing:-.01em;line-height:1.5;margin-bottom:12px;
 }
-.gallery-hero-title em {
-  font-style: italic;
-  color: var(--gallery-gold);
-}
-.gallery-hero-sub {
-  font-size: 13px;
-  color: rgba(255,255,255,.35);
-  line-height: 1.8;
-  letter-spacing: .02em;
+.why-card-cta{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.1em;
+  color:rgba(212,175,55,.55);
 }
 
-/* ── EXHIBIT GRID ──────────────────────────── */
-.exhibit-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 24px 60px;
-  position: relative;
-  z-index: 1;
+/* ── MOBILE LIST (< 700px) ── */
+.node-list{display:none}
+@media(max-width:700px){
+  #mapWrap{display:none}
+  .node-list{display:block;padding:0 20px 60px}
+  .node-section{margin-bottom:32px}
+  .node-section-title{
+    font-family:'JetBrains Mono',monospace;
+    font-size:8px;letter-spacing:.2em;
+    color:var(--gold2);margin-bottom:12px;
+  }
+  .node-item{
+    display:block;text-decoration:none;
+    border-bottom:1px solid var(--line);
+    padding:14px 0;
+    font-family:'Cormorant Garamond',serif;
+    font-size:18px;color:var(--ink1);
+    letter-spacing:-.01em;
+    transition:color .2s;
+  }
+  .node-item:hover{color:var(--gold)}
+  .node-item-sub{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;color:var(--ink3);
+    margin-top:4px;letter-spacing:.06em;
+  }
 }
 
-/* ── EXHIBIT CARD ──────────────────────────── */
-.exhibit {
-  background: var(--gallery-panel);
-  border: 1px solid rgba(255,255,255,.04);
-  border-radius: 16px;
-  overflow: hidden;
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  transition: all .4s cubic-bezier(.4,0,.2,1);
-  position: relative;
+/* ── FOOTER ── */
+footer{
+  padding:32px 28px;
+  border-top:1px solid var(--line);
+  display:flex;align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
 }
-.exhibit::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 17px;
-  background: linear-gradient(135deg, rgba(212,175,55,.08), transparent 50%, rgba(168,85,247,.04));
-  opacity: 0;
-  transition: opacity .4s ease;
-  pointer-events: none;
+.footer-brand{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.16em;
+  color:var(--ink3);
 }
-.exhibit:hover::before { opacity: 1; }
-.exhibit:hover {
-  transform: translateY(-4px);
-  border-color: rgba(212,175,55,.12);
-  box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 80px rgba(212,175,55,.02);
+.footer-right{
+  display:flex;gap:20px;flex-wrap:wrap;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.08em;
 }
-
-/* ── EXHIBIT VISUAL ────────────────────────── */
-.exhibit-visual {
-  height: 180px;
-  background: linear-gradient(135deg, rgba(168,85,247,.06), rgba(34,211,238,.02));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-.exhibit-visual::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 30% 40%, rgba(212,175,55,.04) 0%, transparent 60%);
-}
-.exhibit-visual::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, var(--gallery-panel) 0%, transparent 40%);
-  pointer-events: none;
-}
-.exhibit-visual .exhibit-icon {
-  font-size: 64px;
-  opacity: .5;
-  transition: all .5s cubic-bezier(.4,0,.2,1);
-  position: relative;
-  z-index: 1;
-}
-.exhibit:hover .exhibit-icon {
-  opacity: .9;
-  transform: scale(1.1) rotate(-2deg);
-}
-
-.exhibit-status-badge {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  font-family: var(--f-sans);
-  font-size: 9px;
-  padding: 4px 12px;
-  border-radius: 99px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  z-index: 2;
-}
-.exhibit-status-badge.live {
-  background: rgba(74,222,128,.1);
-  color: #4ade80;
-  border: 1px solid rgba(74,222,128,.12);
-}
-.exhibit-status-badge.planned {
-  background: rgba(255,255,255,.03);
-  color: rgba(255,255,255,.25);
-  border: 1px solid rgba(255,255,255,.06);
-}
-
-/* ── EXHIBIT LABEL ─────────────────────────── */
-.exhibit-label {
-  padding: 22px 24px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex: 1;
-  position: relative;
-}
-
-.exhibit-tag {
-  font-family: var(--f-sans);
-  font-size: 8px;
-  letter-spacing: .14em;
-  color: var(--gallery-gold);
-  text-transform: uppercase;
-  opacity: .6;
-}
-.exhibit-title {
-  font-family: var(--f-serif);
-  font-size: 23px;
-  font-weight: 600;
-  color: rgba(255,255,255,.92);
-  line-height: 1.2;
-  letter-spacing: -.01em;
-}
-.exhibit-meta {
-  display: flex;
-  gap: 10px;
-  font-family: var(--f-sans);
-  font-size: 10px;
-  color: rgba(255,255,255,.25);
-}
-.exhibit-meta span { white-space: nowrap; }
-.exhibit-meta .meta-divider { color: rgba(255,255,255,.1); }
-.exhibit-desc {
-  font-size: 12px;
-  color: rgba(255,255,255,.45);
-  line-height: 1.7;
-  margin-top: 6px;
-  flex: 1;
-}
-
-/* ── EXHIBIT TAGS ──────────────────────────── */
-.exhibit-tags {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  margin-top: 6px;
-}
-.exhibit-tags span {
-  font-family: var(--f-sans);
-  font-size: 9px;
-  padding: 3px 10px;
-  border-radius: 99px;
-  background: rgba(168,85,247,.06);
-  color: rgba(168,85,247,.7);
-  border: 1px solid rgba(168,85,247,.06);
-  font-weight: 500;
-}
-.exhibit-tags span.cyan { background: rgba(34,211,238,.06); color: rgba(34,211,238,.7); border-color: rgba(34,211,238,.06); }
-.exhibit-tags span.gold { background: rgba(212,175,55,.06); color: rgba(212,175,55,.7); border-color: rgba(212,175,55,.06); }
-
-/* ── EXHIBIT ACTIONS ───────────────────────── */
-.exhibit-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255,255,255,.04);
-}
-.exhibit-btn {
-  font-family: var(--f-sans);
-  font-size: 10px;
-  padding: 7px 16px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all .25s ease;
-}
-.exhibit-btn.primary {
-  background: var(--gallery-gold);
-  color: #07070d;
-}
-.exhibit-btn.primary:hover { opacity: .85; }
-.exhibit-btn.secondary {
-  border: 1px solid rgba(255,255,255,.08);
-  color: rgba(255,255,255,.4);
-}
-.exhibit-btn.secondary:hover { border-color: var(--gallery-gold); color: var(--gallery-gold); }
-
-/* ── EXHIBIT SCORE ─────────────────────────── */
-.exhibit-score {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  font-family: var(--f-serif);
-  font-size: 28px;
-  font-weight: 600;
-  color: rgba(212,175,55,.5);
-  z-index: 2;
-  line-height: 1;
-}
-.exhibit-score small {
-  font-size: 11px;
-  color: rgba(212,175,55,.25);
-  font-weight: 400;
-}
-
-/* ── EMPTY EXHIBIT ─────────────────────────── */
-.exhibit.empty .exhibit-visual {
-  background: var(--gallery-panel);
-  opacity: .4;
-}
-.exhibit.empty .exhibit-icon { opacity: .15; }
-.exhibit.empty:hover { border-color: rgba(255,255,255,.04); transform: none; box-shadow: none; }
-.exhibit.empty:hover::before { opacity: 0; }
-
-.exhibit-from-log {
-  font-family: var(--f-sans);
-  font-size: 8px;
-  color: rgba(255,255,255,.15);
-  margin-top: 4px;
-}
-
-.gallery-footer-text {
-  text-align: center;
-  font-family: var(--f-sans);
-  font-size: 11px;
-  color: rgba(255,255,255,.2);
-  padding-bottom: 60px;
-  letter-spacing: .04em;
-}
-
-/* ── WING B/C COMMON ──────────────────────── */
-.wing-section {
-  padding: 40px 24px;
-  max-width: 1000px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-}
-.wing-section:first-of-type { padding-top: 60px; }
-.wing-section.compact { padding-top: 20px; }
-
-/* ── RESPONSIVE ───────────────────────────── */
-@media (max-width: 700px) {
-  .exhibit-grid { grid-template-columns: 1fr; gap: 16px; padding: 0 16px 40px; }
-  .wing-btn { padding: 8px 14px; font-size: 11px; }
-  .gallery-hero { padding: 48px 16px 32px; }
-  .exhibit-visual { height: 140px; }
-  .exhibit-visual .exhibit-icon { font-size: 48px; }
-  .exhibit-label { padding: 16px 18px 20px; }
-  .exhibit-title { font-size: 20px; }
-}
+.footer-right a{color:var(--ink3);text-decoration:none;transition:color .2s}
+.footer-right a:hover{color:var(--ink2)}
 </style>
 </head>
 <body>
-  <nav class="gallery-nav">
-    <a href="/" class="nav-brand">Orbit<span class="nav-brand-accent">Prompt</span></a>
-    <div class="nav-right">
-      <a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" class="nav-link">GitHub</a>
-    </div>
 
-  </nav>
-
-  <!-- ═══ WING NAV ═══ -->
-  <div class="wing-nav" id="wingNav">
-    <button class="wing-btn active" data-wing="gallery"> Gallery <span class="wing-count" id="wingCountA"></span></button>
-    <button class="wing-btn" data-wing="studio"> Studio <span class="wing-count">(8)</span></button>
-    <button class="wing-btn" data-wing="archive"> Archive <span class="wing-count">(28)</span></button>
+<nav>
+  <a class="nav-logo" href="/">ORBITPROMPT</a>
+  <div class="nav-links">
+    <a class="nav-link hot" href="why.html">WHY →</a>
+    <a class="nav-link" href="whitepaper.html">백서</a>
+    <a class="nav-link" href="philosophy.html">철학</a>
+    <a class="nav-link" href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" rel="noopener">GitHub</a>
   </div>
+</nav>
 
-  <!-- ════════════════════════════════════════════ -->
-  <!-- WING A: GALLERY (전시관)                    -->
-  <!-- ════════════════════════════════════════════ -->
-  <div class="wing-panel active" id="wingGallery">
+<div class="hero">
+  <p class="hero-kicker">THOUGHT SYSTEM · 사고 시스템</p>
+  <h1 class="hero-title">철학이 코드가 되고,<br>코드가 <em>삶이 되는</em> 방식</h1>
+  <p class="hero-sub">노드를 클릭하면 이동합니다.</p>
+</div>
 
-  <!-- Category Filter -->
-  <div class="category-filter" style="display:flex;gap:4px;padding:0 28px;margin-bottom:20px;flex-wrap:wrap;">
-    <button class="cat-btn active" data-cat="all">전체 <span class="cat-count" id="catAll"></span></button>
-    <button class="cat-btn" data-cat="Meta">🧠 Meta <span class="cat-count" id="catMeta"></span></button>
-    <button class="cat-btn" data-cat="Reverse">🔄 Reverse <span class="cat-count" id="catReverse"></span></button>
-    <button class="cat-btn" data-cat="Modular">🧩 Modular <span class="cat-count" id="catModular"></span></button>
-    <button class="cat-btn" data-cat="Language">💬 Language <span class="cat-count" id="catLanguage"></span></button>
-    <button class="cat-btn" data-cat="Zoom">🔍 Zoom <span class="cat-count" id="catZoom"></span></button>
-    <button class="cat-btn" data-cat="Spiral">📈 Spiral <span class="cat-count" id="catSpiral"></span></button>
-    <button class="cat-btn" data-cat="Quantum">⚡ Quantum <span class="cat-count" id="catQuantum"></span></button>
+<!-- WHY 카드 -->
+<div class="why-card">
+  <a href="why.html">
+    <div class="why-card-kicker">WHY · 존재 이유</div>
+    <div class="why-card-body">철학을 하는 사람은 많다.<br>코드를 만드는 사람도 많다.<br>이 둘이 한 루프에서 돌아가는 케이스는 드물다.</div>
+    <div class="why-card-cta">읽기 →</div>
+  </a>
+</div>
+
+<!-- NODE MAP -->
+<div id="mapWrap">
+  <svg id="nodeMap" viewBox="0 0 1020 700" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+
+<!-- MOBILE FALLBACK LIST -->
+<div class="node-list">
+  <div class="node-section">
+    <div class="node-section-title">철학 · PHILOSOPHY</div>
+    <a class="node-item" href="why.html">왜 존재하는가<div class="node-item-sub">WHY · 존재 이유</div></a>
+    <a class="node-item" href="whitepaper.html">백서<div class="node-item-sub">WHITEPAPER v1.1</div></a>
+    <a class="node-item" href="philosophy.html">7축 철학<div class="node-item-sub">Φ7 FRAMEWORK</div></a>
   </div>
-  <style>
-  .cat-btn{
-    font-family:var(--f-sans);font-size:.65rem;letter-spacing:.08em;
-    padding:5px 12px;border:1px solid rgba(255,255,255,.06);background:transparent;
-    color:rgba(255,255,255,.35);cursor:pointer;transition:all .15s;border-radius:3px;
-  }
-  .cat-btn:hover{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.12);}
-  .cat-btn.active{color:var(--gallery-gold);border-color:rgba(212,175,55,.3);background:rgba(212,175,55,.04);}
-  .cat-count{font-size:.55rem;color:rgba(255,255,255,.15);margin-left:3px;}
-  .cat-btn.active .cat-count{color:rgba(212,175,55,.4);}
-  </style>
-
-    <div class="gallery-hero">
-      <p class="gallery-hero-sub" style="font-size:15px;color:rgba(255,255,255,.75);line-height:1.9;margin-bottom:0;max-width:540px;margin-left:auto;margin-right:auto;">
-        당신 머릿속 20년 판단 기준은 평생 간다.<br>그걸 밖으로 꺼내서, 시스템으로 남기는 게 OrbitPrompt다.
-      </p>
-    </div>
-
-    <!-- 존재 이유 — 프라임 포지션 -->
-    <div style="max-width:560px;margin:0 auto 56px;padding:0 20px;">
-      <a href="why.html" style="display:block;text-decoration:none;border:1px solid rgba(212,175,55,.18);border-radius:3px;padding:32px 36px;background:rgba(212,175,55,.02);transition:background .25s,border-color .25s;" onmouseover="this.style.background='rgba(212,175,55,.05)';this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.background='rgba(212,175,55,.02)';this.style.borderColor='rgba(212,175,55,.18)'">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:rgba(212,175,55,.5);margin-bottom:14px;">WHY · 존재 이유</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:rgba(255,255,255,.88);letter-spacing:-.01em;line-height:1.4;margin-bottom:14px;">철학을 하는 사람은 많다.<br>코드를 만드는 사람도 많다.<br>이 둘이 한 루프에서 돌아가는 케이스는 드물다.</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(212,175,55,.55);letter-spacing:.06em;">읽기 →</div>
-      </a>
-    </div>
-
-    <!-- 작업물 3개 — 설명 없이 -->
-    <div style="max-width:560px;margin:0 auto 64px;padding:0 20px;display:flex;flex-direction:column;gap:1px;">
-      <div style="padding:28px 0;border-bottom:1px solid rgba(255,255,255,.06);">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(212,175,55,.45);letter-spacing:.12em;margin-bottom:10px;">2026 · 백서</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:rgba(255,255,255,.85);letter-spacing:-.01em;">알람 송 학습법 백서</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.2);margin-top:8px;">v1 → v5 &nbsp;·&nbsp; 100점</div>
-      </div>
-      <div style="padding:28px 0;border-bottom:1px solid rgba(255,255,255,.06);">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(212,175,55,.45);letter-spacing:.12em;margin-bottom:10px;">2026 · 인터랙티브 모델</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:rgba(255,255,255,.85);letter-spacing:-.01em;">5변수 축구 모델</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.2);margin-top:8px;">GitHub Pages 배포</div>
-      </div>
-      <div style="padding:28px 0;border-bottom:1px solid rgba(255,255,255,.06);">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(212,175,55,.45);letter-spacing:.12em;margin-bottom:10px;">2026 · 아카이브</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:rgba(255,255,255,.85);letter-spacing:-.01em;">철학자 박씨 에피소드</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.2);margin-top:8px;">19편 확정</div>
-      </div>
-      <a href="boards/sancho-philosophy.html" style="display:block;padding:28px 0;text-decoration:none;transition:opacity .2s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(212,175,55,.45);letter-spacing:.12em;margin-bottom:10px;">2026 · 언어 생활 철학</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:rgba(255,255,255,.85);letter-spacing:-.01em;">귀족적 쌍스러움</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.2);margin-top:8px;">Dimas · Thomas · Sancho</div>
-      </a>
-    </div>
-
-    <!-- 문 하나 -->
-    <div style="max-width:400px;margin:0 auto 80px;padding:0 20px;" id="accessRequest">
-      <div style="border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;">
-        <input type="text" id="accessInput" placeholder="한 줄로 소개해주세요."
-          style="width:100%;box-sizing:border-box;background:transparent;border:none;padding:18px 20px;font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.7);outline:none;letter-spacing:.01em;"
-          onkeydown="if(event.key==='Enter')sendAccess()">
-        <div style="border-top:1px solid rgba(255,255,255,.06);padding:12px 20px;display:flex;justify-content:flex-end;">
-          <button onclick="sendAccess()"
-            style="background:none;border:none;font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(212,175,55,.6);cursor:pointer;letter-spacing:.08em;padding:0;transition:color .2s;"
-            onmouseover="this.style.color='#d4af37'" onmouseout="this.style.color='rgba(212,175,55,.6)'">
-            열람 요청 →
-          </button>
-        </div>
-      </div>
-      <div id="accessMsg" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.2);text-align:center;letter-spacing:.06em;min-height:14px;"></div>
-    </div>
-
-    <script>
-    function sendAccess() {
-      const input = document.getElementById('accessInput');
-      const msg = document.getElementById('accessMsg');
-      const text = input.value.trim();
-      if (!text) return;
-      const token = '7634493765:AAHDqmUmI5U3fqZWEUavpNLKR2yy6KeM7cw';
-      const chat  = '6858098283';
-      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({chat_id: chat, text: `🚪 열람 요청\n${text}`})
-      }).then(() => {
-        input.value = '';
-        msg.textContent = '전달됐습니다.';
-        setTimeout(() => msg.textContent = '', 4000);
-      }).catch(() => {
-        msg.textContent = '잠시 후 다시 시도해주세요.';
-      });
-    }
-    </script>
-
-    <div class="exhibit-grid" id="exhibitGrid"></div>
-    <div class="gallery-footer-text" id="galleryFooter"></div>
-    <div class="wing-section" id="galleryJournal" style="padding-top:0"></div>
+  <div class="node-section">
+    <div class="node-section-title">사고 모듈 · THOUGHT MODULES</div>
+    <a class="node-item" href="football-model/index.html">축구 협회 모델<div class="node-item-sub">Φ-I-C-K-P · 98점</div></a>
+    <a class="node-item" href="football-model/wc2026-predictor.html">WC2026 예측기<div class="node-item-sub">인터랙티브 모델</div></a>
+    <a class="node-item" href="boards/election-gallery.html">선거 MCP<div class="node-item-sub">AI 유권자 프레임</div></a>
+    <a class="node-item" href="boards/dollar-system-whitepaper.html">달러 시스템<div class="node-item-sub">DSI · BS_INDEX</div></a>
+    <a class="node-item" href="boards/sancho-philosophy.html">귀족적 쌍스러움<div class="node-item-sub">언어 생활 철학</div></a>
   </div>
-
-  <!-- ════════════════════════════════════════════ -->
-  <!-- WING B: STUDIO (제작실)                     -->
-  <!-- ════════════════════════════════════════════ -->
-  <div class="wing-panel" id="wingStudio">
-    <div class="wing-section">
-      <div class="sec-label">Fab Parts · 챕터 구조</div>
-      <h2 class="sec-title">Parts — 철학 공정의 단계</h2>
-      <p class="sec-desc">5개 Parts는 철학적 사고에서 모듈 출판까지의 공정을 정의한다.</p>
-      <div class="parts-nav" id="partsNav"></div>
-    </div>
-
-    <div class="wing-section compact">
-      <div class="sec-label">Generator Hub · 14개 Generator</div>
-      <h2 class="sec-title">모듈을 만드는 도구들</h2>
-      <p class="sec-desc">사고 과정을 앱으로 출판하는 작업대. Generator가 철학을 모델로, 모델을 앱으로 바꾼다.</p>
-      <div class="gen-grid" id="genGrid"></div>
-    </div>
-
-    <div class="wing-section compact">
-      <div class="sec-label">FAB Factory Floor · 제조 공정</div>
-      <h2 class="sec-title">8개 라우트, 하나의 공장</h2>
-      <p class="sec-desc">RT-α 콘텐츠 생산에서 RT-θ 인프라까지. Generator는 각 라우트에 배정되고, 출력물은 output_repo로 자동 출하된다.</p>
-      <div class="fab-floor" id="fabFloorContent"><div style="color:var(--ink3);font-size:12px;">로딩 중...</div></div>
-      <div style="margin-top:24px;">
-        <div class="ws-label">Cross-Repo Map · 레포 역할 맵</div>
-        <div class="cross-repo" id="crossRepoMap"><div style="color:var(--ink3);font-size:12px;">로딩 중...</div></div>
-      </div>
-    </div>
-
-    <div class="wing-section compact">
-      <div class="sec-label">PHL Protocol · 상태 전이 인터페이스</div>
-      <h2 class="sec-title">철학적 사고 프로토콜</h2>
-      <p class="sec-desc">PHL(Protocol for Human Language) — 의미 압축 프로토콜. 3개 토큰(Expansion/Hardening/Reverse)이 사고 상태를 전이한다.</p>
-      <div class="phl-grid">
-        <div class="phl-card">
-          <div class="phl-token">PHL-Expansion</div>
-          <div class="phl-name">모듈 확장 · 견고화</div>
-          <div class="phl-desc">에러 처리 강화, 로깅 추가, 인터페이스 정리, 테스트 추가. 단계별 수행 → 커밋.</div>
-          <a href="phl-spec/PHL-Expansion.html" class="phl-spec-link">Generator 열기 →</a>
-        </div>
-        <div class="phl-card">
-          <div class="phl-token">PHL-Hardening</div>
-          <div class="phl-name">보안 하드닝</div>
-          <div class="phl-desc">입력 검증, 인증/인가 우회 차단, 비밀키 환경변수 이동, 안정성 강화.</div>
-          <a href="phl-spec/PHL-Hardening.html" class="phl-spec-link">Generator 열기 →</a>
-        </div>
-        <div class="phl-card">
-          <div class="phl-token">PHL-Reverse</div>
-          <div class="phl-name">역방향 검증</div>
-          <div class="phl-desc">정방향 흐름 매핑 → 역방향 설계 → 역순 로깅 → 정역 일관성 테스트 → 불일치 리포트.</div>
-          <a href="phl-spec/PHL-Reverse.html" class="phl-spec-link">Generator 열기 →</a>
-        </div>
-        <div class="phl-card">
-          <div class="phl-token">스펙 원본</div>
-          <div class="phl-name">PHL_SPEC.md</div>
-          <div class="phl-desc">46개 테스트 케이스 · FAB 계약 · 실행 사이클. PHL 최상위 SSOT.</div>
-          <a href="PHL_SPEC.md" class="phl-spec-link" target="_blank" rel="noopener">읽기 →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="wing-section compact">
-      <div class="ws-label">Dual Lane Architecture</div>
-      <h2 class="sec-title">2개 컴파일러</h2>
-      <p class="sec-desc">사건과 대화를 동시에 지식과 프롬프트로 변환하는 이중 레인.</p>
-      <div class="dual-lane">
-        <div class="lane-card">
-          <div class="lane-icon">🎓</div>
-          <div class="lane-name">Lane A · University</div>
-          <div class="lane-title">Knowledge Compiler</div>
-          <div class="lane-desc">사건 → Knowledge Atom. Context · Decision · Reason · Outcome · Route. 5개 Design Type으로 즉시 분류.</div>
-          <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener" class="lane-link">EAE University →</a>
-        </div>
-        <div class="lane-card">
-          <div class="lane-icon">🌀</div>
-          <div class="lane-name">Lane B · Orbit</div>
-          <div class="lane-title">Prompt Compiler</div>
-          <div class="lane-desc">대화 → Prompt Atom. intent · target · constraints · tone · done_criteria. 6개 Prompt Type.</div>
-          <a href="orbit/atoms/" class="lane-link">Orbit Atoms →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="wing-section compact">
-      <div class="ws-label">Physical Output · 물성화 채널</div>
-      <h2 class="sec-title">디지털에서 아날로그로</h2>
-      <p class="sec-desc">576px 감열지에 출력하여 손에 쥐는 지식으로 물성화. 철학 카드 · 암기장 · 처방전 · 정산표.</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        <a href="prompts/printer/" class="btn-secondary">포맷 살펴보기 →</a>
-        <a href="prompts/printer/printer-format.html" class="btn-primary">Generator 열기 →</a>
-      </div>
-    </div>
-
-    <div class="wing-section compact">
-      <div class="ws-label">Perplexity Spaces · 8개 지식 공간</div>
-      <div class="spaces-grid" id="spacesGrid"></div>
-    </div>
+  <div class="node-section">
+    <div class="node-section-title">MCP 도구 · MCP TOOLS</div>
+    <a class="node-item" href="political-mcp/index.html">정치 MCP<div class="node-item-sub">parksy-political</div></a>
+    <a class="node-item" href="parksy-finance-mcp/index.html">금융 MCP<div class="node-item-sub">parksy-finance</div></a>
+    <a class="node-item" href="dollar-system-mcp/WHITEPAPER.md">달러 MCP 백서<div class="node-item-sub">parksy-dollar v2.2</div></a>
   </div>
-
-  <!-- ════════════════════════════════════════════ -->
-  <!-- WING C: ARCHIVE (아카이브)                  -->
-  <!-- ════════════════════════════════════════════ -->
-  <div class="wing-panel" id="wingArchive">
-    <div class="wing-section">
-      <div class="sec-label">Ecosystem · 29개 레포 생태계</div>
-      <h2 class="sec-title">5개 계층, 하나의 OS</h2>
-      <p class="sec-desc">Tier 1 본사에서 Tier 5 인프라까지. 각 레포는 공장이고, 커밋은 전표이며, 전체는 하나의 분산 운영체계다. 모든 레포는 <a href="https://github.com/dtslib1979" target="_blank" rel="noopener" style="color:var(--purple2)">dtslib1979</a> GitHub Organization 아래 운영된다.</p>
-      <div class="eco-map" id="ecoMap"><div style="color:var(--ink3);font-size:12px;">로딩 중...</div></div>
-    </div>
-
-    <div class="wing-section compact">
-      <div class="sec-label">Repo Stories · 레포 서사</div>
-      <h2 class="sec-title">각 레포는 한 권의 소설이다</h2>
-      <p class="sec-desc">헌법 제1조: 모든 레포지토리는 소설책이다. 커밋이 문장이고, 브랜치가 챕터이고, git log --reverse가 줄거리다.</p>
-      <div class="story-grid" id="storyGrid"><div style="color:var(--ink3);font-size:12px;">로딩 중...</div></div>
-    </div>
-
-    <div class="wing-section compact">
-      <div class="sec-label">Studio Journal · 과정 기록</div>
-      <h2 class="sec-title">최근 세션 로그</h2>
-      <p class="sec-desc">어떤 문제를 만났고, 어떻게 해결했고, 뭘 배웠는지 — 그 과정이 여기 남는다.</p>
-      <div class="journal-list" id="journalContainer">
-        <div class="journal-item">
-          <div class="journal-date">2026-05-30</div>
-          <div class="journal-title">축구협회 수학 모델 — Φ-I-C-K-P 프레임워크 완성</div>
-          <div class="journal-body">97/100 점수로 축구협회 경기력 모델 완성. 철학·인프라·컨텍스트·전략·슈퍼스타의 5변수 동적 모델. 백서 + 인터랙티브 계산기 + 30시즌 시뮬레이션을 하나의 Thought Module로 출판.</div>
-        </div>
-        <div class="journal-item">
-          <div class="journal-date">2026-04-22</div>
-          <div class="journal-title">OrbitPrompt 근본 재정의 — 스튜디오(엔진), 사이트(저널)</div>
-          <div class="journal-body">도구 쇼케이스로 쓰던 사이트를 과정 저널로 전환. Generator는 밖으로 납품하고 사이트엔 왜 만들었는지만 남긴다.</div>
-        </div>
-        <div class="journal-item">
-          <div class="journal-date">2026-04-18</div>
-          <div class="journal-title">FAB 컴퓨트 아키텍처 확정 — CapEx 제로</div>
-          <div class="journal-body">저장=GitHub/CDN, 연산=Railway MCP, GPU=Vast.ai. 클라우드 서버 영구 포기. 28레포 전부 이 모델 따름.</div>
-        </div>
-      </div>
-      <div style="margin-top:16px;">
-        <a href="docs/SESSION-LOG-20260422.md" class="journal-link" target="_blank" rel="noopener">전체 세션 로그 →</a>
-      </div>
-    </div>
-
-    <div class="wing-section compact">
-      <div class="sec-label">철학 문서</div>
-      <h2 class="sec-title">백서와 철학</h2>
-      <p class="sec-desc">OrbitPrompt의 철학적 기반을 정의하는 문서들.</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        <a href="whitepaper.html" class="btn-primary">백서 읽기 →</a>
-        <a href="philosophy.html" class="btn-secondary">7축 철학 →</a>
-        <a href="docs/ORBITPROMPT-POSITION-PAPER.md" class="btn-secondary">Position Paper →</a>
-        <a href="docs/extension-pack-report.md" class="btn-secondary">확장팩 리포트 →</a>
-        <a href="docs/mcp-architecture.md" class="btn-secondary">MCP 아키텍처 →</a>
-        <a href="PHL_SPEC.md" class="btn-secondary" target="_blank" rel="noopener">PHL Spec →</a>
-      </div>
-    </div>
-
-    <div class="wing-section compact" id="philosopherFeed">
-      <div class="sec-label">@philosopher-parksy · 최신 영상</div>
-      <h2 class="sec-title">철학자 박씨 채널</h2>
-      <p class="sec-desc">OrbitPrompt · dtslib-papyrus · parksy-logs — 이 세 레포의 산출물이 여기 올라온다.</p>
-      <div class="yt-grid" id="philosopherYtContainer"><div class="yt-loading">로딩 중…</div></div>
-    </div>
-
-    <div class="wing-section compact">
-      <div class="sec-label">EAE University · 최신 강의</div>
-      <h2 class="sec-title">EAE 최신 영상</h2>
-      <p class="sec-desc">@EAE-University 채널 최신 업로드. GitHub Actions 자동 갱신.</p>
-      <div class="yt-grid" id="ytLatestContainer"><div class="yt-loading">로딩 중…</div></div>
-    </div>
-
-    <div class="wing-section compact" id="discordSection" style="display:none;">
-      <div class="sec-label">Discord · orbitprompt 채널</div>
-      <h2 class="sec-title">최신 공지</h2>
-      <p class="sec-desc">Discord #orbitprompt 채널 최신 메시지. 30분마다 자동 갱신.</p>
-      <div class="discord-list" id="discordContainer"><div class="discord-loading">로딩 중…</div></div>
-    </div>
-
-    <div class="wing-section compact">
-      <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener" class="eae-link">
-        <div class="eae-link-label">대학교 · 6대 스킬셋</div>
-        <div class="eae-link-title">EAE University →</div>
-        <div class="eae-link-desc">없는 걸 만드는 게 아니다. 있는 걸 해체하고 재조합한다.<br>EML · QSketch · MAL · PENON · PHL · Patchtech</div>
-      </a>
-    </div>
+  <div class="node-section">
+    <div class="node-section-title">제너레이터 · GENERATORS</div>
+    <a class="node-item" href="prompts/chalkboard/index.html">칠판 Generator<div class="node-item-sub">방송용 템플릿</div></a>
+    <a class="node-item" href="prompts/identity/index.html">Identity Engine<div class="node-item-sub">7축 자기 모델링</div></a>
+    <a class="node-item" href="prompts/broadcast/parksy-brain-season.html">Broadcast<div class="node-item-sub">시즌 기획</div></a>
+    <a class="node-item" href="prompts/apk/index.html">PWA Generator<div class="node-item-sub">앱 제조</div></a>
   </div>
+  <div class="node-section">
+    <div class="node-section-title">아카이브 · ARCHIVE</div>
+    <a class="node-item" href="archive.html">Archive<div class="node-item-sub">전체 작업물</div></a>
+    <a class="node-item" href="map.html">Map<div class="node-item-sub">레포 지도</div></a>
+    <a class="node-item" href="links/index.html">Links<div class="node-item-sub">외부 링크</div></a>
+  </div>
+</div>
 
-  <footer>
-    <div class="footer-brand">OrbitPrompt</div>
-    <div class="footer-links">
-      <a href="links/">Links</a>
-      <a href="philosophy.html">7축 철학</a>
-      <a href="docs/PHI7-ECO-COUNTER-METHOD.md" style="color:#d4af37;">📜 에코 카운터 방법론</a>
-      <a href="whitepaper.html">Whitepaper</a>
-      <a href="football-model/index.html">축구 모델</a>
-        <a href="football-model/wc2026-predictor.html" style="color:#e02b22;font-weight:600;">WC2026 예측기 🏆</a>
-        <a href="football-model/case-study-wc2026.html" style="color:#28c76f;font-weight:600;">📊 케이스 스터디</a>
-      <a href="about/position.html">About</a>
-      <a href="prompts/broadcast/parksy-brain-season.html" target="_blank">Broadcast</a>
-      <a href="prompts/publisher/" target="_blank">Publisher</a>
-      <a href="prompts/printer/" target="_blank">Printer</a>
-      <a href="PHL_SPEC.md" target="_blank" rel="noopener">PHL Spec</a>
-      <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener">EAE-Univ</a>
-      <a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" rel="noopener">GitHub</a>
-    </div>
-    <p class="footer-copy">© 2026 OrbitPrompt · 철학 갤러리. 사고가 전시가 되는 순간.</p>
-  </footer>
-  <script>
+<footer>
+  <div class="footer-brand">ORBITPROMPT · 2026</div>
+  <div class="footer-right">
+    <a href="archive.html">Archive</a>
+    <a href="map.html">Map</a>
+    <a href="links/index.html">Links</a>
+    <a href="football-model/index.html">축구 모델</a>
+    <a href="parksy-finance-mcp/index.html">Finance MCP</a>
+    <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener">EAE Univ</a>
+    <a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
+<script>
+/* ── NODE GRAPH DATA ── */
+const GOLD  = 'rgba(212,175,55,';
+const PUR   = 'rgba(168,85,247,';
+const CYAN  = 'rgba(34,211,238,';
+const GRN   = 'rgba(74,222,128,';
+const WHT   = 'rgba(255,255,255,';
+
+const CENTER = {x:510, y:350, r:34, label:'OrbitPrompt', type:'center'};
+
+/* hub nodes */
+const HUBS = [
+  {id:'phi',   x:510, y:155, r:20, label:'철학',    color:GOLD,  ec:'rgba(212,175,55,.18)'},
+  {id:'mod',   x:740, y:245, r:20, label:'모듈',    color:PUR,   ec:'rgba(168,85,247,.18)'},
+  {id:'mcp',   x:720, y:470, r:20, label:'MCP',    color:CYAN,  ec:'rgba(34,211,238,.18)'},
+  {id:'gen',   x:280, y:470, r:20, label:'생성기',  color:GRN,   ec:'rgba(74,222,128,.18)'},
+  {id:'arch',  x:265, y:245, r:20, label:'아카이브', color:WHT,  ec:'rgba(255,255,255,.14)'},
+];
+
+/* leaf nodes */
+const LEAVES = [
+  // Philosophy
+  {hub:'phi', x:360, y:50,  r:15, label:'WHY',          sub:'존재 이유',     href:'why.html',          color:GOLD},
+  {hub:'phi', x:510, y:30,  r:15, label:'백서',          sub:'Whitepaper',    href:'whitepaper.html',   color:GOLD},
+  {hub:'phi', x:660, y:50,  r:15, label:'7축 철학',      sub:'Φ7',            href:'philosophy.html',   color:GOLD},
+
+  // Thought Modules
+  {hub:'mod', x:880, y:155, r:15, label:'축구 모델',     sub:'98pts',         href:'football-model/index.html',              color:PUR},
+  {hub:'mod', x:960, y:290, r:15, label:'WC2026',        sub:'예측기',        href:'football-model/wc2026-predictor.html',   color:PUR},
+  {hub:'mod', x:920, y:430, r:15, label:'선거 MCP',      sub:'100pts',        href:'boards/election-gallery.html',           color:PUR},
+  {hub:'mod', x:840, y:550, r:15, label:'달러 시스템',   sub:'DSI',           href:'boards/dollar-system-whitepaper.html',   color:PUR},
+
+  // MCP Tools
+  {hub:'mcp', x:870, y:590, r:15, label:'정치 MCP',      sub:'parksy-pol',    href:'political-mcp/index.html',        color:CYAN},
+  {hub:'mcp', x:820, y:670, r:14, label:'금융 MCP',      sub:'parksy-fin',    href:'parksy-finance-mcp/index.html',   color:CYAN},
+  {hub:'mcp', x:650, y:670, r:14, label:'달러 MCP',      sub:'parksy-dollar', href:'dollar-system-mcp/WHITEPAPER.md', color:CYAN},
+  {hub:'mcp', x:550, y:650, r:14, label:'산초 철학',     sub:'언어생활',      href:'boards/sancho-philosophy.html',   color:CYAN},
+
+  // Generators
+  {hub:'gen', x:140, y:570, r:15, label:'칠판',          sub:'Chalkboard',    href:'prompts/chalkboard/index.html',              color:GRN},
+  {hub:'gen', x:100, y:430, r:15, label:'Identity',      sub:'Engine',        href:'prompts/identity/index.html',                color:GRN},
+  {hub:'gen', x:145, y:285, r:15, label:'Broadcast',     sub:'방송',          href:'prompts/broadcast/parksy-brain-season.html', color:GRN},
+  {hub:'gen', x:250, y:180, r:14, label:'PWA',           sub:'Generator',     href:'prompts/apk/index.html',                     color:GRN},
+  {hub:'gen', x:350, y:640, r:14, label:'Printer',       sub:'물성화',        href:'prompts/printer/',                           color:GRN},
+
+  // Archive
+  {hub:'arch', x:110, y:180, r:14, label:'Archive',      sub:'전체 작업물',   href:'archive.html',    color:WHT},
+  {hub:'arch', x: 95, y:315, r:14, label:'Map',          sub:'레포 지도',     href:'map.html',        color:WHT},
+  {hub:'arch', x:165, y:645, r:14, label:'Links',        sub:'외부링크',      href:'links/index.html', color:WHT},
+];
+
+/* ── RENDER ── */
+const svg = document.getElementById('nodeMap');
+const NS = 'http://www.w3.org/2000/svg';
+
+function el(tag, attrs) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  return e;
+}
+
+function makeLine(x1,y1,x2,y2,cls) {
+  return el('line',{x1,y1,x2,y2,class:'edge '+cls});
+}
+
+function wrapLink(href) {
+  const a = document.createElementNS(NS, 'a');
+  a.setAttributeNS('http://www.w3.org/1999/xlink','href',href);
+  a.setAttribute('href',href);
+  return a;
+}
+
+function tspan(text, dy, size, fill) {
+  const t = document.createElementNS(NS,'tspan');
+  t.setAttribute('x','0');
+  t.setAttribute('dy',dy);
+  t.style.fontSize = size+'px';
+  t.style.fill = fill;
+  t.textContent = text;
+  return t;
+}
+
+// ── defs: glow filter ──
+const defs = el('defs',{});
+['gold','pur','cyan','grn'].forEach((id,i)=>{
+  const cols = ['#d4af37','#a855f7','#22d3ee','#4ade80'];
+  const f = el('filter',{id:'glow-'+id, x:'-30%',y:'-30%',width:'160%',height:'160%'});
+  const fe1 = el('feGaussianBlur',{stdDeviation:'3',result:'blur'});
+  const fe2 = el('feFlood',{'flood-color':cols[i],'flood-opacity':'0.35',result:'color'});
+  const fe3 = el('feComposite',{in:'color',in2:'blur',operator:'in',result:'glow'});
+  const fm = el('feMerge',{});
+  [el('feMergeNode',{in:'glow'}),el('feMergeNode',{in:'SourceGraphic'})].forEach(n=>fm.appendChild(n));
+  [fe1,fe2,fe3,fm].forEach(n=>f.appendChild(n));
+  defs.appendChild(f);
+});
+svg.appendChild(defs);
+
+const glowMap = {phi:'gold',mod:'pur',mcp:'cyan',gen:'grn',arch:null};
+const filterMap = {phi:'url(#glow-gold)',mod:'url(#glow-pur)',mcp:'url(#glow-cyan)',gen:'url(#glow-grn)',center:'url(#glow-gold)'};
+
+// ── edges: center → hubs ──
+HUBS.forEach(h=>{
+  svg.appendChild(makeLine(CENTER.x,CENTER.y, h.x, h.y, 'edge-'+h.id));
+});
+
+// ── edges: hubs → leaves ──
+LEAVES.forEach(leaf=>{
+  const hub = HUBS.find(h=>h.id===leaf.hub);
+  svg.appendChild(makeLine(hub.x,hub.y, leaf.x, leaf.y, 'edge-'+leaf.hub));
+});
+
+// ── leaf nodes ──
+LEAVES.forEach(leaf=>{
+  const hub = HUBS.find(h=>h.id===leaf.hub);
+  const gf = glowMap[leaf.hub];
+  const colorFill = leaf.color+'0.7)';
+  const colorStroke = leaf.color+'0.4)';
+
+  const a = wrapLink(leaf.href);
+  a.setAttribute('class','leaf-group');
+  a.style.cursor='pointer';
+
+  const circ = el('circle',{
+    cx:leaf.x, cy:leaf.y, r:leaf.r,
+    fill: leaf.color+'0.08)',
+    stroke: colorStroke,
+    'stroke-width':'1',
+    class:'leaf-circle'
+  });
+  circ.style.transition='all .25s';
+  a.appendChild(circ);
+
+  // dot in center
+  const dot = el('circle',{cx:leaf.x,cy:leaf.y,r:3, fill:colorFill});
+  a.appendChild(dot);
+
+  // label text
+  const txt = el('text',{
+    x:leaf.x, y:leaf.y+leaf.r+13,
+    class:'leaf-label',
+    'text-anchor':'middle'
+  });
+  txt.textContent = leaf.label;
+  a.appendChild(txt);
+
+  // hover effects
+  a.addEventListener('mouseenter',()=>{
+    circ.setAttribute('fill', leaf.color+'0.18)');
+    circ.setAttribute('stroke', leaf.color+'0.7)');
+    if(gf) circ.setAttribute('filter','url(#glow-'+gf+')');
+  });
+  a.addEventListener('mouseleave',()=>{
+    circ.setAttribute('fill', leaf.color+'0.08)');
+    circ.setAttribute('stroke', colorStroke);
+    circ.removeAttribute('filter');
+  });
+
+  svg.appendChild(a);
+});
+
+// ── hub nodes ──
+HUBS.forEach(hub=>{
+  const gf = glowMap[hub.id];
+  const colorFill = hub.color+'0.1)';
+  const colorStroke = hub.color+'0.35)';
+
+  const g = document.createElementNS(NS,'g');
+  g.setAttribute('class','hub-group');
+
+  const ring = el('circle',{
+    cx:hub.x,cy:hub.y,r:hub.r+8,
+    fill:'none',
+    stroke:hub.color+'0.06)',
+    'stroke-width':'1',
+  });
+  g.appendChild(ring);
+
+  const circ = el('circle',{
+    cx:hub.x,cy:hub.y,r:hub.r,
+    fill: colorFill,
+    stroke: colorStroke,
+    'stroke-width':'1.5',
+    class:'hub-circle'
+  });
+  g.appendChild(circ);
+
+  const txt = el('text',{
+    x:hub.x,y:hub.y+hub.r+14,
+    class:'hub-label'
+  });
+  txt.textContent = hub.label;
+  g.appendChild(txt);
+
+  g.addEventListener('mouseenter',()=>{
+    circ.setAttribute('fill', hub.color+'0.22)');
+    circ.setAttribute('stroke', hub.color+'0.7)');
+    if(gf) circ.setAttribute('filter','url(#glow-'+gf+')');
+  });
+  g.addEventListener('mouseleave',()=>{
+    circ.setAttribute('fill', colorFill);
+    circ.setAttribute('stroke', colorStroke);
+    circ.removeAttribute('filter');
+  });
+
+  svg.appendChild(g);
+});
+
+// ── center node ──
 (() => {
-  /* ======== MODULES DATA ======== */
-  const MODULES = [
-    {
-      category: 'Quantum',
-      id: 'football',
-      icon: '⚽',
-      domain: '축구',
-      number: '01',
-      title: 'KFA Φ-I-C-K-P 시뮬레이터',
-      desc: '축구협회장 선출 모델 v2. Chart.js 4뷰 + 5인 레이더 비교 + L 게이트 선출 + 4대 위험 시나리오 + 20년 시뮬레이터.',
-      tags: ['Φ ∈ Δ²', 'Chart.js', 'L 게이트', 'Monte Carlo'],
-      score: 98,
-      maxScore: 100,
-      status: 'live',
-      fromLog: 'ParksyLog_20260530',
-      path: 'football-model/index.html',
-      wc2026: 'football-model/wc2026-predictor.html',
-      casestudy: 'football-model/case-study-wc2026.html',
-      whitepaper: 'football-model/whitepaper.html',
-      year: '2026',
-      medium: 'Interactive Mathematical Model',
-      casestudy: 'football-model/case-study-wc2026.html',
-      corner: '축구'
-    },
-    {
-      category: 'Zoom',
-      id: 'election-mcp',
-      icon: '🧪',
-      domain: '정치철학',
-      number: '02',
-      title: 'PARKSY ELECTION MCP',
-      desc: 'AI 시대 유권자를 위한 정치 사고 모델. MCP 하나 띄워놓고 선거를 같은 언어로 읽는다. direction_acc 100% · 12개 델타 레이어 · 10개 도구.',
-      tags: ['F=ma', '정치철학', 'MCP', 'AI유권자'],
-      score: 100,
-      maxScore: 100,
-      usage: 'Claude Code에 등록: ~/.claude.json → "parksy_election":{"command":"python3","args":["server.py"]} → research_election("부산", ["전재수","박형준"])',
-      status: 'live',
-      fromLog: '2026-06-03',
-      path: 'boards/election-gallery.html',
-      whitepaper: 'docs/election-mcp-spec-100.md',
-      year: '2026',
-      medium: 'MCP Political Engine',
-      corner: '정치'
-    },
-    {
-      category: 'Zoom',
-      id: 'political-phi7',
-      icon: '🏛️',
-      domain: '정치',
-      number: '02b',
-      title: 'Φ7 정치 MCP — Φ-I-C-K-P-7AXIS',
-      desc: '정치인 7축 프로필·두 정치인 비교·정책 영향 예측·전략 리포트. 보좌관이 상대 의원 분석용 B2B 도구. Φ드라이버 7축이 전부 — 일반 LLM 래퍼 없음.',
-      tags: ['Φ7', 'MCP', 'B2B', '보좌관', '7축'],
-      score: 87,
-      maxScore: 100,
-      status: 'live',
-      fromLog: '2026-06-08',
-      path: 'https://dtslib1979.github.io/dtslib-branch/mcp/',
-      whitepaper: 'https://github.com/dtslib1979/dtslib-branch/blob/main/mcp/README.md',
-      year: '2026',
-      medium: 'MCP 정치 분석 엔진',
-      corner: '정치'
-    },
-    {
-      category: 'Quantum',
-      id: 'wc2026-mcp',
-      icon: '🏆',
-      domain: '축구',
-      number: '01b',
-      title: 'WC2026 Φ-I-C-K-P 예측 MCP',
-      desc: '3332경기 실데이터 + Φ12 12차원 모델 + 7드라이버 + 10,000회 MC 시뮬레이션. Wikipedia FIFA 랭킹 + ELO 실제 계산. 3레이어 비교(Φ12 vs Φ5 vs ELO). Python MCP server.py 구현 완료.',
-      tags: ['MCP', 'MC 10K', 'Φ12', '7드라이버', 'ELO'],
-      score: 93,
-      maxScore: 100,
-      status: 'live',
-      fromLog: '2026-06-08',
-      path: 'football-model/mcp/',
-      whitepaper: 'football-model/mcp/README.md',
-      year: '2026',
-      medium: 'MCP 축구 예측 엔진',
-      corner: '축구'
-    },
-    {
-      category: 'Meta',
-      id: 'mcp-methodology',
-      icon: '🏗️',
-      domain: '방법론',
-      number: '03',
-      title: 'PARKSY MCP METHODOLOGY',
-      desc: '"에이전트로 MCP를 만들고, MCP로 LLM을 족쇄 채운다." 인간 사고 ↔ LLM 대화 → 에이전트 MCP 생성 → 족쇄 완성. 지금까지 없었던 MCP 개발법. direction_acc 100% 증명.',
-      tags: ['MCP', '방법론', '5단계', '족쇄'],
-      score: 100,
-      maxScore: 100,
-      status: 'live',
-      fromLog: '2026-06-04',
-      path: 'boards/mcp-methodology.html',
-      whitepaper: 'docs/MCP_DEVELOPMENT_METHODOLOGY.md',
-      year: '2026',
-      medium: 'MCP Development Methodology',
-      corner: '방법론'
-    },
-    {
-      category: 'Meta',
-      id: 'phi7-counter',
-      icon: '🧠',
-      domain: '철학',
-      number: '07',
-      title: 'Φ7 철학 카운터 MCP',
-      desc: '11명 철학자 vs 박씨 — Φ7 7축 동적 유사도 분석. discover/rank/map/id_update/counter 툴. 자카드 유사도 기반 진짜 발견 엔진.',
-      tags: ['Φ7', '자카드 유사도', '11명 철학자', 'ID 엔진'],
-      score: 100,
-      maxScore: 100,
-      status: 'live',
-      fromLog: '2026-06-08',
-      path: 'philosophy-counter/mcp/server.py',
-      whitepaper: 'docs/PHI7-COUNTER-MCP-REVIEW-v1.md',
-      year: '2026',
-      medium: 'MCP 철학 분석 엔진',
-      corner: '철학'
-    },
-    {
-      category: 'Meta',
-      id: 'identity-mcp',
-      icon: '🪞',
-      domain: '정체성',
-      number: '08',
-      title: 'ID-MANIFEST MCP',
-      desc: '박씨 정체성 6줄 + 포지셔닝 + 선언. six_lines/positioning/manifesto/full 툴. 자기 모델을 조회하고 업데이트하는 엔진.',
-      tags: ['ID 엔진', '6줄 정체성', '메타모델러', 'MANIFEST'],
-      score: 100,
-      maxScore: 100,
-      status: 'live',
-      fromLog: '2026-06-08',
-      path: 'identity-mcp/mcp/server.py',
-      year: '2026',
-      medium: 'MCP 정체성 엔진',
-      corner: '철학'
-    },
-    {
-      category: 'Reverse',
-      id: 'branch-philosophy-mcp',
-      icon: '🌿',
-      domain: '파트너십',
-      number: '09',
-      title: '브랜치 철학 MCP',
-      desc: '팀 아님, 전부 브랜치. 파트너십 원칙 + fork/merge/레포=기억 철학. principles/cases/apply 툴.',
-      tags: ['브랜치', '파트너십', 'fork 비용 0', '레포=기억'],
-      score: 100,
-      maxScore: 100,
-      status: 'live',
-      fromLog: '2026-06-08',
-      path: 'branch-philosophy-mcp/mcp/server.py',
-      year: '2026',
-      medium: 'MCP 철학 엔진',
-      corner: '철학'
-    },
-    {
-      category: 'Modular',
-      id: 'terminal-condition-mcp',
-      icon: '⚡',
-      domain: '모순 엔진',
-      number: '10',
-      title: '단말기 조건 MCP',
-      desc: '박씨 내부 모순 덩어리 — 여성성/남성성, 민주당/약자 혐오, 천민/엘리트. contradictions/analyze/resolve 툴.',
-      tags: ['모순', '단말기 조건', '드라이버 전환', '복잡계'],
-      score: 100,
-      maxScore: 100,
-      status: 'live',
-      fromLog: '2026-06-08',
-      path: 'terminal-condition-mcp/mcp/server.py',
-      year: '2026',
-      medium: 'MCP 모순 분석 엔진',
-          {
-      category: 'Zoom',
-      id: 'dollar-system',
-      icon: '💵',
-      domain: '금융철학',
-      number: '06',
-      title: '달러 시스템 백서 — 금융 철학',
-      desc: '달러 기축체제, 원·달러 환율, 사제적 해석권, 자기 명의·자기 계산을 하나의 연쇄로 묶는다. 핵심 명제: 달러 시스템은 설계가 아니라 누적된 땜빵이다.',
-      tags: ['달러', '환율', '금융철학', '해석권'],
-      score: 95,
-      maxScore: 100,
-      status: 'live',
-      fromLog: '2026-06-08',
-      path: 'boards/dollar-system-whitepaper.html',
-      whitepaper: 'boards/dollar-system-whitepaper.html',
-      year: '2026',
-      medium: 'Financial Philosophy Whitepaper',
-      corner: '금융철학'
-    },    {
-      category: 'Zoom',
-      id: 'dollar-system-mcp',
-      icon: '💰',
-      domain: '금융철학',
-      number: '06b',
-      title: '달러 시스템 MCP v2.0 — 환율 예측 엔진',
-      desc: '실시간 yfinance 드라이버(USDKRW/DXY/TNX/VIX) + 선형회귀 30일 예측 + 95% 신뢰구간. 툴: analyze/drivers/predict/structure/phi7_map/timeline/compare',
-      tags: ['MCP', '달러', '환율', '예측모델', '구조분석'],
-      score: 100,
-      maxScore: 100,
-      status: 'live',
-      fromLog: '2026-06-08',
-      path: 'dollar-system-mcp/mcp/server.py',
-      year: '2026',
-      medium: 'MCP 금융 예측 엔진',
-      corner: '금융철학'
-    },
-    {
-      category: 'Language',
-      id: 'empty-1',
-      icon: '◇',
-      domain: '준비중',
-      number: '04',
-      title: 'Next Module',
-      desc: '다음 사고 과정이 여기에 등록됩니다.',
-      tags: [],
-      desc: 'ParksyLog에서 추출한 다음 사고 과정이 여기에 등록됩니다.',
-      tags: [],
-      score: 0,
-      maxScore: 100,
-      status: 'planned',
-      path: '',
-      year: '',
-      medium: '',
-      corner: ''
-    },
-    {
-      category: 'Spiral',
-      id: 'empty-2',
-      icon: '◇',
-      domain: '준비중',
-      number: '03',
-      title: '철학 모듈',
-      desc: '7축 철학 프레임워크를 대화형 모델로 시각화.',
-      tags: [],
-      score: 0,
-      maxScore: 100,
-      status: 'planned',
-      path: '',
-      year: '',
-      medium: '',
-      corner: ''
-    },
-    {
-      category: 'Modular',
-      id: 'finance-ratio',
-      icon: '📊',
-      domain: '금융',
-      number: '04',
-      title: '재무비율을 철학하는 모델',
-      desc: '비율은 공식이 아니라 관계, 질문, 국면, 선택의 기준이다. 12개 재무비율(시계) × 5개 관점(분) = 60개 분석 슬롯. 각 좌표를 LLM이 60갑자 서사로 자동 해석하는 MCP 분석 엔진. Form/Flow/Frag/Field/Fit 5관점 + SMART/CLAND 10축 해석.',
-      tags: ['12비율', '60갑자', 'MCP', 'SMART/CLAND', '철학'],
-      score: 92,
-      maxScore: 100,
-      status: 'live',
-      fromLog: 'ParksyLog_20260531',
-      path: 'parksy-finance-mcp/index.html',
-      whitepaper: 'parksy-finance-mcp/whitepaper.html',
-      year: '2026',
-      medium: 'MCP Analysis Engine',
-      corner: '금융'
-    },
-    {
-      category: 'Reverse',
-      id: 'empty-3',
-      icon: '◇',
-      domain: '준비중',
-      number: '05',
-      title: '실패·케이스스터디',
-      desc: '예측 대비 실제 결과 비교. 역방향 설계와 학습 아카이브.',
-      tags: [],
-      score: 0,
-      maxScore: 100,
-      status: 'planned',
-      path: '',
-      year: '',
-      medium: '',
-      corner: ''
-    },
-  ];
+  const cx = CENTER.x, cy = CENTER.y, r = CENTER.r;
 
-  /* ======== WING SWITCHING ======== */
-  const wingBtns = document.querySelectorAll('.wing-btn');
-  const wingPanels = {
-    gallery: document.getElementById('wingGallery'),
-    studio: document.getElementById('wingStudio'),
-    archive: document.getElementById('wingArchive')
-  };
+  const ring2 = el('circle',{cx,cy,r:r+18,fill:'none',stroke:'rgba(212,175,55,.04)','stroke-width':'1'});
+  const ring1 = el('circle',{cx,cy,r:r+9, fill:'none',stroke:'rgba(212,175,55,.08)','stroke-width':'1'});
+  const circ  = el('circle',{cx,cy,r,fill:'rgba(212,175,55,.1)',stroke:'rgba(212,175,55,.5)','stroke-width':'1.5','filter':'url(#glow-gold)'});
 
-  function switchWing(name) {
-    wingBtns.forEach(b => b.classList.toggle('active', b.dataset.wing === name));
-    Object.entries(wingPanels).forEach(([k, el]) => {
-      if (el) el.classList.toggle('active', k === name);
-    });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  const txt = el('text',{x:cx,y:cy+3,class:'center-label'});
+  txt.textContent='OrbitPrompt';
 
-  wingBtns.forEach(btn => {
-    btn.addEventListener('click', () => switchWing(btn.dataset.wing));
+  // pulse animation
+  const pulse = el('animateTransform',{
+    attributeName:'transform',type:'scale',
+    values:'1;1.03;1',dur:'3s',repeatCount:'indefinite',
+    additive:'sum'
   });
-
-  /* ======== EXHIBIT CARD RENDERING ======== */
-  const exhibitGrid = document.getElementById('exhibitGrid');
-  const galleryFooter = document.getElementById('galleryFooter');
-  const wingCountA = document.getElementById('wingCountA');
-
-  function renderExhibits() {
-    const live = MODULES.filter(m => m.status === 'live');
-    const planned = MODULES.filter(m => m.status !== 'live');
-
-    // Category counts
-  const cats = {};
-  MODULES.forEach(m => { const c = m.category || '기타'; cats[c] = (cats[c] || 0) + 1; });
-  document.getElementById('catAll').textContent = '(' + MODULES.length + ')';
-  Object.keys(cats).forEach(c => {
-    const el = document.getElementById('cat' + c);
-    if (el) el.textContent = '(' + cats[c] + ')';
+  const pOrigin = el('animateTransform',{
+    attributeName:'transform',type:'translate',
+    values:`${-cx} ${-cy};${-cx} ${-cy};${-cx} ${-cy}`,
+    dur:'3s',repeatCount:'indefinite'
   });
-
-  exhibitGrid.innerHTML = [...live, ...planned].map(m => {
-      const isLive = m.status === 'live';
-      const tag = isLive ? 'a' : 'div';
-      const href = isLive ? ' href="' + m.path + '"' : '';
-
-      return '<' + tag + href + ' data-category="' + (m.category || '') + '" class="exhibit' + (!isLive ? ' empty' : '') + '">' +
-        '<div class="exhibit-visual">' +
-          '<span class="exhibit-icon">' + m.icon + '</span>' +
-          '<span class="exhibit-status-badge ' + m.status + '">' + (isLive ? '● Published' : '○ Planned') + '</span>' +
-        '</div>' +
-        '<div class="exhibit-label">' +
-          '<div class="exhibit-tag">' + (isLive ? 'PERMANENT COLLECTION' : 'UPCOMING') + '</div>' +
-          '<h2 class="exhibit-title">' + m.title + '</h2>' +
-          '<div class="exhibit-meta">' +
-            '<span>박씨</span>' +
-            (m.year ? '<span class="meta-divider">·</span><span>' + m.year + '</span>' : '') +
-            (m.medium ? '<span class="meta-divider">·</span><span>' + m.medium + '</span>' : '') +
-          '</div>' +
-          '<p class="exhibit-desc">' + m.desc + '</p>' +
-          (m.tags.length ? '<div class="exhibit-tags">' + m.tags.map(t => '<span>' + t + '</span>').join('') + '</div>' : '') +
-          (isLive ? '<div class="exhibit-actions">' +
-            '<span class="exhibit-btn primary">전시품 관란 →</span>' +
-            (m.whitepaper ? '<a href="' + m.whitepaper + '" class="exhibit-btn secondary" onclick="event.stopPropagation()">백서 읽기</a>' : '') +
-          '</div>' : '') +
-        '</div>' +
-        (isLive ? '<div class="exhibit-score">' + m.score + '<small>/' + m.maxScore + '</small></div>' : '') +
-      '</' + tag + '>';
-    }).join('');
-
-    const liveCount = MODULES.filter(m => m.status === 'live').length;
-    galleryFooter.textContent = '총 ' + MODULES.length + '개 전시품 · ' + liveCount + '개 출판됨';
-    if (wingCountA) wingCountA.textContent = '(' + MODULES.length + ')';
-  }
-
-  renderExhibits();
-
-  if (window.GalleryStore) {
-    GalleryStore.modules = MODULES;
-
-  /* Category Filter */
-  document.querySelectorAll('.cat-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const cat = btn.dataset.cat;
-      document.querySelectorAll('.exhibit').forEach(el => {
-        if (cat === 'all' || el.dataset.category === cat) {
-          el.style.display = '';
-        } else {
-          el.style.display = 'none';
-        }
-      });
-    });
+  // simpler: just a circle ring pulse
+  const ringPulse = el('circle',{
+    cx,cy,r:r+2,
+    fill:'none',stroke:'rgba(212,175,55,.2)','stroke-width':'1',
+    opacity:'0.5'
   });
+  const anim = el('animate',{
+    attributeName:'r',values:`${r+2};${r+20};${r+2}`,
+    dur:'3s',repeatCount:'indefinite'
+  });
+  const animOp = el('animate',{
+    attributeName:'opacity',values:'0.5;0;0.5',
+    dur:'3s',repeatCount:'indefinite'
+  });
+  ringPulse.appendChild(anim);
+  ringPulse.appendChild(animOp);
 
-  }
-
-  /* ======== INIT DATA SECTIONS ======== */
-  function initDataSections(store) {
-    renderEcosystem(store.repos);
-    renderFabFloor(store.fab);
-  }
-
-  if (window.GalleryStore && GalleryStore.repos && GalleryStore.repos.length) {
-    initDataSections(GalleryStore);
-  } else {
-    document.addEventListener('GalleryStoreReady', function(e) { initDataSections(e.detail); });
-  }
-
-  renderRepoStories();
-
-  /* ======== ECOSYSTEM MAP ======== */
-  function renderEcosystem(repos) {
-    var mapEl = document.getElementById('ecoMap');
-    if (!mapEl || !Array.isArray(repos) || !repos.length) return;
-    var tierNames = { 1: 'Group HQ', 2: 'Division HQ', 3: 'Studio', 4: 'Venture', 5: 'Infrastructure' };
-    var tierColors = { 1: '#d4af37', 2: '#a855f7', 3: '#22d3ee', 4: '#4ade80', 5: '#666' };
-    var grouped = {};
-    repos.forEach(function(r) { var t = r.tier || 3; if (!grouped[t]) grouped[t] = []; grouped[t].push(r); });
-    mapEl.innerHTML = Object.keys(grouped).sort(function(a,b) { return a-b; }).map(function(tier) {
-      var list = grouped[tier];
-      return '<div class="eco-tier">' +
-        '<div class="eco-tier-header"><span class="eco-tier-badge" style="background:' + tierColors[tier] + '20;color:' + tierColors[tier] + '">' + tier + '</span><span class="eco-tier-label">' + (tierNames[tier] || 'Tier ' + tier) + '</span><span class="eco-tier-count">(' + list.length + ' repos)</span></div>' +
-        '<div class="eco-tier-grid">' +
-          list.map(function(r) {
-            return '<a href="https://github.com/dtslib1979/' + r.id + '" target="_blank" rel="noopener" class="eco-card t' + (r.tier||3) + '">' +
-              '<div class="eco-card-id">' + r.id + '</div>' +
-              '<div class="eco-card-name">' + (r.name || '') + '</div>' +
-              '<div class="eco-card-role">' + (r.role || '') + '</div></a>';
-          }).join('') +
-        '</div></div>';
-    }).join('');
-  }
-
-  /* ======== FAB FACTORY FLOOR ======== */
-  function renderFabFloor(fab) {
-    var floorEl = document.getElementById('fabFloorContent');
-    var crossEl = document.getElementById('crossRepoMap');
-    if (!floorEl || !fab || !fab.routes) return;
-    var routeOrder = ['RT-\u03b1','RT-\u03b2','RT-\u03b3','RT-\u03b4','RT-\u03b5','RT-\u03b6','RT-\u03b7','RT-\u03b8'];
-    floorEl.innerHTML = routeOrder.filter(function(id) { return fab.routes[id]; }).map(function(id) {
-      var r = fab.routes[id];
-      return '<div class="fab-route"><div class="fab-route-top"><span class="fab-route-id">' + id + '</span><span class="fab-route-name">' + r.name + '</span></div>' +
-        '<div class="fab-route-desc">' + (r.desc || '') + '</div>' +
-        '<div class="fab-route-meta">' +
-          (r.generators && r.generators.length ? r.generators.map(function(g) { return '<span class="fab-route-tag gen">\u2699\ufe0f ' + g + '</span>'; }).join('') : '') +
-          (r.output_repos && r.output_repos.length ? r.output_repos.map(function(o) { return '<span class="fab-route-tag repo">\ud83d\udce6 ' + o.split('/').pop() + '</span>'; }).join('') : '') +
-          (r.studio_tools && r.studio_tools.length ? r.studio_tools.map(function(t) { return '<span class="fab-route-tag tool">\ud83d\udd27 ' + t + '</span>'; }).join('') : '') +
-        '</div></div>';
-    }).join('');
-    if (crossEl && fab.cross_repo_map) {
-      crossEl.innerHTML = Object.entries(fab.cross_repo_map).map(function(e) {
-        return '<div class="cross-repo-card"><div class="cross-repo-name">' + e[0] + '</div><div class="cross-repo-role">' + e[1] + '</div></div>';
-      }).join('');
-    }
-  }
-
-  /* ======== REPO STORIES ======== */
-  var REPO_STORIES = [
-    { icon:'\ud83c\udfdb\ufe0f', title:'dtslib-papyrus', subtitle:'\uadf8\ub8f9 \ubcf8\uc0ac \u00b7 Tier 1', desc:'28\uac1c \ub808\ud3ec \uad00\uc81c + FAB \ub300\uc2dc\ubcf4\ub4dc.' },
-    { icon:'\ud83c\udf3f', title:'dtslib-branch', subtitle:'\ud504\ub79c\ucc28\uc774\uc988 OS \u00b7 Tier 2', desc:'\ub808\ud3ec \ubcf5\uc81c \uac00\ub2a5\ud55c Branch OS.' },
-    { icon:'\ud83c\udfb5', title:'espiritu-tango', subtitle:'\ubb3c\uc131 HQ \u00b7 Tier 2', desc:'\ubb3c\uc131 \uc2a4\ud29c\ub514\uc624 HQ.' },
-    { icon:'\ud83d\udc57', title:'gohsy-fashion', subtitle:'\ucee4\uba38\uc2a4 HQ \u00b7 Tier 2', desc:'\ud328\uc158 \ucee4\uba38\uc2a4 HQ.' },
-    { icon:'\ud83c\udf93', title:'eae-univ', subtitle:'\uc0ac\ub0b4\ub300\ud559 \u00b7 Tier 2', desc:'6\ub300 \uc2a4\ud0ac\uc14b.' },
-    { icon:'\ud83d\udcfa', title:'parksy.kr', subtitle:'\uba54\ub9ac\ud2b8 \ubc29\uc1a1 \u00b7 Tier 3', desc:'\ubb34\uc9c0\uc158 \ubc15\uc528 \ucc44\ub110.' },
-    { icon:'\ud83d\udce1', title:'eae.kr', subtitle:'\uad50\uc721\ubc29\uc1a1 \u00b7 Tier 3', desc:'\uad50\uc721 \ucf58\ud150\uce20 YouTube.' },
-    { icon:'\ud83d\udcb0', title:'dtslib.kr', subtitle:'\uacbd\uc81c\ubc29\uc1a1 \u00b7 Tier 3', desc:'\uacbd\uc81c/\uae08\uc735 \ucf58\ud150\uce20.' },
-    { icon:'\ud83d\uddbc\ufe0f', title:'parksy-image', subtitle:'\uc774\ubbf8\uc9c0 \uc2a4\ud29c\ub514\uc624 \u00b7 Tier 3', desc:'\uc774\ubbf8\uc9c0 \uc5d0\uc14b + Showcase.' },
-    { icon:'\ud83c\udfa7', title:'parksy-audio', subtitle:'\uc624\ub514\uc624 \uc2a4\ud29c\ub514\uc624 \u00b7 Tier 3', desc:'BGM \ud30c\uc774\ud504\ub77c\uc778.' },
-    { icon:'\ud83c\udf00', title:'OrbitPrompt', subtitle:'\ud504\ub86c\ud504\ud2b8 \uc5d4\uc9c4 \u00b7 Tier 3', desc:'\uc5ec\uae30. PHL IP + \ud3b8\uc9d1 \uc194\ub8e8\uc158.' },
-    { icon:'\ud83c\udf5e', title:'hoyadang.com', subtitle:'\ube75\uc9d1 \u00b7 Tier 3', desc:'Hoyadang \ube75 + \ucee4\ud53c + \uc2a4\ud1a0\ub9ac.' },
-    { icon:'\ud83c\udfac', title:'gohsy-production', subtitle:'\ubc29\uc1a1 \uc2a4\ud29c\ub514\uc624 \u00b7 Tier 3', desc:'\ubb3c\uc131 \uc2a4\ud29c\ub514\uc624.' },
-    { icon:'\ud83d\udcf1', title:'phoneparis', subtitle:'\ubaa8\ubc14\uc77c \uc720\ud1b5 \u00b7 Tier 3', desc:'\ubaa8\ubc14\uc77c \uc720\ud1b5 \ucc44\ub110.' },
-    { icon:'\ud83c\udfe5', title:'alexandria-sanctuary', subtitle:'\uc694\uc591\uc6d0 \u00b7 Tier 3', desc:'\uc54c\ub809\uc0b0\ub4dc\ub9ac\uc544 \uc694\uc591\uc6d0.' },
-    { icon:'\ud83e\udd1d', title:'buddies.kr', subtitle:'\uc18c\uae30\uc5c5 \uc778\uc2a4\ud1a8 \u00b7 Tier 3', desc:'\uc18c\uae30\uc5c5 IT \ucee8\uc124\ud305.' },
-    { icon:'\ud83d\udcbc', title:'buckleychang.com', subtitle:'\ucee8\uc124\ud305 \u00b7 Tier 3', desc:'\ubc84\ud074\ub9ac \uccb4\uc778 \ucee8\uc124\ud305.' },
-    { icon:'\ud83d\udcd0', title:'koosy', subtitle:'\uc218\ud559\uacfc\uc678 \u00b7 Tier 4', desc:'\uc218\ud559 \uacfc\uc678.' },
-    { icon:'\ud83c\udfad', title:'gohsy', subtitle:'\ubc30\uc6b0/PD \u00b7 Tier 4', desc:'\uace0\uc2dc \uc5f0\uae30/\uc81c\uc791.' },
-    { icon:'\ud83c\udfa8', title:'artrew', subtitle:'AI \ubbf8\ub300\uc0dd \u00b7 Tier 4', desc:'AI \ubbf8\ub300\uc0dd.' },
-    { icon:'\ud83c\udf69', title:'papafly', subtitle:'K-\ub3c4\ub111 \u00b7 Tier 4', desc:'K-\ub3c4\ub111.' },
-    { icon:'\ud83d\udecd\ufe0f', title:'justino', subtitle:'\uc1fc\ud551\ubab0 \u00b7 Tier 4', desc:'\uc1fc\ud551\ubab0.' },
-    { icon:'\ud83c\udfe0', title:'namoneygoal', subtitle:'\ubd80\ub3d9\uc0b0 \uae38\ub4dc \u00b7 Tier 4', desc:'\ubd80\ub3d9\uc0b0 \ud22c\uc790.' },
-    { icon:'\ud83d\udcf2', title:'dtslib-apk-lab', subtitle:'APK \uc2a4\ud1a0\uc5b4 \u00b7 Tier 5', desc:'APK \ube4c\ub4dc/\ubc30\ud3ec.' },
-    { icon:'\u2601\ufe0f', title:'dtslib-cloud-appstore', subtitle:'PWA \uc2a4\ud29c\ub514\uc624 \u00b7 Tier 5', desc:'\ube0c\ub77c\uc6b0\uc800 \uc2a4\ud29c\ub514\uc624.' },
-    { icon:'\ud83d\udd27', title:'termux-bridge', subtitle:'\ub3c4\uad6c \ubaa8\uc74c \u00b7 Tier 5', desc:'Termux \ub3c4\uad6c.' },
-    { icon:'\ud83d\udcbb', title:'dtslib-localpc', subtitle:'GPU \ud658\uacbd \u00b7 Tier 5', desc:'WSL2 + CUDA.' },
-    { icon:'\ud83d\udccb', title:'parksy-logs', subtitle:'\ub85c\uadf8/RAG \u00b7 Tier 5', desc:'\ub300\ud654 \ub85c\uadf8 \uc800\uc7a5\uc18c.' },
-  ];
-
-  function renderRepoStories() {
-    var grid = document.getElementById('storyGrid');
-    if (!grid) return;
-    grid.innerHTML = REPO_STORIES.map(function(s) {
-      return '<div class="story-card"><div class="story-card-top"><div class="story-card-icon">' + s.icon + '</div><div><div class="story-card-title">' + s.title + '</div><div class="story-card-subtitle">' + s.subtitle + '</div></div></div><div class="story-card-desc">' + s.desc + '</div></div>';
-    }).join('');
-  }
-
-  /* ======== PERPLEXITY SPACES ======== */
-  var SPACES = [
-    { icon:'\ud83d\udcca', name:'EAE Analytics', desc:'6\ub300 \uc2a4\ud0ac\uc14b \uc131\uacfc \ubd84\uc11d' },
-    { icon:'\ud83c\udf99\ufe0f', name:'Parksy Logs', desc:'\ub300\ud654 \ub85c\uadf8 RAG \uac80\uc0c9' },
-    { icon:'\ud83d\udce1', name:'Broadcast Intel', desc:'\ubc29\uc1a1 \ucf58\ud150\uce20 \ub9ac\uc11c\uce58' },
-    { icon:'\ud83c\udfed', name:'FAB Operations', desc:'\uacf5\uc815 \ucd5c\uc801\ud654' },
-    { icon:'\ud83d\udcb9', name:'Branch Finance', desc:'\uc138\uadf8\uba3c\ud2b8 P&L' },
-    { icon:'\ud83e\udd16', name:'AI Pipeline', desc:'\uc74c\uc131/\uc774\ubbf8\uc9c0 \ud30c\uc774\ud504\ub77c\uc778' },
-    { icon:'\ud83c\udf10', name:'Knowledge Graph', desc:'28\uac1c \ub808\ud3ec \uc9c0\uc2dd \uadf8\ub798\ud504' },
-    { icon:'\ud83c\udfac', name:'YouTube Insights', desc:'\ucc44\ub110 \uc131\uacfc \ubd84\uc11d' },
-  ];
-
-  var spacesGrid = document.getElementById('spacesGrid');
-  if (spacesGrid) {
-    spacesGrid.innerHTML = SPACES.map(function(s) {
-      return '<div class="space-card"><div class="space-icon">' + s.icon + '</div><div class="space-name">' + s.name + '</div><div class="space-desc">' + s.desc + '</div></div>';
-    }).join('');
-  }
-
-  /* ======== PARTS FROM phases.json ======== */
-  var partsNav = document.getElementById('partsNav');
-  if (partsNav) {
-    fetch('./data/phases.json').then(function(r) { return r.json(); }).then(function(data) {
-      partsNav.innerHTML = data.parts.map(function(p) {
-        var liveCount = p.chapters.filter(function(c) { return c.status === 'live'; }).length;
-        var total = p.chapters.length;
-        var firstLive = p.chapters.find(function(c) { return c.status === 'live' && c.url; });
-        var cardTag = firstLive ? 'a' : 'div';
-        var cardHref = firstLive ? ' href="' + firstLive.url + '"' : '';
-        var statusClass = liveCount === total ? 'live' : liveCount > 0 ? 'building' : 'pending';
-        var statusText = liveCount === total ? '\u25cf ' + total + '\ucc58\ud130 \uc644\ub8cc' : liveCount > 0 ? '\u25d0 ' + liveCount + '/' + total + ' \ub77c\uc774\ube0c' : '\u25cb ' + total + '\ucc58\ud130 \uc900\ube44 \uc911';
-        return '<' + cardTag + cardHref + ' class="part-card" style="--part-color:' + p.color + ';text-decoration:none;display:block;">' +
-          '<div class="part-number">Part ' + p.number + '</div>' +
-          '<div class="part-icon">' + p.icon + '</div>' +
-          '<div class="part-name">' + p.title + '</div>' +
-          '<div class="part-nameKo">' + p.subtitle + '</div>' +
-          '<div class="part-status ' + statusClass + '">' + statusText + '</div>' +
-        '</' + cardTag + '>';
-      }).join('');
-    }).catch(function() { partsNav.innerHTML = '<div style="color:#666;font-size:12px;">phases.json \ub85c\ub4dc \uc2e4\ud328</div>'; });
-  }
-
-  /* ======== GENERATORS ======== */
-  var STATUS_TAG = { live: '\u25cf live', building: '\u25d0 building', pending: '\u25cb \uc900\ube44 \uc911' };
-  function renderCard(g) {
-    var isLive = g.status === 'live';
-    var isBuilding = g.status === 'building';
-    var disabled = !isLive;
-    var href = isLive ? ' href="' + g.path + '"' + (g.path.endsWith('.html') ? '' : ' target="_blank" rel="noopener"') : '';
-    var tag = isLive ? 'a' : 'div';
-    var fileCount = g.files ? g.files.length : 0;
-    var statusCls = isLive ? 'gen-tag-live' : isBuilding ? 'gen-tag-building' : 'gen-tag-pending';
-    return '<' + tag + href + ' class="gen-card' + (disabled ? ' disabled' : '') + '">' +
-      '<div class="gen-icon">' + g.icon + '</div>' +
-      '<div class="gen-name">' + g.name + '</div>' +
-      '<div class="gen-desc">' + g.desc + '</div>' +
-      (fileCount > 0 ? '<div class="gen-count">' + fileCount + '\uac1c \uce60\ud310</div>' : '') +
-      '<div class="gen-status ' + statusCls + '">' + (STATUS_TAG[g.status] || g.status) + '</div>' +
-    '</' + tag + '>';
-  }
-  var genGrid = document.getElementById('genGrid');
-  if (genGrid) {
-    fetch('./data/generators.json').then(function(r) { return r.json(); }).then(function(data) {
-      genGrid.innerHTML = data.generators.map(renderCard).join('');
-    }).catch(function() { genGrid.innerHTML = '<div style="color:#888;padding:24px;">generators.json \ub85c\ub4dc \uc2e4\ud328</div>'; });
-  }
-
-  /* ======== YOUTUBE: philosopher-parksy ======== */
-  var PHILOSOPHER_CH = 'UCJaGuXjxoNjFMqfYUSFjZVg';
-  var philContainer = document.getElementById('philosopherYtContainer');
-  if (philContainer) {
-    fetch('https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.youtube.com%2Ffeeds%2Fvideos.xml%3Fchannel_id%3D' + PHILOSOPHER_CH + '&api_key=public&count=6')
-      .then(function(r) { return r.json(); }).then(function(data) {
-        var items = data.items || [];
-        if (!items.length) { philContainer.innerHTML = '<div class="yt-loading">\uc544\uc9c1 \uc5c5\ub85c\ub4dc\ub41c \uc601\uc0c1\uc774 \uc5c6\uc2b5\ub2c8\ub2e4</div>'; return; }
-        philContainer.innerHTML = items.map(function(v) {
-          var vid = (v.link || '').split('v=')[1] ? (v.link || '').split('v=')[1].split('&')[0] : '';
-          var thumb = vid ? 'https://i.ytimg.com/vi/' + vid + '/mqdefault.jpg' : '';
-          var date = v.pubDate ? new Date(v.pubDate).toLocaleDateString('ko-KR') : '';
-          return '<a class="yt-card" href="' + v.link + '" target="_blank" rel="noopener">' +
-            (thumb ? '<img class="yt-thumb" src="' + thumb + '" alt="' + v.title + '" loading="lazy">' : '') +
-            '<div class="yt-info"><div class="yt-title">' + v.title + '</div><div class="yt-date">' + date + '</div></div></a>';
-        }).join('');
-      }).catch(function() { philContainer.innerHTML = '<div class="yt-loading">\ud53c\ub4dc \ub85c\ub4dc \uc2e4\ud328</div>'; });
-  }
-
-  /* ======== YOUTUBE: EAE latest ======== */
-  var ytContainer = document.getElementById('ytLatestContainer');
-  if (ytContainer) {
-    fetch('./data/youtube-cache.json').then(function(r) { return r.json(); }).then(function(data) {
-      var videos = data.videos || [];
-      if (!videos.length) { ytContainer.innerHTML = '<div class="yt-loading">\uc601\uc0c1 \uc5c6\uc74c</div>'; return; }
-      ytContainer.innerHTML = videos.slice(0, 6).map(function(v) {
-        return '<a class="yt-card" href="https://www.youtube.com/watch?v=' + v.videoId + '" target="_blank" rel="noopener">' +
-          '<img class="yt-thumb" src="' + (v.thumbnail || 'https://i.ytimg.com/vi/' + v.videoId + '/mqdefault.jpg') + '" alt="' + v.title + '" loading="lazy">' +
-          '<div class="yt-info"><div class="yt-title">' + v.title + '</div><div class="yt-date">' + (v.publishedAt ? new Date(v.publishedAt).toLocaleDateString('ko-KR') : '') + '</div></div></a>';
-      }).join('');
-    }).catch(function() { ytContainer.innerHTML = '<div class="yt-loading">youtube-cache.json \uc5c6\uc74c</div>'; });
-  }
-
-  /* ======== DISCORD ======== */
-  var discordContainer = document.getElementById('discordContainer');
-  if (discordContainer) {
-    fetch('./data/latest-messages.json').then(function(r) { return r.json(); }).then(function(msgs) {
-      var discordSection = document.getElementById('discordSection');
-      if (!Array.isArray(msgs) || !msgs.length) return;
-      var visible = msgs.filter(function(m) {
-        var hasText = m.content && m.content.trim();
-        var hasEmbed = m.embeds && m.embeds.length > 0 && (m.embeds[0].title || m.embeds[0].description);
-        return hasText || hasEmbed;
-      });
-      if (!visible.length) return;
-      if (discordSection) discordSection.style.display = '';
-      discordContainer.innerHTML = visible.slice(0, 5).map(function(m) {
-        var author = m.author ? m.author.username || '\uc54c \uc218 \uc5c6\uc74c' : '\uc54c \uc218 \uc5c6\uc74c';
-        var embed = m.embeds ? m.embeds[0] : null;
-        var content = m.content && m.content.trim() ? m.content : (embed ? '**' + (embed.title || '') + '**\n' + (embed.description || '') : '');
-        var time = m.timestamp ? new Date(m.timestamp).toLocaleString('ko-KR') : '';
-        return '<div class="discord-msg"><div class="discord-author">' + author + '</div><div class="discord-content">' + content + '</div><div class="discord-time">' + time + '</div></div>';
-      }).join('');
-    }).catch(function() { discordContainer.innerHTML = '<div class="discord-loading">latest-messages.json \ub85c\ub4dc \uc911</div>'; });
-  }
+  [ring2,ring1,ringPulse,circ,txt].forEach(e=>svg.appendChild(e));
 })();
+
+/* ── subtle floating animation for edges ── */
+document.querySelectorAll('.edge').forEach((e,i)=>{
+  e.style.strokeDasharray='4 6';
+  e.style.strokeDashoffset='0';
+  // no animation to keep perf good, just static dashed
+});
 </script>
 </body>
 </html>
