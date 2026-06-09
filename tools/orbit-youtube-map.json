@@ -1,0 +1,232 @@
+{
+  "_comment": "OrbitPrompt 카테고리 → YouTube 채널+플레이리스트 매핑 (2026-06-09)",
+  "_primary_channel": "@EAE-University (token_c) — Φ7 7축 정렬",
+  "_crosspost_channel": "@blogger-parksy (token_a) — @OrbitPrompt 크로스포스트",
+
+  "channels": {
+    "eae_univ": {
+      "handle": "@EAE-University",
+      "channel_id": "UCogemhYGCnbVp13ARqFYM8A",
+      "token_acc": "c",
+      "email": "Thomas.tj.Park@gmail.com"
+    },
+    "philosopher": {
+      "handle": "@philosopher-parksy",
+      "channel_id": "UCJaGuXjxoNjFMqfYUSFjZVg",
+      "token_acc": "a",
+      "email": "dimas.thomas.sancho@gmail.com"
+    },
+    "blogger": {
+      "handle": "@blogger-parksy",
+      "channel_id": "UC5H8CnRGDxvx4v3HWrktuSg",
+      "token_acc": "a",
+      "email": "dimas.thomas.sancho@gmail.com"
+    },
+    "technician": {
+      "handle": "@technician-parksy",
+      "channel_id": "UCfRaJjIn2oXyThHpAhOBSYg",
+      "token_acc": "a",
+      "email": "dimas.thomas.sancho@gmail.com"
+    }
+  },
+
+  "items": [
+    {
+      "id": "why",
+      "title": "OrbitPrompt — 왜 존재하는가",
+      "source_html": "why.html",
+      "phi7_axis": "Meta",
+      "primary": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JTOkln3NH5oI0yv1U25bTM9",
+        "playlist_name": "🧠 Meta — 철학·방법론"
+      },
+      "crosspost": {
+        "channel": "blogger",
+        "playlist_id": "PLNAJ8HsuRXWsUfgYjcJV8mA9m8ETuws06",
+        "playlist_name": "@OrbitPrompt"
+      },
+      "tags": ["OrbitPrompt", "AI철학", "메타사고", "허생프로젝트"],
+      "category_id": "27",
+      "status": "pending"
+    },
+    {
+      "id": "whitepaper",
+      "title": "달러 패권 백서 — 원달러 환율을 7축으로 읽다",
+      "source_html": "whitepaper.html",
+      "phi7_axis": "Meta",
+      "primary": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JTOkln3NH5oI0yv1U25bTM9",
+        "playlist_name": "🧠 Meta — 철학·방법론"
+      },
+      "crosspost": {
+        "channel": "blogger",
+        "playlist_id": "PLNAJ8HsuRXWsUfgYjcJV8mA9m8ETuws06",
+        "playlist_name": "@OrbitPrompt"
+      },
+      "tags": ["백서", "달러패권", "MCP", "OrbitPrompt"],
+      "category_id": "27",
+      "status": "pending"
+    },
+    {
+      "id": "philosophy",
+      "title": "Φ7 — 7축 사고 프레임워크 전체 해설",
+      "source_html": "philosophy.html",
+      "phi7_axis": "Meta",
+      "primary": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JRbFIN9_5AJ84saM91kvo-7",
+        "playlist_name": "🧭 Philosophy 7축"
+      },
+      "crosspost": {
+        "channel": "philosopher",
+        "playlist_id": "PLHxxA2wkGZAPXVoh9cfCK9rXiAkrkToTm",
+        "playlist_name": "Flyer"
+      },
+      "tags": ["Phi7", "7축철학", "메타사고", "프레임워크"],
+      "category_id": "27",
+      "status": "pending"
+    },
+    {
+      "id": "dollar_system",
+      "title": "달러 시스템 MCP — DSI 스트레스 지수 + 한 끼 지수",
+      "source_html": "boards/dollar-system-whitepaper.html",
+      "phi7_axis": "Quantum",
+      "primary": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JQxgr-vICqgqMlKwDWfpsRO",
+        "playlist_name": "⚡ Quantum — 예측·도약"
+      },
+      "crosspost": {
+        "channel": "blogger",
+        "playlist_id": "PLNAJ8HsuRXWsUfgYjcJV8mA9m8ETuws06",
+        "playlist_name": "@OrbitPrompt"
+      },
+      "tags": ["달러패권", "DSI", "MCP", "환율분석", "경제철학"],
+      "category_id": "25",
+      "status": "pending"
+    },
+    {
+      "id": "election_mcp",
+      "title": "선거 MCP — AI 유권자를 위한 정치 사고 모델",
+      "source_html": "boards/election-gallery.html",
+      "phi7_axis": "Zoom",
+      "primary": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JT4lC_x8Z2dHOUZkAuaXnxx",
+        "playlist_name": "🔍 Zoom — 정치·경제·도시"
+      },
+      "crosspost": {
+        "channel": "blogger",
+        "playlist_id": "PLNAJ8HsuRXWsUfgYjcJV8mA9m8ETuws06",
+        "playlist_name": "@OrbitPrompt"
+      },
+      "tags": ["선거", "AI유권자", "정치철학", "MCP", "F=ma"],
+      "category_id": "25",
+      "status": "pending"
+    },
+    {
+      "id": "football_model",
+      "title": "축구협회 수학 모델 — Φ-I-C-K-P 5변수 시뮬레이터",
+      "source_html": "football-model/index.html",
+      "phi7_axis": "Quantum",
+      "primary": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JQxgr-vICqgqMlKwDWfpsRO",
+        "playlist_name": "⚡ Quantum — 예측·도박"
+      },
+      "crosspost": {
+        "channel": "blogger",
+        "playlist_id": "PLNAJ8HsuRXWsUfgYjcJV8mA9m8ETuws06",
+        "playlist_name": "@OrbitPrompt"
+      },
+      "tags": ["축구", "KFA", "수학모델", "몬테카를로", "PhiICKP"],
+      "category_id": "17",
+      "status": "pending"
+    },
+    {
+      "id": "wc2026",
+      "title": "WC2026 예측기 — 월드컵 출전국 성적 시뮬레이션",
+      "source_html": "football-model/wc2026-predictor.html",
+      "phi7_axis": "Quantum",
+      "primary": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JQxgr-vICqgqMlKwDWfpsRO",
+        "playlist_name": "⚡ Quantum — 예측·도약"
+      },
+      "crosspost": null,
+      "tags": ["WC2026", "월드컵예측", "축구통계", "AI예측"],
+      "category_id": "17",
+      "status": "pending"
+    },
+    {
+      "id": "sancho_philosophy",
+      "title": "귀족적 쌍스러움 — 언어 생활 철학",
+      "source_html": "boards/sancho-philosophy.html",
+      "phi7_axis": "Language",
+      "primary": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JQDLj6gv6qcgeQ0c3ghwAvY",
+        "playlist_name": "💬 Language — 말하기·언어"
+      },
+      "crosspost": {
+        "channel": "philosopher",
+        "playlist_id": "PLHxxA2wkGZAPhDMFo3UfsWY6IsP3jHzwS",
+        "playlist_name": "15-Second Philosophy"
+      },
+      "tags": ["철학", "언어생활", "Sancho", "Dimas", "Thomas"],
+      "category_id": "27",
+      "status": "pending"
+    },
+    {
+      "id": "mcp_methodology",
+      "title": "MCP 방법론 — 철학을 실행 가능한 도구로",
+      "source_html": "boards/mcp-methodology.html",
+      "phi7_axis": "Modular",
+      "primary": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JSvpeAi-13S-B7r4GbqbSO6",
+        "playlist_name": "🧩 Modular — 도구·템플릿"
+      },
+      "crosspost": {
+        "channel": "technician",
+        "playlist_id": "PLr2Kritbw4D3j245kxFOcHfbkW_KGwTIc",
+        "playlist_name": "3 core"
+      },
+      "tags": ["MCP", "Claude", "AI도구", "방법론", "자동화"],
+      "category_id": "28",
+      "status": "pending"
+    },
+    {
+      "id": "generators",
+      "title": "14개 Generator — 사고를 앱으로 만드는 작업대",
+      "source_html": "prompts/chalkboard/index.html",
+      "phi7_axis": "Modular",
+      "primary": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JSOT0MN3-iXe8w6NKSvSbLQ",
+        "playlist_name": "🛠️ Generators — 14 프롬프트 생성기"
+      },
+      "crosspost": null,
+      "tags": ["Generator", "프롬프트", "PWA", "OrbitPrompt", "생성기"],
+      "category_id": "28",
+      "status": "pending"
+    },
+    {
+      "id": "boards_overview",
+      "title": "Boards — 8개 PWA 시연 갤러리",
+      "source_html": "boards/voice-to-mcp.html",
+      "phi7_axis": "Modular",
+      "primary": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JScXw0p5n61Vw_crwCsbNjd",
+        "playlist_name": "📋 Boards — 8 PWA 시연"
+      },
+      "crosspost": null,
+      "tags": ["Boards", "PWA", "OrbitPrompt", "인터랙티브"],
+      "category_id": "28",
+      "status": "pending"
+    }
+  ]
+}
