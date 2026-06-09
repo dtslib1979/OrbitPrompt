@@ -1,6 +1,7 @@
 {
-  "_comment": "OrbitPrompt 카테고리 → YouTube 채널+플레이리스트 매핑 (2026-06-09)",
-  "_primary_channel": "@EAE-University (token_c) — Φ7 7축 정렬",
+  "_comment": "OrbitPrompt 카테고리 → YouTube 채널+플레이리스트 매핑 (2026-06-09 v2)",
+  "_primary_channel": "@EAE-University (token_c) — Φ7 7축 정렬 (한국어)",
+  "_philosopher_channel": "@philosopher-parksy (token_a) — 영어 철학 딥다이브",
   "_crosspost_channel": "@blogger-parksy (token_a) — @OrbitPrompt 크로스포스트",
 
   "channels": {
@@ -8,34 +9,177 @@
       "handle": "@EAE-University",
       "channel_id": "UCogemhYGCnbVp13ARqFYM8A",
       "token_acc": "c",
-      "email": "Thomas.tj.Park@gmail.com"
+      "email": "Thomas.tj.Park@gmail.com",
+      "lang": "ko",
+      "playlists": {
+        "meta":          "PLp4XpLOr--JTOkln3NH5oI0yv1U25bTM9",
+        "philosophy7":   "PLp4XpLOr--JRbFIN9_5AJ84saM91kvo-7",
+        "quantum":       "PLp4XpLOr--JQxgr-vICqgqMlKwDWfpsRO",
+        "zoom":          "PLp4XpLOr--JT4lC_x8Z2dHOUZkAuaXnxx",
+        "language":      "PLp4XpLOr--JQDLj6gv6qcgeQ0c3ghwAvY",
+        "modular":       "PLp4XpLOr--JSvpeAi-13S-B7r4GbqbSO6",
+        "generators":    "PLp4XpLOr--JSOT0MN3-iXe8w6NKSvSbLQ",
+        "boards":        "PLp4XpLOr--JScXw0p5n61Vw_crwCsbNjd"
+      }
     },
     "philosopher": {
       "handle": "@philosopher-parksy",
       "channel_id": "UCJaGuXjxoNjFMqfYUSFjZVg",
       "token_acc": "a",
-      "email": "dimas.thomas.sancho@gmail.com"
+      "email": "dimas.thomas.sancho@gmail.com",
+      "lang": "en",
+      "playlists": {
+        "flyer":         "PLHxxA2wkGZAPXVoh9cfCK9rXiAkrkToTm",
+        "15sec":         "PLHxxA2wkGZAPhDMFo3UfsWY6IsP3jHzwS",
+        "phi7_axes":     "PLNAJ8HsuRXWtmFEGASKWdIpPcscLuI_Ki",
+        "ai_x_phil":     "PLNAJ8HsuRXWsJ24tDWJ7-4368z1dRB16L",
+        "language":      "PLNAJ8HsuRXWvT_grPEmlbGhmuRCKhEOKi",
+        "questions":     "PLNAJ8HsuRXWu0GUXBFWyQnxsFqpzaYW8Z",
+        "on_living":     "PLNAJ8HsuRXWt_btI5onwkdxO2sIQwkUPS"
+      }
     },
     "blogger": {
       "handle": "@blogger-parksy",
       "channel_id": "UC5H8CnRGDxvx4v3HWrktuSg",
       "token_acc": "a",
-      "email": "dimas.thomas.sancho@gmail.com"
+      "email": "dimas.thomas.sancho@gmail.com",
+      "lang": "ko",
+      "playlists": {
+        "orbitprompt":   "PLNAJ8HsuRXWsUfgYjcJV8mA9m8ETuws06"
+      }
     },
     "technician": {
       "handle": "@technician-parksy",
       "channel_id": "UCfRaJjIn2oXyThHpAhOBSYg",
       "token_acc": "a",
-      "email": "dimas.thomas.sancho@gmail.com"
+      "email": "dimas.thomas.sancho@gmail.com",
+      "lang": "ko",
+      "playlists": {
+        "3core":         "PLr2Kritbw4D3j245kxFOcHfbkW_KGwTIc"
+      }
     }
   },
 
   "items": [
     {
+      "_section": "── philosopher PRIMARY (영어 콘텐츠) ──────────────────"
+    },
+    {
+      "id": "phi7_explained",
+      "title": "The 7 Drivers of Thought — Φ7 Explained",
+      "source_html": "philosophy.html",
+      "phi7_axis": "Meta",
+      "lang": "en",
+      "video_id": "KYIclf2A1Hs",
+      "primary": {
+        "channel": "philosopher",
+        "playlist_id": "PLNAJ8HsuRXWtmFEGASKWdIpPcscLuI_Ki",
+        "playlist_name": "Φ7 — The 7 Axes of Thought"
+      },
+      "crosspost": null,
+      "tags": ["Phi7", "7axes", "thinking framework", "AI philosophy", "OrbitPrompt"],
+      "category_id": "27",
+      "status": "uploaded"
+    },
+    {
+      "id": "creation_recombination",
+      "title": "Creation Is Recombination.",
+      "source_html": null,
+      "phi7_axis": "Quantum",
+      "lang": "en",
+      "video_id": "OFYuIVco9qQ",
+      "primary": {
+        "channel": "philosopher",
+        "playlist_id": "PLHxxA2wkGZAPhDMFo3UfsWY6IsP3jHzwS",
+        "playlist_name": "15-Second Philosophy"
+      },
+      "crosspost": null,
+      "tags": ["philosophy", "creativity", "15 seconds", "Phi7"],
+      "category_id": "27",
+      "status": "uploaded"
+    },
+    {
+      "id": "parksy_opening",
+      "title": "Parksy.kr Opening",
+      "source_html": null,
+      "phi7_axis": "Meta",
+      "lang": "en",
+      "video_id": "0CJLcwXXNjU",
+      "primary": {
+        "channel": "philosopher",
+        "playlist_id": "PLHxxA2wkGZAPXVoh9cfCK9rXiAkrkToTm",
+        "playlist_name": "Flyer"
+      },
+      "crosspost": null,
+      "tags": ["OrbitPrompt", "Parksy", "philosophy", "AI"],
+      "category_id": "27",
+      "status": "uploaded"
+    },
+    {
+      "id": "ai_questioning",
+      "title": "What AI Gets Wrong About Philosophy",
+      "source_html": null,
+      "phi7_axis": "Reverse",
+      "lang": "en",
+      "primary": {
+        "channel": "philosopher",
+        "playlist_id": "PLNAJ8HsuRXWsJ24tDWJ7-4368z1dRB16L",
+        "playlist_name": "AI × Philosophy"
+      },
+      "crosspost": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JRbFIN9_5AJ84saM91kvo-7",
+        "playlist_name": "🧭 Philosophy 7축"
+      },
+      "tags": ["AI philosophy", "critical thinking", "Phi7", "OrbitPrompt"],
+      "category_id": "27",
+      "status": "pending"
+    },
+    {
+      "id": "language_shapes",
+      "title": "The Words You Use Shape the Thoughts You Can Think",
+      "source_html": "boards/sancho-philosophy.html",
+      "phi7_axis": "Language",
+      "lang": "en",
+      "primary": {
+        "channel": "philosopher",
+        "playlist_id": "PLNAJ8HsuRXWvT_grPEmlbGhmuRCKhEOKi",
+        "playlist_name": "Language & Thought"
+      },
+      "crosspost": {
+        "channel": "eae_univ",
+        "playlist_id": "PLp4XpLOr--JQDLj6gv6qcgeQ0c3ghwAvY",
+        "playlist_name": "💬 Language — 말하기·언어"
+      },
+      "tags": ["language philosophy", "framing", "Phi7", "Sancho"],
+      "category_id": "27",
+      "status": "pending"
+    },
+    {
+      "id": "questions_decisions",
+      "title": "Most Decisions Are Just Badly Framed Questions",
+      "source_html": null,
+      "phi7_axis": "Zoom",
+      "lang": "en",
+      "primary": {
+        "channel": "philosopher",
+        "playlist_id": "PLNAJ8HsuRXWu0GUXBFWyQnxsFqpzaYW8Z",
+        "playlist_name": "Questions Worth Asking"
+      },
+      "crosspost": null,
+      "tags": ["decision making", "philosophy", "questions", "Phi7"],
+      "category_id": "27",
+      "status": "pending"
+    },
+    {
+      "_section": "── EAE-University PRIMARY (한국어 콘텐츠) ────────────"
+    },
+    {
       "id": "why",
       "title": "OrbitPrompt — 왜 존재하는가",
       "source_html": "why.html",
       "phi7_axis": "Meta",
+      "lang": "ko",
       "primary": {
         "channel": "eae_univ",
         "playlist_id": "PLp4XpLOr--JTOkln3NH5oI0yv1U25bTM9",
@@ -55,6 +199,7 @@
       "title": "달러 패권 백서 — 원달러 환율을 7축으로 읽다",
       "source_html": "whitepaper.html",
       "phi7_axis": "Meta",
+      "lang": "ko",
       "primary": {
         "channel": "eae_univ",
         "playlist_id": "PLp4XpLOr--JTOkln3NH5oI0yv1U25bTM9",
@@ -74,6 +219,7 @@
       "title": "Φ7 — 7축 사고 프레임워크 전체 해설",
       "source_html": "philosophy.html",
       "phi7_axis": "Meta",
+      "lang": "ko",
       "primary": {
         "channel": "eae_univ",
         "playlist_id": "PLp4XpLOr--JRbFIN9_5AJ84saM91kvo-7",
@@ -93,6 +239,7 @@
       "title": "달러 시스템 MCP — DSI 스트레스 지수 + 한 끼 지수",
       "source_html": "boards/dollar-system-whitepaper.html",
       "phi7_axis": "Quantum",
+      "lang": "ko",
       "primary": {
         "channel": "eae_univ",
         "playlist_id": "PLp4XpLOr--JQxgr-vICqgqMlKwDWfpsRO",
@@ -112,6 +259,7 @@
       "title": "선거 MCP — AI 유권자를 위한 정치 사고 모델",
       "source_html": "boards/election-gallery.html",
       "phi7_axis": "Zoom",
+      "lang": "ko",
       "primary": {
         "channel": "eae_univ",
         "playlist_id": "PLp4XpLOr--JT4lC_x8Z2dHOUZkAuaXnxx",
@@ -131,6 +279,7 @@
       "title": "축구협회 수학 모델 — Φ-I-C-K-P 5변수 시뮬레이터",
       "source_html": "football-model/index.html",
       "phi7_axis": "Quantum",
+      "lang": "ko",
       "primary": {
         "channel": "eae_univ",
         "playlist_id": "PLp4XpLOr--JQxgr-vICqgqMlKwDWfpsRO",
@@ -150,6 +299,7 @@
       "title": "WC2026 예측기 — 월드컵 출전국 성적 시뮬레이션",
       "source_html": "football-model/wc2026-predictor.html",
       "phi7_axis": "Quantum",
+      "lang": "ko",
       "primary": {
         "channel": "eae_univ",
         "playlist_id": "PLp4XpLOr--JQxgr-vICqgqMlKwDWfpsRO",
@@ -165,6 +315,7 @@
       "title": "귀족적 쌍스러움 — 언어 생활 철학",
       "source_html": "boards/sancho-philosophy.html",
       "phi7_axis": "Language",
+      "lang": "ko",
       "primary": {
         "channel": "eae_univ",
         "playlist_id": "PLp4XpLOr--JQDLj6gv6qcgeQ0c3ghwAvY",
@@ -184,6 +335,7 @@
       "title": "MCP 방법론 — 철학을 실행 가능한 도구로",
       "source_html": "boards/mcp-methodology.html",
       "phi7_axis": "Modular",
+      "lang": "ko",
       "primary": {
         "channel": "eae_univ",
         "playlist_id": "PLp4XpLOr--JSvpeAi-13S-B7r4GbqbSO6",
@@ -203,6 +355,7 @@
       "title": "14개 Generator — 사고를 앱으로 만드는 작업대",
       "source_html": "prompts/chalkboard/index.html",
       "phi7_axis": "Modular",
+      "lang": "ko",
       "primary": {
         "channel": "eae_univ",
         "playlist_id": "PLp4XpLOr--JSOT0MN3-iXe8w6NKSvSbLQ",
@@ -218,6 +371,7 @@
       "title": "Boards — 8개 PWA 시연 갤러리",
       "source_html": "boards/voice-to-mcp.html",
       "phi7_axis": "Modular",
+      "lang": "ko",
       "primary": {
         "channel": "eae_univ",
         "playlist_id": "PLp4XpLOr--JScXw0p5n61Vw_crwCsbNjd",
