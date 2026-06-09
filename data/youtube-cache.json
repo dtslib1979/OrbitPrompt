@@ -1,466 +1,104 @@
 {
-  "updated": "2026-04-21T09:49:33.899Z",
+  "updated": "2026-06-09T09:12:00Z",
   "handle": "@EAE-University",
-  "repo": "eae-univ",
+  "repo": "OrbitPrompt",
   "channelId": "UCogemhYGCnbVp13ARqFYM8A",
+  "account": "c",
+  "note": "v2: OrbitPrompt 레포 연결 확정. Φ7 드라이버 + 박씨캡쳐. eae-univ(@BeingEduartEngineer-4)와 별개.",
   "name": "EAE Univ.",
-  "description": "🎓 DTSLIB 사내대학.\nPHL, EML, QSketch, MAL, PENON, Patchtech 6개 스킬셋.\n\n✅ PHL 프로토콜 강의\n✅ AI 도구 스킬셋\n✅ 실전 프로젝트\n✅ 기업 교육 콘텐츠",
-  "thumbnail": "https://yt3.ggpht.com/VSuTS6cpgpCG1kUv1vVFLp2pzvWNjp3P71Tx0lKzpigqSNsjztE_2KBVVTe_9Oc5RkP0MtUGhg=s88-c-k-c0x00ffffff-no-rj",
   "stats": {
     "subscriberCount": 11,
-    "viewCount": 13132,
+    "viewCount": 13142,
     "videoCount": 87
   },
-  "videos": [
-    {
-      "videoId": "ZoNCR_h5qEQ",
-      "title": "EAE University — Design Your Existence",
-      "publishedAt": "2026-03-23T06:05:11Z"
-    },
-    {
-      "videoId": "TppewJzeRss",
-      "title": "1분쇼츠 AI 활용 제작 튜토리얼",
-      "publishedAt": "2026-02-07T23:53:00Z"
-    },
-    {
-      "videoId": "HrEcbp-b_7s",
-      "title": "호야당 4번",
-      "publishedAt": "2026-01-27T23:59:19Z"
-    },
-    {
-      "videoId": "tJMnHI-Gz3U",
-      "title": "호야당 3번",
-      "publishedAt": "2026-01-27T23:56:50Z"
-    },
-    {
-      "videoId": "tu7uUR4beSo",
-      "title": "호야당 2번",
-      "publishedAt": "2026-01-27T23:50:32Z"
-    },
-    {
-      "videoId": "kBe0qb_Stz4",
-      "title": "호야당 1번",
-      "publishedAt": "2026-01-27T23:45:58Z"
-    },
-    {
-      "videoId": "WuNbMdjKi1Q",
-      "title": "Github Repo Apps on CellPhone screen",
-      "publishedAt": "2026-01-18T22:39:43Z"
-    },
-    {
-      "videoId": "Dhnt05cXeg8",
-      "title": "papafly logo2",
-      "publishedAt": "2026-01-15T22:27:09Z"
-    },
-    {
-      "videoId": "frym7BZB2_w",
-      "title": "papafly",
-      "publishedAt": "2026-01-15T22:20:39Z"
-    },
-    {
-      "videoId": "MFBQTVrU_6Y",
-      "title": "Gohsy logo",
-      "publishedAt": "2026-01-15T13:05:27Z"
-    },
-    {
-      "videoId": "2FaUlNhuvTA",
-      "title": "Koosy logo2",
-      "publishedAt": "2026-01-14T17:25:53Z"
-    },
-    {
-      "videoId": "tHbaJXgj3Yg",
-      "title": "Koosy logo",
-      "publishedAt": "2026-01-14T11:33:43Z"
-    },
-    {
-      "videoId": "mn2oihGyJvM",
-      "title": "다이소갓성비5",
-      "publishedAt": "2026-01-14T03:16:49Z"
-    },
-    {
-      "videoId": "-ROes0pcnBA",
-      "title": "Gemini Director",
-      "publishedAt": "2026-01-14T00:09:45Z"
-    },
-    {
-      "videoId": "ArreO-I40ns",
-      "title": "Opening for ArtRemix tutorials",
-      "publishedAt": "2026-01-02T06:47:37Z"
-    },
-    {
-      "videoId": "NPy_Hb64C-Q",
-      "title": "Outdoor Office",
-      "publishedAt": "2025-12-27T00:26:08Z"
-    },
-    {
-      "videoId": "EoDNb2UKXU4",
-      "title": "가족사진",
-      "publishedAt": "2025-12-25T07:31:20Z"
-    },
-    {
-      "videoId": "fdBhZQL4atI",
-      "title": "Parksy’s 3-Core Technique",
-      "publishedAt": "2025-12-24T04:40:35Z"
-    },
-    {
-      "videoId": "PeRfZevO3qM",
-      "title": "손하트",
-      "publishedAt": "2025-12-22T00:23:35Z"
-    },
-    {
-      "videoId": "nB_uGoAO5Bs",
-      "title": "가족애",
-      "publishedAt": "2025-12-22T00:23:35Z"
-    },
-    {
-      "videoId": "dOjae1S22YI",
-      "title": "맹방해변 지키미",
-      "publishedAt": "2025-12-22T00:11:45Z"
-    },
-    {
-      "videoId": "Xx6CuW74B0k",
-      "title": "일출",
-      "publishedAt": "2025-12-22T00:04:26Z"
-    },
-    {
-      "videoId": "TCg5p_fhSS8",
-      "title": "Greetings",
-      "publishedAt": "2025-12-21T23:52:06Z"
-    },
-    {
-      "videoId": "ZDjzdwNyCI4",
-      "title": "소용돌이",
-      "publishedAt": "2025-12-20T21:48:26Z"
-    },
-    {
-      "videoId": "uSF8Bsiyoh4",
-      "title": "Samsung phone machine ",
-      "publishedAt": "2025-12-19T03:07:50Z"
-    },
-    {
-      "videoId": "P5pC8qLusCw",
-      "title": "Grok qual",
-      "publishedAt": "2025-12-18T02:51:02Z"
-    },
-    {
-      "videoId": "kUn4PLpZG5w",
-      "title": "Introduction",
-      "publishedAt": "2025-12-17T23:55:12Z"
-    },
-    {
-      "videoId": "S5lt9aIxWkM",
-      "title": "真的太牛了",
-      "publishedAt": "2025-12-16T04:57:04Z"
-    },
-    {
-      "videoId": "QFV34_EDSzQ",
-      "title": "OrbitPrompt indexing ",
-      "publishedAt": "2025-12-13T13:01:24Z"
-    },
-    {
-      "videoId": "i5WL0EZb7H4",
-      "title": "Herb start up logo",
-      "publishedAt": "2025-12-11T03:55:41Z"
-    },
-    {
-      "videoId": "USlPOQ8fngg",
-      "title": "Github Blogger ",
-      "publishedAt": "2025-12-10T08:34:41Z"
-    },
-    {
-      "videoId": "TZHqIiQpZUY",
-      "title": "Github-publishing logo",
-      "publishedAt": "2025-12-10T05:00:06Z"
-    },
-    {
-      "videoId": "019Jwvd93dI",
-      "title": "Patchtech ",
-      "publishedAt": "2025-12-09T04:17:45Z"
-    },
-    {
-      "videoId": "CgEDdCSeyAU",
-      "title": "YT acct tree",
-      "publishedAt": "2025-12-08T04:22:17Z"
-    },
-    {
-      "videoId": "PdN6WnlvS1g",
-      "title": "kakao talk opening clip-kr",
-      "publishedAt": "2025-12-08T04:15:34Z"
-    },
-    {
-      "videoId": "gA2ncksdHRk",
-      "title": "Automation Engine opening ",
-      "publishedAt": "2025-12-07T08:38:10Z"
-    },
-    {
-      "videoId": "w-KWkjd81pI",
-      "title": "Sora-AI voice Record in 10sec",
-      "publishedAt": "2025-12-06T06:50:19Z"
-    },
-    {
-      "videoId": "bD6cwjCZtY4",
-      "title": "The AI-Powered Quit Smoking Blueprint",
-      "publishedAt": "2025-12-06T06:16:57Z"
-    },
-    {
-      "videoId": "0PabstIYlMs",
-      "title": "Parksy OS - SMOKE → COMPUTE",
-      "publishedAt": "2025-12-06T05:52:59Z"
-    },
-    {
-      "videoId": "fqy0HJGMz4M",
-      "title": "Parksy OS- Visual Engine Core",
-      "publishedAt": "2025-12-06T04:05:20Z"
-    },
-    {
-      "videoId": "HFFEm34xBHg",
-      "title": "Parksy OS- Visual Engine Core",
-      "publishedAt": "2025-12-06T03:59:18Z"
-    },
-    {
-      "videoId": "IJEmHxWp_eA",
-      "title": "GitHub Publishing OS",
-      "publishedAt": "2025-12-06T01:01:23Z"
-    },
-    {
-      "videoId": "1dOIQsCmJPw",
-      "title": "Github publishing OS logo",
-      "publishedAt": "2025-12-06T00:51:10Z"
-    },
-    {
-      "videoId": "6T3mibse3Q4",
-      "title": "eae.kr banner ",
-      "publishedAt": "2025-12-04T07:01:44Z"
-    },
-    {
-      "videoId": "r85EQYhSQg4",
-      "title": "PENon logo",
-      "publishedAt": "2025-12-04T03:22:32Z"
-    },
-    {
-      "videoId": "QXiE8MTZ85U",
-      "title": "QSketch logo",
-      "publishedAt": "2025-12-04T03:21:51Z"
-    },
-    {
-      "videoId": "FTZ-8TkwZnc",
-      "title": "EML logo",
-      "publishedAt": "2025-12-04T03:22:09Z"
-    },
-    {
-      "videoId": "TYlDjuEy7ts",
-      "title": "MAL logo",
-      "publishedAt": "2025-12-04T03:21:13Z"
-    },
-    {
-      "videoId": "lOTRhdYYubU",
-      "title": "Patchtech logo",
-      "publishedAt": "2025-12-04T03:20:57Z"
-    },
-    {
-      "videoId": "-V7AmgPinbo",
-      "title": "PHL.logo",
-      "publishedAt": "2025-12-04T03:21:33Z"
-    },
-    {
-      "videoId": "aTbjOwfn-aU",
-      "title": "Technician-Parksy logo",
-      "publishedAt": "2025-12-04T01:18:43Z"
-    },
-    {
-      "videoId": "bhNnBZo1xs0",
-      "title": "Musician-Parksy logo",
-      "publishedAt": "2025-12-04T01:19:02Z"
-    },
-    {
-      "videoId": "AaRozBhaIzQ",
-      "title": "Visualizer-Parksy logo",
-      "publishedAt": "2025-12-04T01:16:09Z"
-    },
-    {
-      "videoId": "IVMbWnfDscM",
-      "title": "Philosopher-Parksy logo",
-      "publishedAt": "2025-12-04T01:15:41Z"
-    },
-    {
-      "videoId": "z4qBXg4_Dsw",
-      "title": "Blogger-Parksy logo",
-      "publishedAt": "2025-12-04T01:15:28Z"
-    },
-    {
-      "videoId": "MEGM9SO6QPg",
-      "title": "eduart engineer logo",
-      "publishedAt": "2025-12-03T13:36:58Z"
-    },
-    {
-      "videoId": "lM2PC35WbGM",
-      "title": "Parksy OS",
-      "publishedAt": "2025-12-03T09:48:20Z"
-    },
-    {
-      "videoId": "m0jpClPH2YA",
-      "title": "Parksy OS w/Sora",
-      "publishedAt": "2025-12-03T09:45:59Z"
-    },
-    {
-      "videoId": "fNeuEffbDQU",
-      "title": "Parksy production",
-      "publishedAt": "2025-12-03T07:44:50Z"
-    },
-    {
-      "videoId": "Mj7JUXoq0xk",
-      "title": "Korean name-signiture",
-      "publishedAt": "2025-12-03T06:09:52Z"
-    },
-    {
-      "videoId": "ex50PdCReRc",
-      "title": "dtslib patch logo",
-      "publishedAt": "2025-12-03T05:48:44Z"
-    },
-    {
-      "videoId": "hTncZJhgvTs",
-      "title": "Lion",
-      "publishedAt": "2025-12-03T04:13:47Z"
-    },
-    {
-      "videoId": "mk92WBwdOvY",
-      "title": "Venus de Milo",
-      "publishedAt": "2025-12-03T04:02:52Z"
-    },
-    {
-      "videoId": "fw3fnse26Y8",
-      "title": "Golden Ratio",
-      "publishedAt": "2025-12-03T03:47:48Z"
-    },
-    {
-      "videoId": "43Dbts8vT0A",
-      "title": "naver-blog-logo",
-      "publishedAt": "2025-12-03T03:28:55Z"
-    },
-    {
-      "videoId": "tfu6HvAPeIU",
-      "title": "kr-merits-logo",
-      "publishedAt": "2025-12-03T03:20:14Z"
-    },
-    {
-      "videoId": "SRkRmx4G5Gc",
-      "title": "dtslib.com-logo",
-      "publishedAt": "2025-12-03T03:19:18Z"
-    },
-    {
-      "videoId": "5kmcCbveI5I",
-      "title": "“USB DIGITAL BOOK PACKAGE”",
-      "publishedAt": "2025-12-03T01:03:02Z"
-    },
-    {
-      "videoId": "YWfuCGjdhRk",
-      "title": "The Church at Auvers, 1890",
-      "publishedAt": "2025-12-02T00:59:16Z"
-    },
-    {
-      "videoId": "RDuF9nBr55w",
-      "title": "Fishing Boats on the Beach at Saintes-Maries, 1889",
-      "publishedAt": "2025-12-02T00:47:37Z"
-    },
-    {
-      "videoId": "0rgktLnxQ68",
-      "title": "Shoes, 1888",
-      "publishedAt": "2025-12-02T00:37:59Z"
-    },
-    {
-      "videoId": "MRYXUYXOEl4",
-      "title": "The Siesta, 1890",
-      "publishedAt": "2025-12-02T00:35:33Z"
-    },
-    {
-      "videoId": "mn-b5dzYRmM",
-      "title": "First Steps, after Millet, 1890",
-      "publishedAt": "2025-12-02T00:36:42Z"
-    },
-    {
-      "videoId": "U3NtXtUbdrs",
-      "title": "Logo-朴氏出版",
-      "publishedAt": "2025-12-02T00:26:43Z"
-    },
-    {
-      "videoId": "AdI7hqG1iY8",
-      "title": "Prompt Hierarchy",
-      "publishedAt": "2025-12-02T00:16:10Z"
-    },
-    {
-      "videoId": "F3hlePdXanI",
-      "title": "Parksy OS",
-      "publishedAt": "2025-12-02T00:10:46Z"
-    },
-    {
-      "videoId": "ZpBfZPtM2Mw",
-      "title": "Finger≒Humanity",
-      "publishedAt": "2025-12-02T00:03:54Z"
-    },
-    {
-      "videoId": "_rECJWvXD3k",
-      "title": "The Bedroom (1889)",
-      "publishedAt": "2025-12-01T06:56:49Z"
-    },
-    {
-      "videoId": "JTYqo6mCuFU",
-      "title": "Sunflowers (1888)",
-      "publishedAt": "2025-12-01T06:52:49Z"
-    },
-    {
-      "videoId": "m4xBj47S-8E",
-      "title": "Bust of Nefertiti- Ancient Egyptian c. 1345 BC",
-      "publishedAt": "2025-12-01T05:25:59Z"
-    },
-    {
-      "videoId": "_WPeqryybJY",
-      "title": "Paris Street; Rainy Day. Gustave Caillebotte.1877",
-      "publishedAt": "2025-12-01T05:13:04Z"
-    },
-    {
-      "videoId": "Fc_lY0ROcCA",
-      "title": "The Wanderer above the Sea of Fog – Caspar David Friedrich – 1818",
-      "publishedAt": "2025-12-01T04:56:48Z"
-    },
-    {
-      "videoId": "sjgu5AGOJc4",
-      "title": "The Milkmaid, Johannes Vermeer, c. 1660",
-      "publishedAt": "2025-11-30T12:39:27Z"
-    },
-    {
-      "videoId": "tCR1GFlrOyg",
-      "title": "The Starry Night . Vincent van Gogh . 1889",
-      "publishedAt": "2025-11-30T12:31:18Z"
-    },
-    {
-      "videoId": "g1wil9Dbnhk",
-      "title": "Wings of Isis” · Ancient Egypt · c.1200 BCE",
-      "publishedAt": "2025-11-30T11:58:13Z"
-    },
-    {
-      "videoId": "-S5L4DCyMqM",
-      "title": "Water Lilies · Claude Monet, c.1906",
-      "publishedAt": "2025-11-30T11:16:37Z"
-    },
-    {
-      "videoId": "ea51nIoQDHg",
-      "title": "The Great Wave off Kanagawa — Hokusai, c.1831",
-      "publishedAt": "2025-11-30T10:42:28Z"
-    }
-  ],
   "playlists": {
-    "meta": "PLp4XpLOr--JTOkln3NH5oI0yv1U25bTM9",
-    "reverse": "PLp4XpLOr--JQj2kaQM8nw5Rltw-NGXM-7",
-    "modular": "PLp4XpLOr--JSvpeAi-13S-B7r4GbqbSO6",
-    "language": "PLp4XpLOr--JQDLj6gv6qcgeQ0c3ghwAvY",
-    "zoom": "PLp4XpLOr--JT4lC_x8Z2dHOUZkAuaXnxx",
-    "spiral": "PLp4XpLOr--JSOaxjTAP-VpLbKJXSva6_4",
-    "quantum": "PLp4XpLOr--JQxgr-vICqgqMlKwDWfpsRO",
-    "parksy_capture": "PLp4XpLOr--JQI_EYELt3Pu9O9sFhZJ0t0",
-    "study": "PLp4XpLOr--JROHtUiI3C3MhaFosDQCJfc"
-  },
-  "playlist_updated": "2026-06-08",
-  "video_count": 87,
-  "updated_full": "2026-06-08",
-  "study_note": "습작 플레이리스트에 87개 전작 보관 완료 (2026-06-08)"
+    "phi7": [
+      {
+        "driver": "Quantum",
+        "index": 1,
+        "title": "⚡ Quantum — 예측·도박",
+        "id": "PLp4XpLOr--JQxgr-vICqgqMlKwDWfpsRO",
+        "itemCount": 8,
+        "description": "Φ7 퀀텀 드라이버. 예측 모델, 시뮬레이션."
+      },
+      {
+        "driver": "Spiral",
+        "index": 2,
+        "title": "📈 Spiral — 로드맵·성장",
+        "id": "PLp4XpLOr--JSOaxjTAP-VpLbKJXSva6_4",
+        "itemCount": 0,
+        "description": "Φ7 스파이럴 드라이버. 반복 상승, 발전 궤적."
+      },
+      {
+        "driver": "Zoom",
+        "index": 3,
+        "title": "🔍 Zoom — 정치·경제·도시",
+        "id": "PLp4XpLOr--JT4lC_x8Z2dHOUZkAuaXnxx",
+        "itemCount": 0,
+        "description": "Φ7 줌 드라이버. 개인→국가→글로벌 스케일."
+      },
+      {
+        "driver": "Language",
+        "index": 4,
+        "title": "💬 Language — 말하기·언어",
+        "id": "PLp4XpLOr--JQDLj6gv6qcgeQ0c3ghwAvY",
+        "itemCount": 0,
+        "description": "Φ7 랭귀지 드라이버. 언어 해석권, 번역 레이어."
+      },
+      {
+        "driver": "Modular",
+        "index": 5,
+        "title": "🧩 Modular — 도구·템플릿",
+        "id": "PLp4XpLOr--JSvpeAi-13S-B7r4GbqbSO6",
+        "itemCount": 5,
+        "description": "Φ7 모듈러 드라이버. 재사용 가능한 도구, 생성기."
+      },
+      {
+        "driver": "Reverse",
+        "index": 6,
+        "title": "🔄 Reverse — 케이스스터디",
+        "id": "PLp4XpLOr--JQj2kaQM8nw5Rltw-NGXM-7",
+        "itemCount": 0,
+        "description": "Φ7 리버스 드라이버. 실패에서 배우기, 역방향 설계."
+      },
+      {
+        "driver": "Meta",
+        "index": 7,
+        "title": "🧠 Meta — 철학·방법론",
+        "id": "PLp4XpLOr--JTOkln3NH5oI0yv1U25bTM9",
+        "itemCount": 3,
+        "description": "Φ7 메타 드라이버. 철학 백서, 방법론, PHL 스펙."
+      }
+    ],
+    "content": [
+      {
+        "key": "parksy-capture",
+        "title": "📱 박씨캡쳐 — AI 대화 무손실 캡처 앱",
+        "id": "PLp4XpLOr--JQI_EYELt3Pu9O9sFhZJ0t0",
+        "itemCount": 0,
+        "description": "Parksy Capture APK 11+ 버전 튜토리얼 시리즈. Φ7 Language 드라이버 하드웨어 인터페이스.",
+        "phi7_link": "Language",
+        "source_files": [
+          "eae-univ/broadcast/parksy-capture-01-purpose.html",
+          "eae-univ/broadcast/parksy-capture-02-usage.html",
+          "eae-univ/broadcast/parksy-capture-03-install.html",
+          "OrbitPrompt/boards/parksy-capture-tutorial.html"
+        ],
+        "gene_card": "dtslib-papyrus/genes/apk-card-parksy-capture.json",
+        "status": "empty"
+      }
+    ],
+    "archive": [
+      {
+        "title": "📚 습작 — 시범작·로고모음 (2026-06-08 이전)",
+        "id": "PLp4XpLOr--JThzBx90hGUVpliO8A1YnjM",
+        "itemCount": 11
+      },
+      {
+        "title": "📚 습작 — 연습작·실험작 (2026-06-08 이전)",
+        "id": "PLp4XpLOr--JROHtUiI3C3MhaFosDQCJfc",
+        "itemCount": 87
+      }
+    ]
+  }
 }
