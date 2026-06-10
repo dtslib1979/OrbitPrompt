@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media MCP · 기술백서 v5</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500&display=swap');
+  :root{--bg:#0A0A0F;--surf:#111118;--bdr:#1E1E2E;--acc:#FF4B26;--acc2:#FF8C42;--go:#26FF8C;--warn:#FFB800;--txt:#E8E8F0;--mid:#C0C0CC;--muted:#6B6B80;--mono:'JetBrains Mono',monospace;--serif:'Noto Serif KR',serif;--sans:'Noto Sans KR',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-weight:300;line-height:1.8;font-size:15px}
+  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:4rem 4rem 5rem;border-bottom:1px solid var(--bdr);position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-20%;right:-10%;width:60vw;height:60vw;background:radial-gradient(circle,rgba(255,75,38,0.07)0%,transparent 70%);pointer-events:none}
+  .eyebrow{font-family:var(--mono);font-size:11px;color:var(--acc);letter-spacing:.2em;text-transform:uppercase;margin-bottom:2rem}
+  .hero-title{font-family:var(--serif);font-size:clamp(3rem,7vw,6rem);font-weight:900;line-height:1;letter-spacing:-.02em;margin-bottom:2rem}
+  .hero-title span{color:var(--acc)}
+  .hero-sub{font-size:1rem;color:var(--muted);max-width:560px;line-height:1.7;margin-bottom:3rem}
+  .hero-meta{display:flex;gap:3rem;flex-wrap:wrap}
+  .hero-meta-item{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .hero-meta-item strong{color:var(--txt);display:block;font-size:13px;margin-bottom:4px}
+  .doc{max-width:900px;margin:0 auto;padding:0 2rem}
+  section{padding:5rem 0;border-bottom:1px solid var(--bdr)}
+  section:last-child{border-bottom:none}
+  .sec-label{font-family:var(--mono);font-size:10px;color:var(--acc);letter-spacing:.25em;text-transform:uppercase;margin-bottom:1.5rem}
+  h2{font-family:var(--serif);font-size:clamp(1.6rem,3vw,2.3rem);font-weight:700;line-height:1.15;letter-spacing:-.01em;margin-bottom:1.5rem}
+  h3{font-family:var(--sans);font-size:.8rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:2.5rem 0 1rem}
+  p{margin-bottom:1.2rem;color:var(--mid)}
+  strong{color:var(--acc);font-weight:700}
+  code{font-family:var(--mono);font-size:11px;color:var(--acc2);background:rgba(255,140,66,0.1);padding:1px 5px}
+  .props{display:grid;gap:1px;background:var(--bdr);border:1px solid var(--bdr);margin:2rem 0}
+  .prop{background:var(--surf);padding:1.3rem 1.8rem;display:grid;grid-template-columns:2.2rem 1fr;gap:1rem;align-items:start}
+  .prop-n{font-family:var(--mono);font-size:11px;color:var(--acc);padding-top:2px}
+  .prop-text{font-size:.93rem;line-height:1.6;color:var(--txt)}
+  .pipeline{border:1px solid var(--bdr);margin:2rem 0}
+  .pipe-step{display:grid;grid-template-columns:120px 1fr;border-bottom:1px solid var(--bdr)}
+  .pipe-step:last-child{border-bottom:none}
+  .pipe-layer{background:var(--surf);padding:1.1rem 1.3rem;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;border-right:1px solid var(--bdr)}
+  .pipe-content{padding:1.1rem 1.4rem;font-size:.85rem;color:var(--mid);display:flex;align-items:center}
+  .agent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--bdr);border:1px solid var(--bdr);margin:2rem 0}
+  .agent-card{background:var(--surf);padding:1.5rem}
+  .agent-role{font-family:var(--mono);font-size:10px;color:var(--acc);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.5rem}
+  .agent-name{font-family:var(--serif);font-size:1.1rem;font-weight:700;margin-bottom:.4rem}
+  .agent-desc{font-size:.82rem;color:var(--muted);line-height:1.5}
+  .llm-wrap{overflow-x:auto;margin:2rem 0}
+  .llm-table{width:100%;border-collapse:collapse;font-size:.83rem;min-width:580px}
+  .llm-table th{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:left;padding:.7rem 1rem;border-bottom:1px solid var(--bdr);letter-spacing:.1em;text-transform:uppercase}
+  .llm-table td{padding:.9rem 1rem;border-bottom:1px solid var(--bdr);color:var(--mid);vertical-align:top;line-height:1.5}
+  .llm-name{font-family:var(--mono);color:var(--acc2);font-weight:700}
+  .ban{color:#FF4B26;font-size:.78rem}
+  .sm-wrap{background:var(--surf);border:1px solid var(--bdr);padding:2.5rem;margin:2rem 0;overflow-x:auto}
+  .sm-flow{display:flex;align-items:center;gap:0;flex-wrap:nowrap;min-width:640px}
+  .sm-state{flex-shrink:0;padding:.55rem 1rem;border:1px solid var(--bdr);font-family:var(--mono);font-size:11px;text-align:center;background:var(--bg)}
+  .sm-arr{font-family:var(--mono);font-size:11px;color:var(--muted);padding:0 .3rem;flex-shrink:0}
+  .rule-block{background:#0D0D16;border:1px solid var(--bdr);border-left:3px solid var(--acc);padding:1.8rem 2rem;margin:2rem 0;font-family:var(--mono);font-size:12px;line-height:2.1;overflow-x:auto}
+  .c{color:var(--muted)}.kw{color:var(--acc)}.st{color:var(--go)}.nm{color:var(--acc2)}.rt{color:var(--warn)}
+  .json-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;background:var(--bdr);border:1px solid var(--bdr);margin:2rem 0}
+  .json-card{background:var(--surf)}
+  .json-head{font-family:var(--mono);font-size:10px;color:var(--acc);letter-spacing:.15em;text-transform:uppercase;padding:.8rem 1.2rem;border-bottom:1px solid var(--bdr)}
+  .json-body{padding:1rem 1.2rem;font-family:var(--mono);font-size:11px;line-height:1.9;color:var(--mid);overflow-x:auto;white-space:pre}
+  .sla-grid{border:1px solid var(--bdr);margin:2rem 0}
+  .sla-row{display:grid;grid-template-columns:1fr auto;border-bottom:1px solid var(--bdr)}
+  .sla-row:last-child{border-bottom:none}
+  .sla-label{padding:.9rem 1.4rem;font-size:.85rem;color:var(--mid)}
+  .sla-val{padding:.9rem 1.4rem;font-family:var(--mono);color:var(--acc2);background:var(--surf);white-space:nowrap;font-size:.85rem}
+  .final-box{background:var(--surf);border:1px solid var(--bdr);border-top:3px solid var(--acc);padding:3rem;margin:2rem 0}
+  .final-box p{font-family:var(--serif);font-size:1.05rem;line-height:2;color:var(--txt)}
+  footer{padding:3rem 2rem;text-align:center;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.1em;border-top:1px solid var(--bdr)}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="eyebrow">dtslib · media systems · technical whitepaper v5.0</div>
+  <h1 class="hero-title">Media<br><span>MCP</span></h1>
+  <p class="hero-sub">외부 미디어와 LLM 대화를 같은 입력 레이어로 취급하고, 역할별 에이전트와 Python 결정 규칙, 인간 승인 뒤에만 소비와 배포를 허용하는 개인 미디어 운영체제.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><strong>상태</strong>설계 확정 · 구현 직전</div>
+    <div class="hero-meta-item"><strong>핵심 명제</strong>LLM도 미디어다</div>
+    <div class="hero-meta-item"><strong>권위</strong>Python Rule Engine + Human PD</div>
+    <div class="hero-meta-item"><strong>채널</strong>Telegram · YouTube · Private Queue</div>
+    <div class="hero-meta-item"><strong>기존 골격</strong>parksy-logs → TTS → FFmpeg → upload.cjs</div>
+  </div>
+</div>
+<div class="doc">
+<section>
+  <div class="sec-label">01 — Problem + Thesis</div>
+  <h2>문제는 콘텐츠 부족이 아니라 편성권 상실이다</h2>
+  <p>사용자는 더 많이 보지만, 덜 통제한다. 외부 시사 방송과 해설 채널은 사건을 특정 프레임과 편성 감각으로 재포장한다. 장시간 시청은 정보 획득이라기보다 타인의 우선순위에 장시간 머무는 행위가 된다.</p>
+  <p>이 구조의 핵심 전환은 <strong>LLM 대화도 예외가 아니라는 점이다.</strong> 아이디어를 크로스체크한다는 명분으로 LLM과 길게 대화하는 행위 역시, 실시간 적응형 미디어 채널을 소비하는 것과 구조적으로 같다.</p>
+  <p>따라서 Media MCP는 뉴스 큐레이션 도구가 아니라, 외부 미디어와 LLM을 동일한 관리 대상 레이어로 재편입하는 시스템이다. 목적은 더 많이 요약하는 것이 아니라, <strong>개인이 다시 편성권을 갖는 것이다.</strong></p>
+  <h3>시스템 명제</h3>
+  <div class="props">
+    <div class="prop"><span class="prop-n">P1</span><span class="prop-text">외부 미디어는 상시 복종 대상이 아니라 샘플링 대상이다.</span></div>
+    <div class="prop"><span class="prop-n">P2</span><span class="prop-text">LLM은 최종 권위가 아니라 역할별 제작진이다.</span></div>
+    <div class="prop"><span class="prop-n">P3</span><span class="prop-text">원자료는 해설보다 상위에 둔다.</span></div>
+    <div class="prop"><span class="prop-n">P4</span><span class="prop-text">모델 간 합의는 참고일 뿐, 진실의 근거가 아니다.</span></div>
+    <div class="prop"><span class="prop-n">P5</span><span class="prop-text">최종 게이트는 Python 규칙과 인간 승인자가 쥔다.</span></div>
+    <div class="prop"><span class="prop-n">P6</span><span class="prop-text">사용자는 필터링된 결과만 선택적으로 소비한다.</span></div>
+  </div>
+</section>
+<section>
+  <div class="sec-label">02 — Operating Model</div>
+  <h2>있는 방송을 보는 구조에서 필요한 방송을 시키는 구조로</h2>
+  <p>MCP는 허브, 에이전트는 제작진, 인간은 총괄 PD다.</p>
+  <div class="pipeline">
+    <div class="pipe-step"><div class="pipe-layer">수집</div><div class="pipe-content">소스 에이전트가 기사, 전사문, 공식 문서, 원자료 링크를 모은다.</div></div>
+    <div class="pipe-step"><div class="pipe-layer">분석</div><div class="pipe-content">프레임·구조 에이전트가 진영별 포장 방식과 인과 구조를 분리한다.</div></div>
+    <div class="pipe-step"><div class="pipe-layer">판정</div><div class="pipe-content">Python 결정 레이어가 상태를 부여한다.</div></div>
+    <div class="pipe-step"><div class="pipe-layer">제작</div><div class="pipe-content">스크립트·미디어 빌드 에이전트가 TTS → FFmpeg → 패키징을 수행한다.</div></div>
+    <div class="pipe-step"><div class="pipe-layer">보고</div><div class="pipe-content">리포트 에이전트가 Telegram으로 결과와 상태를 전송한다.</div></div>
+    <div class="pipe-step"><div class="pipe-layer">배포</div><div class="pipe-content">private 시청 후 인간 승인으로 public 승격.</div></div>
+  </div>
+</section>
+<section>
+  <div class="sec-label">03 — Agents + Multi-LLM Bridge</div>
+  <h2>한 개의 챗봇이 아니라 하나의 편성실</h2>
+  <div class="agent-grid">
+    <div class="agent-card"><div class="agent-role">Agent 01</div><div class="agent-name">소스</div><div class="agent-desc">원문, 기사, 전사문, 공식 문서, 링크 수집. 원자료 우선 원칙의 출발점.</div></div>
+    <div class="agent-card"><div class="agent-role">Agent 02</div><div class="agent-name">프레임</div><div class="agent-desc">같은 사건을 진영별·화자별로 어떻게 포장하는지 분해. 편향 탐지 담당.</div></div>
+    <div class="agent-card"><div class="agent-role">Agent 03</div><div class="agent-name">구조</div><div class="agent-desc">이해관계자, 인센티브, 갈등 축, 인과관계 구조화.</div></div>
+    <div class="agent-card"><div class="agent-role">Agent 04</div><div class="agent-name">스크립트</div><div class="agent-desc">구조화된 재료를 TTS/내레이션용 대본으로 변환.</div></div>
+    <div class="agent-card"><div class="agent-role">Agent 05</div><div class="agent-name">미디어 빌드</div><div class="agent-desc">음성 합성, FFmpeg, 자막, 썸네일, 패키징, 업로드 준비.</div></div>
+    <div class="agent-card"><div class="agent-role">Agent 06</div><div class="agent-name">리포트</div><div class="agent-desc">상태 변화와 결과물을 Telegram 운영 인박스로 보고.</div></div>
+  </div>
+</section>
+<section>
+  <div class="sec-label">04 — Final Definition</div>
+  <div class="final-box"><p>Media MCP는 <strong>외부 미디어를 샘플 입력으로 강등하고,</strong> MCP를 오케스트레이션 허브로 세우며, LLM을 역할별 제작진으로 배치하고, <strong>Python 결정 규칙을 편성 법률처럼 삽입하고,</strong> 인간 승인 뒤에만 선택 소비와 공개 배포를 허용하는 <strong>개인 제작 운영체제</strong>다.</p></div>
+</section>
+</div>
+<footer>Media MCP v5 · dtslib · private systems for media sovereignty</footer>
+</body>
+</html>
