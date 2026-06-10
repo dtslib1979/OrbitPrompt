@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>겸손·확증편향·Flux — 시스템 설계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#07070d;--surf:#0b0b14;--card:#0e0e1a;--gold:#d4af37;--brass:#b8982a;--ink:#f0e8d8;--dim:rgba(240,232,216,.5);--muted:rgba(240,232,216,.35);--red:#d06b57;--green:#10b981;--f-sans:'Inter',sans-serif;--f-serif:'Playfair Display',serif;--f-mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-sans);line-height:1.8;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 30%,rgba(208,107,87,.04) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 30% 80%,rgba(16,185,129,.03) 0%,transparent 50%);pointer-events:none;z-index:0}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;padding:0 28px;height:56px;background:rgba(7,7,13,.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.04)}
+.nav-brand{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--gold);text-decoration:none;letter-spacing:.08em}
+.nav-back{font-family:var(--f-mono);font-size:11px;color:var(--muted);text-decoration:none;margin-left:auto;transition:color .2s}
+.nav-back:hover{color:var(--gold)}
+.hero{min-height:70vh;display:flex;flex-direction:column;justify-content:center;padding:100px 28px 60px;position:relative;z-index:1;text-align:center}
+.hero-label{font-family:var(--f-mono);font-size:11px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:20px}
+.hero h1{font-family:var(--f-serif);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:700;line-height:1.05;letter-spacing:-.03em;margin-bottom:16px}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:15px;color:var(--dim);max-width:520px;margin:0 auto;line-height:1.7}
+.section{max-width:680px;margin:0 auto;padding:80px 28px;position:relative;z-index:1}
+.section-label{font-family:var(--f-mono);font-size:10px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:12px}
+h2{font-family:var(--f-serif);font-size:clamp(1.3rem,2.5vw,1.8rem);font-weight:700;margin-bottom:24px;letter-spacing:-.02em}
+h2 em{font-style:italic;color:var(--gold)}
+p{font-size:14px;color:var(--dim);margin-bottom:16px;line-height:1.9}
+.thesis{border-left:2px solid var(--gold);padding:20px 24px;margin:24px 0;background:var(--card);border-radius:0 8px 8px 0}
+.thesis-text{font-family:var(--f-serif);font-size:16px;font-style:italic;color:#fff;line-height:1.6;letter-spacing:-.01em}
+.rule-grid{display:grid;gap:1px;border:1px solid rgba(255,255,255,.06);border-radius:8px;overflow:hidden;margin:24px 0}
+.rule-item{background:var(--card);padding:20px 24px;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start}
+.rule-num{font-family:var(--f-mono);font-size:11px;color:var(--gold);padding-top:2px}
+.rule-text{font-size:13px;color:var(--dim);line-height:1.6}
+.rule-text strong{color:#fff}
+.flux-card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:24px;margin:24px 0}
+.flux-card .flux-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:8px}
+.flux-card .flux-desc{font-size:13px;color:var(--dim);margin-bottom:12px}
+.flux-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+.flux-table td{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);color:var(--dim);vertical-align:top}
+.flux-table td:first-child{color:var(--gold);font-family:var(--f-mono);font-size:11px;width:100px}
+.flux-code{background:rgba(0,0,0,.3);border-radius:4px;padding:12px 16px;font-family:var(--f-mono);font-size:12px;color:var(--muted);line-height:1.8;margin:12px 0;overflow-x:auto}
+.declare-box{background:var(--card);border:1px solid var(--gold);border-radius:8px;padding:28px 32px;margin:32px 0;text-align:center}
+.declare-text{font-family:var(--f-serif);font-size:17px;line-height:1.8;color:#fff;letter-spacing:-.01em}
+.declare-source{font-family:var(--f-mono);font-size:10px;color:var(--gold);margin-top:12px}
+.verdict{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;border:1px solid rgba(255,255,255,.06);border-radius:8px;overflow:hidden;margin:24px 0}
+.vd-item{background:var(--card);padding:20px}
+.vd-item .vd-icon{font-size:20px;margin-bottom:6px}
+.vd-item .vd-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px}
+.vd-item .vd-desc{font-size:12px;color:var(--muted);line-height:1.5}
+footer{border-top:1px solid rgba(255,255,255,.04);padding:24px 28px;text-align:center;font-family:var(--f-mono);font-size:10px;color:var(--muted);letter-spacing:.08em;position:relative;z-index:1}
+@media(max-width:640px){.verdict{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+<a class="nav-brand" href="/" style="color:var(--gold);">ORBITPROMPT</a>
+<a class="nav-back" href="/">← 갤러리로</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Φ7 Humility · System Design</div>
+  <h1>겸손·확증편향·<br><em>사람 대면</em></h1>
+  <p class="hero-sub">MCP는 왕국이 아니다. 이 시스템의 목적은 진실을 찾는 것이 아니라, 내 주의력을 되찾는 것이다.</p>
+</div>
+
+<section class="section">
+  <div class="section-label">01 · 목적 재정의</div>
+  <h2>MCP의 목적은 <em>진실 발견</em>이 아니다</h2>
+  <div class="thesis">
+    <div class="thesis-text">"MCP는 왕국이 아니다. 멀티 LLM도, Φ7 드라이버도, 결정 엔진도 나보다 위대하지 않다. 이 시스템의 목적은 진실을 찾는 것이 아니라, 내 주의력을 되찾는 것이다."</div>
+  </div>
+  <p><strong>❌ MCP = 진실 발견 시스템</strong> — 위험하다. "내 MCP가 더 똑똑해"라는 오만으로 이어질 수 있다.</p>
+  <p><strong>✅ MCP = 주의력 방어벽</strong> — 외부 미디어의 편성권을 되찾고, 내 시선 분배를 덜 병신같이 만드는 도구.</p>
+</section>
+
+<section class="section">
+  <div class="section-label">02 · 확증편향 방지</div>
+  <h2><em>3개의 룰</em>이 엔진에 박혀 있다</h2>
+  <p>engine.py의 decide() 함수는 단순한 상태머신이 아니다. 입력이 들어오면 확증편향 여부를 먼저 검사한다.</p>
+  <div class="rule-grid">
+    <div class="rule-item"><span class="rule-num">01</span><span class="rule-text"><strong>반대 의견 강제</strong> — 동일 이슈에 hostile source가 없으면 risk_level이 자동으로 high로 상향된다. 내가 좋아하는 채널의 소스만 있을수록 시스템이 경고를 띄운다.</span></div>
+    <div class="rule-item"><span class="rule-num">02</span><span class="rule-text"><strong>친숙한 채널 페널티</strong> — familiar_only 플래그가 true면 무조건 HOLD 상태가 된다. "또 그 채널만 보고 있네"라고 시스템이 먼저 감지한다.</span></div>
+    <div class="rule-item"><span class="rule-num">03</span><span class="rule-text"><strong>hostile source 부재 + 고위험 = HOLD</strong> — 반대 의견도 없는데 리스크가 높은 주제면, 시스템이 알아서 보류시킨다. 인간 검토를 강제한다.</span></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-label">03 · Flux 슬롯</div>
+  <h2>사람 말을 듣는 <em>채널</em></h2>
+  <div class="flux-card">
+    <div class="flux-title">Flux Channel — 분석 금지, 청취만</div>
+    <div class="flux-desc">MCP 파이프라인에 "사람 말 직접 듣기 전용" 슬롯을 추가했다. 이 슬롯에 들어온 데이터는 분석하지 않고 있는 그대로 보존한다.</div>
+    <table class="flux-table">
+      <tr><td>주기</td><td>주 1회 이상</td></tr>
+      <tr><td>포맷</td><td>오프라인 모임 / 디스코드 / 트위터 스페이스 / 친구·가족 통화</td></tr>
+      <tr><td>규칙</td><td>그 자리에서는 편집자가 아니라 청취자로만 있음</td></tr>
+      <tr><td>후처리</td><td>나중에 생각나는 것만 사후 정리 모드로 rawmat MCP에 입력</td></tr>
+    </table>
+  </div>
+  <div class="flux-code">{
+  "date": "2026-06-09",
+  "type": "offline_meeting",
+  "summary": "있는 그대로 기록",
+  "feeling": "내 감정 상태",
+  "key_points": ["중요하게 들은 것"],
+  "action_later": "(선택) 나중에 MCP에 넣을 것"
+}</div>
+</section>
+
+<section class="section">
+  <div class="section-label">04 · 검증</div>
+  <h2>분기별 <em>자기검증</em></h2>
+  <p>MCP가 틀린 케이스를 기록하는 review_log 시스템. 시스템이 완벽하지 않다는 감각을 유지하기 위한 장치다.</p>
+  <div class="verdict">
+    <div class="vd-item"><div class="vd-icon">🧠</div><div class="vd-title">Flux 슬롯</div><div class="vd-desc">사람 대면 기록. 분석 금지. 청취만. 있는 그대로 보존.</div></div>
+    <div class="vd-item"><div class="vd-icon">📝</div><div class="vd-title">자기검증</div><div class="vd-desc">"지금까지 MCP가 N번 틀렸습니다." 리뷰 로그에 기록됨.</div></div>
+    <div class="vd-item"><div class="vd-icon">🔄</div><div class="vd-title">확증편향 방지</div><div class="vd-desc">3개 룰이 입력 단계에서 편향을 1차 필터링.</div></div>
+    <div class="vd-item"><div class="vd-icon">🌐</div><div class="vd-title">사람 접촉</div><div class="vd-desc">Flux 슬롯을 막으면 시스템이 나를 고립시킨다는 경고.</div></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-label">05 · 선언</div>
+  <div class="declare-box">
+    <div class="declare-text">MCP는 왕국이 아니다.<br>멀티 LLM도, Φ7 드라이버도, 결정 엔진도 나보다 위대하지 않다.<br>이 시스템의 목적은 진실을 찾는 것이 아니라,<br>내 주의력을 되찾는 것이다.<br><br>사람 말을 듣는 슬롯을 막으면 시스템이 나를 고립시킨다.</div>
+    <div class="declare-source">OrbitPrompt · HUMILITY CHECK · 2026</div>
+  </div>
+</section>
+
+<footer>Φ7-I-C-K-P-7AXIS · Humility Check · System Design</footer>
+</body>
+</html>

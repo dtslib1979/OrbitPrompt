@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OrbitPrompt — 정체성 선언</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#07070d;--surf:#0b0b14;--card:#0e0e1a;--gold:#d4af37;--brass:#b8982a;--ink:#f0e8d8;--dim:rgba(240,232,216,.5);--muted:rgba(240,232,216,.35);--f-sans:'Inter',sans-serif;--f-serif:'Playfair Display',serif;--f-mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-sans);line-height:1.8;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 30% 20%,rgba(212,175,55,.04) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 70% 80%,rgba(168,85,247,.02) 0%,transparent 50%);pointer-events:none;z-index:0}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;padding:0 28px;height:56px;background:rgba(7,7,13,.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.04)}
+.nav-brand{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--gold);text-decoration:none;letter-spacing:.08em}
+.nav-back{font-family:var(--f-mono);font-size:11px;color:var(--muted);text-decoration:none;margin-left:auto;transition:color .2s}
+.nav-back:hover{color:var(--gold)}
+.hero{min-height:80vh;display:flex;flex-direction:column;justify-content:center;padding:100px 28px 60px;position:relative;z-index:1;text-align:center}
+.hero-label{font-family:var(--f-mono);font-size:11px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:20px}
+.hero h1{font-family:var(--f-serif);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;line-height:1.05;letter-spacing:-.03em;margin-bottom:16px}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:15px;color:var(--dim);max-width:520px;margin:0 auto;line-height:1.7}
+.os-diagram{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;max-width:800px;margin:60px auto;border:1px solid rgba(255,255,255,.06);border-radius:12px;overflow:hidden;position:relative;z-index:1}
+.os-layer{background:var(--card);padding:28px 20px;text-align:center;transition:background .4s;cursor:pointer}
+.os-layer:hover{background:rgba(212,175,55,.06)}
+.os-layer .icon{font-size:28px;margin-bottom:8px}
+.os-layer .name{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:4px}
+.os-layer .title{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px}
+.os-layer .desc{font-size:11px;color:var(--muted);line-height:1.5}
+.os-layer .status{display:inline-block;padding:2px 8px;border-radius:3px;font-family:var(--f-mono);font-size:9px;margin-top:6px;background:rgba(16,185,129,.1);color:#10b981}
+.section{max-width:680px;margin:0 auto;padding:80px 28px;position:relative;z-index:1}
+.section-label{font-family:var(--f-mono);font-size:10px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:12px}
+h2{font-family:var(--f-serif);font-size:clamp(1.5rem,3vw,2rem);font-weight:700;margin-bottom:24px;letter-spacing:-.02em}
+h2 em{font-style:italic;color:var(--gold)}
+p{font-size:14px;color:var(--dim);margin-bottom:16px;line-height:1.9}
+.not-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;border:1px solid rgba(255,255,255,.06);border-radius:8px;overflow:hidden;margin:24px 0}
+.not-item{background:var(--card);padding:20px}
+.not-item .no{font-family:var(--f-mono);font-size:10px;color:var(--gold);margin-bottom:4px}
+.not-item .what{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px}
+.not-item .why{font-size:12px;color:var(--muted);line-height:1.5}
+.matrix{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;border:1px solid rgba(255,255,255,.06);border-radius:8px;overflow:hidden;margin:24px 0}
+.mx-item{background:var(--card);padding:24px}
+.mx-item .mx-icon{font-size:24px;margin-bottom:8px}
+.mx-item .mx-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px}
+.mx-item .mx-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.quote-block{border-left:2px solid var(--gold);padding:20px 24px;margin:32px 0;background:var(--card);border-radius:0 8px 8px 0}
+.quote-text{font-family:var(--f-serif);font-size:18px;font-style:italic;color:#fff;line-height:1.5;letter-spacing:-.01em}
+.quote-source{font-family:var(--f-mono);font-size:10px;color:var(--gold);margin-top:8px}
+footer{border-top:1px solid rgba(255,255,255,.04);padding:24px 28px;text-align:center;font-family:var(--f-mono);font-size:10px;color:var(--muted);letter-spacing:.08em;position:relative;z-index:1}
+@media(max-width:640px){.os-diagram{grid-template-columns:repeat(2,1fr)}.not-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+<a class="nav-brand" href="/" style="color:var(--gold);">ORBITPROMPT</a>
+<a class="nav-back" href="/">← 갤러리로</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Φ7 Identity · 2026</div>
+  <h1>개인 사고<br><em>운영체제</em></h1>
+  <p class="hero-sub">OrbitPrompt는 Φ7을 커널로 하는 개인 사고 OS다. MCP는 드라이버고, 갤러리는 데스크탑이고, 유튜브는 네트워크 스택이다.</p>
+</div>
+
+<div class="os-diagram">
+  <div class="os-layer"><div class="icon">🧠</div><div class="name">커널</div><div class="title">Φ7 드라이버</div><div class="desc">7축 사고 프레임워크 — 모든 MCP의 기반</div><div class="status">✅ 안정</div></div>
+  <div class="os-layer"><div class="icon">⚙️</div><div class="name">드라이버</div><div class="title">MCP 10개</div><div class="desc">정치/축구/달러/철학/미디어 도메인 분석 모듈</div><div class="status">✅ 안정</div></div>
+  <div class="os-layer"><div class="icon">📝</div><div class="name">파일시스템</div><div class="title">docs/ · boards/</div><div class="desc">철학 문서 7개 + 백서 43개 + 보드 15개</div><div class="status">✅ 안정</div></div>
+  <div class="os-layer"><div class="icon">🖥️</div><div class="name">데스크탑</div><div class="title">SVG 노드맵</div><div class="desc">설치된 MCP를 보여주고 실행하는 UI</div><div class="status">✅ v2</div></div>
+  <div class="os-layer"><div class="icon">🌐</div><div class="name">네트워크</div><div class="title">YouTube 3채널</div><div class="desc">OS의 출력물을 외부로 유통</div><div class="status">✅ 연결</div></div>
+  <div class="os-layer"><div class="icon">🔒</div><div class="name">보안</div><div class="title">Media MCP</div><div class="desc">확증편향 방지 · Flux 슬롯 · 자기검증</div><div class="status">✅ v2.0</div></div>
+</div>
+
+<section class="section">
+  <div class="section-label">01 · 정의</div>
+  <h2>이 레포지토리는 <em>무엇인가</em></h2>
+  <p><strong>OrbitPrompt = Φ7을 커널로 하는 개인 사고 운영체제.</strong> 일반적인 OS가 프로세스와 파일을 관리하듯, 이 레포는 네 사고방식과 판단을 관리한다. 아래 6개 레이어로 구성되어 있고, 전부 연결되어 있다.</p>
+  <p>🧠 <strong>커널</strong> — Φ7 드라이버, 7축 철학. 모든 MCP의 기반이 되는 사고 엔진.<br>
+  ⚙️ <strong>디바이스 드라이버</strong> — MCP 10개. 각 도메인(정치/축구/달러/철학/미디어)을 Φ7로 분석하는 실행 모듈.<br>
+  📝 <strong>파일시스템</strong> — docs/ 43개 + boards/ 15개. 철학 문서·백서·로그가 저장된 영속 계층.<br>
+  🖥️ <strong>데스크탑</strong> — 갤러리 (SVG 노드맵). 설치된 MCP를 보고 실행하는 사용자 인터페이스.<br>
+  🌐 <strong>네트워크 스택</strong> — YouTube 3개 채널 + Telegram. OS의 출력물을 외부로 유통.<br>
+  🔒 <strong>보안 커널</strong> — Media MCP engine.py. 확증편향 방지, Flux 슬롯, 자기검증.</p>
+</section>
+
+<section class="section">
+  <div class="section-label">02 · 경계</div>
+  <h2>이 레포지토리가 <em>아닌 것</em></h2>
+  <div class="not-grid">
+    <div class="not-item"><div class="no">❌ 철학 블로그</div><div class="what">블로그가 아니다</div><div class="why">철학을 말로 끝내지 않고, MCP로 컴파일해서 실행하는 레포다.</div></div>
+    <div class="not-item"><div class="no">❌ 개발 문서</div><div class="what">개발 문서가 아니다</div><div class="why">MCP는 부산물이다. 핵심은 사고방식 자체. 코드는 그 사고를 고정한 형식일 뿐.</div></div>
+    <div class="not-item"><div class="no">❌ AI 프로젝트</div><div class="what">AI 프로젝트가 아니다</div><div class="why">AI는 도구다. 이 레포의 주인은 네 사고방식이지, AI가 아니다.</div></div>
+    <div class="not-item"><div class="no">❌ 유튜브 채널</div><div class="what">유튜브 채널이 아니다</div><div class="why">유튜브는 출력 채널 중 하나일 뿐. 레포 자체가 본체다.</div></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-label">03 · 구조</div>
+  <h2>왜 <em>OS여야</em> 하는가</h2>
+  <div class="matrix">
+    <div class="mx-item"><div class="mx-icon">🧠</div><div class="mx-title">커널 통제</div><div class="mx-desc">Φ7 드라이버 = 모든 MCP의 기반 철학. 하나의 커널이 전부를 통제한다.</div></div>
+    <div class="mx-item"><div class="mx-icon">🔌</div><div class="mx-title">플러그 앤 플레이</div><div class="mx-desc">MCP = 디바이스 드라이버. 새 도메인 꽂으면 바로 분석 가능. 정치·축구·달러·미디어.</div></div>
+    <div class="mx-item"><div class="mx-icon">🖥️</div><div class="mx-title">사용자 모드</div><div class="mx-desc">사용자는 UI만 본다. 갤러리 + YouTube = 인터페이스. 내부 복잡도는 숨겨진다.</div></div>
+    <div class="mx-item"><div class="mx-icon">🔄</div><div class="mx-title">버전업</div><div class="mx-desc">"과거의 나 MCP" vs "현재의 나" 카운터 = OS 업데이트. 시간이 지날수록 진화한다.</div></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-label">04 · 부팅 상태</div>
+  <h2>현재 <em>OS 상태</em></h2>
+  <p>안정. 6개 레이어 전부 동작 중. 10개 MCP 확인 완료. 3개 YouTube 채널 연결. Media MCP v2.0 보안 커널 가동 중.</p>
+  <div class="quote-block">
+    <div class="quote-text">"OS는 원래 뒤죽박죽看起来지만, 부팅되면 사용자는 그냥 쓴다."</div>
+    <div class="quote-source">OrbitPrompt · IDENTITY DECLARATION · 2026</div>
+  </div>
+</section>
+
+<footer>Φ7-I-C-K-P-7AXIS · OrbitPrompt · 개인 사고 운영체제</footer>
+</body>
+</html>
