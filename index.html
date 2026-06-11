@@ -51,14 +51,13 @@ footer a:hover{color:var(--gold)}
 #graphSvg:active{cursor:grabbing}
 
 .edge{fill:none;stroke-linecap:round;transition:opacity .6s;will-change:opacity}
-.node-dot{transition:r .3s,opacity .3s;cursor:pointer;will-change:r,opacity}
-.node-label{font-family:'JetBrains Mono',monospace;font-size:7.5px;fill:rgba(255,255,255,.3);letter-spacing:.04em;pointer-events:none;transition:opacity .4s;text-anchor:middle;dominant-baseline:middle}
-.node-group{cursor:pointer;transition:transform .3s}
-.node-group:hover .node-label{opacity:1;fill:rgba(255,255,255,.7)}
-.node-group:hover .node-dot{filter:brightness(1.8)}
-.center-label{font-family:'Cormorant Garamond',serif;font-size:14px;fill:var(--gold);font-style:italic;text-anchor:middle;pointer-events:none}
-.hub-label{font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:rgba(255,255,255,.12);letter-spacing:.14em;text-anchor:middle;pointer-events:none;text-transform:uppercase}
-.hub-ring{transition:r .6s ease,opacity .6s ease;will-change:r,opacity}
+.node-dot{transition:opacity .3s;cursor:pointer}
+.node-label{font-family:'JetBrains Mono',monospace;fill:rgba(255,255,255,.3);letter-spacing:.04em;pointer-events:none;transition:opacity .3s;text-anchor:middle;dominant-baseline:middle}
+.node-group{cursor:pointer}
+.node-group:hover .node-dot{filter:brightness(2)}
+.center-label{font-family:'Cormorant Garamond',serif;fill:var(--gold);font-style:italic;text-anchor:middle;pointer-events:none}
+.hub-label{font-family:'JetBrains Mono',monospace;fill:rgba(255,255,255,.12);letter-spacing:.14em;text-anchor:middle;pointer-events:none;text-transform:uppercase}
+.hub-ring{pointer-events:none}
 
 /* TOOLTIP */
 #tooltip{position:fixed;z-index:200;pointer-events:none;background:rgba(10,26,15,.95);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:12px 16px;font-family:'Inter',sans-serif;font-size:11px;line-height:1.5;color:var(--ink2);max-width:220px;opacity:0;transition:opacity .2s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
@@ -267,228 +266,141 @@ Object.entries(HUBS).forEach(([id, hub]) => {
   });
 });
 
-// ─── 3D DRAG + PINCH ZOOM + TAP DETECTION ───
-let isDragging = false;
-let sx = 0, sy = 0;
+// ─── INFINITE CANVAS ENGINE ───
+// SVG matrix-based hit detection + dynamic node scaling + floaty momentum
+
+let isDragging = false, sx = 0, sy = 0;
 let angleX = 0, angleY = 0;
-let velocityX = 0, velocityY = 0;
-let targetX = 0, targetY = 0;
-let autoRotate = false;
-let zoom = 1;
-let targetZoom = 1;
-let touchStartTime = 0;
-let touchStartX = 0, touchStartY = 0;
+let vx = 0, vy = 0;
+let tx = 0, ty = 0; // target angles
+let autoRotate = false, hoveredHub = null;
+let zoom = 1, tz = 1; // target zoom
+let touchStartTime = 0, touchStartX = 0, touchStartY = 0;
 let wasTap = false;
-let initialPinchDist = 0;
-let initialPinchZoom = 1;
-let mouseDownX = 0, mouseDownY = 0;
-let mouseDownTime = 0;
+let pinchDist = 0, pinchZoom = 1;
+let mdx = 0, mdy = 0, mdTime = 0;
 
 const wrap = document.getElementById('graphWrap');
-const tooltip = document.getElementById('tooltip');
+const tip = document.getElementById('tooltip');
+const svg = document.getElementById('graphSvg');
+const NS = 'http://www.w3.org/2000/svg';
 
-wrap.addEventListener('mousedown', e => {
-  isDragging = true;
-  wasTap = true;
-  sx = e.clientX; sy = e.clientY;
-  mouseDownX = e.clientX; mouseDownY = e.clientY;
-  mouseDownTime = Date.now();
-  velocityX = 0; velocityY = 0;
-});
+// Get SVG coordinates from mouse/touch event (handles CSS 3D transform)
+function svgPoint(ev) {
+  const p = svg.createSVGPoint();
+  p.x = ev.clientX; p.y = ev.clientY;
+  const ctm = svg.getScreenCTM();
+  if (!ctm) return {x:0,y:0};
+  return p.matrixTransform(ctm.inverse());
+}
 
-window.addEventListener('mousemove', e => {
-  if (isDragging) {
-    const moved = Math.sqrt((e.clientX - mouseDownX) ** 2 + (e.clientY - mouseDownY) ** 2);
-    if (moved > 5) wasTap = false;
-    const dx = e.clientY - sy;
-    const dy = e.clientX - sx;
-    targetX += dx * 0.004;
-    targetY += dy * 0.004;
-    velocityX = dx * 0.004;
-    velocityY = dy * 0.004;
-    sx = e.clientX; sy = e.clientY;
-  }
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-});
-
-window.addEventListener('mouseup', e => {
-  isDragging = false;
-  // If click (no drag), navigate to nearest node
-  if (wasTap && Date.now() - mouseDownTime < 300) {
-    const rect = svg.getBoundingClientRect();
-    const svgX = (e.clientX - rect.left) / rect.width * 1200 - 600;
-    const svgY = (e.clientY - rect.top) / rect.height * 1200 - 600;
-    navigateToNode(svgX, svgY);
-  }
-});
-
-// ── TOUCH: single-finger drag + pinch zoom + tap ──
-wrap.addEventListener('touchstart', e => {
-  const touches = e.touches;
-  touchStartTime = Date.now();
-
-  if (touches.length === 1) {
-    // Single finger
-    isDragging = true;
-    wasTap = true;
-    sx = touches[0].clientX; sy = touches[0].clientY;
-    touchStartX = sx; touchStartY = sy;
-    velocityX = 0; velocityY = 0;
-  } else if (touches.length === 2) {
-    // Pinch start
-    isDragging = false;
-    const dx = touches[0].clientX - touches[1].clientX;
-    const dy = touches[0].clientY - touches[1].clientY;
-    initialPinchDist = Math.sqrt(dx * dx + dy * dy);
-    initialPinchZoom = targetZoom;
-  }
-}, {passive:true});
-
-window.addEventListener('touchmove', e => {
-  const touches = e.touches;
-
-  if (touches.length === 2) {
-    // Pinch zoom
-    e.preventDefault();
-    const dx = touches[0].clientX - touches[1].clientX;
-    const dy = touches[0].clientY - touches[1].clientY;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (initialPinchDist > 0) {
-      targetZoom = Math.max(0.4, Math.min(3.0, initialPinchZoom * (dist / initialPinchDist)));
-    }
-    document.getElementById('zoomIndicator').style.opacity = '1';
-    clearTimeout(window._zoomTimeout);
-    window._zoomTimeout = setTimeout(() => {
-      document.getElementById('zoomIndicator').style.opacity = '0';
-    }, 1500);
-    return;
-  }
-
-  if (!isDragging || touches.length !== 1) return;
-
-  const cx = touches[0].clientX, cy = touches[0].clientY;
-  const moved = Math.sqrt((cx - touchStartX) ** 2 + (cy - touchStartY) ** 2);
-
-  // If moved more than 8px, it's a drag not a tap
-  if (moved > 8) wasTap = false;
-
-  const dx = cy - sy;
-  const dy = cx - sx;
-  targetX += dx * 0.004;
-  targetY += dy * 0.004;
-  velocityX = dx * 0.004;
-  velocityY = dy * 0.004;
-  sx = cx; sy = cy;
-}, {passive:false});
-
-window.addEventListener('touchend', e => {
-  if (e.touches.length > 0) return;
-  const elapsed = Date.now() - touchStartTime;
-
-  if (wasTap && elapsed < 300) {
-    const tx = e.changedTouches[0].clientX;
-    const ty = e.changedTouches[0].clientY;
-    const rect = svg.getBoundingClientRect();
-    const svgX = (tx - rect.left) / rect.width * 1200 - 600;
-    const svgY = (ty - rect.top) / rect.height * 1200 - 600;
-    navigateToNode(svgX, svgY);
-  }
-
-  isDragging = false;
-});
-
-// ── MOUSE WHEEL ZOOM ──
-wrap.addEventListener('wheel', e => {
-  e.preventDefault();
-  targetZoom = Math.max(0.4, Math.min(3.0, targetZoom - e.deltaY * 0.001));
-  document.getElementById('zoomIndicator').style.opacity = '1';
-  clearTimeout(window._zoomTimeout);
-  window._zoomTimeout = setTimeout(() => {
-    document.getElementById('zoomIndicator').style.opacity = '0';
-  }, 1500);
-}, {passive:false});
-
-// Auto-rotate toggle
-document.getElementById('autoRotateBtn').addEventListener('click', () => {
-  autoRotate = !autoRotate;
-  document.getElementById('autoRotateBtn').style.color = autoRotate ? GOLD : '';
-  document.getElementById('autoRotateBtn').style.borderColor = autoRotate ? GOLD : '';
-});
-
-// ─── NODE NAVIGATION (click/tap leaf → go, hub → first child) ───
-function navigateToNode(svgX, svgY) {
-  let best = null, bestDist = Infinity;
-  // Check leaf nodes first (smaller radius = higher priority)
+// Navigate to nearest node
+function tapNavigate(ev) {
+  const pt = svgPoint(ev);
+  const zf = Math.max(0.5, Math.min(2, zoom));
+  let best = null, bestD = Infinity;
   leafEls.forEach(l => {
-    const d = Math.sqrt((l.x - svgX) ** 2 + (l.y - svgY) ** 2);
-    if (d < bestDist) { bestDist = d; best = { type: 'leaf', data: l }; }
+    const d = Math.hypot(l.x - pt.x, l.y - pt.y);
+    if (d < bestD) { bestD = d; best = { t:'leaf', d:l }; }
   });
-  if (best && bestDist < 40 && best.type === 'leaf') {
-    window.location.href = best.data.leaf.href;
-    return;
+  const leafHit = 25 * zf;
+  if (best && bestD < leafHit && best.t === 'leaf') {
+    window.location.href = best.d.leaf.href; return;
   }
-  // Check hubs
-  Object.entries(HUBS).forEach(([id, hub]) => {
-    const d = Math.sqrt((hub.x - svgX) ** 2 + (hub.y - svgY) ** 2);
-    if (d < bestDist) { bestDist = d; best = { type: 'hub', hubId: id }; }
+  Object.entries(HUBS).forEach(([id, h]) => {
+    const d = Math.hypot(h.x - pt.x, h.y - pt.y);
+    if (d < bestD) { bestD = d; best = { t:'hub', id }; }
   });
-  if (best && bestDist < 60 && best.type === 'hub') {
-    const leaves = LEAVES[best.hubId];
-    if (leaves && leaves[0]) window.location.href = leaves[0].href;
+  const hubHit = 40 * zf;
+  if (best && bestD < hubHit && best.t === 'hub') {
+    const lv = LEAVES[best.id];
+    if (lv && lv[0]) window.location.href = lv[0].href;
   }
 }
 
-// Hub click via pointer cursor (for desktop SVG <g>)
-Object.entries(hubEls).forEach(([id, h]) => {
-  h.group.addEventListener('click', e => {
-    if (wasTap === false) return; // was a drag
+// ── MOUSE ──
+wrap.addEventListener('mousedown', e => {
+  isDragging = true; wasTap = true;
+  sx = e.clientX; sy = e.clientY;
+  mdx = e.clientX; mdy = e.clientY; mdTime = Date.now();
+  vx = 0; vy = 0;
+});
+window.addEventListener('mousemove', e => {
+  if (isDragging) {
+    if (Math.hypot(e.clientX-mdx, e.clientY-mdy) > 5) wasTap = false;
+    const dx = e.clientY - sy, dy = e.clientX - sx;
+    tx += dx * 0.004; ty += dy * 0.004;
+    vx = dx * 0.004; vy = dy * 0.004;
+    sx = e.clientX; sy = e.clientY;
+  }
+  mouseX = e.clientX; mouseY = e.clientY;
+});
+window.addEventListener('mouseup', e => {
+  isDragging = false;
+  if (wasTap && Date.now() - mdTime < 300) tapNavigate(e);
+});
+
+// ── TOUCH ──
+wrap.addEventListener('touchstart', e => {
+  const t = e.touches;
+  touchStartTime = Date.now();
+  if (t.length === 1) {
+    isDragging = true; wasTap = true;
+    sx = t[0].clientX; sy = t[0].clientY;
+    touchStartX = sx; touchStartY = sy;
+    vx = 0; vy = 0;
+  } else if (t.length === 2) {
+    isDragging = false;
+    pinchDist = Math.hypot(t[0].clientX-t[1].clientX, t[0].clientY-t[1].clientY);
+    pinchZoom = tz;
+  }
+}, {passive:true});
+window.addEventListener('touchmove', e => {
+  const t = e.touches;
+  if (t.length === 2) {
     e.preventDefault();
-    const leaves = LEAVES[id];
-    if (leaves && leaves[0]) window.location.href = leaves[0].href;
-  });
-});
-const centerGlow1 = cGlow;
-const centerGlow2 = cGlow2;
-let hoveredHub = null;
-
-// Hover tracking for hub tooltips
-document.querySelectorAll('.node-group[data-hub]').forEach(el => {
-  el.addEventListener('mouseenter', e => {
-    const id = el.getAttribute('data-hub');
-    const hub = HUBS[id];
-    if (!hub) return;
-    tooltip.innerHTML = `<strong>${hub.label}</strong><br>${hub.desc}<span class="hint">클릭 시 허브 확장</span>`;
-    tooltip.classList.add('visible');
-    hoveredHub = id;
-  });
-  el.addEventListener('mousemove', e => {
-    tooltip.style.left = (e.clientX + 16) + 'px';
-    tooltip.style.top = (e.clientY - 10) + 'px';
-  });
-  el.addEventListener('mouseleave', () => {
-    tooltip.classList.remove('visible');
-    hoveredHub = null;
-  });
+    const d = Math.hypot(t[0].clientX-t[1].clientX, t[0].clientY-t[1].clientY);
+    if (pinchDist > 0) tz = Math.max(0.2, Math.min(5, pinchZoom * (d/pinchDist)));
+    document.getElementById('zoomIndicator').style.opacity = '1';
+    clearTimeout(window._zoomTimeout);
+    window._zoomTimeout = setTimeout(() => document.getElementById('zoomIndicator').style.opacity = '0', 1500);
+    return;
+  }
+  if (!isDragging || t.length !== 1) return;
+  const cx = t[0].clientX, cy = t[0].clientY;
+  if (Math.hypot(cx-touchStartX, cy-touchStartY) > 8) wasTap = false;
+  const dx = cy - sy, dy = cx - sx;
+  tx += dx * 0.004; ty += dy * 0.004;
+  vx = dx * 0.004; vy = dy * 0.004;
+  sx = cx; sy = cy;
+}, {passive:false});
+window.addEventListener('touchend', e => {
+  if (e.touches.length > 0) return;
+  if (wasTap && Date.now() - touchStartTime < 300) {
+    tapNavigate(e.changedTouches[0]);
+  }
+  isDragging = false;
 });
 
-// Leaf hover
-document.querySelectorAll('.node-group[data-leaf]').forEach(el => {
-  el.addEventListener('mouseenter', e => {
-    const label = el.querySelector('.node-label')?.textContent || '';
-    const href = el.getAttribute('href') || '';
-    tooltip.innerHTML = `<strong>${label}</strong><span class="hint">${href}</span>`;
-    tooltip.classList.add('visible');
-  });
-  el.addEventListener('mousemove', e => {
-    tooltip.style.left = (e.clientX + 16) + 'px';
-    tooltip.style.top = (e.clientY - 10) + 'px';
-  });
-  el.addEventListener('mouseleave', () => {
-    tooltip.classList.remove('visible');
-  });
+// ── WHEEL ZOOM ──
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  const factor = zoom < 0.5 ? 0.0005 : zoom < 1 ? 0.0008 : 0.001;
+  tz = Math.max(0.2, Math.min(5, tz - e.deltaY * factor));
+  document.getElementById('zoomIndicator').style.opacity = '1';
+  clearTimeout(window._zoomTimeout);
+  window._zoomTimeout = setTimeout(() => document.getElementById('zoomIndicator').style.opacity = '0', 1500);
+}, {passive:false});
+
+// ── AUTO-ROTATE ──
+document.getElementById('autoRotateBtn').addEventListener('click', () => {
+  autoRotate = !autoRotate;
+  const btn = document.getElementById('autoRotateBtn');
+  btn.style.color = autoRotate ? GOLD : '';
+  btn.style.borderColor = autoRotate ? GOLD : '';
 });
 
+// ── ANIMATION LOOP ──
 let t = 0;
 
 function animate() {
@@ -496,73 +408,155 @@ function animate() {
 
   // Auto-rotate
   if (autoRotate && !isDragging) {
-    targetY += 0.003;
-    targetX += Math.sin(t * 0.3) * 0.001;
+    ty += 0.002;
+    tx += Math.sin(t * 0.25) * 0.0008;
   }
 
-  // Inertia (momentum)
+  // Inertia — floaty momentum with low friction
   if (!isDragging) {
-    targetX += velocityX * 0.92;
-    targetY += velocityY * 0.92;
-    velocityX *= 0.92;
-    velocityY *= 0.92;
-    if (Math.abs(velocityX) < 0.0001) velocityX = 0;
-    if (Math.abs(velocityY) < 0.0001) velocityY = 0;
+    tx += vx * 0.94; ty += vy * 0.94;
+    vx *= 0.94; vy *= 0.94;
+    if (Math.abs(vx) < 0.00005) vx = 0;
+    if (Math.abs(vy) < 0.00005) vy = 0;
   }
 
-  // Smooth follow
-  angleX += (targetX - angleX) * 0.08;
-  angleY += (targetY - angleY) * 0.08;
-  zoom += (targetZoom - zoom) * 0.08;
+  // Smooth follow (spring-like)
+  angleX += (tx - angleX) * 0.06;
+  angleY += (ty - angleY) * 0.06;
+  zoom += (tz - zoom) * 0.06;
 
+  // Apply CSS 3D transform + scale
   svg.style.transform = `rotateX(${angleX}rad) rotateY(${angleY}rad) scale(${zoom})`;
 
-  // Center breathing
-  const breathe = 1 + Math.sin(t * 0.8) * 0.04;
-  centerGlow1.setAttribute('r', (70 * breathe).toString());
-  centerGlow1.setAttribute('opacity', (0.05 + Math.sin(t * 0.8) * 0.02).toString());
-  centerGlow2.setAttribute('r', (45 * breathe).toString());
-  centerGlow2.setAttribute('opacity', (0.07 + Math.sin(t * 0.8) * 0.03).toString());
+  // Dynamic node sizing based on zoom
+  const z = Math.max(0.4, Math.min(2.5, zoom));
+  const hubR = 5 + z * 2;       // 7→10
+  const leafR = 1.5 + z * 1.2;  // 2→4.3
+  const labelFS = 5 + z * 2.5;  // 7→12
+  const hubLabelFS = 4.5 + z * 2;
+  const centerFS = 10 + z * 4;
+  const edgeW = 0.3 + z * 0.25;
+
+  // Update hub dots
+  Object.entries(hubEls).forEach(([id, h]) => {
+    const r = hoveredHub === id ? hubR * 1.4 : hoveredHub ? hubR * 0.6 : hubR;
+    h.dot.setAttribute('r', r.toString());
+    h.dot.setAttribute('opacity', hoveredHub === id ? '1' : hoveredHub ? '0.3' : '0.7');
+    // Hub floating
+    const float = Math.sin(t * 0.6 + id.length * 1.3) * 4;
+    h.group.setAttribute('transform', `translate(0,${float.toFixed(1)})`);
+    // Label
+    h.label.setAttribute('y', (h.y + 17 + float).toString());
+    h.label.setAttribute('font-size', hubLabelFS.toFixed(1));
+  });
+
+  // Update leaf nodes
+  leafEls.forEach((l, i) => {
+    const float = Math.sin(t * 0.5 + i * 0.9) * 3;
+    l.dot.setAttribute('r', leafR.toFixed(1));
+    l.dot.setAttribute('opacity', Math.min(0.6, 0.2 + z * 0.15));
+    l.label.setAttribute('font-size', labelFS.toFixed(1));
+    l.label.setAttribute('y', (l.y + 12 + float).toString());
+    l.el.setAttribute('transform', `translate(0,${float.toFixed(1)})`);
+  });
+
+  // Center label
+  centerTxt.setAttribute('font-size', centerFS.toFixed(1));
+
+  // Edge stroke widths
+  edgeEls.forEach(e => {
+    e.setAttribute('stroke-width', edgeW.toFixed(2));
+    e.setAttribute('opacity', Math.min(0.08, 0.02 + z * 0.03));
+  });
+
+  // Center breathing glow
+  const breathe = 1 + Math.sin(t * 0.7) * 0.04;
+  cGlow.setAttribute('r', (70 * breathe * z * 0.3).toString());
+  cGlow.setAttribute('opacity', (0.04 + Math.sin(t * 0.7) * 0.02).toString());
+  cGlow2.setAttribute('r', (45 * breathe * z * 0.35).toString());
+  cGlow2.setAttribute('opacity', (0.06 + Math.sin(t * 0.7) * 0.03).toString());
 
   // Hub rings pulse
   const rings = document.querySelectorAll('.hub-ring');
   rings.forEach((r, i) => {
-    const s = 1 + Math.sin(t + i * 0.7) * 0.08;
-    r.setAttribute('r', (55 * s).toString());
-    r.setAttribute('opacity', (0.06 + Math.sin(t + i * 0.7) * 0.03).toString());
+    const s = 1 + Math.sin(t + i * 0.7) * 0.1;
+    r.setAttribute('r', (45 * s * z * 0.25).toString());
+    r.setAttribute('opacity', (0.05 + Math.sin(t + i * 0.7) * 0.02).toString());
+    r.setAttribute('stroke-width', (0.3 * z * 0.5).toFixed(2));
   });
 
-  // Hovered hub highlight
-  Object.entries(hubEls).forEach(([id, h]) => {
-    if (hoveredHub === id) {
-      h.dot.setAttribute('r', '9');
-      h.dot.setAttribute('opacity', '1');
-    } else if (hoveredHub) {
-      h.dot.setAttribute('r', '4');
-      h.dot.setAttribute('opacity', '0.3');
-    } else {
-      h.dot.setAttribute('r', '7');
-      h.dot.setAttribute('opacity', '0.7');
-    }
-  });
-
-  // Update zoom indicator
+  // Zoom indicator
   const zi = document.getElementById('zoomIndicator');
   zi.textContent = Math.round(zoom * 100) + '%';
 
   requestAnimationFrame(animate);
 }
 
-animate();
+// ─── HUB CLICK ───
+Object.entries(hubEls).forEach(([id, h]) => {
+  h.group.addEventListener('click', e => {
+    if (!wasTap) return;
+    e.preventDefault();
+    const lv = LEAVES[id];
+    if (lv && lv[0]) window.location.href = lv[0].href;
+  });
+});
+
+// ─── HOVER TOOLTIPS ───
+document.querySelectorAll('[data-hub]').forEach(el => {
+  el.addEventListener('mouseenter', e => {
+    const id = el.getAttribute('data-hub');
+    const h = HUBS[id]; if (!h) return;
+    tip.innerHTML = '<strong>'+h.label+'</strong><br>'+h.desc+'<span class="hint">클릭 시 허브 확장</span>';
+    tip.classList.add('visible'); hoveredHub = id;
+  });
+  el.addEventListener('mousemove', e => {
+    tip.style.left = (e.clientX+16)+'px'; tip.style.top = (e.clientY-10)+'px';
+  });
+  el.addEventListener('mouseleave', () => { tip.classList.remove('visible'); hoveredHub = null; });
+});
+document.querySelectorAll('[data-leaf]').forEach(el => {
+  el.addEventListener('mouseenter', e => {
+    const label = el.querySelector('.node-label')?.textContent||'';
+    const href = el.getAttribute('href')||'';
+    tip.innerHTML = '<strong>'+label+'</strong><span class="hint">'+href+'</span>';
+    tip.classList.add('visible');
+  });
+  el.addEventListener('mousemove', e => {
+    tip.style.left = (e.clientX+16)+'px'; tip.style.top = (e.clientY-10)+'px';
+  });
+  el.addEventListener('mouseleave', () => { tip.classList.remove('visible'); });
+});
+
+// ─── KEYBOARD ───
+window.addEventListener('keydown', e => {
+  if (e.key==='r'||e.key==='R') document.getElementById('autoRotateBtn').click();
+  if (e.key==='+'||e.key==='=') tz = Math.min(5, tz*1.15);
+  if (e.key==='-') tz = Math.max(0.2, tz/1.15);
+  if (e.key==='0') { tz=1; tx=0; ty=0; angleX=0; angleY=0; vx=0; vy=0; }
+});
+
+// ─── STAGGERED ENTRY ───
+setTimeout(() => {
+  document.querySelectorAll('.node-group').forEach((n,i) => {
+    n.style.opacity = '0'; n.style.transform = 'translateY(12px)';
+    setTimeout(() => {
+      n.style.transition = 'opacity .5s ease, transform .5s ease';
+      n.style.opacity = '1'; n.style.transform = 'translateY(0)';
+    }, 1400 + i*60);
+  });
+  setTimeout(() => {
+    document.querySelectorAll('.node-group').forEach(n => { n.style.transition=''; n.style.transform=''; });
+  }, 1400 + document.querySelectorAll('.node-group').length*60 + 500);
+}, 100);
+
+console.log('🧑‍🏫 OrbitPrompt — 칠판에 쓰는 철학');
 
 // ─── CHALK DUST PARTICLE SYSTEM ───
 const canvas = document.getElementById('chalkCanvas');
 const ctx = canvas.getContext('2d');
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
@@ -570,121 +564,43 @@ const PARTICLES = [];
 const PARTICLE_COUNT = 60;
 let mouseX = -1000, mouseY = -1000;
 
-// Create particles
 for (let i = 0; i < PARTICLE_COUNT; i++) {
   PARTICLES.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    vx: (Math.random() - 0.5) * 0.15,
-    vy: (Math.random() - 0.5) * 0.15 - 0.05,
-    r: Math.random() * 1.8 + 0.3,
-    opacity: Math.random() * 0.3 + 0.05,
-    life: Math.random() * Math.PI * 2,
+    x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+    vx: (Math.random()-0.5)*0.15, vy: (Math.random()-0.5)*0.15-0.05,
+    r: Math.random()*1.8+0.3, opacity: Math.random()*0.3+0.05,
+    life: Math.random()*Math.PI*2,
   });
 }
 
 function drawParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+  ctx.clearRect(0,0,canvas.width,canvas.height);
   for (const p of PARTICLES) {
-    p.x += p.vx;
-    p.y += p.vy;
-    p.life += 0.01;
-
-    // Slight attraction to mouse
-    const dx = mouseX - p.x;
-    const dy = mouseY - p.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < 200 && dist > 0) {
-      p.vx += dx / dist * 0.002;
-      p.vy += dy / dist * 0.002;
-    }
-
-    // Damping
-    p.vx *= 0.998;
-    p.vy *= 0.998;
-
-    // Wrap around
-    if (p.x < -10) p.x = canvas.width + 10;
-    if (p.x > canvas.width + 10) p.x = -10;
-    if (p.y < -10) p.y = canvas.height + 10;
-    if (p.y > canvas.height + 10) p.y = -10;
-
-    const flicker = 0.6 + Math.sin(p.life) * 0.4;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${p.opacity * flicker})`;
-    ctx.fill();
+    p.x+=p.vx; p.y+=p.vy; p.life+=0.01;
+    const dx=mouseX-p.x, dy=mouseY-p.y, dist=Math.hypot(dx,dy);
+    if (dist<200&&dist>0) { p.vx+=dx/dist*0.002; p.vy+=dy/dist*0.002; }
+    p.vx*=0.998; p.vy*=0.998;
+    if(p.x<-10)p.x=canvas.width+10;if(p.x>canvas.width+10)p.x=-10;
+    if(p.y<-10)p.y=canvas.height+10;if(p.y>canvas.height+10)p.y=-10;
+    const flicker=0.6+Math.sin(p.life)*0.4;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,'+(p.opacity*flicker)+')'; ctx.fill();
   }
-
-  // Mouse trail sparkles
-  if (!isDragging && mouseX > 0 && mouseY > 0) {
-    for (let i = 0; i < 3; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const dist = Math.random() * 30 + 5;
-      ctx.beginPath();
-      ctx.arc(
-        mouseX + Math.cos(angle) * dist,
-        mouseY + Math.sin(angle) * dist,
-        Math.random() * 1 + 0.3,
-        0, Math.PI * 2
-      );
-      ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.1 + 0.02})`;
-      ctx.fill();
+  // Mouse sparkle
+  if(!isDragging&&mouseX>0&&mouseY>0){
+    for(let i=0;i<3;i++){
+      const a=Math.random()*Math.PI*2, d=Math.random()*30+5;
+      ctx.beginPath(); ctx.arc(mouseX+Math.cos(a)*d,mouseY+Math.sin(a)*d,Math.random()*1+0.3,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,255,255,'+(Math.random()*0.1+0.02)+')'; ctx.fill();
     }
-
-    // Subtle glow around cursor
-    const grad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 40);
-    grad.addColorStop(0, 'rgba(238,200,100,0.03)');
-    grad.addColorStop(1, 'rgba(238,200,100,0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(mouseX - 40, mouseY - 40, 80, 80);
+    const g=ctx.createRadialGradient(mouseX,mouseY,0,mouseX,mouseY,40);
+    g.addColorStop(0,'rgba(238,200,100,0.03)'); g.addColorStop(1,'rgba(238,200,100,0)');
+    ctx.fillStyle=g; ctx.fillRect(mouseX-40,mouseY-40,80,80);
   }
-
   requestAnimationFrame(drawParticles);
 }
-
 drawParticles();
 
-// ─── KEYBOARD SHORTCUTS ───
-window.addEventListener('keydown', e => {
-  if (e.key === 'r' || e.key === 'R') {
-    document.getElementById('autoRotateBtn').click();
-  }
-  if (e.key === '+' || e.key === '=') {
-    targetZoom = Math.min(2.0, targetZoom + 0.1);
-  }
-  if (e.key === '-') {
-    targetZoom = Math.max(0.4, targetZoom - 0.1);
-  }
-  if (e.key === '0') {
-    targetZoom = 1;
-    targetX = 0; targetY = 0;
-    angleX = 0; angleY = 0;
-  }
-});
-
-// ─── STAGGERED NODE ENTRY ───
-(function sequence() {
-  const allNodes = document.querySelectorAll('.node-group');
-  allNodes.forEach((n, i) => {
-    n.style.opacity = '0';
-    n.style.transform = 'translateY(10px)';
-    setTimeout(() => {
-      n.style.transition = 'opacity .6s ease, transform .6s ease';
-      n.style.opacity = '1';
-      n.style.transform = 'translateY(0)';
-    }, 1500 + i * 80);
-  });
-  setTimeout(() => {
-    allNodes.forEach(n => {
-      n.style.transition = '';
-      n.style.transform = '';
-    });
-  }, 1500 + allNodes.length * 80 + 600);
-})();
-
-console.log('🧑‍🏫 OrbitPrompt — 칠판에 쓰는 철학');
 </script>
 </body>
 </html>
