@@ -46,6 +46,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .quote-source{font-family:var(--f-mono);font-size:10px;color:var(--gold);margin-top:8px}
 footer{border-top:1px solid rgba(255,255,255,.04);padding:24px 28px;text-align:center;font-family:var(--f-mono);font-size:10px;color:var(--muted);letter-spacing:.08em;position:relative;z-index:1}
 @media(max-width:640px){.finger-row{grid-template-columns:36px 80px 1fr;gap:12px;padding:16px}.finger-emoji{font-size:24px}.matrix{grid-template-columns:repeat(3,1fr)}}
+
+/* 칠판 분필 효과 */
+@keyframes chalkDust {
+    0% { opacity: 0; transform: translateY(0); }
+    50% { opacity: 0.2; }
+    100% { opacity: 0; transform: translateY(-30px); }
+}
+.chalk-particle {
+    position: fixed; width: 2px; height: 8px;
+    background: rgba(238,200,100,0.15);
+    border-radius: 50%; pointer-events: none; z-index: 9999;
+    animation: chalkDust 6s ease-in infinite;
+}
 </style>
 </head>
 <body>
@@ -138,5 +151,9 @@ footer{border-top:1px solid rgba(255,255,255,.04);padding:24px 28px;text-align:c
 </section>
 
 <footer>Φ7-I-C-K-P-7AXIS · 칠판 위에 쓰는 철학 · OrbitPrompt</footer>
+<div class="chalk-particle" style="left:10%;top:80%;animation-delay:0s;"></div>
+<div class="chalk-particle" style="left:30%;top:60%;animation-delay:2s;width:1px;height:5px;"></div>
+<div class="chalk-particle" style="left:70%;top:75%;animation-delay:4s;width:3px;height:6px;"></div>
+<div class="chalk-particle" style="left:85%;top:50%;animation-delay:1s;width:1.5px;"></div>
 </body>
 </html>
