@@ -46,7 +46,7 @@ footer a:hover{color:var(--gold)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* CANVAS — fullscreen */
-#graphWrap{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;perspective:1200px}
+#graphWrap{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;perspective:1200px;touch-action:none;-ms-touch-action:none}
 #graphSvg{width:100%;height:100%;display:block;cursor:grab;background:transparent;transform-style:preserve-3d;will-change:transform}
 #graphSvg:active{cursor:grabbing}
 
@@ -267,7 +267,7 @@ Object.entries(HUBS).forEach(([id, hub]) => {
   });
 });
 
-// ─── 3D DRAG WITH INERTIA ───
+// ─── 3D DRAG + PINCH ZOOM + TAP DETECTION ───
 let isDragging = false;
 let sx = 0, sy = 0;
 let angleX = 0, angleY = 0;
@@ -276,18 +276,30 @@ let targetX = 0, targetY = 0;
 let autoRotate = false;
 let zoom = 1;
 let targetZoom = 1;
+let touchStartTime = 0;
+let touchStartX = 0, touchStartY = 0;
+let wasTap = false;
+let initialPinchDist = 0;
+let initialPinchZoom = 1;
+let mouseDownX = 0, mouseDownY = 0;
+let mouseDownTime = 0;
 
 const wrap = document.getElementById('graphWrap');
 const tooltip = document.getElementById('tooltip');
 
 wrap.addEventListener('mousedown', e => {
   isDragging = true;
+  wasTap = true;
   sx = e.clientX; sy = e.clientY;
+  mouseDownX = e.clientX; mouseDownY = e.clientY;
+  mouseDownTime = Date.now();
   velocityX = 0; velocityY = 0;
 });
 
 window.addEventListener('mousemove', e => {
   if (isDragging) {
+    const moved = Math.sqrt((e.clientX - mouseDownX) ** 2 + (e.clientY - mouseDownY) ** 2);
+    if (moved > 5) wasTap = false;
     const dx = e.clientY - sy;
     const dy = e.clientX - sx;
     targetX += dx * 0.004;
@@ -296,39 +308,100 @@ window.addEventListener('mousemove', e => {
     velocityY = dy * 0.004;
     sx = e.clientX; sy = e.clientY;
   }
-  // Mouse followers for particles
   mouseX = e.clientX;
   mouseY = e.clientY;
 });
 
-window.addEventListener('mouseup', () => {
+window.addEventListener('mouseup', e => {
   isDragging = false;
+  // If click (no drag), navigate to nearest node
+  if (wasTap && Date.now() - mouseDownTime < 300) {
+    const rect = svg.getBoundingClientRect();
+    const svgX = (e.clientX - rect.left) / rect.width * 1200 - 600;
+    const svgY = (e.clientY - rect.top) / rect.height * 1200 - 600;
+    navigateToNode(svgX, svgY);
+  }
 });
 
-// Touch
+// ── TOUCH: single-finger drag + pinch zoom + tap ──
 wrap.addEventListener('touchstart', e => {
-  isDragging = true;
-  sx = e.touches[0].clientX; sy = e.touches[0].clientY;
-  velocityX = 0; velocityY = 0;
+  const touches = e.touches;
+  touchStartTime = Date.now();
+
+  if (touches.length === 1) {
+    // Single finger
+    isDragging = true;
+    wasTap = true;
+    sx = touches[0].clientX; sy = touches[0].clientY;
+    touchStartX = sx; touchStartY = sy;
+    velocityX = 0; velocityY = 0;
+  } else if (touches.length === 2) {
+    // Pinch start
+    isDragging = false;
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    initialPinchDist = Math.sqrt(dx * dx + dy * dy);
+    initialPinchZoom = targetZoom;
+  }
 }, {passive:true});
 
 window.addEventListener('touchmove', e => {
-  if (!isDragging) return;
-  const dx = e.touches[0].clientY - sy;
-  const dy = e.touches[0].clientX - sx;
+  const touches = e.touches;
+
+  if (touches.length === 2) {
+    // Pinch zoom
+    e.preventDefault();
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (initialPinchDist > 0) {
+      targetZoom = Math.max(0.4, Math.min(3.0, initialPinchZoom * (dist / initialPinchDist)));
+    }
+    document.getElementById('zoomIndicator').style.opacity = '1';
+    clearTimeout(window._zoomTimeout);
+    window._zoomTimeout = setTimeout(() => {
+      document.getElementById('zoomIndicator').style.opacity = '0';
+    }, 1500);
+    return;
+  }
+
+  if (!isDragging || touches.length !== 1) return;
+
+  const cx = touches[0].clientX, cy = touches[0].clientY;
+  const moved = Math.sqrt((cx - touchStartX) ** 2 + (cy - touchStartY) ** 2);
+
+  // If moved more than 8px, it's a drag not a tap
+  if (moved > 8) wasTap = false;
+
+  const dx = cy - sy;
+  const dy = cx - sx;
   targetX += dx * 0.004;
   targetY += dy * 0.004;
   velocityX = dx * 0.004;
   velocityY = dy * 0.004;
-  sx = e.touches[0].clientX; sy = e.touches[0].clientY;
-}, {passive:true});
+  sx = cx; sy = cy;
+}, {passive:false});
 
-window.addEventListener('touchend', () => { isDragging = false; });
+window.addEventListener('touchend', e => {
+  if (e.touches.length > 0) return;
+  const elapsed = Date.now() - touchStartTime;
 
-// Scroll to zoom
+  if (wasTap && elapsed < 300) {
+    const tx = e.changedTouches[0].clientX;
+    const ty = e.changedTouches[0].clientY;
+    const rect = svg.getBoundingClientRect();
+    const svgX = (tx - rect.left) / rect.width * 1200 - 600;
+    const svgY = (ty - rect.top) / rect.height * 1200 - 600;
+    navigateToNode(svgX, svgY);
+  }
+
+  isDragging = false;
+});
+
+// ── MOUSE WHEEL ZOOM ──
 wrap.addEventListener('wheel', e => {
   e.preventDefault();
-  targetZoom = Math.max(0.4, Math.min(2.0, targetZoom - e.deltaY * 0.001));
+  targetZoom = Math.max(0.4, Math.min(3.0, targetZoom - e.deltaY * 0.001));
   document.getElementById('zoomIndicator').style.opacity = '1';
   clearTimeout(window._zoomTimeout);
   window._zoomTimeout = setTimeout(() => {
@@ -343,7 +416,38 @@ document.getElementById('autoRotateBtn').addEventListener('click', () => {
   document.getElementById('autoRotateBtn').style.borderColor = autoRotate ? GOLD : '';
 });
 
-// ─── ANIMATION LOOP ───
+// ─── NODE NAVIGATION (click/tap leaf → go, hub → first child) ───
+function navigateToNode(svgX, svgY) {
+  let best = null, bestDist = Infinity;
+  // Check leaf nodes first (smaller radius = higher priority)
+  leafEls.forEach(l => {
+    const d = Math.sqrt((l.x - svgX) ** 2 + (l.y - svgY) ** 2);
+    if (d < bestDist) { bestDist = d; best = { type: 'leaf', data: l }; }
+  });
+  if (best && bestDist < 40 && best.type === 'leaf') {
+    window.location.href = best.data.leaf.href;
+    return;
+  }
+  // Check hubs
+  Object.entries(HUBS).forEach(([id, hub]) => {
+    const d = Math.sqrt((hub.x - svgX) ** 2 + (hub.y - svgY) ** 2);
+    if (d < bestDist) { bestDist = d; best = { type: 'hub', hubId: id }; }
+  });
+  if (best && bestDist < 60 && best.type === 'hub') {
+    const leaves = LEAVES[best.hubId];
+    if (leaves && leaves[0]) window.location.href = leaves[0].href;
+  }
+}
+
+// Hub click via pointer cursor (for desktop SVG <g>)
+Object.entries(hubEls).forEach(([id, h]) => {
+  h.group.addEventListener('click', e => {
+    if (wasTap === false) return; // was a drag
+    e.preventDefault();
+    const leaves = LEAVES[id];
+    if (leaves && leaves[0]) window.location.href = leaves[0].href;
+  });
+});
 const centerGlow1 = cGlow;
 const centerGlow2 = cGlow2;
 let hoveredHub = null;
