@@ -174,6 +174,56 @@ nav{
   }
 }
 
+/* ── CHANNEL CTA ── */
+.channel-cta{
+  max-width:700px;margin:0 auto 48px;
+  padding:0 24px;
+}
+.channel-cta-inner{
+  border:1px solid rgba(212,175,55,.18);
+  border-radius:12px;
+  padding:28px 32px;
+  background:rgba(212,175,55,.03);
+  display:flex;align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;gap:20px;
+}
+.channel-cta-left{}
+.channel-cta-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.2em;
+  color:var(--gold2);margin-bottom:8px;
+}
+.channel-cta-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;
+  color:var(--ink1);letter-spacing:-.01em;
+  margin-bottom:6px;
+}
+.channel-cta-playlists{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;
+}
+.pl-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.06em;
+  color:var(--ink3);
+  border:1px solid var(--line);
+  border-radius:4px;padding:4px 10px;
+  text-decoration:none;transition:all .2s;
+}
+.pl-tag:hover{color:var(--gold);border-color:var(--gold2)}
+.channel-cta-btn{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.12em;
+  color:var(--bg);
+  background:var(--gold);
+  border-radius:6px;padding:12px 24px;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:opacity .2s;
+}
+.channel-cta-btn:hover{opacity:.85}
+
 /* ── FOOTER ── */
 footer{
   padding:32px 28px;
@@ -221,6 +271,22 @@ footer{
     <div class="why-card-body">철학을 하는 사람은 많다.<br>코드를 만드는 사람도 많다.<br>이 둘이 한 루프에서 돌아가는 케이스는 드물다.</div>
     <div class="why-card-cta">읽기 →</div>
   </a>
+</div>
+
+<!-- CHANNEL CTA -->
+<div class="channel-cta">
+  <div class="channel-cta-inner">
+    <div class="channel-cta-left">
+      <div class="channel-cta-label">YOUTUBE · @philosopher-parksy</div>
+      <div class="channel-cta-name">철학자 박씨 채널</div>
+      <div class="channel-cta-playlists">
+        <a class="pl-tag" href="https://www.youtube.com/playlist?list=PLNAJ8HsuRXWs-G0xLNBTr-I9_2V90ivcu" target="_blank" rel="noopener">Parksy MCP</a>
+        <a class="pl-tag" href="https://www.youtube.com/playlist?list=PLNAJ8HsuRXWv9g31LAELOT8H0L1oPYBah" target="_blank" rel="noopener">Parksy Capture</a>
+        <a class="pl-tag" href="https://www.youtube.com/playlist?list=PLNAJ8HsuRXWvUH2Q1ZmGfdo8n9neEUA7U" target="_blank" rel="noopener">Parksy Log</a>
+      </div>
+    </div>
+    <a class="channel-cta-btn" href="https://www.youtube.com/@philosopher-parksy" target="_blank" rel="noopener">채널 보기 →</a>
+  </div>
 </div>
 
 <!-- NODE MAP -->
