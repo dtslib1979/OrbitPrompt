@@ -2,313 +2,585 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="description" content="철학을 코드로 — OrbitPrompt 사고 시스템">
-<title>OrbitPrompt</title>
+<meta name="theme-color" content="#0A1A0F">
+<title>OrbitPrompt — 칠판 위에 쓰는 철학</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0A1A0F;--bg2:#0D2214;--bg3:#112A18;--gold:#EEC864;--gold2:rgba(238,200,100,.45);--gold3:rgba(238,200,100,.1);--ink1:#FFFFFF;--ink2:rgba(255,255,255,.5);--ink3:rgba(255,255,255,.25);--purple:#a855f7;--cyan:#22d3ee;--green:#4ade80;--line:rgba(255,255,255,.04);--chalk:rgba(255,255,255,.02)}
-html,body{background:var(--bg);color:var(--ink1);font-family:'Inter',sans-serif;min-height:100vh;overflow:hidden}
-body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
-body::after{content:'';position:fixed;inset:0;background:radial-gradient(circle at 30% 30%, rgba(238,200,100,.03) 0%, transparent 50%),radial-gradient(circle at 70% 70%, rgba(34,211,238,.02) 0%, transparent 50%);pointer-events:none;z-index:0}
+:root{--bg:#0A1A0F;--bg2:#0D2214;--bg3:#112A18;--gold:#EEC864;--gold2:rgba(238,200,100,.35);--ink1:#FFFFFF;--ink2:rgba(255,255,255,.5);--ink3:rgba(255,255,255,.2);--purple:#a855f7;--cyan:#22d3ee;--green:#4ade80;--radius:8px;--phi:0.618}
+html,body{background:var(--bg);color:var(--ink1);font-family:'Inter',sans-serif;height:100%;overflow:hidden;-webkit-font-smoothing:antialiased}
 
-/* ── FULLSCREEN GRAPH ── */
-#graphWrap{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1}
-#graphSvg{width:100%;height:100%;display:block;cursor:grab;background:transparent;transform-style:preserve-3d;transform-origin:center center}
+/* CHALKBOARD TEXTURE */
+body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 55% 45% at 25% 30%,rgba(238,200,100,.04) 0%,transparent 60%),radial-gradient(ellipse 40% 35% at 75% 70%,rgba(34,211,238,.03) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+/* HEADER */
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;background:linear-gradient(180deg,rgba(10,26,15,.6) 0%,transparent 100%)}
+header .brand{pointer-events:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--gold2);text-decoration:none;transition:color .3s}
+header .brand:hover{color:var(--gold)}
+header nav{pointer-events:auto;display:flex;gap:28px}
+header nav a{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--ink3);text-decoration:none;transition:color .4s}
+header nav a:hover{color:var(--ink2)}
+
+/* TOGGLE AUTO-ROTATE */
+#autoRotateBtn{position:fixed;bottom:80px;right:24px;z-index:99;background:none;border:1px solid var(--ink3);color:var(--ink2);font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;padding:8px 14px;border-radius:4px;cursor:pointer;transition:all .3s;pointer-events:auto;opacity:.4}
+#autoRotateBtn:hover{opacity:.9;border-color:var(--gold);color:var(--gold)}
+
+/* ZOOM INDICATOR */
+#zoomIndicator{position:fixed;bottom:120px;right:24px;z-index:99;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--ink3);pointer-events:none;opacity:0;transition:opacity .4s}
+
+/* FOOTER */
+footer{position:fixed;bottom:0;left:0;right:0;z-index:100;padding:20px 32px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap;pointer-events:none;background:linear-gradient(0deg,rgba(10,26,15,.6) 0%,transparent 100%)}
+footer a{pointer-events:auto;font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:var(--ink3);text-decoration:none;transition:color .3s}
+footer a:hover{color:var(--gold)}
+
+/* TITLE */
+.title{position:fixed;z-index:50;pointer-events:none;left:50%;top:38.2%;transform:translate(-50%,-50%);text-align:center}
+.title-kicker{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.35em;color:var(--gold2);margin-bottom:16px;opacity:0;animation:fadeUp .8s ease .4s forwards}
+.title h1{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,5.5vw,52px);font-weight:400;line-height:1.15;letter-spacing:-.03em;color:#fff;margin-bottom:6px;opacity:0;animation:fadeUp .8s ease .7s forwards}
+.title h1 em{font-style:italic;color:var(--gold)}
+.title-sub{font-size:clamp(10px,1.4vw,13px);color:var(--ink2);margin-top:12px;letter-spacing:.04em;font-weight:300;opacity:0;animation:fadeUp .8s ease 1.2s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CANVAS — fullscreen */
+#graphWrap{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;perspective:1200px}
+#graphSvg{width:100%;height:100%;display:block;cursor:grab;background:transparent;transform-style:preserve-3d;will-change:transform}
 #graphSvg:active{cursor:grabbing}
-.edge{fill:none;stroke-width:.8;stroke-linecap:round;opacity:.12;transition:opacity .3s}
-.edge:hover,.edge.highlight{opacity:.6}
-.node-dot{transition:r .2s,opacity .2s;cursor:pointer}
-.node-dot:hover{r:6;opacity:1}
-.node-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;fill:rgba(255,255,255,.35);letter-spacing:.04em;pointer-events:none;transition:opacity .3s;text-anchor:middle;dominant-baseline:middle}
+
+.edge{fill:none;stroke-linecap:round;transition:opacity .6s;will-change:opacity}
+.node-dot{transition:r .3s,opacity .3s;cursor:pointer;will-change:r,opacity}
+.node-label{font-family:'JetBrains Mono',monospace;font-size:7.5px;fill:rgba(255,255,255,.3);letter-spacing:.04em;pointer-events:none;transition:opacity .4s;text-anchor:middle;dominant-baseline:middle}
+.node-group{cursor:pointer;transition:transform .3s}
 .node-group:hover .node-label{opacity:1;fill:rgba(255,255,255,.7)}
-.node-group:hover .node-dot{filter:brightness(1.5)}
-.center-label{font-family:'Cormorant Garamond',serif;font-size:15px;fill:var(--gold);font-style:italic;text-anchor:middle;pointer-events:none;opacity:.8}
+.node-group:hover .node-dot{filter:brightness(1.8)}
+.center-label{font-family:'Cormorant Garamond',serif;font-size:14px;fill:var(--gold);font-style:italic;text-anchor:middle;pointer-events:none}
+.hub-label{font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:rgba(255,255,255,.12);letter-spacing:.14em;text-anchor:middle;pointer-events:none;text-transform:uppercase}
+.hub-ring{transition:r .6s ease,opacity .6s ease;will-change:r,opacity}
 
-/* ── SIDE LABEL (hub names) ── */
-.hub-label{font-family:'JetBrains Mono',monospace;font-size:7px;fill:rgba(255,255,255,.15);letter-spacing:.12em;text-anchor:middle;pointer-events:none;text-transform:uppercase}
+/* TOOLTIP */
+#tooltip{position:fixed;z-index:200;pointer-events:none;background:rgba(10,26,15,.95);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:12px 16px;font-family:'Inter',sans-serif;font-size:11px;line-height:1.5;color:var(--ink2);max-width:220px;opacity:0;transition:opacity .2s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#tooltip.visible{opacity:1}
+#tooltip strong{color:var(--ink1);font-weight:500}
+#tooltip .hint{display:block;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--ink3)}
 
-/* ── OVERLAY UI ── */
-.header{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
-.header .logo{pointer-events:auto;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold2);text-decoration:none}
-.header .nav-links{pointer-events:auto;display:flex;gap:24px}
-.header .nav-links a{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--ink3);text-decoration:none;transition:color .2s}
-.header .nav-links a:hover{color:var(--ink2)}
-.header .nav-links a.hot{color:var(--gold2)}
+/* CANVAS CHALK DUST */
+#chalkCanvas{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:2;pointer-events:none}
 
-.footer{position:fixed;bottom:0;left:0;right:0;z-index:100;padding:16px 28px;display:flex;justify-content:center;gap:24px;flex-wrap:wrap;pointer-events:none}
-.footer a{pointer-events:auto;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.08em;color:var(--ink3);text-decoration:none;transition:color .2s}
-.footer a:hover{color:var(--ink2)}
-
-/* ── TITLE BOX ── */
-.title-box{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:50;text-align:center;pointer-events:none;opacity:0;animation:fadeIn 2s ease 1s forwards}
-.title-box .kicker{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;color:var(--gold2);margin-bottom:12px}
-.title-box h1{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;line-height:1.2;letter-spacing:-.02em;color:#fff;margin-bottom:4px}
-.title-box h1 em{font-style:italic;color:var(--gold)}
-.title-box .sub{font-size:11px;color:var(--ink2);margin-top:8px}
-
-@keyframes fadeIn{to{opacity:1}}
-
+/* MOBILE */
 @media(max-width:700px){
-  .header .nav-links{display:none}
-  .footer{justify-content:center;gap:12px;padding:10px 16px}
-  .footer a{font-size:7px}
-  .title-box h1{font-size:22px}
+  header{padding:16px 20px}
+  header nav{display:none}
+  footer{padding:12px 16px;gap:10px}
+  footer a{font-size:6.5px}
+  .node-label{font-size:6px}
+  #autoRotateBtn{bottom:70px;right:12px}
+  #zoomIndicator{bottom:108px;right:12px}
 }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <a class="logo" href="/">ORBITPROMPT</a>
-  <div class="nav-links">
-    <a class="hot" href="why.html">WHY</a>
+<header>
+  <a class="brand" href="/">ORBITPROMPT</a>
+  <nav>
+    <a href="why.html">WHY</a>
     <a href="whitepaper.html">백서</a>
     <a href="philosophy.html">철학</a>
     <a href="humanity-finger.html">휴머니티</a>
-  </div>
-</div>
+  </nav>
+</header>
 
-<div class="title-box">
-  <div class="kicker">Φ-I-C-K-P-7AXIS · THOUGHT SYSTEM</div>
+<div class="title">
+  <div class="title-kicker">Φ · I · C · K · P · 7AXIS — THOUGHT SYSTEM</div>
   <h1>칠판 위에 쓰는 <em>철학</em></h1>
-  <div class="sub">그래프의 노드를 클릭하면 이동합니다 · 드래그로 회전</div>
+  <div class="title-sub">탐색하려면 노드를 클릭하세요 · 드래그로 회전 · 스크롤로 확대</div>
 </div>
 
-<div id="graphWrap">
-  <svg id="graphSvg" viewBox="-500 -500 1000 1000" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <radialGradient id="ggold"><stop offset="0%" stop-color="#EEC864" stop-opacity=".3"/><stop offset="100%" stop-color="#EEC864" stop-opacity="0"/></radialGradient>
-      <radialGradient id="gpurp"><stop offset="0%" stop-color="#a855f7" stop-opacity=".3"/><stop offset="100%" stop-color="#a855f7" stop-opacity="0"/></radialGradient>
-      <radialGradient id="gcyan"><stop offset="0%" stop-color="#22d3ee" stop-opacity=".3"/><stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
-      <radialGradient id="ggrn"><stop offset="0%" stop-color="#4ade80" stop-opacity=".25"/><stop offset="100%" stop-color="#4ade80" stop-opacity="0"/></radialGradient>
-      <radialGradient id="gwht"><stop offset="0%" stop-color="#fff" stop-opacity=".2"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
-      <filter id="glow"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    </defs>
-  </svg>
-</div>
+<button id="autoRotateBtn">◈ 자동 회전</button>
+<div id="zoomIndicator">100%</div>
 
-<div class="footer">
+<div id="graphWrap"><svg id="graphSvg" viewBox="-600 -600 1200 1200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="gg"><stop offset="0%" stop-color="#EEC864" stop-opacity=".25"/><stop offset="100%" stop-color="#EEC864" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gp"><stop offset="0%" stop-color="#a855f7" stop-opacity=".25"/><stop offset="100%" stop-color="#a855f7" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gc"><stop offset="0%" stop-color="#22d3ee" stop-opacity=".2"/><stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
+    <radialGradient id="ggr"><stop offset="0%" stop-color="#4ade80" stop-opacity=".2"/><stop offset="100%" stop-color="#4ade80" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gw"><stop offset="0%" stop-color="#fff" stop-opacity=".15"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="glowStrong"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="chalkDust"><feGaussianBlur stdDeviation=".8"/></filter>
+  </defs>
+</svg></div>
+
+<canvas id="chalkCanvas"></canvas>
+
+<div id="tooltip"></div>
+
+<footer>
   <a href="identity.html">정체성</a>
   <a href="humility.html">겸손</a>
   <a href="docs/JUSTIFICATION-REPORT.md">정당성</a>
   <a href="docs/AI-MISSIONARY-PLUGIN-WHITEPAPER.md">미셔너</a>
+  <a href="edu-mcp/mcp/server.py">Edu MCP</a>
+  <a href="media-mcp/mcp/server.py">Media MCP</a>
   <a href="archive.html">Archive</a>
-  <a href="map.html">Map</a>
   <a href="https://github.com/dtslib1979/OrbitPrompt">GitHub</a>
-</div>
+</footer>
 
 <script>
+// ─── CONFIG ───
 const GOLD='#EEC864', PUR='#a855f7', CYAN='#22d3ee', GRN='#4ade80', WHT='#fff';
-const GLOW={gold:'url(#glow)',pur:'url(#glow)',cyan:'url(#glow)',grn:'url(#glow)',arch:null};
 
-// ── DATA ──
-const HUBS = [
-  {id:'phi', label:'철학',    color:GOLD, glow:GLOW.gold},
-  {id:'mod', label:'모듈',    color:PUR,  glow:GLOW.pur},
-  {id:'mcp', label:'MCP',    color:CYAN, glow:GLOW.cyan},
-  {id:'gen', label:'생성기',  color:GRN,  glow:GLOW.grn},
-  {id:'arch',label:'아카이브',color:WHT,  glow:null},
-];
+// ─── NODE DATA ───
+const HUBS = {
+  phi: { label:'철학', x:-260, y:-160, color:GOLD, desc:'Φ7 철학 체계 — 정체성, 겸손, 정당성, 휴머니티' },
+  mod: { label:'모듈', x:290, y:-130, color:PUR, desc:'사고 모듈 — 축구 모델, 선거 MCP, 달러 시스템' },
+  mcp: { label:'MCP', x:320, y:260, color:CYAN, desc:'MCP 서버 모음 — 정치, 금융, 교육, 미디어' },
+  gen: { label:'생성기', x:-270, y:220, color:GRN, desc:'프롬프트 생성기 — 칠판, Identity, Broadcast' },
+  arch:{ label:'아카이브', x:-400, y:60, color:WHT, desc:'기록과 자료 — Archive, Map, Links, 정당성' }
+};
 
-const LEAVES = [
-  // 철학
-  {hub:'phi', label:'WHY',     sub:'존재 이유',    href:'why.html',           color:GOLD},
-  {hub:'phi', label:'백서',     sub:'Whitepaper',   href:'whitepaper.html',    color:GOLD},
-  {hub:'phi', label:'7축 철학', sub:'Φ7',           href:'philosophy.html',    color:GOLD},
-  {hub:'phi', label:'휴머니티', sub:'5 Fingers',    href:'humanity-finger.html',color:GOLD},
-  // 모듈
-  {hub:'mod', label:'축구 모델', sub:'98pts',       href:'football-model/index.html',            color:PUR},
-  {hub:'mod', label:'WC2026',   sub:'예측기',      href:'football-model/wc2026-predictor.html', color:PUR},
-  {hub:'mod', label:'선거 MCP', sub:'100pts',      href:'boards/election-gallery.html',         color:PUR},
-  {hub:'mod', label:'달러 시스템',sub:'DSI',        href:'boards/dollar-system-whitepaper.html', color:PUR},
-  // MCP
-  {hub:'mcp', label:'정치 MCP',  sub:'parksy-pol',  href:'political-mcp/index.html',        color:CYAN},
-  {hub:'mcp', label:'금융 MCP',  sub:'parksy-fin',  href:'parksy-finance-mcp/index.html',   color:CYAN},
-  {hub:'mcp', label:'달러 MCP',  sub:'parksy-dollar',href:'dollar-system-mcp/WHITEPAPER.md',color:CYAN},
-  {hub:'mcp', label:'교육 MCP',  sub:'edu',         href:'edu-mcp/mcp/server.py',           color:CYAN},
-  {hub:'mcp', label:'Media MCP', sub:'v2.0',        href:'media-mcp/mcp/server.py',         color:CYAN},
-  // 생성기
-  {hub:'gen', label:'칠판',     sub:'Chalkboard',   href:'prompts/chalkboard/index.html',              color:GRN},
-  {hub:'gen', label:'Identity', sub:'Engine',       href:'prompts/identity/index.html',                color:GRN},
-  {hub:'gen', label:'Broadcast',sub:'방송',         href:'prompts/broadcast/parksy-brain-season.html', color:GRN},
-  {hub:'gen', label:'PWA',      sub:'Generator',    href:'prompts/apk/index.html',                     color:GRN},
-  // 아카이브
-  {hub:'arch',label:'Archive',  sub:'전체 작업물',  href:'archive.html',  color:WHT},
-  {hub:'arch',label:'Map',      sub:'레포 지도',    href:'map.html',      color:WHT},
-  {hub:'arch',label:'Links',    sub:'외부링크',    href:'links/index.html',color:WHT},
-  {hub:'arch',label:'정당성',   sub:'Justification',href:'docs/JUSTIFICATION-REPORT.md', color:WHT},
-  {hub:'arch',label:'미셔너',   sub:'AI Missionary',href:'docs/AI-MISSIONARY-PLUGIN-WHITEPAPER.md',color:WHT},
-];
+const LEAVES = {
+  phi: [
+    {label:'WHY', href:'why.html'},
+    {label:'백서', href:'whitepaper.html'},
+    {label:'7축 철학', href:'philosophy.html'},
+    {label:'휴머니티', href:'humanity-finger.html'},
+  ],
+  mod: [
+    {label:'축구 모델', href:'football-model/index.html'},
+    {label:'WC2026', href:'football-model/wc2026-predictor.html'},
+    {label:'선거 MCP', href:'boards/election-gallery.html'},
+    {label:'달러 시스템', href:'boards/dollar-system-whitepaper.html'},
+  ],
+  mcp: [
+    {label:'정치 MCP', href:'political-mcp/index.html'},
+    {label:'금융 MCP', href:'parksy-finance-mcp/index.html'},
+    {label:'달러 MCP', href:'dollar-system-mcp/WHITEPAPER.md'},
+    {label:'교육 MCP', href:'edu-mcp/mcp/server.py'},
+    {label:'Media MCP', href:'media-mcp/mcp/server.py'},
+  ],
+  gen: [
+    {label:'칠판', href:'prompts/chalkboard/index.html'},
+    {label:'Identity', href:'prompts/identity/index.html'},
+    {label:'Broadcast', href:'prompts/broadcast/parksy-brain-season.html'},
+    {label:'PWA', href:'prompts/apk/index.html'},
+  ],
+  arch: [
+    {label:'Archive', href:'archive.html'},
+    {label:'Map', href:'map.html'},
+    {label:'Links', href:'links/index.html'},
+    {label:'정당성', href:'docs/JUSTIFICATION-REPORT.md'},
+    {label:'미셔너', href:'docs/AI-MISSIONARY-PLUGIN-WHITEPAPER.md'},
+  ]
+};
 
-// ── 3D ORBIT COORDINATES ──
-// 각 리프 노드를 허브 주변 궤도에 3D 회전 배치
-function orbitPos(hubAngle, hubDist, leafIndex, totalLeaves, orbitTilt) {
-  const angle = (leafIndex / totalLeaves) * Math.PI * 2 + hubAngle;
-  const x = Math.cos(angle) * hubDist;
-  const y = Math.sin(angle) * hubDist * Math.cos(orbitTilt);
-  return {x, y};
-}
-
-const HUBS_3D = [
-  {id:'phi',   x:-280, y:-150, label:'철학',    color:GOLD},
-  {id:'mod',   x:320,  y:-100, label:'모듈',    color:PUR},
-  {id:'mcp',   x:280,  y:170,  label:'MCP',    color:CYAN},
-  {id:'gen',   x:-300, y:180,  label:'생성기',  color:GRN},
-  {id:'arch',  x:-400, y:40,   label:'아카이브',color:WHT},
-];
-
-// 각 허브별 리프 노드들 궤도 좌표 계산
-const hubsById = {};
-HUBS.forEach(h => hubsById[h.id] = h);
-
-const NODES = [];
-const EDGES = [];
-
-HUBS_3D.forEach(hub => {
-  const leaves = LEAVES.filter(l => l.hub === hub.id);
-  const glowRad = 80;
-  
-  // Center dot glow
-  NODES.push({type:'hubGlow', x:hub.x, y:hub.y, r:glowRad, color:hub.color});
-  // Hub center
-  NODES.push({type:'hub', x:hub.x, y:hub.y, r:6, color:hub.color, label:hub.label});
-  
-  leaves.forEach((leaf, i) => {
-    const total = leaves.length;
-    const angle = (i / total) * Math.PI * 2 - Math.PI/2 + (hub.id === 'phi' ? 0.3 : hub.id === 'mod' ? 0.5 : hub.id === 'mcp' ? 0.7 : hub.id === 'gen' ? 0.2 : 0.4);
-    const dist = 45 + (i % 3) * 12;
-    const lx = hub.x + Math.cos(angle) * dist;
-    const ly = hub.y + Math.sin(angle) * dist * 0.7;
-    
-    NODES.push({type:'leaf', x:lx, y:ly, r:3, color:leaf.color, label:leaf.label, href:leaf.href, hubId:hub.id});
-    EDGES.push({x1:hub.x, y1:hub.y, x2:lx, y2:ly, color:leaf.color, hubId:hub.id});
-  });
-  
-  // Inter-hub edges
-  HUBS_3D.forEach(other => {
-    if (hub.id < other.id) {
-      EDGES.push({x1:hub.x, y1:hub.y, x2:other.x, y2:other.y, color:'rgba(255,255,255,.03)', hubId:'all'});
-    }
-  });
-});
-
-// ── RENDER ──
+// ─── SVG RENDER ───
 const svg = document.getElementById('graphSvg');
 const NS = 'http://www.w3.org/2000/svg';
+function el(t,a){const e=document.createElementNS(NS,t);for(const[k,v]of Object.entries(a||{}))e.setAttribute(k,v);return e}
 
-function el(tag, attrs) {
-  const e = document.createElementNS(NS, tag);
-  for (const [k, v] of Object.entries(attrs || {})) e.setAttribute(k, v);
-  return e;
-}
+// Center glow
+const cGlow = el('circle',{cx:0,cy:0,r:70,fill:'none',stroke:GOLD,'stroke-width':.3,opacity:.05});
+svg.appendChild(cGlow);
+const cGlow2 = el('circle',{cx:0,cy:0,r:45,fill:'none',stroke:GOLD,'stroke-width':.4,opacity:.07});
+svg.appendChild(cGlow2);
+const centerTxt = el('text',{x:0,y:0,class:'center-label',filter:'url(#glow)'});
+centerTxt.textContent = 'OrbitPrompt';
+svg.appendChild(centerTxt);
 
-// Edges
-EDGES.forEach(edge => {
-  const line = el('line', {
-    x1:edge.x1, y1:edge.y1, x2:edge.x2, y2:edge.y2,
-    class:edge+' edge-'+edge.hubId, stroke:edge.color || 'rgba(255,255,255,.03)'
+// Store references for animations
+const hubEls = {};
+const edgeEls = [];
+const leafEls = [];
+const ringEls = [];
+
+Object.entries(HUBS).forEach(([id, hub]) => {
+  const hx = hub.x, hy = hub.y;
+  const leaves = LEAVES[id] || [];
+
+  // Orbit ring
+  const ringR = Math.sqrt(hx*hx + hy*hy);
+  const ring = el('circle',{cx:0,cy:0,r:ringR,fill:'none',stroke:'rgba(255,255,255,.04)','stroke-width':.5});
+  svg.appendChild(ring);
+
+  // Hub glow radial
+  const glow = el('circle',{cx:hx,cy:hy,r:55,fill:'none',stroke:hub.color,'stroke-width':.4,opacity:.08,class:'hub-ring',filter:'url(#glow)'});
+  svg.appendChild(glow);
+
+  // Hub group
+  const hg = document.createElementNS(NS,'g');
+  hg.setAttribute('class','node-group');
+  hg.setAttribute('data-hub',id);
+
+  const hd = el('circle',{cx:hx,cy:hy,r:hub.r||7,class:'node-dot',fill:hub.color,filter:'url(#glow)',opacity:.7});
+  hg.appendChild(hd);
+
+  // Hub inner dot
+  const hi = el('circle',{cx:hx,cy:hy,r:2.5,fill:WHT,opacity:.3});
+  hg.appendChild(hi);
+
+  const hl = el('text',{x:hx,y:hy+17,class:'hub-label',fill:hub.color});
+  hl.textContent = hub.label;
+  hg.appendChild(hl);
+  svg.appendChild(hg);
+
+  hubEls[id] = { group:hg, dot:hd, glow, ring, label:hl, x:hx, y:hy, hub };
+
+  // Edge to center
+  const ce = el('line',{x1:0,y1:0,x2:hx,y2:hy,class:'edge','stroke':hub.color,'stroke-width':.4,opacity:.04});
+  svg.appendChild(ce);
+  edgeEls.push(ce);
+
+  // Children
+  leaves.forEach((leaf, i) => {
+    const total = leaves.length;
+    const angle = (i/total)*Math.PI*2 - Math.PI/2 + id.length*0.2;
+    const dist = 55 + (i%2)*10;
+    const lx = hx + Math.cos(angle)*dist;
+    const ly = hy + Math.sin(angle)*dist*0.6;
+
+    // Edge
+    const edge = el('line',{x1:hx,y1:hy,x2:lx,y2:ly,class:'edge',stroke:leaf.color||'rgba(255,255,255,.06)','stroke-width':.5,opacity:.06});
+    svg.appendChild(edge);
+    edgeEls.push(edge);
+
+    // Leaf group (anchor)
+    const lg = document.createElementNS(NS,'a');
+    lg.setAttributeNS('http://www.w3.org/1999/xlink','href',leaf.href);
+    lg.setAttribute('href',leaf.href);
+    lg.setAttribute('class','node-group');
+    lg.setAttribute('data-leaf',id+'_'+i);
+
+    const ld = el('circle',{cx:lx,cy:ly,r:2.5,class:'node-dot',fill:leaf.color||WHT,opacity:.4});
+    lg.appendChild(ld);
+
+    const ll = el('text',{x:lx,y:ly+12,class:'node-label',fill:leaf.color||WHT});
+    ll.textContent = leaf.label;
+    lg.appendChild(ll);
+    svg.appendChild(lg);
+
+    leafEls.push({ el:lg, dot:ld, label:ll, x:lx, y:ly, hub:id, leaf, angle, dist });
   });
-  svg.appendChild(line);
 });
 
-// Hover edge highlighter class
-function highlightEdges(hubId) {
-  document.querySelectorAll('.edge').forEach(e => e.classList.remove('highlight'));
-  document.querySelectorAll(`.edge-${hubId}`).forEach(e => e.classList.add('highlight'));
-}
+// ─── 3D DRAG WITH INERTIA ───
+let isDragging = false;
+let sx = 0, sy = 0;
+let angleX = 0, angleY = 0;
+let velocityX = 0, velocityY = 0;
+let targetX = 0, targetY = 0;
+let autoRotate = false;
+let zoom = 1;
+let targetZoom = 1;
 
-// Nodes
-NODES.forEach(node => {
-  if (node.type === 'hubGlow') {
-    const g = el('circle', {cx:node.x, cy:node.y, r:node.r, fill:'none', stroke:node.color, 'stroke-width':.5, opacity:.12});
-    svg.appendChild(g);
-    return;
-  }
-  
-  if (node.type === 'hub') {
-    const g = document.createElementNS(NS, 'g');
-    g.setAttribute('class', `node-group hub-group-${node.label}`);
-    
-    const dot = el('circle', {cx:node.x, cy:node.y, r:node.r, class:'node-dot', fill:node.color, filter:'url(#glow)', opacity:.8});
-    g.appendChild(dot);
-    
-    // Ring
-    const ring = el('circle', {cx:node.x, cy:node.y, r:node.r+6, fill:'none', stroke:node.color, 'stroke-width':.5, opacity:.2});
-    g.appendChild(ring);
-    
-    // Label
-    const txt = el('text', {x:node.x, y:node.y+18, class:'hub-label', fill:node.color});
-    txt.textContent = node.label;
-    g.appendChild(txt);
-    
-    g.addEventListener('mouseenter', () => {
-      document.querySelectorAll(`.edge`).forEach(e => e.style.opacity = '.06');
-      document.querySelectorAll(`.edge-${node.label}`).forEach(e => e.style.opacity = '.5');
-    });
-    g.addEventListener('mouseleave', () => {
-      document.querySelectorAll(`.edge`).forEach(e => e.style.opacity = '');
-    });
-    
-    svg.appendChild(g);
-    return;
-  }
-  
-  if (node.type === 'leaf') {
-    const a = document.createElementNS(NS, 'a');
-    a.setAttributeNS('http://www.w3.org/1999/xlink', 'href', node.href);
-    a.setAttribute('href', node.href);
-    a.setAttribute('class', `node-group edge-${node.hubId}`);
-    
-    const dot = el('circle', {cx:node.x, cy:node.y, r:node.r, class:'node-dot', fill:node.color, opacity:.5});
-    a.appendChild(dot);
-    
-    const label = el('text', {x:node.x, y:node.y+12, class:'node-label', fill:node.color});
-    label.textContent = node.label;
-    a.appendChild(label);
-    
-    svg.appendChild(a);
-  }
-});
-
-// Center label (OrbitPrompt)
-const center = el('text', {x:0, y:0, class:'center-label'});
-center.textContent = 'OrbitPrompt';
-svg.appendChild(center);
-
-// ── DRAG TO ROTATE (simplified 2D transform) ──
-let isDragging = false, startX, startY, angleX = 0, angleY = 0;
 const wrap = document.getElementById('graphWrap');
+const tooltip = document.getElementById('tooltip');
 
 wrap.addEventListener('mousedown', e => {
-  isDragging = true; startX = e.clientX; startY = e.clientY;
+  isDragging = true;
+  sx = e.clientX; sy = e.clientY;
+  velocityX = 0; velocityY = 0;
 });
-window.addEventListener('mousemove', e => {
-  if (!isDragging) return;
-  const dx = e.clientX - startX, dy = e.clientY - startY;
-  angleX += dy * 0.003; angleY += dx * 0.003;
-  svg.style.transform = `rotateX(${angleX}rad) rotateY(${angleY}rad)`;
-  startX = e.clientX; startY = e.clientY;
-});
-window.addEventListener('mouseup', () => { isDragging = false; });
 
-// ── ANIMATED PULSE ──
-let pulse = 0;
-setInterval(() => {
-  pulse = (pulse + 0.02) % (Math.PI * 2);
-  const hubs = document.querySelectorAll('.hub-group-철학, .hub-group-모듈, .hub-group-MCP, .hub-group-생성기, .hub-group-아카이브');
-  hubs.forEach((g, i) => {
-    const dot = g.querySelector('circle');
-    if (dot) {
-      const phase = 1 + Math.sin(pulse + i * 0.8) * 0.15;
-      dot.setAttribute('r', (phase * 6).toString());
+window.addEventListener('mousemove', e => {
+  if (isDragging) {
+    const dx = e.clientY - sy;
+    const dy = e.clientX - sx;
+    targetX += dx * 0.004;
+    targetY += dy * 0.004;
+    velocityX = dx * 0.004;
+    velocityY = dy * 0.004;
+    sx = e.clientX; sy = e.clientY;
+  }
+  // Mouse followers for particles
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+});
+
+// Touch
+wrap.addEventListener('touchstart', e => {
+  isDragging = true;
+  sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+  velocityX = 0; velocityY = 0;
+}, {passive:true});
+
+window.addEventListener('touchmove', e => {
+  if (!isDragging) return;
+  const dx = e.touches[0].clientY - sy;
+  const dy = e.touches[0].clientX - sx;
+  targetX += dx * 0.004;
+  targetY += dy * 0.004;
+  velocityX = dx * 0.004;
+  velocityY = dy * 0.004;
+  sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+}, {passive:true});
+
+window.addEventListener('touchend', () => { isDragging = false; });
+
+// Scroll to zoom
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  targetZoom = Math.max(0.4, Math.min(2.0, targetZoom - e.deltaY * 0.001));
+  document.getElementById('zoomIndicator').style.opacity = '1';
+  clearTimeout(window._zoomTimeout);
+  window._zoomTimeout = setTimeout(() => {
+    document.getElementById('zoomIndicator').style.opacity = '0';
+  }, 1500);
+}, {passive:false});
+
+// Auto-rotate toggle
+document.getElementById('autoRotateBtn').addEventListener('click', () => {
+  autoRotate = !autoRotate;
+  document.getElementById('autoRotateBtn').style.color = autoRotate ? GOLD : '';
+  document.getElementById('autoRotateBtn').style.borderColor = autoRotate ? GOLD : '';
+});
+
+// ─── ANIMATION LOOP ───
+const centerGlow1 = cGlow;
+const centerGlow2 = cGlow2;
+let hoveredHub = null;
+
+// Hover tracking for hub tooltips
+document.querySelectorAll('.node-group[data-hub]').forEach(el => {
+  el.addEventListener('mouseenter', e => {
+    const id = el.getAttribute('data-hub');
+    const hub = HUBS[id];
+    if (!hub) return;
+    tooltip.innerHTML = `<strong>${hub.label}</strong><br>${hub.desc}<span class="hint">클릭 시 허브 확장</span>`;
+    tooltip.classList.add('visible');
+    hoveredHub = id;
+  });
+  el.addEventListener('mousemove', e => {
+    tooltip.style.left = (e.clientX + 16) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+  });
+  el.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('visible');
+    hoveredHub = null;
+  });
+});
+
+// Leaf hover
+document.querySelectorAll('.node-group[data-leaf]').forEach(el => {
+  el.addEventListener('mouseenter', e => {
+    const label = el.querySelector('.node-label')?.textContent || '';
+    const href = el.getAttribute('href') || '';
+    tooltip.innerHTML = `<strong>${label}</strong><span class="hint">${href}</span>`;
+    tooltip.classList.add('visible');
+  });
+  el.addEventListener('mousemove', e => {
+    tooltip.style.left = (e.clientX + 16) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+  });
+  el.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('visible');
+  });
+});
+
+let t = 0;
+
+function animate() {
+  t += 0.02;
+
+  // Auto-rotate
+  if (autoRotate && !isDragging) {
+    targetY += 0.003;
+    targetX += Math.sin(t * 0.3) * 0.001;
+  }
+
+  // Inertia (momentum)
+  if (!isDragging) {
+    targetX += velocityX * 0.92;
+    targetY += velocityY * 0.92;
+    velocityX *= 0.92;
+    velocityY *= 0.92;
+    if (Math.abs(velocityX) < 0.0001) velocityX = 0;
+    if (Math.abs(velocityY) < 0.0001) velocityY = 0;
+  }
+
+  // Smooth follow
+  angleX += (targetX - angleX) * 0.08;
+  angleY += (targetY - angleY) * 0.08;
+  zoom += (targetZoom - zoom) * 0.08;
+
+  svg.style.transform = `rotateX(${angleX}rad) rotateY(${angleY}rad) scale(${zoom})`;
+
+  // Center breathing
+  const breathe = 1 + Math.sin(t * 0.8) * 0.04;
+  centerGlow1.setAttribute('r', (70 * breathe).toString());
+  centerGlow1.setAttribute('opacity', (0.05 + Math.sin(t * 0.8) * 0.02).toString());
+  centerGlow2.setAttribute('r', (45 * breathe).toString());
+  centerGlow2.setAttribute('opacity', (0.07 + Math.sin(t * 0.8) * 0.03).toString());
+
+  // Hub rings pulse
+  const rings = document.querySelectorAll('.hub-ring');
+  rings.forEach((r, i) => {
+    const s = 1 + Math.sin(t + i * 0.7) * 0.08;
+    r.setAttribute('r', (55 * s).toString());
+    r.setAttribute('opacity', (0.06 + Math.sin(t + i * 0.7) * 0.03).toString());
+  });
+
+  // Hovered hub highlight
+  Object.entries(hubEls).forEach(([id, h]) => {
+    if (hoveredHub === id) {
+      h.dot.setAttribute('r', '9');
+      h.dot.setAttribute('opacity', '1');
+    } else if (hoveredHub) {
+      h.dot.setAttribute('r', '4');
+      h.dot.setAttribute('opacity', '0.3');
+    } else {
+      h.dot.setAttribute('r', '7');
+      h.dot.setAttribute('opacity', '0.7');
     }
   });
-}, 50);
 
-console.log('✅ OrbitPrompt Graph — Obsidian-style');
+  // Update zoom indicator
+  const zi = document.getElementById('zoomIndicator');
+  zi.textContent = Math.round(zoom * 100) + '%';
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+// ─── CHALK DUST PARTICLE SYSTEM ───
+const canvas = document.getElementById('chalkCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const PARTICLES = [];
+const PARTICLE_COUNT = 60;
+let mouseX = -1000, mouseY = -1000;
+
+// Create particles
+for (let i = 0; i < PARTICLE_COUNT; i++) {
+  PARTICLES.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 0.15,
+    vy: (Math.random() - 0.5) * 0.15 - 0.05,
+    r: Math.random() * 1.8 + 0.3,
+    opacity: Math.random() * 0.3 + 0.05,
+    life: Math.random() * Math.PI * 2,
+  });
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (const p of PARTICLES) {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life += 0.01;
+
+    // Slight attraction to mouse
+    const dx = mouseX - p.x;
+    const dy = mouseY - p.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 200 && dist > 0) {
+      p.vx += dx / dist * 0.002;
+      p.vy += dy / dist * 0.002;
+    }
+
+    // Damping
+    p.vx *= 0.998;
+    p.vy *= 0.998;
+
+    // Wrap around
+    if (p.x < -10) p.x = canvas.width + 10;
+    if (p.x > canvas.width + 10) p.x = -10;
+    if (p.y < -10) p.y = canvas.height + 10;
+    if (p.y > canvas.height + 10) p.y = -10;
+
+    const flicker = 0.6 + Math.sin(p.life) * 0.4;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${p.opacity * flicker})`;
+    ctx.fill();
+  }
+
+  // Mouse trail sparkles
+  if (!isDragging && mouseX > 0 && mouseY > 0) {
+    for (let i = 0; i < 3; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * 30 + 5;
+      ctx.beginPath();
+      ctx.arc(
+        mouseX + Math.cos(angle) * dist,
+        mouseY + Math.sin(angle) * dist,
+        Math.random() * 1 + 0.3,
+        0, Math.PI * 2
+      );
+      ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.1 + 0.02})`;
+      ctx.fill();
+    }
+
+    // Subtle glow around cursor
+    const grad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 40);
+    grad.addColorStop(0, 'rgba(238,200,100,0.03)');
+    grad.addColorStop(1, 'rgba(238,200,100,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(mouseX - 40, mouseY - 40, 80, 80);
+  }
+
+  requestAnimationFrame(drawParticles);
+}
+
+drawParticles();
+
+// ─── KEYBOARD SHORTCUTS ───
+window.addEventListener('keydown', e => {
+  if (e.key === 'r' || e.key === 'R') {
+    document.getElementById('autoRotateBtn').click();
+  }
+  if (e.key === '+' || e.key === '=') {
+    targetZoom = Math.min(2.0, targetZoom + 0.1);
+  }
+  if (e.key === '-') {
+    targetZoom = Math.max(0.4, targetZoom - 0.1);
+  }
+  if (e.key === '0') {
+    targetZoom = 1;
+    targetX = 0; targetY = 0;
+    angleX = 0; angleY = 0;
+  }
+});
+
+// ─── STAGGERED NODE ENTRY ───
+(function sequence() {
+  const allNodes = document.querySelectorAll('.node-group');
+  allNodes.forEach((n, i) => {
+    n.style.opacity = '0';
+    n.style.transform = 'translateY(10px)';
+    setTimeout(() => {
+      n.style.transition = 'opacity .6s ease, transform .6s ease';
+      n.style.opacity = '1';
+      n.style.transform = 'translateY(0)';
+    }, 1500 + i * 80);
+  });
+  setTimeout(() => {
+    allNodes.forEach(n => {
+      n.style.transition = '';
+      n.style.transform = '';
+    });
+  }, 1500 + allNodes.length * 80 + 600);
+})();
+
+console.log('🧑‍🏫 OrbitPrompt — 칠판에 쓰는 철학');
 </script>
 </body>
 </html>
