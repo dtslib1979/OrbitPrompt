@@ -156,6 +156,7 @@ var zoom=1, tz=1;
 var autoRot=false;
 var tap=true, mdX=0, mdY=0, mdT=0;
 var t=0, hov=null;
+var pinchDist=0, pinchZoom=1;
 
 var wrap=document.getElementById("graphWrap");
 var tip=document.getElementById("tooltip");
@@ -192,23 +193,28 @@ window.addEventListener("mouseup",function(e){
   if(tap&&Date.now()-mdT<300) go(e.clientX,e.clientY);
 });
 
-// Touch
-wrap.addEventListener("touchstart",function(e){
-  var tch=e.touches;
-  mdT=Date.now();
+window.addEventListener("touchstart",function(e){
+  var tch=e.touches; mdT=Date.now();
   if(tch.length===1){
     drag=true; tap=true;
     sx=tch[0].clientX; sy=tch[0].clientY;
-    mdX=sx; mdY=sy;
-    vx=0; vy=0;
+    mdX=sx; mdY=sy; vx=0; vy=0;
   } else if(tch.length===2){
-    drag=false;
+    drag=false; tap=false;
+    var dx=tch[0].clientX-tch[1].clientX, dy=tch[0].clientY-tch[1].clientY;
+    pinchDist=Math.sqrt(dx*dx+dy*dy);
+    pinchZoom=tz;
   }
 },{passive:true});
-wrap.addEventListener("touchmove",function(e){
+window.addEventListener("touchmove",function(e){
   var tch=e.touches;
   if(tch.length===2){
     e.preventDefault();
+    var dx=tch[0].clientX-tch[1].clientX, dy=tch[0].clientY-tch[1].clientY;
+    var dist=Math.sqrt(dx*dx+dy*dy);
+    if(pinchDist>0) tz=Math.max(0.2,Math.min(5,pinchZoom*(dist/pinchDist)));
+    var zi=document.getElementById("zoomIndicator");
+    if(zi){ zi.style.opacity="1"; clearTimeout(window._zt); window._zt=setTimeout(function(){zi.style.opacity="0";},1200); }
     return;
   }
   if(!drag||tch.length!==1) return;
