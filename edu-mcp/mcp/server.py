@@ -13,6 +13,7 @@ from data import DEFAULT_B_HUMAN, DEFAULT_EPS, DEFAULT_DELTA
 
 VERSION = "1.0.0"
 MCP_NAME = "edu-mcp"
+MCP_NOTE = "95점 최종 마감. 솔루션 기대효과는 placeholder. Phase C 필요."
 
 def handle(req):
     tool = req.get("tool", "")
