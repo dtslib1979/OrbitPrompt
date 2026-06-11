@@ -9,636 +9,306 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0A1A0F;
-  --bg2:#0D2214;
-  --bg3:#112A18;
-  --gold:#EEC864;
-  --gold2:rgba(238,200,100,.55);
-  --gold3:rgba(238,200,100,.12);
-  --ink1:#FFFFFF;
-  --ink2:rgba(255,255,255,.62);
-  --ink3:rgba(255,255,255,.35);
-  --ink4:rgba(255,255,255,.08);
-  --purple:rgba(168,85,247,.85);
-  --cyan:rgba(34,211,238,.8);
-  --green:rgba(74,222,128,.8);
-  --line:rgba(238,200,100,.12);
-  --chalk:rgba(255,255,255,.03);
-}
-html,body{background:var(--bg);color:var(--ink1);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.4}
-body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 45% at 25% 25%,rgba(238,200,100,.04) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 75% 75%,rgba(34,211,238,.03) 0%,transparent 50%);pointer-events:none;z-index:0}
+:root{--bg:#0A1A0F;--bg2:#0D2214;--bg3:#112A18;--gold:#EEC864;--gold2:rgba(238,200,100,.45);--gold3:rgba(238,200,100,.1);--ink1:#FFFFFF;--ink2:rgba(255,255,255,.5);--ink3:rgba(255,255,255,.25);--purple:#a855f7;--cyan:#22d3ee;--green:#4ade80;--line:rgba(255,255,255,.04);--chalk:rgba(255,255,255,.02)}
+html,body{background:var(--bg);color:var(--ink1);font-family:'Inter',sans-serif;min-height:100vh;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(circle at 30% 30%, rgba(238,200,100,.03) 0%, transparent 50%),radial-gradient(circle at 70% 70%, rgba(34,211,238,.02) 0%, transparent 50%);pointer-events:none;z-index:0}
 
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,26,15,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
-.nav-logo{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--gold2);text-decoration:none}
-.nav-links{display:flex;gap:20px;align-items:center}
-.nav-link{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--ink3);text-decoration:none;transition:color .2s}
-.nav-link:hover{color:var(--ink2)}
-.nav-link.hot{color:rgba(238,200,100,.55)}
-.nav-link.hot:hover{color:var(--gold)}
+/* ── FULLSCREEN GRAPH ── */
+#graphWrap{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1}
+#graphSvg{width:100%;height:100%;display:block;cursor:grab;background:transparent;transform-style:preserve-3d;transform-origin:center center}
+#graphSvg:active{cursor:grabbing}
+.edge{fill:none;stroke-width:.8;stroke-linecap:round;opacity:.12;transition:opacity .3s}
+.edge:hover,.edge.highlight{opacity:.6}
+.node-dot{transition:r .2s,opacity .2s;cursor:pointer}
+.node-dot:hover{r:6;opacity:1}
+.node-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;fill:rgba(255,255,255,.35);letter-spacing:.04em;pointer-events:none;transition:opacity .3s;text-anchor:middle;dominant-baseline:middle}
+.node-group:hover .node-label{opacity:1;fill:rgba(255,255,255,.7)}
+.node-group:hover .node-dot{filter:brightness(1.5)}
+.center-label{font-family:'Cormorant Garamond',serif;font-size:15px;fill:var(--gold);font-style:italic;text-anchor:middle;pointer-events:none;opacity:.8}
 
-/* ── HERO ── */
-.hero{position:relative;z-index:1;
-  padding:110px 24px 48px;
-  text-align:center;
-  max-width:600px;margin:0 auto;
-}
-.hero-kicker{
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;letter-spacing:.22em;
-  color:var(--gold2);margin-bottom:18px;
-}
-.hero-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(32px,6vw,54px);
-  font-weight:400;line-height:1.18;
-  letter-spacing:-.02em;
-  color:var(--ink1);margin-bottom:18px;
-}
-.hero-title em{font-style:italic;color:var(--gold)}
-.hero-sub{
-  font-size:13px;color:var(--ink2);
-  line-height:1.85;letter-spacing:.02em;
-}
+/* ── SIDE LABEL (hub names) ── */
+.hub-label{font-family:'JetBrains Mono',monospace;font-size:7px;fill:rgba(255,255,255,.15);letter-spacing:.12em;text-anchor:middle;pointer-events:none;text-transform:uppercase}
 
-/* ── MAP CONTAINER ── */
-#mapWrap{
-  position:relative;
-  width:100%;max-width:1080px;
-  margin:0 auto;
-  padding:0 0 40px;
-}
-#nodeMap{
-  width:100%;height:auto;
-  display:block;cursor:default;
-  overflow:visible;
-}
+/* ── OVERLAY UI ── */
+.header{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+.header .logo{pointer-events:auto;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold2);text-decoration:none}
+.header .nav-links{pointer-events:auto;display:flex;gap:24px}
+.header .nav-links a{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--ink3);text-decoration:none;transition:color .2s}
+.header .nav-links a:hover{color:var(--ink2)}
+.header .nav-links a.hot{color:var(--gold2)}
 
-/* ── SVG NODE STYLES ── */
-.edge{stroke-width:1;fill:none;transition:stroke-opacity .25s}
-.edge-center{stroke:rgba(238,200,100,.18)}
-.edge-phi{stroke:rgba(238,200,100,.14)}
-.edge-mod{stroke:rgba(168,85,247,.14)}
-.edge-mcp{stroke:rgba(34,211,238,.14)}
-.edge-gen{stroke:rgba(74,222,128,.14)}
-.edge-arch{stroke:rgba(255,255,255,.1)}
+.footer{position:fixed;bottom:0;left:0;right:0;z-index:100;padding:16px 28px;display:flex;justify-content:center;gap:24px;flex-wrap:wrap;pointer-events:none}
+.footer a{pointer-events:auto;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.08em;color:var(--ink3);text-decoration:none;transition:color .2s}
+.footer a:hover{color:var(--ink2)}
 
-.hub-group{cursor:pointer}
-.hub-circle{transition:all .3s}
-.hub-group:hover .hub-circle{filter:brightness(1.3)}
+/* ── TITLE BOX ── */
+.title-box{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:50;text-align:center;pointer-events:none;opacity:0;animation:fadeIn 2s ease 1s forwards}
+.title-box .kicker{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;color:var(--gold2);margin-bottom:12px}
+.title-box h1{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;line-height:1.2;letter-spacing:-.02em;color:#fff;margin-bottom:4px}
+.title-box h1 em{font-style:italic;color:var(--gold)}
+.title-box .sub{font-size:11px;color:var(--ink2);margin-top:8px}
 
-.leaf-group{cursor:pointer}
-.leaf-group:hover .leaf-circle{filter:brightness(1.4)}
-.leaf-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:9.5px;
-  fill:rgba(255,255,255,.5);
-  text-anchor:middle;
-  transition:fill .2s;
-  pointer-events:none;
-}
-.leaf-group:hover .leaf-label{fill:rgba(255,255,255,.88)}
-.hub-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;letter-spacing:.1em;
-  fill:rgba(255,255,255,.4);
-  text-anchor:middle;
-  pointer-events:none;
-  text-transform:uppercase;
-}
-.center-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:12px;letter-spacing:.14em;
-  fill:var(--gold);text-anchor:middle;
-  pointer-events:none;
-}
+@keyframes fadeIn{to{opacity:1}}
 
-/* ── WHY CARD ── */
-.why-card{
-  max-width:520px;margin:0 auto 64px;
-  padding:0 24px;
-}
-.why-card a{
-  display:block;text-decoration:none;
-  border:1px solid rgba(238,200,100,.15);
-  border-radius:3px;
-  padding:28px 32px;
-  background:rgba(13,34,20,.6);
-  transition:background .25s,border-color .25s;
-}
-.why-card a:hover{background:rgba(238,200,100,.05);border-color:rgba(238,200,100,.38)}
-.why-card-kicker{
-  font-family:'JetBrains Mono',monospace;
-  font-size:8px;letter-spacing:.2em;
-  color:rgba(238,200,100,.5);margin-bottom:12px;
-}
-.why-card-body{
-  font-family:'Cormorant Garamond',serif;
-  font-size:19px;color:var(--ink1);
-  letter-spacing:-.01em;line-height:1.5;margin-bottom:12px;
-}
-.why-card-cta{
-  font-family:'JetBrains Mono',monospace;
-  font-size:10px;letter-spacing:.1em;
-  color:rgba(238,200,100,.55);
-}
-
-/* ── MOBILE LIST (< 700px) ── */
-.node-list{display:none}
 @media(max-width:700px){
-  #mapWrap{display:none}
-  .node-list{display:block;padding:0 20px 60px}
-  .node-section{margin-bottom:32px}
-  .node-section-title{
-    font-family:'JetBrains Mono',monospace;
-    font-size:8px;letter-spacing:.2em;
-    color:var(--gold2);margin-bottom:12px;
-  }
-  .node-item{
-    display:block;text-decoration:none;
-    border-bottom:1px solid var(--line);
-    padding:14px 0;
-    font-family:'Cormorant Garamond',serif;
-    font-size:18px;color:var(--ink1);
-    letter-spacing:-.01em;
-    transition:color .2s;
-  }
-  .node-item:hover{color:var(--gold)}
-  .node-item-sub{
-    font-family:'JetBrains Mono',monospace;
-    font-size:9px;color:var(--ink3);
-    margin-top:4px;letter-spacing:.06em;
-  }
+  .header .nav-links{display:none}
+  .footer{justify-content:center;gap:12px;padding:10px 16px}
+  .footer a{font-size:7px}
+  .title-box h1{font-size:22px}
 }
-
-/* ── CHANNEL CTA ── */
-.channel-cta{
-  max-width:700px;margin:0 auto 48px;
-  padding:0 24px;
-}
-.channel-cta-inner{
-  border:1px solid rgba(238,200,100,.15);
-  border-radius:8px;
-  padding:28px 32px;
-  background:rgba(13,34,20,.8);
-  display:flex;align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;gap:20px;
-}
-.channel-cta-left{}
-.channel-cta-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;letter-spacing:.2em;
-  color:var(--gold2);margin-bottom:8px;
-}
-.channel-cta-name{
-  font-family:'Cormorant Garamond',serif;
-  font-size:22px;font-weight:600;
-  color:var(--ink1);letter-spacing:-.01em;
-  margin-bottom:6px;
-}
-.channel-cta-playlists{
-  display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;
-}
-.pl-tag{
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;letter-spacing:.06em;
-  color:var(--ink3);
-  border:1px solid var(--line);
-  border-radius:4px;padding:4px 10px;
-  text-decoration:none;transition:all .2s;
-}
-.pl-tag:hover{color:var(--gold);border-color:var(--gold2)}
-.channel-cta-btn{
-  font-family:'JetBrains Mono',monospace;
-  font-size:10px;letter-spacing:.12em;
-  color:var(--bg);
-  background:var(--gold);
-  border-radius:6px;padding:12px 24px;
-  text-decoration:none;
-  white-space:nowrap;
-  transition:opacity .2s;
-}
-.channel-cta-btn:hover{opacity:.85}
-
-/* ── FOOTER ── */
-footer{
-  padding:32px 28px;
-  border-top:1px solid var(--line);
-  display:flex;align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;gap:16px;
-}
-.footer-brand{
-  font-family:'JetBrains Mono',monospace;
-  font-size:10px;letter-spacing:.16em;
-  color:var(--ink3);
-}
-.footer-right{
-  display:flex;gap:20px;flex-wrap:wrap;
-  font-family:'JetBrains Mono',monospace;
-  font-size:9px;letter-spacing:.08em;
-}
-.footer-right a{color:var(--ink3);text-decoration:none;transition:color .2s}
-.footer-right a:hover{color:var(--ink2)}
 </style>
 </head>
 <body>
 
-<nav>
-  <a class="nav-logo" href="/">ORBITPROMPT</a>
+<div class="header">
+  <a class="logo" href="/">ORBITPROMPT</a>
   <div class="nav-links">
-    <a class="nav-link hot" href="why.html">WHY →</a>
-    <a class="nav-link" href="whitepaper.html">백서</a>
-    <a class="nav-link" href="philosophy.html">철학</a>
-    <a class="nav-link" href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" rel="noopener">GitHub</a>
+    <a class="hot" href="why.html">WHY</a>
+    <a href="whitepaper.html">백서</a>
+    <a href="philosophy.html">철학</a>
+    <a href="humanity-finger.html">휴머니티</a>
   </div>
-</nav>
-
-<div class="hero">
-  <p class="hero-kicker">THOUGHT SYSTEM · 사고 시스템</p>
-  <h1 class="hero-title">철학이 코드가 되고,<br>코드가 <em>삶이 되는</em> 방식</h1>
-  <p class="hero-sub">노드를 클릭하면 이동합니다.</p>
 </div>
 
-<!-- WHY 카드 -->
-<div class="why-card">
-  <a href="why.html">
-    <div class="why-card-kicker">WHY · 존재 이유</div>
-    <div class="why-card-body">철학을 하는 사람은 많다.<br>코드를 만드는 사람도 많다.<br>이 둘이 한 루프에서 돌아가는 케이스는 드물다.</div>
-    <div class="why-card-cta">읽기 →</div>
-  </a>
+<div class="title-box">
+  <div class="kicker">Φ-I-C-K-P-7AXIS · THOUGHT SYSTEM</div>
+  <h1>칠판 위에 쓰는 <em>철학</em></h1>
+  <div class="sub">그래프의 노드를 클릭하면 이동합니다 · 드래그로 회전</div>
 </div>
 
-<!-- Φ7 ORBITAL RING -->
-<div style="max-width:400px;margin:0 auto 32px;text-align:center;position:relative;z-index:1">
-  <svg viewBox="0 0 400 60" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+<div id="graphWrap">
+  <svg id="graphSvg" viewBox="-500 -500 1000 1000" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <linearGradient id="phiArc" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="rgba(238,200,100,0)"/>
-        <stop offset="20%" stop-color="#EEC864"/>
-        <stop offset="50%" stop-color="#EEC864"/>
-        <stop offset="80%" stop-color="#22d3ee"/>
-        <stop offset="100%" stop-color="rgba(34,211,238,0)"/>
-      </linearGradient>
+      <radialGradient id="ggold"><stop offset="0%" stop-color="#EEC864" stop-opacity=".3"/><stop offset="100%" stop-color="#EEC864" stop-opacity="0"/></radialGradient>
+      <radialGradient id="gpurp"><stop offset="0%" stop-color="#a855f7" stop-opacity=".3"/><stop offset="100%" stop-color="#a855f7" stop-opacity="0"/></radialGradient>
+      <radialGradient id="gcyan"><stop offset="0%" stop-color="#22d3ee" stop-opacity=".3"/><stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
+      <radialGradient id="ggrn"><stop offset="0%" stop-color="#4ade80" stop-opacity=".25"/><stop offset="100%" stop-color="#4ade80" stop-opacity="0"/></radialGradient>
+      <radialGradient id="gwht"><stop offset="0%" stop-color="#fff" stop-opacity=".2"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+      <filter id="glow"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     </defs>
-    <line x1="20" y1="30" x2="380" y2="30" stroke="rgba(238,200,100,.08)" stroke-width="1"/>
-    <text font-family="'JetBrains Mono',monospace" font-size="11" fill="rgba(238,200,100,.3)" text-anchor="middle" letter-spacing=".8em">
-      <textPath href="#phiPath" startOffset="50%">Φ META · MODULAR · MCP · GENERATOR · ARCHIVE</textPath>
-    </text>
-    <path id="phiPath" d="M20,30 H380" stroke="none" fill="none"/>
-    <!-- 7 phi axis dots -->
-    <circle cx="40" cy="30" r="2" fill="#EEC864" opacity="0.5"/>
-    <circle cx="95" cy="30" r="2" fill="#a855f7" opacity="0.5"/>
-    <circle cx="155" cy="30" r="2" fill="#22d3ee" opacity="0.5"/>
-    <circle cx="200" cy="30" r="2.5" fill="#EEC864" opacity="0.8"/>
-    <circle cx="245" cy="30" r="2" fill="#4ade80" opacity="0.5"/>
-    <circle cx="305" cy="30" r="2" fill="#22d3ee" opacity="0.5"/>
-    <circle cx="360" cy="30" r="2" fill="rgba(255,255,255,.4)" opacity="0.5"/>
   </svg>
 </div>
 
-<!-- CHANNEL CTA -->
-<div class="channel-cta">
-  <div class="channel-cta-inner">
-    <div class="channel-cta-left">
-      <div class="channel-cta-label">YOUTUBE · @philosopher-parksy</div>
-      <div class="channel-cta-name">철학자 박씨 채널</div>
-      <div class="channel-cta-playlists">
-        <a class="pl-tag" href="https://www.youtube.com/playlist?list=PLNAJ8HsuRXWs-G0xLNBTr-I9_2V90ivcu" target="_blank" rel="noopener">Parksy MCP</a>
-        <a class="pl-tag" href="https://www.youtube.com/playlist?list=PLNAJ8HsuRXWtj2JIfSf7WxgN1Hi3Nqh--" target="_blank" rel="noopener">Parksy Engine</a>
-        <a class="pl-tag" href="https://www.youtube.com/playlist?list=PLNAJ8HsuRXWv9g31LAELOT8H0L1oPYBah" target="_blank" rel="noopener">Parksy Capture</a>
-        <a class="pl-tag" href="https://www.youtube.com/playlist?list=PLNAJ8HsuRXWvUH2Q1ZmGfdo8n9neEUA7U" target="_blank" rel="noopener">Parksy Log</a>
-      </div>
-    </div>
-    <a class="channel-cta-btn" href="https://www.youtube.com/@philosopher-parksy" target="_blank" rel="noopener">채널 보기 →</a>
-  </div>
+<div class="footer">
+  <a href="identity.html">정체성</a>
+  <a href="humility.html">겸손</a>
+  <a href="docs/JUSTIFICATION-REPORT.md">정당성</a>
+  <a href="docs/AI-MISSIONARY-PLUGIN-WHITEPAPER.md">미셔너</a>
+  <a href="archive.html">Archive</a>
+  <a href="map.html">Map</a>
+  <a href="https://github.com/dtslib1979/OrbitPrompt">GitHub</a>
 </div>
-
-<!-- NODE MAP -->
-<div id="mapWrap">
-  <svg id="nodeMap" viewBox="0 0 1020 700" xmlns="http://www.w3.org/2000/svg"></svg>
-</div>
-
-<!-- MOBILE FALLBACK LIST -->
-<div class="node-list">
-  <div class="node-section">
-    <div class="node-section-title">철학 · PHILOSOPHY</div>
-    <a class="node-item" href="why.html">왜 존재하는가<div class="node-item-sub">WHY · 존재 이유</div></a>
-    <a class="node-item" href="whitepaper.html">백서<div class="node-item-sub">WHITEPAPER v1.1</div></a>
-    <a class="node-item" href="philosophy.html">7축 철학<div class="node-item-sub">Φ7 FRAMEWORK</div></a>
-  </div>
-  <div class="node-section">
-    <div class="node-section-title">사고 모듈 · THOUGHT MODULES</div>
-    <a class="node-item" href="football-model/index.html">축구 협회 모델<div class="node-item-sub">Φ-I-C-K-P · 98점</div></a>
-    <a class="node-item" href="football-model/wc2026-predictor.html">WC2026 예측기<div class="node-item-sub">인터랙티브 모델</div></a>
-    <a class="node-item" href="boards/election-gallery.html">선거 MCP<div class="node-item-sub">AI 유권자 프레임</div></a>
-    <a class="node-item" href="boards/dollar-system-whitepaper.html">달러 시스템<div class="node-item-sub">DSI · BS_INDEX</div></a>
-    <a class="node-item" href="boards/sancho-philosophy.html">귀족적 쌍스러움<div class="node-item-sub">언어 생활 철학</div></a>
-  </div>
-  <div class="node-section">
-    <div class="node-section-title">MCP 도구 · MCP TOOLS</div>
-    <a class="node-item" href="political-mcp/index.html">정치 MCP<div class="node-item-sub">parksy-political</div></a>
-    <a class="node-item" href="parksy-finance-mcp/index.html">금융 MCP<div class="node-item-sub">parksy-finance</div></a>
-    <a class="node-item" href="dollar-system-mcp/WHITEPAPER.md">달러 MCP 백서<div class="node-item-sub">parksy-dollar v2.2</div></a>
-  </div>
-  <div class="node-section">
-    <div class="node-section-title">제너레이터 · GENERATORS</div>
-    <a class="node-item" href="prompts/chalkboard/index.html">칠판 Generator<div class="node-item-sub">방송용 템플릿</div></a>
-    <a class="node-item" href="prompts/identity/index.html">Identity Engine<div class="node-item-sub">7축 자기 모델링</div></a>
-    <a class="node-item" href="prompts/broadcast/parksy-brain-season.html">Broadcast<div class="node-item-sub">시즌 기획</div></a>
-    <a class="node-item" href="prompts/apk/index.html">PWA Generator<div class="node-item-sub">앱 제조</div></a>
-  </div>
-  <div class="node-section">
-    <div class="node-section-title">아카이브 · ARCHIVE</div>
-    <a class="node-item" href="archive.html">Archive<div class="node-item-sub">전체 작업물</div></a>
-    <a class="node-item" href="map.html">Map<div class="node-item-sub">레포 지도</div></a>
-    <a class="node-item" href="links/index.html">Links<div class="node-item-sub">외부 링크</div></a>
-  </div>
-</div>
-
-<footer>
-  <div class="footer-brand">ORBITPROMPT · 2026</div>
-  <div class="footer-right">
-    <a href="identity.html">🧠 정체성</a>
-    <a href="humility.html">🛡️ 겸손</a>
-	    <a href="docs/JUSTIFICATION-REPORT.md">⚖️ 정당성</a>
-	    <a href="docs/AI-MISSIONARY-PLUGIN-WHITEPAPER.md">🤖 미셔너</a>
-	    <a href="edu-mcp/mcp/server.py">📊 edu MCP</a>
-	    <a href="media-mcp/mcp/server.py">📡 Media MCP</a>
-	    <a href="humanity-finger.html">🖐️ 휴머니티</a>
-    <a href="archive.html">Archive</a>
-    <a href="map.html">Map</a>
-    <a href="links/index.html">Links</a>
-    <a href="football-model/index.html">축구 모델</a>
-    <a href="parksy-finance-mcp/index.html">Finance MCP</a>
-    <a href="https://dtslib1979.github.io/eae-univ/" target="_blank" rel="noopener">EAE Univ</a>
-    <a href="https://github.com/dtslib1979/OrbitPrompt" target="_blank" rel="noopener">GitHub</a>
-  </div>
-</footer>
 
 <script>
-/* ── NODE GRAPH DATA ── */
-const GOLD  = 'rgba(238,200,100,';
-const PUR   = 'rgba(168,85,247,';
-const CYAN  = 'rgba(34,211,238,';
-const GRN   = 'rgba(74,222,128,';
-const WHT   = 'rgba(255,255,255,';
+const GOLD='#EEC864', PUR='#a855f7', CYAN='#22d3ee', GRN='#4ade80', WHT='#fff';
+const GLOW={gold:'url(#glow)',pur:'url(#glow)',cyan:'url(#glow)',grn:'url(#glow)',arch:null};
 
-const CENTER = {x:510, y:350, r:34, label:'OrbitPrompt', type:'center'};
-
-/* hub nodes */
+// ── DATA ──
 const HUBS = [
-  {id:'phi',   x:510, y:155, r:20, label:'철학',    color:GOLD,  ec:'rgba(238,200,100,.18)'},
-  {id:'mod',   x:740, y:245, r:20, label:'모듈',    color:PUR,   ec:'rgba(168,85,247,.18)'},
-  {id:'mcp',   x:720, y:470, r:20, label:'MCP',    color:CYAN,  ec:'rgba(34,211,238,.18)'},
-  {id:'gen',   x:280, y:470, r:20, label:'생성기',  color:GRN,   ec:'rgba(74,222,128,.18)'},
-  {id:'arch',  x:265, y:245, r:20, label:'아카이브', color:WHT,  ec:'rgba(255,255,255,.14)'},
+  {id:'phi', label:'철학',    color:GOLD, glow:GLOW.gold},
+  {id:'mod', label:'모듈',    color:PUR,  glow:GLOW.pur},
+  {id:'mcp', label:'MCP',    color:CYAN, glow:GLOW.cyan},
+  {id:'gen', label:'생성기',  color:GRN,  glow:GLOW.grn},
+  {id:'arch',label:'아카이브',color:WHT,  glow:null},
 ];
 
-/* leaf nodes */
 const LEAVES = [
-  // Philosophy
-  {hub:'phi', x:360, y:50,  r:15, label:'WHY',          sub:'존재 이유',     href:'why.html',          color:GOLD},
-  {hub:'phi', x:510, y:30,  r:15, label:'백서',          sub:'Whitepaper',    href:'whitepaper.html',   color:GOLD},
-  {hub:'phi', x:660, y:50,  r:15, label:'7축 철학',      sub:'Φ7',            href:'philosophy.html',   color:GOLD},
-
-  // Thought Modules
-  {hub:'mod', x:880, y:155, r:15, label:'축구 모델',     sub:'98pts',         href:'football-model/index.html',              color:PUR},
-  {hub:'mod', x:960, y:290, r:15, label:'WC2026',        sub:'예측기',        href:'football-model/wc2026-predictor.html',   color:PUR},
-  {hub:'mod', x:920, y:430, r:15, label:'선거 MCP',      sub:'100pts',        href:'boards/election-gallery.html',           color:PUR},
-  {hub:'mod', x:840, y:550, r:15, label:'달러 시스템',   sub:'DSI',           href:'boards/dollar-system-whitepaper.html',   color:PUR},
-
-  // MCP Tools
-  {hub:'mcp', x:870, y:590, r:15, label:'정치 MCP',      sub:'parksy-pol',    href:'political-mcp/index.html',        color:CYAN},
-  {hub:'mcp', x:820, y:670, r:14, label:'금융 MCP',      sub:'parksy-fin',    href:'parksy-finance-mcp/index.html',   color:CYAN},
-  {hub:'mcp', x:650, y:670, r:14, label:'달러 MCP',      sub:'parksy-dollar', href:'dollar-system-mcp/WHITEPAPER.md', color:CYAN},
-  {hub:'mcp', x:550, y:650, r:14, label:'산초 철학',     sub:'언어생활',      href:'boards/sancho-philosophy.html',   color:CYAN},
-	  {hub:'mcp', x:680, y:590, r:14, label:'교육 MCP',      sub:'edu',           href:'edu-mcp/mcp/server.py',          color:CYAN},
-	  {hub:'mcp', x:740, y:670, r:14, label:'Media MCP',     sub:'v2.0',          href:'media-mcp/mcp/server.py',        color:CYAN},
-
-  // Generators
-	  {hub:'arch', x:265, y:470, r:14, label:'정당성',      sub:'Justification', href:'docs/JUSTIFICATION-REPORT.md',  color:WHT},
-	  {hub:'arch', x:360, y:510, r:14, label:'미셔너',      sub:'AI Missionary', href:'docs/AI-MISSIONARY-PLUGIN-WHITEPAPER.md', color:WHT},
-	  {hub:'arch', x:260, y:600, r:14, label:'휴머니티',    sub:'5 Fingers',      href:'humanity-finger.html',                  color:WHT},
-  {hub:'gen', x:140, y:570, r:15, label:'칠판',          sub:'Chalkboard',    href:'prompts/chalkboard/index.html',              color:GRN},
-  {hub:'gen', x:100, y:430, r:15, label:'Identity',      sub:'Engine',        href:'prompts/identity/index.html',                color:GRN},
-  {hub:'gen', x:145, y:285, r:15, label:'Broadcast',     sub:'방송',          href:'prompts/broadcast/parksy-brain-season.html', color:GRN},
-  {hub:'gen', x:250, y:180, r:14, label:'PWA',           sub:'Generator',     href:'prompts/apk/index.html',                     color:GRN},
-  {hub:'gen', x:350, y:640, r:14, label:'Printer',       sub:'물성화',        href:'prompts/printer/',                           color:GRN},
-
-  // Archive
-  {hub:'arch', x:110, y:180, r:14, label:'Archive',      sub:'전체 작업물',   href:'archive.html',    color:WHT},
-  {hub:'arch', x: 95, y:315, r:14, label:'Map',          sub:'레포 지도',     href:'map.html',        color:WHT},
-  {hub:'arch', x:165, y:645, r:14, label:'Links',        sub:'외부링크',      href:'links/index.html', color:WHT},
+  // 철학
+  {hub:'phi', label:'WHY',     sub:'존재 이유',    href:'why.html',           color:GOLD},
+  {hub:'phi', label:'백서',     sub:'Whitepaper',   href:'whitepaper.html',    color:GOLD},
+  {hub:'phi', label:'7축 철학', sub:'Φ7',           href:'philosophy.html',    color:GOLD},
+  {hub:'phi', label:'휴머니티', sub:'5 Fingers',    href:'humanity-finger.html',color:GOLD},
+  // 모듈
+  {hub:'mod', label:'축구 모델', sub:'98pts',       href:'football-model/index.html',            color:PUR},
+  {hub:'mod', label:'WC2026',   sub:'예측기',      href:'football-model/wc2026-predictor.html', color:PUR},
+  {hub:'mod', label:'선거 MCP', sub:'100pts',      href:'boards/election-gallery.html',         color:PUR},
+  {hub:'mod', label:'달러 시스템',sub:'DSI',        href:'boards/dollar-system-whitepaper.html', color:PUR},
+  // MCP
+  {hub:'mcp', label:'정치 MCP',  sub:'parksy-pol',  href:'political-mcp/index.html',        color:CYAN},
+  {hub:'mcp', label:'금융 MCP',  sub:'parksy-fin',  href:'parksy-finance-mcp/index.html',   color:CYAN},
+  {hub:'mcp', label:'달러 MCP',  sub:'parksy-dollar',href:'dollar-system-mcp/WHITEPAPER.md',color:CYAN},
+  {hub:'mcp', label:'교육 MCP',  sub:'edu',         href:'edu-mcp/mcp/server.py',           color:CYAN},
+  {hub:'mcp', label:'Media MCP', sub:'v2.0',        href:'media-mcp/mcp/server.py',         color:CYAN},
+  // 생성기
+  {hub:'gen', label:'칠판',     sub:'Chalkboard',   href:'prompts/chalkboard/index.html',              color:GRN},
+  {hub:'gen', label:'Identity', sub:'Engine',       href:'prompts/identity/index.html',                color:GRN},
+  {hub:'gen', label:'Broadcast',sub:'방송',         href:'prompts/broadcast/parksy-brain-season.html', color:GRN},
+  {hub:'gen', label:'PWA',      sub:'Generator',    href:'prompts/apk/index.html',                     color:GRN},
+  // 아카이브
+  {hub:'arch',label:'Archive',  sub:'전체 작업물',  href:'archive.html',  color:WHT},
+  {hub:'arch',label:'Map',      sub:'레포 지도',    href:'map.html',      color:WHT},
+  {hub:'arch',label:'Links',    sub:'외부링크',    href:'links/index.html',color:WHT},
+  {hub:'arch',label:'정당성',   sub:'Justification',href:'docs/JUSTIFICATION-REPORT.md', color:WHT},
+  {hub:'arch',label:'미셔너',   sub:'AI Missionary',href:'docs/AI-MISSIONARY-PLUGIN-WHITEPAPER.md',color:WHT},
 ];
 
-/* ── RENDER ── */
-const svg = document.getElementById('nodeMap');
+// ── 3D ORBIT COORDINATES ──
+// 각 리프 노드를 허브 주변 궤도에 3D 회전 배치
+function orbitPos(hubAngle, hubDist, leafIndex, totalLeaves, orbitTilt) {
+  const angle = (leafIndex / totalLeaves) * Math.PI * 2 + hubAngle;
+  const x = Math.cos(angle) * hubDist;
+  const y = Math.sin(angle) * hubDist * Math.cos(orbitTilt);
+  return {x, y};
+}
+
+const HUBS_3D = [
+  {id:'phi',   x:-280, y:-150, label:'철학',    color:GOLD},
+  {id:'mod',   x:320,  y:-100, label:'모듈',    color:PUR},
+  {id:'mcp',   x:280,  y:170,  label:'MCP',    color:CYAN},
+  {id:'gen',   x:-300, y:180,  label:'생성기',  color:GRN},
+  {id:'arch',  x:-400, y:40,   label:'아카이브',color:WHT},
+];
+
+// 각 허브별 리프 노드들 궤도 좌표 계산
+const hubsById = {};
+HUBS.forEach(h => hubsById[h.id] = h);
+
+const NODES = [];
+const EDGES = [];
+
+HUBS_3D.forEach(hub => {
+  const leaves = LEAVES.filter(l => l.hub === hub.id);
+  const glowRad = 80;
+  
+  // Center dot glow
+  NODES.push({type:'hubGlow', x:hub.x, y:hub.y, r:glowRad, color:hub.color});
+  // Hub center
+  NODES.push({type:'hub', x:hub.x, y:hub.y, r:6, color:hub.color, label:hub.label});
+  
+  leaves.forEach((leaf, i) => {
+    const total = leaves.length;
+    const angle = (i / total) * Math.PI * 2 - Math.PI/2 + (hub.id === 'phi' ? 0.3 : hub.id === 'mod' ? 0.5 : hub.id === 'mcp' ? 0.7 : hub.id === 'gen' ? 0.2 : 0.4);
+    const dist = 45 + (i % 3) * 12;
+    const lx = hub.x + Math.cos(angle) * dist;
+    const ly = hub.y + Math.sin(angle) * dist * 0.7;
+    
+    NODES.push({type:'leaf', x:lx, y:ly, r:3, color:leaf.color, label:leaf.label, href:leaf.href, hubId:hub.id});
+    EDGES.push({x1:hub.x, y1:hub.y, x2:lx, y2:ly, color:leaf.color, hubId:hub.id});
+  });
+  
+  // Inter-hub edges
+  HUBS_3D.forEach(other => {
+    if (hub.id < other.id) {
+      EDGES.push({x1:hub.x, y1:hub.y, x2:other.x, y2:other.y, color:'rgba(255,255,255,.03)', hubId:'all'});
+    }
+  });
+});
+
+// ── RENDER ──
+const svg = document.getElementById('graphSvg');
 const NS = 'http://www.w3.org/2000/svg';
 
 function el(tag, attrs) {
   const e = document.createElementNS(NS, tag);
-  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  for (const [k, v] of Object.entries(attrs || {})) e.setAttribute(k, v);
   return e;
 }
 
-function makeLine(x1,y1,x2,y2,cls) {
-  return el('line',{x1,y1,x2,y2,class:'edge '+cls});
+// Edges
+EDGES.forEach(edge => {
+  const line = el('line', {
+    x1:edge.x1, y1:edge.y1, x2:edge.x2, y2:edge.y2,
+    class:edge+' edge-'+edge.hubId, stroke:edge.color || 'rgba(255,255,255,.03)'
+  });
+  svg.appendChild(line);
+});
+
+// Hover edge highlighter class
+function highlightEdges(hubId) {
+  document.querySelectorAll('.edge').forEach(e => e.classList.remove('highlight'));
+  document.querySelectorAll(`.edge-${hubId}`).forEach(e => e.classList.add('highlight'));
 }
 
-function wrapLink(href) {
-  const a = document.createElementNS(NS, 'a');
-  a.setAttributeNS('http://www.w3.org/1999/xlink','href',href);
-  a.setAttribute('href',href);
-  return a;
-}
-
-function tspan(text, dy, size, fill) {
-  const t = document.createElementNS(NS,'tspan');
-  t.setAttribute('x','0');
-  t.setAttribute('dy',dy);
-  t.style.fontSize = size+'px';
-  t.style.fill = fill;
-  t.textContent = text;
-  return t;
-}
-
-// ── defs: glow filter ──
-const defs = el('defs',{});
-['gold','pur','cyan','grn'].forEach((id,i)=>{
-  const cols = ['#EEC864','#a855f7','#22d3ee','#4ade80'];
-  const f = el('filter',{id:'glow-'+id, x:'-30%',y:'-30%',width:'160%',height:'160%'});
-  const fe1 = el('feGaussianBlur',{stdDeviation:'3',result:'blur'});
-  const fe2 = el('feFlood',{'flood-color':cols[i],'flood-opacity':'0.35',result:'color'});
-  const fe3 = el('feComposite',{in:'color',in2:'blur',operator:'in',result:'glow'});
-  const fm = el('feMerge',{});
-  [el('feMergeNode',{in:'glow'}),el('feMergeNode',{in:'SourceGraphic'})].forEach(n=>fm.appendChild(n));
-  [fe1,fe2,fe3,fm].forEach(n=>f.appendChild(n));
-  defs.appendChild(f);
-});
-svg.appendChild(defs);
-
-const glowMap = {phi:'gold',mod:'pur',mcp:'cyan',gen:'grn',arch:null};
-const filterMap = {phi:'url(#glow-gold)',mod:'url(#glow-pur)',mcp:'url(#glow-cyan)',gen:'url(#glow-grn)',center:'url(#glow-gold)'};
-
-// ── edges: center → hubs ──
-HUBS.forEach(h=>{
-  svg.appendChild(makeLine(CENTER.x,CENTER.y, h.x, h.y, 'edge-'+h.id));
-});
-
-// ── edges: hubs → leaves ──
-LEAVES.forEach(leaf=>{
-  const hub = HUBS.find(h=>h.id===leaf.hub);
-  svg.appendChild(makeLine(hub.x,hub.y, leaf.x, leaf.y, 'edge-'+leaf.hub));
-});
-
-// ── leaf nodes ──
-LEAVES.forEach(leaf=>{
-  const hub = HUBS.find(h=>h.id===leaf.hub);
-  const gf = glowMap[leaf.hub];
-  const colorFill = leaf.color+'0.7)';
-  const colorStroke = leaf.color+'0.4)';
-
-  const a = wrapLink(leaf.href);
-  a.setAttribute('class','leaf-group');
-  a.style.cursor='pointer';
-
-  const circ = el('circle',{
-    cx:leaf.x, cy:leaf.y, r:leaf.r,
-    fill: leaf.color+'0.08)',
-    stroke: colorStroke,
-    'stroke-width':'1',
-    class:'leaf-circle'
-  });
-  circ.style.transition='all .25s';
-  a.appendChild(circ);
-
-  // dot in center
-  const dot = el('circle',{cx:leaf.x,cy:leaf.y,r:3, fill:colorFill});
-  a.appendChild(dot);
-
-  // label text
-  const txt = el('text',{
-    x:leaf.x, y:leaf.y+leaf.r+13,
-    class:'leaf-label',
-    'text-anchor':'middle'
-  });
-  txt.textContent = leaf.label;
-  a.appendChild(txt);
-
-  // hover effects
-  a.addEventListener('mouseenter',()=>{
-    circ.setAttribute('fill', leaf.color+'0.18)');
-    circ.setAttribute('stroke', leaf.color+'0.7)');
-    if(gf) circ.setAttribute('filter','url(#glow-'+gf+')');
-  });
-  a.addEventListener('mouseleave',()=>{
-    circ.setAttribute('fill', leaf.color+'0.08)');
-    circ.setAttribute('stroke', colorStroke);
-    circ.removeAttribute('filter');
-  });
-
-  svg.appendChild(a);
+// Nodes
+NODES.forEach(node => {
+  if (node.type === 'hubGlow') {
+    const g = el('circle', {cx:node.x, cy:node.y, r:node.r, fill:'none', stroke:node.color, 'stroke-width':.5, opacity:.12});
+    svg.appendChild(g);
+    return;
+  }
+  
+  if (node.type === 'hub') {
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', `node-group hub-group-${node.label}`);
+    
+    const dot = el('circle', {cx:node.x, cy:node.y, r:node.r, class:'node-dot', fill:node.color, filter:'url(#glow)', opacity:.8});
+    g.appendChild(dot);
+    
+    // Ring
+    const ring = el('circle', {cx:node.x, cy:node.y, r:node.r+6, fill:'none', stroke:node.color, 'stroke-width':.5, opacity:.2});
+    g.appendChild(ring);
+    
+    // Label
+    const txt = el('text', {x:node.x, y:node.y+18, class:'hub-label', fill:node.color});
+    txt.textContent = node.label;
+    g.appendChild(txt);
+    
+    g.addEventListener('mouseenter', () => {
+      document.querySelectorAll(`.edge`).forEach(e => e.style.opacity = '.06');
+      document.querySelectorAll(`.edge-${node.label}`).forEach(e => e.style.opacity = '.5');
+    });
+    g.addEventListener('mouseleave', () => {
+      document.querySelectorAll(`.edge`).forEach(e => e.style.opacity = '');
+    });
+    
+    svg.appendChild(g);
+    return;
+  }
+  
+  if (node.type === 'leaf') {
+    const a = document.createElementNS(NS, 'a');
+    a.setAttributeNS('http://www.w3.org/1999/xlink', 'href', node.href);
+    a.setAttribute('href', node.href);
+    a.setAttribute('class', `node-group edge-${node.hubId}`);
+    
+    const dot = el('circle', {cx:node.x, cy:node.y, r:node.r, class:'node-dot', fill:node.color, opacity:.5});
+    a.appendChild(dot);
+    
+    const label = el('text', {x:node.x, y:node.y+12, class:'node-label', fill:node.color});
+    label.textContent = node.label;
+    a.appendChild(label);
+    
+    svg.appendChild(a);
+  }
 });
 
-// ── hub nodes ──
-HUBS.forEach(hub=>{
-  const gf = glowMap[hub.id];
-  const colorFill = hub.color+'0.1)';
-  const colorStroke = hub.color+'0.35)';
+// Center label (OrbitPrompt)
+const center = el('text', {x:0, y:0, class:'center-label'});
+center.textContent = 'OrbitPrompt';
+svg.appendChild(center);
 
-  const g = document.createElementNS(NS,'g');
-  g.setAttribute('class','hub-group');
+// ── DRAG TO ROTATE (simplified 2D transform) ──
+let isDragging = false, startX, startY, angleX = 0, angleY = 0;
+const wrap = document.getElementById('graphWrap');
 
-  const ring = el('circle',{
-    cx:hub.x,cy:hub.y,r:hub.r+8,
-    fill:'none',
-    stroke:hub.color+'0.06)',
-    'stroke-width':'1',
-  });
-  g.appendChild(ring);
-
-  const circ = el('circle',{
-    cx:hub.x,cy:hub.y,r:hub.r,
-    fill: colorFill,
-    stroke: colorStroke,
-    'stroke-width':'1.5',
-    class:'hub-circle'
-  });
-  g.appendChild(circ);
-
-  const txt = el('text',{
-    x:hub.x,y:hub.y+hub.r+14,
-    class:'hub-label'
-  });
-  txt.textContent = hub.label;
-  g.appendChild(txt);
-
-  g.addEventListener('mouseenter',()=>{
-    circ.setAttribute('fill', hub.color+'0.22)');
-    circ.setAttribute('stroke', hub.color+'0.7)');
-    if(gf) circ.setAttribute('filter','url(#glow-'+gf+')');
-  });
-  g.addEventListener('mouseleave',()=>{
-    circ.setAttribute('fill', colorFill);
-    circ.setAttribute('stroke', colorStroke);
-    circ.removeAttribute('filter');
-  });
-
-  svg.appendChild(g);
+wrap.addEventListener('mousedown', e => {
+  isDragging = true; startX = e.clientX; startY = e.clientY;
 });
-
-// ── center node ──
-(() => {
-  const cx = CENTER.x, cy = CENTER.y, r = CENTER.r;
-
-  const ring2 = el('circle',{cx,cy,r:r+18,fill:'none',stroke:'rgba(238,200,100,.04)','stroke-width':'1'});
-  const ring1 = el('circle',{cx,cy,r:r+9, fill:'none',stroke:'rgba(238,200,100,.08)','stroke-width':'1'});
-  const circ  = el('circle',{cx,cy,r,fill:'rgba(238,200,100,.1)',stroke:'rgba(238,200,100,.5)','stroke-width':'1.5','filter':'url(#glow-gold)'});
-
-  const txt = el('text',{x:cx,y:cy+3,class:'center-label'});
-  txt.textContent='OrbitPrompt';
-
-  // pulse animation
-  const pulse = el('animateTransform',{
-    attributeName:'transform',type:'scale',
-    values:'1;1.03;1',dur:'3s',repeatCount:'indefinite',
-    additive:'sum'
-  });
-  const pOrigin = el('animateTransform',{
-    attributeName:'transform',type:'translate',
-    values:`${-cx} ${-cy};${-cx} ${-cy};${-cx} ${-cy}`,
-    dur:'3s',repeatCount:'indefinite'
-  });
-  // simpler: just a circle ring pulse
-  const ringPulse = el('circle',{
-    cx,cy,r:r+2,
-    fill:'none',stroke:'rgba(238,200,100,.2)','stroke-width':'1',
-    opacity:'0.5'
-  });
-  const anim = el('animate',{
-    attributeName:'r',values:`${r+2};${r+20};${r+2}`,
-    dur:'3s',repeatCount:'indefinite'
-  });
-  const animOp = el('animate',{
-    attributeName:'opacity',values:'0.5;0;0.5',
-    dur:'3s',repeatCount:'indefinite'
-  });
-  ringPulse.appendChild(anim);
-  ringPulse.appendChild(animOp);
-
-  [ring2,ring1,ringPulse,circ,txt].forEach(e=>svg.appendChild(e));
-})();
-
-/* ── subtle floating animation for edges ── */
-document.querySelectorAll('.edge').forEach((e,i)=>{
-  e.style.strokeDasharray='4 6';
-  e.style.strokeDashoffset='0';
-  // no animation to keep perf good, just static dashed
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  const dx = e.clientX - startX, dy = e.clientY - startY;
+  angleX += dy * 0.003; angleY += dx * 0.003;
+  svg.style.transform = `rotateX(${angleX}rad) rotateY(${angleY}rad)`;
+  startX = e.clientX; startY = e.clientY;
 });
+window.addEventListener('mouseup', () => { isDragging = false; });
+
+// ── ANIMATED PULSE ──
+let pulse = 0;
+setInterval(() => {
+  pulse = (pulse + 0.02) % (Math.PI * 2);
+  const hubs = document.querySelectorAll('.hub-group-철학, .hub-group-모듈, .hub-group-MCP, .hub-group-생성기, .hub-group-아카이브');
+  hubs.forEach((g, i) => {
+    const dot = g.querySelector('circle');
+    if (dot) {
+      const phase = 1 + Math.sin(pulse + i * 0.8) * 0.15;
+      dot.setAttribute('r', (phase * 6).toString());
+    }
+  });
+}, 50);
+
+console.log('✅ OrbitPrompt Graph — Obsidian-style');
 </script>
 </body>
 </html>
