@@ -282,39 +282,39 @@ let mdx = 0, mdy = 0, mdTime = 0;
 
 const wrap = document.getElementById('graphWrap');
 const tip = document.getElementById('tooltip');
-const svg = document.getElementById('graphSvg');
-const NS = 'http://www.w3.org/2000/svg';
 
-// Get SVG coordinates from mouse/touch event (handles CSS 3D transform)
-function svgPoint(ev) {
-  const p = svg.createSVGPoint();
-  p.x = ev.clientX; p.y = ev.clientY;
-  const ctm = svg.getScreenCTM();
-  if (!ctm) return {x:0,y:0};
-  return p.matrixTransform(ctm.inverse());
-}
-
-// Navigate to nearest node
+// Navigate to nearest node via elementFromPoint (works with CSS 3D transforms)
 function tapNavigate(ev) {
-  const pt = svgPoint(ev);
-  const zf = Math.max(0.5, Math.min(2, zoom));
-  let best = null, bestD = Infinity;
-  leafEls.forEach(l => {
-    const d = Math.hypot(l.x - pt.x, l.y - pt.y);
-    if (d < bestD) { bestD = d; best = { t:'leaf', d:l }; }
-  });
-  const leafHit = 25 * zf;
-  if (best && bestD < leafHit && best.t === 'leaf') {
-    window.location.href = best.d.leaf.href; return;
+  // Use elementFromPoint to find what's under the click
+  const el = document.elementFromPoint(ev.clientX, ev.clientY);
+  if (!el) return;
+
+  // Walk up to find data-hub or data-leaf
+  let target = el;
+  while (target && target !== document.body) {
+    if (target.getAttribute && target.getAttribute('data-leaf')) {
+      const href = target.getAttribute('href');
+      if (href && href !== '#') { window.location.href = href; return; }
+    }
+    if (target.getAttribute && target.getAttribute('data-hub')) {
+      const id = target.getAttribute('data-hub');
+      const lv = LEAVES[id];
+      if (lv && lv[0]) { window.location.href = lv[0].href; return; }
+    }
+    target = target.parentElement || target.parentNode;
   }
-  Object.entries(HUBS).forEach(([id, h]) => {
-    const d = Math.hypot(h.x - pt.x, h.y - pt.y);
-    if (d < bestD) { bestD = d; best = { t:'hub', id }; }
-  });
-  const hubHit = 40 * zf;
-  if (best && bestD < hubHit && best.t === 'hub') {
-    const lv = LEAVES[best.id];
-    if (lv && lv[0]) window.location.href = lv[0].href;
+
+  // Fallback: check if closest circle/text belongs to a node
+  const leaf = el.closest('[data-leaf]');
+  if (leaf) {
+    const href = leaf.getAttribute('href');
+    if (href && href !== '#') { window.location.href = href; return; }
+  }
+  const hub = el.closest('[data-hub]');
+  if (hub) {
+    const id = hub.getAttribute('data-hub');
+    const lv = LEAVES[id];
+    if (lv && lv[0]) { window.location.href = lv[0].href; return; }
   }
 }
 
