@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>손가락 휴머니티 모델 — OrbitPrompt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#07070d;--surf:#0b0b14;--card:#0e0e1a;--gold:#d4af37;--ink:#f0e8d8;--dim:rgba(240,232,216,.55);--muted:rgba(240,232,216,.3);--f-sans:'Inter',sans-serif;--f-serif:'Playfair Display',serif;--f-mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-sans);line-height:1.8;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 30% 20%,rgba(212,175,55,.04) 0%,transparent 60%);pointer-events:none;z-index:0}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;padding:0 28px;height:56px;background:rgba(7,7,13,.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.04)}
+.nav-brand{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--gold);text-decoration:none;letter-spacing:.08em}
+.nav-back{font-family:var(--f-mono);font-size:11px;color:var(--muted);text-decoration:none;margin-left:auto;transition:color .2s}
+.nav-back:hover{color:var(--gold)}
+.hero{min-height:80vh;display:flex;flex-direction:column;justify-content:center;padding:100px 28px 60px;position:relative;z-index:1;text-align:center}
+.hero-label{font-family:var(--f-mono);font-size:10px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:20px}
+.hero h1{font-family:var(--f-serif);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:400;line-height:1.05;letter-spacing:-.03em;margin-bottom:20px}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:14px;color:var(--dim);max-width:560px;margin:0 auto;line-height:1.7}
+.hand-container{max-width:700px;margin:40px auto;padding:0 20px;position:relative;z-index:1}
+.hand-svg{width:100%;max-width:500px;margin:0 auto;display:block}
+.finger-grid{display:grid;gap:1px;background:rgba(255,255,255,.06);border-radius:12px;overflow:hidden;max-width:700px;margin:40px auto;position:relative;z-index:1}
+.finger-row{background:var(--card);padding:20px 24px;display:grid;grid-template-columns:48px 100px 1fr;gap:16px;align-items:center;cursor:pointer;transition:background .3s}
+.finger-row:hover{background:rgba(212,175,55,.06)}
+.finger-emoji{font-size:32px;text-align:center}
+.finger-name{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;color:var(--gold)}
+.finger-desc{font-size:13px;color:var(--dim);line-height:1.6;grid-column:3}
+.finger-row.expanded .finger-desc{color:var(--ink)}
+.mapping-section{max-width:700px;margin:60px auto;padding:0 20px;position:relative;z-index:1}
+.mapping-section h2{font-family:var(--f-serif);font-size:clamp(1.3rem,2.5vw,1.8rem);font-weight:400;margin-bottom:24px;text-align:center}
+.mapping-section h2 em{font-style:italic;color:var(--gold)}
+.matrix{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:rgba(255,255,255,.06);border-radius:12px;overflow:hidden;margin:24px 0}
+.mx-item{background:var(--card);padding:20px;text-align:center;transition:background .3s}
+.mx-item:hover{background:rgba(212,175,55,.06)}
+.mx-emoji{font-size:28px;margin-bottom:8px}
+.mx-title{font-family:var(--f-mono);font-size:9px;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:4px}
+.mx-meaning{font-size:12px;font-weight:600;color:#fff;margin-bottom:4px}
+.mcp-axis{font-size:11px;color:var(--dim)}
+.footer-section{max-width:700px;margin:40px auto 80px;padding:0 20px;position:relative;z-index:1;text-align:center}
+.quote-block{border-left:2px solid var(--gold);padding:20px 24px;margin:24px 0;background:var(--card);border-radius:0 8px 8px 0;text-align:left}
+.quote-text{font-family:var(--f-serif);font-size:16px;font-style:italic;color:#fff;line-height:1.6}
+.quote-source{font-family:var(--f-mono);font-size:10px;color:var(--gold);margin-top:8px}
+footer{border-top:1px solid rgba(255,255,255,.04);padding:24px 28px;text-align:center;font-family:var(--f-mono);font-size:10px;color:var(--muted);letter-spacing:.08em;position:relative;z-index:1}
+@media(max-width:640px){.finger-row{grid-template-columns:36px 80px 1fr;gap:12px;padding:16px}.finger-emoji{font-size:24px}.matrix{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<nav>
+<a class="nav-brand" href="/">ORBITPROMPT</a>
+<a class="nav-back" href="/">← 갤러리로</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Φ7 · Humanity Model · 2024</div>
+  <h1>손가락<br><em>휴머니티</em> 모델</h1>
+  <p class="hero-sub">인간의 다섯 가지 능력을 손가락에 비유한 모델. 독립, 성찰, 극기, 사랑, 소망 — 이 다섯이 지금의 MCP 4축과 솔루션으로 다시 구현되었다.</p>
+</div>
+
+<div class="hand-container">
+  <svg class="hand-svg" viewBox="0 0 500 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 손바닥 -->
+    <path d="M100 200 Q100 100 150 80 L200 80 Q250 80 250 100 L250 200 Z" fill="rgba(212,175,55,.08)" stroke="rgba(212,175,55,.3)" stroke-width="1.5"/>
+    <path d="M250 200 Q250 100 300 80 L350 80 Q400 80 400 100 L400 200 Z" fill="rgba(212,175,55,.08)" stroke="rgba(212,175,55,.3)" stroke-width="1.5"/>
+
+    <!-- 엄지 (독립) -->
+    <rect x="60" y="120" width="50" height="100" rx="20" fill="rgba(212,175,55,.12)" stroke="#d4af37" stroke-width="2"/>
+    <text x="85" y="180" text-anchor="middle" fill="#d4af37" font-size="13" font-family="JetBrains Mono">👍</text>
+    <text x="85" y="240" text-anchor="middle" fill="rgba(255,255,255,.6)" font-size="10" font-family="JetBrains Mono">자립</text>
+
+    <!-- 검지 (성찰) -->
+    <rect x="165" y="40" width="35" height="140" rx="16" fill="rgba(168,85,247,.12)" stroke="#a855f7" stroke-width="2"/>
+    <text x="183" y="120" text-anchor="middle" fill="#a855f7" font-size="13" font-family="JetBrains Mono">☝️</text>
+    <text x="183" y="195" text-anchor="middle" fill="rgba(255,255,255,.6)" font-size="10" font-family="JetBrains Mono">성찰·h</text>
+
+    <!-- 중지 (극기) -->
+    <rect x="230" y="10" width="35" height="170" rx="16" fill="rgba(208,107,87,.12)" stroke="#d06b57" stroke-width="2"/>
+    <text x="248" y="100" text-anchor="middle" fill="#d06b57" font-size="13" font-family="JetBrains Mono">🖕</text>
+    <text x="248" y="195" text-anchor="middle" fill="rgba(255,255,255,.6)" font-size="10" font-family="JetBrains Mono">극기·c</text>
+
+    <!-- 약지 (사랑/관용) -->
+    <rect x="295" y="40" width="35" height="140" rx="16" fill="rgba(16,185,129,.12)" stroke="#10b981" stroke-width="2"/>
+    <text x="313" y="120" text-anchor="middle" fill="#10b981" font-size="13" font-family="JetBrains Mono">💍</text>
+    <text x="313" y="195" text-anchor="middle" fill="rgba(255,255,255,.6)" font-size="10" font-family="JetBrains Mono">사랑·h/s</text>
+
+    <!-- 새끼 (판타지/소망) -->
+    <rect x="370" y="80" width="28" height="100" rx="12" fill="rgba(34,211,238,.12)" stroke="#22d3ee" stroke-width="2"/>
+    <text x="384" y="140" text-anchor="middle" fill="#22d3ee" font-size="11" font-family="JetBrains Mono">🖐️</text>
+    <text x="384" y="195" text-anchor="middle" fill="rgba(255,255,255,.6)" font-size="10" font-family="JetBrains Mono">소망</text>
+  </svg>
+</div>
+
+<div class="finger-grid">
+  <div class="finger-row">
+    <div class="finger-emoji">👍</div>
+    <div class="finger-name">엄지</div>
+    <div class="finger-desc"><strong style="color:#d4af37;">독립</strong> — 스스로 설 수 있는 힘. a(자립) 축으로 매핑. AI 오케스트레이션 파이프라인이 이 손가락의 구현체다.</div>
+  </div>
+  <div class="finger-row">
+    <div class="finger-emoji">☝️</div>
+    <div class="finger-name">검지</div>
+    <div class="finger-desc"><strong style="color:#a855f7;">자기 성찰</strong> — 나를 포인팅하는 능력. h(인간성) 축과 연결. 철학·종교·Flux 슬롯이 이 손가락의 가드레일이다.</div>
+  </div>
+  <div class="finger-row">
+    <div class="finger-emoji">🖕</div>
+    <div class="finger-name">중지</div>
+    <div class="finger-desc"><strong style="color:#d06b57;">극기 · 한계 돌파</strong> — fuck 소리를 하면서도 나아가는 힘. c(계급인식) 축과 연결. 구조를 직시하고 돌파하는 힘.</div>
+  </div>
+  <div class="finger-row">
+    <div class="finger-emoji">💍</div>
+    <div class="finger-name">약지</div>
+    <div class="finger-desc"><strong style="color:#10b981;">사랑 · 관용 · 연대</strong> — 반지를 끼는 손가락. 나보다 못한 자를 어여삐 여기는 힘. h(돌봄)+s(사회화) 축과 연결.</div>
+  </div>
+  <div class="finger-row">
+    <div class="finger-emoji">🖐️</div>
+    <div class="finger-name">새끼</div>
+    <div class="finger-desc"><strong style="color:#22d3ee;">판타지 · 소망</strong> — 미래를 상상하는 힘. 모든 축의 동력. "AI로 가능해진다"는 상상력이 이 손가락에서 나온다.</div>
+  </div>
+</div>
+
+<section class="mapping-section">
+  <h2>손가락 모델 → <em>MCP 4축</em> 매핑</h2>
+  <div class="matrix">
+    <div class="mx-item"><div class="mx-emoji">👍</div><div class="mx-title">엄지</div><div class="mx-meaning">독립</div><div class="mcp-axis">→ a(자립)<br>🚀 경제적 자립</div></div>
+    <div class="mx-item"><div class="mx-emoji">☝️</div><div class="mx-title">검지</div><div class="mx-meaning">성찰</div><div class="mcp-axis">→ h(인간성)<br>🧠 돌봄·의미</div></div>
+    <div class="mx-item"><div class="mx-emoji">🖕</div><div class="mx-title">중지</div><div class="mx-meaning">극기</div><div class="mcp-axis">→ c(계급인식)<br>🔍 구조 직시</div></div>
+    <div class="mx-item"><div class="mx-emoji">💍</div><div class="mx-title">약지</div><div class="mx-meaning">사랑</div><div class="mcp-axis">→ h+s<br>👥 돌봄·사회화</div></div>
+    <div class="mx-item"><div class="mx-emoji">🖐️</div><div class="mx-title">새끼</div><div class="mx-meaning">소망</div><div class="mcp-axis">→ 모든 축<br>⚡ AI 동력</div></div>
+  </div>
+
+  <div class="quote-block">
+    <div class="quote-text">손가락 5개로 비유했던 인간 능력 모델이, 지금은 MCP 4축과 AI 솔루션으로 코드화되었다. 새로운 철학을 발명한 게 아니라, 옛날 직감을 2,819줄의 코드로 증명한 사람이 된 거다.</div>
+    <div class="quote-source">OrbitPrompt · FINGER HUMANITY MODEL · 2024→2026</div>
+  </div>
+</section>
+
+<footer>Φ7-I-C-K-P-7AXIS · 손가락 휴머니티 모델 · OrbitPrompt</footer>
+</body>
+</html>
