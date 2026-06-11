@@ -10,38 +10,37 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#07070d;
-  --gold:#d4af37;
-  --gold2:rgba(212,175,55,.45);
-  --gold3:rgba(212,175,55,.12);
-  --ink1:rgba(255,255,255,.92);
-  --ink2:rgba(255,255,255,.55);
-  --ink3:rgba(255,255,255,.2);
+  --bg:#0A1A0F;
+  --bg2:#0D2214;
+  --bg3:#112A18;
+  --gold:#EEC864;
+  --gold2:rgba(238,200,100,.55);
+  --gold3:rgba(238,200,100,.12);
+  --ink1:#FFFFFF;
+  --ink2:rgba(255,255,255,.62);
+  --ink3:rgba(255,255,255,.35);
   --ink4:rgba(255,255,255,.08);
   --purple:rgba(168,85,247,.85);
   --cyan:rgba(34,211,238,.8);
   --green:rgba(74,222,128,.8);
-  --line:rgba(255,255,255,.06);
+  --line:rgba(238,200,100,.12);
+  --chalk:rgba(255,255,255,.03);
 }
 html,body{background:var(--bg);color:var(--ink1);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.4}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 45% at 25% 25%,rgba(238,200,100,.04) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 75% 75%,rgba(34,211,238,.03) 0%,transparent 50%);pointer-events:none;z-index:0}
 
 /* ── NAV ── */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  height:52px;padding:0 28px;
-  display:flex;align-items:center;justify-content:space-between;
-  background:rgba(7,7,13,.94);backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--line);
-}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,26,15,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
 .nav-logo{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--gold2);text-decoration:none}
 .nav-links{display:flex;gap:20px;align-items:center}
 .nav-link{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--ink3);text-decoration:none;transition:color .2s}
 .nav-link:hover{color:var(--ink2)}
-.nav-link.hot{color:rgba(212,175,55,.55)}
+.nav-link.hot{color:rgba(238,200,100,.55)}
 .nav-link.hot:hover{color:var(--gold)}
 
 /* ── HERO ── */
-.hero{
+.hero{position:relative;z-index:1;
   padding:110px 24px 48px;
   text-align:center;
   max-width:600px;margin:0 auto;
@@ -79,8 +78,8 @@ nav{
 
 /* ── SVG NODE STYLES ── */
 .edge{stroke-width:1;fill:none;transition:stroke-opacity .25s}
-.edge-center{stroke:rgba(212,175,55,.18)}
-.edge-phi{stroke:rgba(212,175,55,.14)}
+.edge-center{stroke:rgba(238,200,100,.18)}
+.edge-phi{stroke:rgba(238,200,100,.14)}
 .edge-mod{stroke:rgba(168,85,247,.14)}
 .edge-mcp{stroke:rgba(34,211,238,.14)}
 .edge-gen{stroke:rgba(74,222,128,.14)}
@@ -123,17 +122,17 @@ nav{
 }
 .why-card a{
   display:block;text-decoration:none;
-  border:1px solid rgba(212,175,55,.2);
+  border:1px solid rgba(238,200,100,.15);
   border-radius:3px;
   padding:28px 32px;
-  background:rgba(212,175,55,.02);
+  background:rgba(13,34,20,.6);
   transition:background .25s,border-color .25s;
 }
-.why-card a:hover{background:rgba(212,175,55,.05);border-color:rgba(212,175,55,.38)}
+.why-card a:hover{background:rgba(238,200,100,.05);border-color:rgba(238,200,100,.38)}
 .why-card-kicker{
   font-family:'JetBrains Mono',monospace;
   font-size:8px;letter-spacing:.2em;
-  color:rgba(212,175,55,.5);margin-bottom:12px;
+  color:rgba(238,200,100,.5);margin-bottom:12px;
 }
 .why-card-body{
   font-family:'Cormorant Garamond',serif;
@@ -143,7 +142,7 @@ nav{
 .why-card-cta{
   font-family:'JetBrains Mono',monospace;
   font-size:10px;letter-spacing:.1em;
-  color:rgba(212,175,55,.55);
+  color:rgba(238,200,100,.55);
 }
 
 /* ── MOBILE LIST (< 700px) ── */
@@ -180,10 +179,10 @@ nav{
   padding:0 24px;
 }
 .channel-cta-inner{
-  border:1px solid rgba(212,175,55,.18);
-  border-radius:12px;
+  border:1px solid rgba(238,200,100,.15);
+  border-radius:8px;
   padding:28px 32px;
-  background:rgba(212,175,55,.03);
+  background:rgba(13,34,20,.8);
   display:flex;align-items:center;
   justify-content:space-between;
   flex-wrap:wrap;gap:20px;
@@ -273,6 +272,34 @@ footer{
   </a>
 </div>
 
+<!-- Φ7 ORBITAL RING -->
+<div style="max-width:400px;margin:0 auto 32px;text-align:center;position:relative;z-index:1">
+  <svg viewBox="0 0 400 60" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+    <defs>
+      <linearGradient id="phiArc" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="rgba(238,200,100,0)"/>
+        <stop offset="20%" stop-color="#EEC864"/>
+        <stop offset="50%" stop-color="#EEC864"/>
+        <stop offset="80%" stop-color="#22d3ee"/>
+        <stop offset="100%" stop-color="rgba(34,211,238,0)"/>
+      </linearGradient>
+    </defs>
+    <line x1="20" y1="30" x2="380" y2="30" stroke="rgba(238,200,100,.08)" stroke-width="1"/>
+    <text font-family="'JetBrains Mono',monospace" font-size="11" fill="rgba(238,200,100,.3)" text-anchor="middle" letter-spacing=".8em">
+      <textPath href="#phiPath" startOffset="50%">Φ META · MODULAR · MCP · GENERATOR · ARCHIVE</textPath>
+    </text>
+    <path id="phiPath" d="M20,30 H380" stroke="none" fill="none"/>
+    <!-- 7 phi axis dots -->
+    <circle cx="40" cy="30" r="2" fill="#EEC864" opacity="0.5"/>
+    <circle cx="95" cy="30" r="2" fill="#a855f7" opacity="0.5"/>
+    <circle cx="155" cy="30" r="2" fill="#22d3ee" opacity="0.5"/>
+    <circle cx="200" cy="30" r="2.5" fill="#EEC864" opacity="0.8"/>
+    <circle cx="245" cy="30" r="2" fill="#4ade80" opacity="0.5"/>
+    <circle cx="305" cy="30" r="2" fill="#22d3ee" opacity="0.5"/>
+    <circle cx="360" cy="30" r="2" fill="rgba(255,255,255,.4)" opacity="0.5"/>
+  </svg>
+</div>
+
 <!-- CHANNEL CTA -->
 <div class="channel-cta">
   <div class="channel-cta-inner">
@@ -354,7 +381,7 @@ footer{
 
 <script>
 /* ── NODE GRAPH DATA ── */
-const GOLD  = 'rgba(212,175,55,';
+const GOLD  = 'rgba(238,200,100,';
 const PUR   = 'rgba(168,85,247,';
 const CYAN  = 'rgba(34,211,238,';
 const GRN   = 'rgba(74,222,128,';
@@ -364,7 +391,7 @@ const CENTER = {x:510, y:350, r:34, label:'OrbitPrompt', type:'center'};
 
 /* hub nodes */
 const HUBS = [
-  {id:'phi',   x:510, y:155, r:20, label:'철학',    color:GOLD,  ec:'rgba(212,175,55,.18)'},
+  {id:'phi',   x:510, y:155, r:20, label:'철학',    color:GOLD,  ec:'rgba(238,200,100,.18)'},
   {id:'mod',   x:740, y:245, r:20, label:'모듈',    color:PUR,   ec:'rgba(168,85,247,.18)'},
   {id:'mcp',   x:720, y:470, r:20, label:'MCP',    color:CYAN,  ec:'rgba(34,211,238,.18)'},
   {id:'gen',   x:280, y:470, r:20, label:'생성기',  color:GRN,   ec:'rgba(74,222,128,.18)'},
@@ -442,7 +469,7 @@ function tspan(text, dy, size, fill) {
 // ── defs: glow filter ──
 const defs = el('defs',{});
 ['gold','pur','cyan','grn'].forEach((id,i)=>{
-  const cols = ['#d4af37','#a855f7','#22d3ee','#4ade80'];
+  const cols = ['#EEC864','#a855f7','#22d3ee','#4ade80'];
   const f = el('filter',{id:'glow-'+id, x:'-30%',y:'-30%',width:'160%',height:'160%'});
   const fe1 = el('feGaussianBlur',{stdDeviation:'3',result:'blur'});
   const fe2 = el('feFlood',{'flood-color':cols[i],'flood-opacity':'0.35',result:'color'});
@@ -568,9 +595,9 @@ HUBS.forEach(hub=>{
 (() => {
   const cx = CENTER.x, cy = CENTER.y, r = CENTER.r;
 
-  const ring2 = el('circle',{cx,cy,r:r+18,fill:'none',stroke:'rgba(212,175,55,.04)','stroke-width':'1'});
-  const ring1 = el('circle',{cx,cy,r:r+9, fill:'none',stroke:'rgba(212,175,55,.08)','stroke-width':'1'});
-  const circ  = el('circle',{cx,cy,r,fill:'rgba(212,175,55,.1)',stroke:'rgba(212,175,55,.5)','stroke-width':'1.5','filter':'url(#glow-gold)'});
+  const ring2 = el('circle',{cx,cy,r:r+18,fill:'none',stroke:'rgba(238,200,100,.04)','stroke-width':'1'});
+  const ring1 = el('circle',{cx,cy,r:r+9, fill:'none',stroke:'rgba(238,200,100,.08)','stroke-width':'1'});
+  const circ  = el('circle',{cx,cy,r,fill:'rgba(238,200,100,.1)',stroke:'rgba(238,200,100,.5)','stroke-width':'1.5','filter':'url(#glow-gold)'});
 
   const txt = el('text',{x:cx,y:cy+3,class:'center-label'});
   txt.textContent='OrbitPrompt';
@@ -589,7 +616,7 @@ HUBS.forEach(hub=>{
   // simpler: just a circle ring pulse
   const ringPulse = el('circle',{
     cx,cy,r:r+2,
-    fill:'none',stroke:'rgba(212,175,55,.2)','stroke-width':'1',
+    fill:'none',stroke:'rgba(238,200,100,.2)','stroke-width':'1',
     opacity:'0.5'
   });
   const anim = el('animate',{
