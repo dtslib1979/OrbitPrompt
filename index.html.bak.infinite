@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="description" content="철학을 코드로 — OrbitPrompt 사고 시스템">
+<meta name="theme-color" content="#0A1A0F">
+<title>OrbitPrompt — 칠판 위에 쓰는 철학</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0A1A0F;--bg2:#0D2214;--bg3:#112A18;--gold:#EEC864;--gold2:rgba(238,200,100,.35);--ink1:#FFFFFF;--ink2:rgba(255,255,255,.5);--ink3:rgba(255,255,255,.2);--purple:#a855f7;--cyan:#22d3ee;--green:#4ade80;--radius:8px;--phi:0.618}
+html,body{background:var(--bg);color:var(--ink1);font-family:'Inter',sans-serif;height:100%;overflow:hidden;-webkit-font-smoothing:antialiased}
+
+/* CHALKBOARD TEXTURE */
+body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 55% 45% at 25% 30%,rgba(238,200,100,.04) 0%,transparent 60%),radial-gradient(ellipse 40% 35% at 75% 70%,rgba(34,211,238,.03) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+/* HEADER */
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;background:linear-gradient(180deg,rgba(10,26,15,.6) 0%,transparent 100%)}
+header .brand{pointer-events:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--gold2);text-decoration:none;transition:color .3s}
+header .brand:hover{color:var(--gold)}
+header nav{pointer-events:auto;display:flex;gap:28px}
+header nav a{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--ink3);text-decoration:none;transition:color .4s}
+header nav a:hover{color:var(--ink2)}
+
+/* TOGGLE AUTO-ROTATE */
+#autoRotateBtn{position:fixed;bottom:80px;right:24px;z-index:99;background:none;border:1px solid var(--ink3);color:var(--ink2);font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;padding:8px 14px;border-radius:4px;cursor:pointer;transition:all .3s;pointer-events:auto;opacity:.4}
+#autoRotateBtn:hover{opacity:.9;border-color:var(--gold);color:var(--gold)}
+
+/* ZOOM INDICATOR */
+#zoomIndicator{position:fixed;bottom:120px;right:24px;z-index:99;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--ink3);pointer-events:none;opacity:0;transition:opacity .4s}
+
+/* FOOTER */
+footer{position:fixed;bottom:0;left:0;right:0;z-index:100;padding:20px 32px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap;pointer-events:none;background:linear-gradient(0deg,rgba(10,26,15,.6) 0%,transparent 100%)}
+footer a{pointer-events:auto;font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:var(--ink3);text-decoration:none;transition:color .3s}
+footer a:hover{color:var(--gold)}
+
+/* TITLE */
+.title{position:fixed;z-index:50;pointer-events:none;left:50%;top:38.2%;transform:translate(-50%,-50%);text-align:center}
+.title-kicker{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.35em;color:var(--gold2);margin-bottom:16px;opacity:0;animation:fadeUp .8s ease .4s forwards}
+.title h1{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,5.5vw,52px);font-weight:400;line-height:1.15;letter-spacing:-.03em;color:#fff;margin-bottom:6px;opacity:0;animation:fadeUp .8s ease .7s forwards}
+.title h1 em{font-style:italic;color:var(--gold)}
+.title-sub{font-size:clamp(10px,1.4vw,13px);color:var(--ink2);margin-top:12px;letter-spacing:.04em;font-weight:300;opacity:0;animation:fadeUp .8s ease 1.2s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CANVAS — fullscreen */
+#graphWrap{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;perspective:1200px;touch-action:none;-ms-touch-action:none}
+#graphSvg{width:100%;height:100%;display:block;cursor:grab;background:transparent;transform-style:preserve-3d;will-change:transform}
+#graphSvg:active{cursor:grabbing}
+
+.edge{fill:none;stroke-linecap:round;transition:opacity .6s;will-change:opacity}
+.node-dot{transition:r .3s,opacity .3s;cursor:pointer;will-change:r,opacity}
+.node-label{font-family:'JetBrains Mono',monospace;font-size:7.5px;fill:rgba(255,255,255,.3);letter-spacing:.04em;pointer-events:none;transition:opacity .4s;text-anchor:middle;dominant-baseline:middle}
+.node-group{cursor:pointer;transition:transform .3s}
+.node-group:hover .node-label{opacity:1;fill:rgba(255,255,255,.7)}
+.node-group:hover .node-dot{filter:brightness(1.8)}
+.center-label{font-family:'Cormorant Garamond',serif;font-size:14px;fill:var(--gold);font-style:italic;text-anchor:middle;pointer-events:none}
+.hub-label{font-family:'JetBrains Mono',monospace;font-size:6.5px;fill:rgba(255,255,255,.12);letter-spacing:.14em;text-anchor:middle;pointer-events:none;text-transform:uppercase}
+.hub-ring{transition:r .6s ease,opacity .6s ease;will-change:r,opacity}
+
+/* TOOLTIP */
+#tooltip{position:fixed;z-index:200;pointer-events:none;background:rgba(10,26,15,.95);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:12px 16px;font-family:'Inter',sans-serif;font-size:11px;line-height:1.5;color:var(--ink2);max-width:220px;opacity:0;transition:opacity .2s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#tooltip.visible{opacity:1}
+#tooltip strong{color:var(--ink1);font-weight:500}
+#tooltip .hint{display:block;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--ink3)}
+
+/* CANVAS CHALK DUST */
+#chalkCanvas{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:2;pointer-events:none}
+
+/* MOBILE */
+@media(max-width:700px){
+  header{padding:16px 20px}
+  header nav{display:none}
+  footer{padding:12px 16px;gap:10px}
+  footer a{font-size:6.5px}
+  .node-label{font-size:6px}
+  #autoRotateBtn{bottom:70px;right:12px}
+  #zoomIndicator{bottom:108px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/">ORBITPROMPT</a>
+  <nav>
+    <a href="why.html">WHY</a>
+    <a href="whitepaper.html">백서</a>
+    <a href="philosophy.html">철학</a>
+    <a href="humanity-finger.html">휴머니티</a>
+  </nav>
+</header>
+
+<div class="title">
+  <div class="title-kicker">Φ · I · C · K · P · 7AXIS — THOUGHT SYSTEM</div>
+  <h1>칠판 위에 쓰는 <em>철학</em></h1>
+  <div class="title-sub">탐색하려면 노드를 클릭하세요 · 드래그로 회전 · 스크롤로 확대</div>
+</div>
+
+<button id="autoRotateBtn">◈ 자동 회전</button>
+<div id="zoomIndicator">100%</div>
+
+<div id="graphWrap"><svg id="graphSvg" viewBox="-600 -600 1200 1200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="gg"><stop offset="0%" stop-color="#EEC864" stop-opacity=".25"/><stop offset="100%" stop-color="#EEC864" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gp"><stop offset="0%" stop-color="#a855f7" stop-opacity=".25"/><stop offset="100%" stop-color="#a855f7" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gc"><stop offset="0%" stop-color="#22d3ee" stop-opacity=".2"/><stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
+    <radialGradient id="ggr"><stop offset="0%" stop-color="#4ade80" stop-opacity=".2"/><stop offset="100%" stop-color="#4ade80" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gw"><stop offset="0%" stop-color="#fff" stop-opacity=".15"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="glowStrong"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="chalkDust"><feGaussianBlur stdDeviation=".8"/></filter>
+  </defs>
+</svg></div>
+
+<canvas id="chalkCanvas"></canvas>
+
+<div id="tooltip"></div>
+
+<footer>
+  <a href="identity.html">정체성</a>
+  <a href="humility.html">겸손</a>
+  <a href="docs/JUSTIFICATION-REPORT.md">정당성</a>
+  <a href="docs/AI-MISSIONARY-PLUGIN-WHITEPAPER.md">미셔너</a>
+  <a href="edu-mcp/mcp/server.py">Edu MCP</a>
+  <a href="media-mcp/mcp/server.py">Media MCP</a>
+  <a href="archive.html">Archive</a>
+  <a href="https://github.com/dtslib1979/OrbitPrompt">GitHub</a>
+</footer>
+
+<script>
+// ─── CONFIG ───
+const GOLD='#EEC864', PUR='#a855f7', CYAN='#22d3ee', GRN='#4ade80', WHT='#fff';
+
+// ─── NODE DATA ───
+const HUBS = {
+  phi: { label:'철학', x:-260, y:-160, color:GOLD, desc:'Φ7 철학 체계 — 정체성, 겸손, 정당성, 휴머니티' },
+  mod: { label:'모듈', x:290, y:-130, color:PUR, desc:'사고 모듈 — 축구 모델, 선거 MCP, 달러 시스템' },
+  mcp: { label:'MCP', x:320, y:260, color:CYAN, desc:'MCP 서버 모음 — 정치, 금융, 교육, 미디어' },
+  gen: { label:'생성기', x:-270, y:220, color:GRN, desc:'프롬프트 생성기 — 칠판, Identity, Broadcast' },
+  arch:{ label:'아카이브', x:-400, y:60, color:WHT, desc:'기록과 자료 — Archive, Map, Links, 정당성' }
+};
+
+const LEAVES = {
+  phi: [
+    {label:'WHY', href:'why.html'},
+    {label:'백서', href:'whitepaper.html'},
+    {label:'7축 철학', href:'philosophy.html'},
+    {label:'휴머니티', href:'humanity-finger.html'},
+  ],
+  mod: [
+    {label:'축구 모델', href:'football-model/index.html'},
+    {label:'WC2026', href:'football-model/wc2026-predictor.html'},
+    {label:'선거 MCP', href:'boards/election-gallery.html'},
+    {label:'달러 시스템', href:'boards/dollar-system-whitepaper.html'},
+  ],
+  mcp: [
+    {label:'정치 MCP', href:'political-mcp/index.html'},
+    {label:'금융 MCP', href:'parksy-finance-mcp/index.html'},
+    {label:'달러 MCP', href:'dollar-system-mcp/WHITEPAPER.md'},
+    {label:'교육 MCP', href:'edu-mcp/mcp/server.py'},
+    {label:'Media MCP', href:'media-mcp/mcp/server.py'},
+  ],
+  gen: [
+    {label:'칠판', href:'prompts/chalkboard/index.html'},
+    {label:'Identity', href:'prompts/identity/index.html'},
+    {label:'Broadcast', href:'prompts/broadcast/parksy-brain-season.html'},
+    {label:'PWA', href:'prompts/apk/index.html'},
+  ],
+  arch: [
+    {label:'Archive', href:'archive.html'},
+    {label:'Map', href:'map.html'},
+    {label:'Links', href:'links/index.html'},
+    {label:'정당성', href:'docs/JUSTIFICATION-REPORT.md'},
+    {label:'미셔너', href:'docs/AI-MISSIONARY-PLUGIN-WHITEPAPER.md'},
+  ]
+};
+
+// ─── SVG RENDER ───
+const svg = document.getElementById('graphSvg');
+const NS = 'http://www.w3.org/2000/svg';
+function el(t,a){const e=document.createElementNS(NS,t);for(const[k,v]of Object.entries(a||{}))e.setAttribute(k,v);return e}
+
+// Center glow
+const cGlow = el('circle',{cx:0,cy:0,r:70,fill:'none',stroke:GOLD,'stroke-width':.3,opacity:.05});
+svg.appendChild(cGlow);
+const cGlow2 = el('circle',{cx:0,cy:0,r:45,fill:'none',stroke:GOLD,'stroke-width':.4,opacity:.07});
+svg.appendChild(cGlow2);
+const centerTxt = el('text',{x:0,y:0,class:'center-label',filter:'url(#glow)'});
+centerTxt.textContent = 'OrbitPrompt';
+svg.appendChild(centerTxt);
+
+// Store references for animations
+const hubEls = {};
+const edgeEls = [];
+const leafEls = [];
+const ringEls = [];
+
+Object.entries(HUBS).forEach(([id, hub]) => {
+  const hx = hub.x, hy = hub.y;
+  const leaves = LEAVES[id] || [];
+
+  // Orbit ring
+  const ringR = Math.sqrt(hx*hx + hy*hy);
+  const ring = el('circle',{cx:0,cy:0,r:ringR,fill:'none',stroke:'rgba(255,255,255,.04)','stroke-width':.5});
+  svg.appendChild(ring);
+
+  // Hub glow radial
+  const glow = el('circle',{cx:hx,cy:hy,r:55,fill:'none',stroke:hub.color,'stroke-width':.4,opacity:.08,class:'hub-ring',filter:'url(#glow)'});
+  svg.appendChild(glow);
+
+  // Hub group
+  const hg = document.createElementNS(NS,'g');
+  hg.setAttribute('class','node-group');
+  hg.setAttribute('data-hub',id);
+
+  const hd = el('circle',{cx:hx,cy:hy,r:hub.r||7,class:'node-dot',fill:hub.color,filter:'url(#glow)',opacity:.7});
+  hg.appendChild(hd);
+
+  // Hub inner dot
+  const hi = el('circle',{cx:hx,cy:hy,r:2.5,fill:WHT,opacity:.3});
+  hg.appendChild(hi);
+
+  const hl = el('text',{x:hx,y:hy+17,class:'hub-label',fill:hub.color});
+  hl.textContent = hub.label;
+  hg.appendChild(hl);
+  svg.appendChild(hg);
+
+  hubEls[id] = { group:hg, dot:hd, glow, ring, label:hl, x:hx, y:hy, hub };
+
+  // Edge to center
+  const ce = el('line',{x1:0,y1:0,x2:hx,y2:hy,class:'edge','stroke':hub.color,'stroke-width':.4,opacity:.04});
+  svg.appendChild(ce);
+  edgeEls.push(ce);
+
+  // Children
+  leaves.forEach((leaf, i) => {
+    const total = leaves.length;
+    const angle = (i/total)*Math.PI*2 - Math.PI/2 + id.length*0.2;
+    const dist = 55 + (i%2)*10;
+    const lx = hx + Math.cos(angle)*dist;
+    const ly = hy + Math.sin(angle)*dist*0.6;
+
+    // Edge
+    const edge = el('line',{x1:hx,y1:hy,x2:lx,y2:ly,class:'edge',stroke:leaf.color||'rgba(255,255,255,.06)','stroke-width':.5,opacity:.06});
+    svg.appendChild(edge);
+    edgeEls.push(edge);
+
+    // Leaf group (anchor)
+    const lg = document.createElementNS(NS,'a');
+    lg.setAttributeNS('http://www.w3.org/1999/xlink','href',leaf.href);
+    lg.setAttribute('href',leaf.href);
+    lg.setAttribute('class','node-group');
+    lg.setAttribute('data-leaf',id+'_'+i);
+
+    const ld = el('circle',{cx:lx,cy:ly,r:2.5,class:'node-dot',fill:leaf.color||WHT,opacity:.4});
+    lg.appendChild(ld);
+
+    const ll = el('text',{x:lx,y:ly+12,class:'node-label',fill:leaf.color||WHT});
+    ll.textContent = leaf.label;
+    lg.appendChild(ll);
+    svg.appendChild(lg);
+
+    leafEls.push({ el:lg, dot:ld, label:ll, x:lx, y:ly, hub:id, leaf, angle, dist });
+  });
+});
+
+// ─── 3D DRAG + PINCH ZOOM + TAP DETECTION ───
+let isDragging = false;
+let sx = 0, sy = 0;
+let angleX = 0, angleY = 0;
+let velocityX = 0, velocityY = 0;
+let targetX = 0, targetY = 0;
+let autoRotate = false;
+let zoom = 1;
+let targetZoom = 1;
+let touchStartTime = 0;
+let touchStartX = 0, touchStartY = 0;
+let wasTap = false;
+let initialPinchDist = 0;
+let initialPinchZoom = 1;
+let mouseDownX = 0, mouseDownY = 0;
+let mouseDownTime = 0;
+
+const wrap = document.getElementById('graphWrap');
+const tooltip = document.getElementById('tooltip');
+
+wrap.addEventListener('mousedown', e => {
+  isDragging = true;
+  wasTap = true;
+  sx = e.clientX; sy = e.clientY;
+  mouseDownX = e.clientX; mouseDownY = e.clientY;
+  mouseDownTime = Date.now();
+  velocityX = 0; velocityY = 0;
+});
+
+window.addEventListener('mousemove', e => {
+  if (isDragging) {
+    const moved = Math.sqrt((e.clientX - mouseDownX) ** 2 + (e.clientY - mouseDownY) ** 2);
+    if (moved > 5) wasTap = false;
+    const dx = e.clientY - sy;
+    const dy = e.clientX - sx;
+    targetX += dx * 0.004;
+    targetY += dy * 0.004;
+    velocityX = dx * 0.004;
+    velocityY = dy * 0.004;
+    sx = e.clientX; sy = e.clientY;
+  }
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+window.addEventListener('mouseup', e => {
+  isDragging = false;
+  // If click (no drag), navigate to nearest node
+  if (wasTap && Date.now() - mouseDownTime < 300) {
+    const rect = svg.getBoundingClientRect();
+    const svgX = (e.clientX - rect.left) / rect.width * 1200 - 600;
+    const svgY = (e.clientY - rect.top) / rect.height * 1200 - 600;
+    navigateToNode(svgX, svgY);
+  }
+});
+
+// ── TOUCH: single-finger drag + pinch zoom + tap ──
+wrap.addEventListener('touchstart', e => {
+  const touches = e.touches;
+  touchStartTime = Date.now();
+
+  if (touches.length === 1) {
+    // Single finger
+    isDragging = true;
+    wasTap = true;
+    sx = touches[0].clientX; sy = touches[0].clientY;
+    touchStartX = sx; touchStartY = sy;
+    velocityX = 0; velocityY = 0;
+  } else if (touches.length === 2) {
+    // Pinch start
+    isDragging = false;
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    initialPinchDist = Math.sqrt(dx * dx + dy * dy);
+    initialPinchZoom = targetZoom;
+  }
+}, {passive:true});
+
+window.addEventListener('touchmove', e => {
+  const touches = e.touches;
+
+  if (touches.length === 2) {
+    // Pinch zoom
+    e.preventDefault();
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (initialPinchDist > 0) {
+      targetZoom = Math.max(0.4, Math.min(3.0, initialPinchZoom * (dist / initialPinchDist)));
+    }
+    document.getElementById('zoomIndicator').style.opacity = '1';
+    clearTimeout(window._zoomTimeout);
+    window._zoomTimeout = setTimeout(() => {
+      document.getElementById('zoomIndicator').style.opacity = '0';
+    }, 1500);
+    return;
+  }
+
+  if (!isDragging || touches.length !== 1) return;
+
+  const cx = touches[0].clientX, cy = touches[0].clientY;
+  const moved = Math.sqrt((cx - touchStartX) ** 2 + (cy - touchStartY) ** 2);
+
+  // If moved more than 8px, it's a drag not a tap
+  if (moved > 8) wasTap = false;
+
+  const dx = cy - sy;
+  const dy = cx - sx;
+  targetX += dx * 0.004;
+  targetY += dy * 0.004;
+  velocityX = dx * 0.004;
+  velocityY = dy * 0.004;
+  sx = cx; sy = cy;
+}, {passive:false});
+
+window.addEventListener('touchend', e => {
+  if (e.touches.length > 0) return;
+  const elapsed = Date.now() - touchStartTime;
+
+  if (wasTap && elapsed < 300) {
+    const tx = e.changedTouches[0].clientX;
+    const ty = e.changedTouches[0].clientY;
+    const rect = svg.getBoundingClientRect();
+    const svgX = (tx - rect.left) / rect.width * 1200 - 600;
+    const svgY = (ty - rect.top) / rect.height * 1200 - 600;
+    navigateToNode(svgX, svgY);
+  }
+
+  isDragging = false;
+});
+
+// ── MOUSE WHEEL ZOOM ──
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  targetZoom = Math.max(0.4, Math.min(3.0, targetZoom - e.deltaY * 0.001));
+  document.getElementById('zoomIndicator').style.opacity = '1';
+  clearTimeout(window._zoomTimeout);
+  window._zoomTimeout = setTimeout(() => {
+    document.getElementById('zoomIndicator').style.opacity = '0';
+  }, 1500);
+}, {passive:false});
+
+// Auto-rotate toggle
+document.getElementById('autoRotateBtn').addEventListener('click', () => {
+  autoRotate = !autoRotate;
+  document.getElementById('autoRotateBtn').style.color = autoRotate ? GOLD : '';
+  document.getElementById('autoRotateBtn').style.borderColor = autoRotate ? GOLD : '';
+});
+
+// ─── NODE NAVIGATION (click/tap leaf → go, hub → first child) ───
+function navigateToNode(svgX, svgY) {
+  let best = null, bestDist = Infinity;
+  // Check leaf nodes first (smaller radius = higher priority)
+  leafEls.forEach(l => {
+    const d = Math.sqrt((l.x - svgX) ** 2 + (l.y - svgY) ** 2);
+    if (d < bestDist) { bestDist = d; best = { type: 'leaf', data: l }; }
+  });
+  if (best && bestDist < 40 && best.type === 'leaf') {
+    window.location.href = best.data.leaf.href;
+    return;
+  }
+  // Check hubs
+  Object.entries(HUBS).forEach(([id, hub]) => {
+    const d = Math.sqrt((hub.x - svgX) ** 2 + (hub.y - svgY) ** 2);
+    if (d < bestDist) { bestDist = d; best = { type: 'hub', hubId: id }; }
+  });
+  if (best && bestDist < 60 && best.type === 'hub') {
+    const leaves = LEAVES[best.hubId];
+    if (leaves && leaves[0]) window.location.href = leaves[0].href;
+  }
+}
+
+// Hub click via pointer cursor (for desktop SVG <g>)
+Object.entries(hubEls).forEach(([id, h]) => {
+  h.group.addEventListener('click', e => {
+    if (wasTap === false) return; // was a drag
+    e.preventDefault();
+    const leaves = LEAVES[id];
+    if (leaves && leaves[0]) window.location.href = leaves[0].href;
+  });
+});
+const centerGlow1 = cGlow;
+const centerGlow2 = cGlow2;
+let hoveredHub = null;
+
+// Hover tracking for hub tooltips
+document.querySelectorAll('.node-group[data-hub]').forEach(el => {
+  el.addEventListener('mouseenter', e => {
+    const id = el.getAttribute('data-hub');
+    const hub = HUBS[id];
+    if (!hub) return;
+    tooltip.innerHTML = `<strong>${hub.label}</strong><br>${hub.desc}<span class="hint">클릭 시 허브 확장</span>`;
+    tooltip.classList.add('visible');
+    hoveredHub = id;
+  });
+  el.addEventListener('mousemove', e => {
+    tooltip.style.left = (e.clientX + 16) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+  });
+  el.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('visible');
+    hoveredHub = null;
+  });
+});
+
+// Leaf hover
+document.querySelectorAll('.node-group[data-leaf]').forEach(el => {
+  el.addEventListener('mouseenter', e => {
+    const label = el.querySelector('.node-label')?.textContent || '';
+    const href = el.getAttribute('href') || '';
+    tooltip.innerHTML = `<strong>${label}</strong><span class="hint">${href}</span>`;
+    tooltip.classList.add('visible');
+  });
+  el.addEventListener('mousemove', e => {
+    tooltip.style.left = (e.clientX + 16) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+  });
+  el.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('visible');
+  });
+});
+
+let t = 0;
+
+function animate() {
+  t += 0.02;
+
+  // Auto-rotate
+  if (autoRotate && !isDragging) {
+    targetY += 0.003;
+    targetX += Math.sin(t * 0.3) * 0.001;
+  }
+
+  // Inertia (momentum)
+  if (!isDragging) {
+    targetX += velocityX * 0.92;
+    targetY += velocityY * 0.92;
+    velocityX *= 0.92;
+    velocityY *= 0.92;
+    if (Math.abs(velocityX) < 0.0001) velocityX = 0;
+    if (Math.abs(velocityY) < 0.0001) velocityY = 0;
+  }
+
+  // Smooth follow
+  angleX += (targetX - angleX) * 0.08;
+  angleY += (targetY - angleY) * 0.08;
+  zoom += (targetZoom - zoom) * 0.08;
+
+  svg.style.transform = `rotateX(${angleX}rad) rotateY(${angleY}rad) scale(${zoom})`;
+
+  // Center breathing
+  const breathe = 1 + Math.sin(t * 0.8) * 0.04;
+  centerGlow1.setAttribute('r', (70 * breathe).toString());
+  centerGlow1.setAttribute('opacity', (0.05 + Math.sin(t * 0.8) * 0.02).toString());
+  centerGlow2.setAttribute('r', (45 * breathe).toString());
+  centerGlow2.setAttribute('opacity', (0.07 + Math.sin(t * 0.8) * 0.03).toString());
+
+  // Hub rings pulse
+  const rings = document.querySelectorAll('.hub-ring');
+  rings.forEach((r, i) => {
+    const s = 1 + Math.sin(t + i * 0.7) * 0.08;
+    r.setAttribute('r', (55 * s).toString());
+    r.setAttribute('opacity', (0.06 + Math.sin(t + i * 0.7) * 0.03).toString());
+  });
+
+  // Hovered hub highlight
+  Object.entries(hubEls).forEach(([id, h]) => {
+    if (hoveredHub === id) {
+      h.dot.setAttribute('r', '9');
+      h.dot.setAttribute('opacity', '1');
+    } else if (hoveredHub) {
+      h.dot.setAttribute('r', '4');
+      h.dot.setAttribute('opacity', '0.3');
+    } else {
+      h.dot.setAttribute('r', '7');
+      h.dot.setAttribute('opacity', '0.7');
+    }
+  });
+
+  // Update zoom indicator
+  const zi = document.getElementById('zoomIndicator');
+  zi.textContent = Math.round(zoom * 100) + '%';
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+// ─── CHALK DUST PARTICLE SYSTEM ───
+const canvas = document.getElementById('chalkCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const PARTICLES = [];
+const PARTICLE_COUNT = 60;
+let mouseX = -1000, mouseY = -1000;
+
+// Create particles
+for (let i = 0; i < PARTICLE_COUNT; i++) {
+  PARTICLES.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 0.15,
+    vy: (Math.random() - 0.5) * 0.15 - 0.05,
+    r: Math.random() * 1.8 + 0.3,
+    opacity: Math.random() * 0.3 + 0.05,
+    life: Math.random() * Math.PI * 2,
+  });
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (const p of PARTICLES) {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life += 0.01;
+
+    // Slight attraction to mouse
+    const dx = mouseX - p.x;
+    const dy = mouseY - p.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 200 && dist > 0) {
+      p.vx += dx / dist * 0.002;
+      p.vy += dy / dist * 0.002;
+    }
+
+    // Damping
+    p.vx *= 0.998;
+    p.vy *= 0.998;
+
+    // Wrap around
+    if (p.x < -10) p.x = canvas.width + 10;
+    if (p.x > canvas.width + 10) p.x = -10;
+    if (p.y < -10) p.y = canvas.height + 10;
+    if (p.y > canvas.height + 10) p.y = -10;
+
+    const flicker = 0.6 + Math.sin(p.life) * 0.4;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${p.opacity * flicker})`;
+    ctx.fill();
+  }
+
+  // Mouse trail sparkles
+  if (!isDragging && mouseX > 0 && mouseY > 0) {
+    for (let i = 0; i < 3; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * 30 + 5;
+      ctx.beginPath();
+      ctx.arc(
+        mouseX + Math.cos(angle) * dist,
+        mouseY + Math.sin(angle) * dist,
+        Math.random() * 1 + 0.3,
+        0, Math.PI * 2
+      );
+      ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.1 + 0.02})`;
+      ctx.fill();
+    }
+
+    // Subtle glow around cursor
+    const grad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 40);
+    grad.addColorStop(0, 'rgba(238,200,100,0.03)');
+    grad.addColorStop(1, 'rgba(238,200,100,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(mouseX - 40, mouseY - 40, 80, 80);
+  }
+
+  requestAnimationFrame(drawParticles);
+}
+
+drawParticles();
+
+// ─── KEYBOARD SHORTCUTS ───
+window.addEventListener('keydown', e => {
+  if (e.key === 'r' || e.key === 'R') {
+    document.getElementById('autoRotateBtn').click();
+  }
+  if (e.key === '+' || e.key === '=') {
+    targetZoom = Math.min(2.0, targetZoom + 0.1);
+  }
+  if (e.key === '-') {
+    targetZoom = Math.max(0.4, targetZoom - 0.1);
+  }
+  if (e.key === '0') {
+    targetZoom = 1;
+    targetX = 0; targetY = 0;
+    angleX = 0; angleY = 0;
+  }
+});
+
+// ─── STAGGERED NODE ENTRY ───
+(function sequence() {
+  const allNodes = document.querySelectorAll('.node-group');
+  allNodes.forEach((n, i) => {
+    n.style.opacity = '0';
+    n.style.transform = 'translateY(10px)';
+    setTimeout(() => {
+      n.style.transition = 'opacity .6s ease, transform .6s ease';
+      n.style.opacity = '1';
+      n.style.transform = 'translateY(0)';
+    }, 1500 + i * 80);
+  });
+  setTimeout(() => {
+    allNodes.forEach(n => {
+      n.style.transition = '';
+      n.style.transform = '';
+    });
+  }, 1500 + allNodes.length * 80 + 600);
+})();
+
+console.log('🧑‍🏫 OrbitPrompt — 칠판에 쓰는 철학');
+</script>
+</body>
+</html>
