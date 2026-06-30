@@ -143,7 +143,7 @@ def run_pipeline(
         "pipeline_status": "BLOCKED" if errors else "COMPLETE",
         "guardrails": [
             "사후분석 — 예측 아님",
-            "베타 헤지 전략 — 알파 아님",
+            "트랙 2(FX/금 DCA) = 복리 컴파운드 수익 트랙 — 손실방어용 보험 아님",
             "레버리지 금지 — 현물 자산 매집 기준",
             "최소 8회 시그널 누적 전 자본투입 금지",
             "End-Station=FX = 로데이터 무시 아님 — 산업/경상수지 데이터는 환율 모델 입력 검증용 사료로 계층 재정렬",
