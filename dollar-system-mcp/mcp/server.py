@@ -295,6 +295,10 @@ def fx_pipeline(
 
     GATE 0 → Module 3(헤게모니 수수료) → Module 7(듀얼 유닛 환산) → Module 8(시그널 로깅)
 
+    ⚠️ 가드레일: "End-Station=FX" = 로데이터 무시 아님.
+    산업/경상수지 데이터는 직접 베팅 대상이 아니라 환율 모델 입력 검증용 사료로 계층 재정렬.
+    로데이터를 완전히 0으로 만들면 GATE 0(인센티브분석/역용시그널)이 통째로 의미 상실.
+
     Args:
         currency: 대상 통화 (KRW/JPY/TWD)
         exposures: Module 7용 통화 노출 리스트 (선택)
