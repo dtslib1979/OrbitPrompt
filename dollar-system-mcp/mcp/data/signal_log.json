@@ -1,90 +1,51 @@
 [
   {
-    "id": "SIG-20260630-141002-won_overvaluation",
-    "timestamp": "2026-06-30 14:10 KST",
+    "id": "SIG-20260630-143443-won_overvaluation",
+    "timestamp": "2026-06-30 14:34 KST",
     "signal_type": "won_overvaluation",
     "signal_label": "원화 일시 고평가",
-    "strength": 0.35,
+    "strength": 0.247,
     "max_strength": 0.35,
-    "strength_ratio": 100.0,
-    "basis": "[2026H1] KRW 헤게모니 수수료율 23.79%. USDKRW 1535, baseline 1240. 백서 12장.",
+    "strength_ratio": 70.6,
+    "basis": "[KRW] yfinance: 1546.30, 약세율 24.7% (baseline 1240.0). 기준 15% 초과.",
     "metadata": {
       "currency": "KRW",
-      "fee_rate": 23.79,
-      "round": "2026H1"
+      "rate": 1546.3,
+      "baseline": 1240.0,
+      "depreciation_pct": 24.7,
+      "source": "yfinance"
     }
   },
   {
-    "id": "SIG-20260630-141002-treasury_watchlist",
-    "timestamp": "2026-06-30 14:10 KST",
-    "signal_type": "treasury_watchlist",
-    "signal_label": "재무부 모니터링 리스트 압박",
-    "strength": 0.25,
-    "max_strength": 0.25,
-    "strength_ratio": 100.0,
-    "basis": "[2026H1] 미 재무부 2026H1 FX Report — KRW monitoring list 유지. 백서 7장.",
+    "id": "SIG-20260630-143443-won_overvaluation",
+    "timestamp": "2026-06-30 14:34 KST",
+    "signal_type": "won_overvaluation",
+    "signal_label": "원화 일시 고평가",
+    "strength": 0.267,
+    "max_strength": 0.35,
+    "strength_ratio": 76.3,
+    "basis": "[JPY] yfinance: 162.20, 약세율 26.7% (baseline 128.0). 기준 15% 초과.",
     "metadata": {
-      "source": "US Treasury",
-      "round": "2026H1"
+      "currency": "JPY",
+      "rate": 162.2,
+      "baseline": 128.0,
+      "depreciation_pct": 26.7,
+      "source": "yfinance"
     }
   },
   {
-    "id": "SIG-20260630-141002-fed_hike_cycle",
-    "timestamp": "2026-06-30 14:10 KST",
-    "signal_type": "fed_hike_cycle",
-    "signal_label": "Fed 긴축 사이클 초입",
-    "strength": 0.25,
-    "max_strength": 0.25,
-    "strength_ratio": 100.0,
-    "basis": "[2026H1] Fed 6월 FOMC 동결, 점도표 상향. 고금리 장기화. 백서 9.3절.",
-    "metadata": {
-      "fomc": "2026-06",
-      "decision": "hold",
-      "round": "2026H1"
-    }
-  },
-  {
-    "id": "SIG-20260630-141002-dsi_stress",
-    "timestamp": "2026-06-30 14:10 KST",
-    "signal_type": "dsi_stress",
-    "signal_label": "DSI 스트레스 경고",
-    "strength": 0.2,
-    "max_strength": 0.2,
-    "strength_ratio": 100.0,
-    "basis": "[2026H1] DSI v2.2 68.3 — 65 초과 손실전가 구간.",
-    "metadata": {
-      "dsi": 68.3,
-      "round": "2026H1"
-    }
-  },
-  {
-    "id": "SIG-20260630-141002-gold_discount",
-    "timestamp": "2026-06-30 14:10 KST",
+    "id": "SIG-20260630-143443-gold_discount",
+    "timestamp": "2026-06-30 14:34 KST",
     "signal_type": "gold_discount",
     "signal_label": "금 가격 일시 조정",
-    "strength": 0.15,
+    "strength": 0.148,
     "max_strength": 0.15,
-    "strength_ratio": 100.0,
-    "basis": "[2026H1] 금 $2,330 — 30일 이평 $2,480 대비 -6.05%.",
+    "strength_ratio": 98.7,
+    "basis": "금 $3999, 30일 이평 $4319 대비 -7.41%. 기준 -5% 초과.",
     "metadata": {
-      "gold": 2330,
-      "ma30": 2480,
-      "discount": -6.05,
-      "round": "2026H1"
-    }
-  },
-  {
-    "id": "SIG-20260630-141002-regime_change",
-    "timestamp": "2026-06-30 14:10 KST",
-    "signal_type": "regime_change",
-    "signal_label": "GATE 0 체제변화 감지",
-    "strength": 0.2,
-    "max_strength": 0.2,
-    "strength_ratio": 100.0,
-    "basis": "[2026H1] GATE 0 regime_change Z-score 3.2σ — 기준 변경 의심.",
-    "metadata": {
-      "z_score": 3.2,
-      "round": "2026H1"
+      "gold": 3998.7,
+      "ma30": 4318.5,
+      "discount_pct": -7.41
     }
   }
 ]

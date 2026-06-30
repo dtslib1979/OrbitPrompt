@@ -27,9 +27,9 @@ _DEFAULT_BUCKET_WEIGHTS = {
 }
 
 _DEFAULT_RETURNS = {
-    "USD_cash": 0.04,   # MMF 금리 가정
-    "GOLD": 0.06,       # 금 장기 연평균 가정
-    "USD_bond": 0.045,  # 단기국채 가정
+    "USD_cash": 0.04,   # MMF 금리 가정 (TNX 4.37%, 2026-06-30)
+    "GOLD": 0.08,       # 금 장기 연평균 (1Y +21.3%, 보수적 장기 8%)
+    "USD_bond": 0.044,  # 단기국채 (미국 10년물 4.37%, 2026-06-30)
 }
 
 _BUCKET_LABELS = {
