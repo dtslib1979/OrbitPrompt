@@ -39,7 +39,7 @@ from module10_compound_simulator import run_module10, run_module10_for_track2
 
 VERSION = "3.3.0"
 
-mcp = FastMCP("parksy-fx")
+mcp = FastMCP("parksy-economy-fx")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
