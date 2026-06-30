@@ -3,12 +3,13 @@
 Module 8 — Accumulation Signal Logger (백서 13장 + 허생전 프로토콜)
 
 기록 전용 로거. 절대 매매하지 않음.
-신호만 쌓는다. 최소 8회 누적 전까지 자본투입 금지.
+신호만 쌓는다. 최소 8회(반기단위 4년치) 누적 전까지 자본투입 금지.
 
 허생전 프로토콜 1단계:
-  Module 8이 신호를 낼 때마다 signal_log.json에 타임스탬프+신호강도+근거 기록.
-  신호만 쌓는다. 절대 매매하지 않음.
-  최소 8회 누적 전까지 자본투입 금지.
+  Module 8이 신호를 낼 때마다 signal_log.json에 기록.
+  반기(6개월)를 1 observation round로 간주.
+  같은 반기 내 여러 신호 = 같은 round로 묶임.
+  최소 8개 반기(4년)에 걸친 분산 신호 필요.
 """
 
 import json, os
@@ -60,6 +61,16 @@ _SIGNAL_TYPES = list(_SIGNAL_WEIGHTS.keys())
 def _ensure_log_dir():
     """로그 디렉토리 생성"""
     os.makedirs(_LOG_DIR, exist_ok=True)
+
+
+def _get_semi_annual_key(timestamp_str: str) -> str:
+    """타임스탬프 → 반기 키 (예: '2026-06-30 13:59 KST' → '2026H1')"""
+    try:
+        dt = datetime.strptime(timestamp_str.split(" ")[0], "%Y-%m-%d")
+        h = "H1" if dt.month <= 6 else "H2"
+        return f"{dt.year}{h}"
+    except Exception:
+        return "unknown"
 
 
 def _load_log() -> list:
@@ -129,28 +140,34 @@ def record_signal(
         "recorded": entry,
         "cumulative": {
             "total_signals": stats["total_signals"],
+            "distinct_rounds": stats["distinct_rounds"],
             "unique_types": stats["unique_types"],
             "date_range": stats["date_range"],
             "avg_strength": stats["avg_strength"],
-            "min_signals_before_capital": 8,
-            "capital_deployment_allowed": stats["total_signals"] >= 8,
-            "rule": "최소 8회 누적 전 자본투입 금지 (허생전 프로토콜)",
+            "min_rounds_before_capital": 8,
+            "capital_deployment_allowed": stats["distinct_rounds"] >= 8,
+            "rule": "최소 8개 반기(4년) 분산 누적 전 자본투입 금지 (허생전 프로토콜)",
         },
     }
 
 
 def get_stats() -> dict:
-    """시그널 누적 통계"""
+    """시그널 누적 통계 — 반기(半期) 단위 독립 round 카운트"""
     log = _load_log()
 
     if not log:
         return {
             "total_signals": 0,
+            "distinct_rounds": 0,
             "unique_types": 0,
             "date_range": "N/A",
             "avg_strength": 0.0,
             "type_breakdown": {},
+            "rounds": [],
             "recent_signals": [],
+            "capital_deployment_allowed": False,
+            "min_rounds_before_capital": 8,
+            "rounds_needed": 8,
         }
 
     timestamps = [e["timestamp"] for e in log if "timestamp" in e]
@@ -160,18 +177,51 @@ def get_stats() -> dict:
         st = e.get("signal_type", "unknown")
         types[st] = types.get(st, 0) + 1
 
+    # 반기 단위 grouping
+    rounds: dict[str, dict] = {}
+    for e in log:
+        ts = e.get("timestamp", "")
+        round_key = _get_semi_annual_key(ts)
+        if round_key not in rounds:
+            rounds[round_key] = {
+                "round": round_key,
+                "signal_count": 0,
+                "types_observed": set(),
+                "total_strength": 0.0,
+                "first_signal": ts,
+            }
+        rounds[round_key]["signal_count"] += 1
+        rounds[round_key]["types_observed"].add(e.get("signal_type", "unknown"))
+        rounds[round_key]["total_strength"] += e.get("strength", 0)
+
+    # round 목록 정렬 (오래된 순)
+    sorted_round_keys = sorted(rounds.keys())
+    round_list = []
+    for rk in sorted_round_keys:
+        r = rounds[rk]
+        round_list.append({
+            "round": r["round"],
+            "signals": r["signal_count"],
+            "types": len(r["types_observed"]),
+            "total_strength": round(r["total_strength"], 3),
+        })
+
+    distinct_rounds = len(rounds)
     recent = sorted(log, key=lambda x: x.get("timestamp", ""), reverse=True)[:5]
 
     return {
         "total_signals": len(log),
+        "distinct_rounds": distinct_rounds,
         "unique_types": len(types),
         "date_range": f"{timestamps[-1][:10]} ~ {timestamps[0][:10]}" if len(timestamps) >= 2 else timestamps[0][:10] if timestamps else "N/A",
         "avg_strength": round(sum(strengths) / len(strengths), 3) if strengths else 0.0,
         "total_strength": round(sum(strengths), 3) if strengths else 0.0,
         "type_breakdown": types,
+        "rounds": round_list,
         "recent_signals": recent,
-        "capital_deployment_allowed": len(log) >= 8,
-        "signals_needed": max(0, 8 - len(log)),
+        "capital_deployment_allowed": distinct_rounds >= 8,
+        "min_rounds_before_capital": 8,
+        "rounds_needed": max(0, 8 - distinct_rounds),
     }
 
 

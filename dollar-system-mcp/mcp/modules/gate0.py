@@ -34,6 +34,7 @@ _SECONDARY_DOMAINS = [
     "reuters.com", "bloomberg.com", "wsj.com",
     "ft.com", "cnbc.com", "marketwatch.com",
     "investing.com", "tradingview.com",
+    "yahoo.com", "finance.yahoo.com",            # yfinance 실시간 환율
 ]
 
 def _extract_domain(url: str) -> str:
