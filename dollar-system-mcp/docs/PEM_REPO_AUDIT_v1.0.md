@@ -37,7 +37,7 @@ PEM 2x2는 **위에서 내려온 이론이 아니라, 이미 만들어놓은 레
 - `mcp/modules/gate0.py`: 5단계 데이터 검증 (Benford, Regime Change, Issuer Incentive 등)
 - `mcp/modules/hegemonic_fee.py`: 헤게모니수수료 = 누적약세율
 - yfinance 실시간 데이터 연동 (USDKRW=1546, USDJPY=162, USDTWD=32)
-- docs/ 4개 백서 (CAPITALISM_AS_OS, PEM, FX_WHITEPAPER, 철학100서)
+- docs/ 4개 백서 (CAPITALISM_AS_OS, PEM, FX_WHITEPAPER, 100서)
 
 ### 역산 가능한 모델
 - 헤게모니수수료율: 명목흑자 대비 실질수취 격차율 ← **이미 코드로 완성**
