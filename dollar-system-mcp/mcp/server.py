@@ -35,8 +35,9 @@ from hegemonic_fee import calc_hegemonic_fee, calc_all
 from dual_unit import reduce as dual_unit_reduce
 from signal_logger import record_signal, get_stats, get_log
 from main import run_pipeline, run_quick_snapshot
+from module10_compound_simulator import run_module10, run_module10_for_track2
 
-VERSION = "3.0.0"
+VERSION = "3.3.0"
 
 mcp = FastMCP("parksy-dollar")
 
@@ -283,21 +284,105 @@ def signal_log(
 
 
 @mcp.tool()
+def compound_simulator(
+    monthly_contribution: float = 370.0,
+    years: int = 5,
+    usd_cash_return: float | None = None,
+    gold_return: float | None = None,
+    usd_bond_return: float | None = None,
+    bucket_usd_cash: float = 0.40,
+    bucket_gold: float = 0.35,
+    bucket_bond: float = 0.25,
+    fee_rate: float = 0.0,
+) -> dict:
+    """
+    [v3.3 신규] Module 10 — Compound Reinvestment Simulator (백서 13.2/13.6절).
+
+    트랙2(FX/금) 전용 복리누적곡선 시뮬레이터.
+    3-Bucket(USD 현금/금/단기국채) 복리 재투자 시뮬레이션.
+
+    ⚠️ 가드레일:
+    - 트랙1(IP)과 직접비교 그래프 생성 금지
+    - 5년 미만은 "평가시기상조" 라벨 자동 부착
+    - 확정 수익 보장 아님
+
+    Args:
+        monthly_contribution: 월 적립액 (USD, 기본 $370 ≈ 50만원)
+        years: 시뮬레이션 기간 (년, 기본 5, 최소 5년 권장)
+        usd_cash_return: USD 현금/MMF 연수익률 (기본 0.04)
+        gold_return: 금 연수익률 (기본 0.06)
+        usd_bond_return: 단기국채 연수익률 (기본 0.045)
+        bucket_usd_cash: USD 현금/MMF 비중 (기본 0.40)
+        bucket_gold: 금 비중 (기본 0.35)
+        bucket_bond: 단기국채 비중 (기본 0.25)
+        fee_rate: 세금/수수료 차감율 (기본 0.0)
+
+    Returns:
+        시뮬레이션 결과 + 버킷별 내역 + 평가준비도
+    """
+    bucket_weights = {
+        "USD_cash": bucket_usd_cash,
+        "GOLD": bucket_gold,
+        "USD_bond": bucket_bond,
+    }
+    return run_module10(
+        monthly_contribution=monthly_contribution,
+        years=years,
+        bucket_weights=bucket_weights,
+        usd_cash_return=usd_cash_return,
+        gold_return=gold_return,
+        usd_bond_return=usd_bond_return,
+        fee_rate=fee_rate,
+    )
+
+
+@mcp.tool()
+def compound_track2(
+    monthly_contribution_krw: float = 500_000,
+    usd_krw_rate: float = 1500.0,
+    years: int = 5,
+) -> dict:
+    """
+    [v3.3 신규] Module 10 — 원화 기준 편의 래퍼.
+
+    월 원화 적립액을 입력하면 USD 자동 환산 후 복리 시뮬레이션 실행.
+
+    Args:
+        monthly_contribution_krw: 월 적립액 (원화, 기본 500,000원)
+        usd_krw_rate: 적용 환율 (기본 1500)
+        years: 시뮬레이션 기간 (년, 기본 5)
+
+    Returns:
+        시뮬레이션 결과
+    """
+    return run_module10_for_track2(
+        monthly_contribution_krw=monthly_contribution_krw,
+        usd_krw_rate=usd_krw_rate,
+        years=years,
+    )
+
+
+@mcp.tool()
 def fx_pipeline(
     currency: str = "KRW",
     exposures: list[dict] | None = None,
     nominal_surplus: float | None = None,
     year: int | None = None,
     record_signal: bool = True,
+    run_compound: bool = False,
+    compound_monthly: float = 370,
+    compound_years: int = 5,
 ) -> dict:
     """
-    [v3.0 신규] FX Engine 풀 파이프라인 실행.
+    [v3.3 업데이트] FX Engine 풀 파이프라인 실행.
 
-    GATE 0 → Module 3(헤게모니 수수료) → Module 7(듀얼 유닛 환산) → Module 8(시그널 로깅)
+    GATE 0 → Module 3(헤게모니 수수료) → Module 7(듀얼 유닛 환산)
+    → Module 8(시그널 로깅) → Module 10(복리 시뮬레이터, 옵션)
 
-    ⚠️ 가드레일: "End-Station=FX" = 로데이터 무시 아님.
-    산업/경상수지 데이터는 직접 베팅 대상이 아니라 환율 모델 입력 검증용 사료로 계층 재정렬.
-    로데이터를 완전히 0으로 만들면 GATE 0(인센티브분석/역용시그널)이 통째로 의미 상실.
+    ⚠️ 가드레일:
+    - 트랙2 = 복리 컴파운드 수익 트랙 — 손실방어용 보험 아님
+    - "End-Station=FX" = 로데이터 무시 아님. 산업/경상수지 데이터는 환율 모델 입력 검증용 사료.
+    - GATE 0 무력화 금지 — 로데이터를 완전히 0으로 만들면 GATE 0이 통째로 의미 상실.
 
     Args:
         currency: 대상 통화 (KRW/JPY/TWD)
@@ -306,11 +391,18 @@ def fx_pipeline(
         nominal_surplus: 명목 경상흑자 억 USD (선택, 테이블 참조)
         year: 분석 연도 (선택, 현재년도)
         record_signal: Module 8 시그널 기록 여부 (기본 True)
+        run_compound: Module 10 복리 시뮬레이션 실행 여부 (기본 False)
+        compound_monthly: 월 적립액 USD (기본 370, run_compound=True 시)
+        compound_years: 시뮬레이션 기간 년 (기본 5)
 
     Returns:
-        gate0, module3_hegemonic_fee, module7_dual_unit, module8_signal, pipeline_status
+        gate0, module3_hegemonic_fee, module7_dual_unit, module8_signal,
+        module10_compound(옵션), pipeline_status
     """
-    return run_pipeline(currency, exposures, nominal_surplus, year, record_signal)
+    return run_pipeline(
+        currency, exposures, nominal_surplus, year, record_signal,
+        run_compound, compound_monthly, compound_years,
+    )
 
 
 @mcp.tool()
@@ -350,27 +442,35 @@ def version() -> dict:
             "forecast     — 선형회귀 + DXY 보정 환율 예측",
             "dsi          — DSI 스트레스 지수 + BS_INDEX + 백테스트",
             "meal_index   — 한 끼 지수: 달러를 생존 단위로 번역",
-            # v3.0 (신규 FX Engine)
-            "gate0_check  — [신규] GATE 0 데이터 출처 검증 게이트",
-            "hegemonic_fee— [신규] 헤게모니 수수료 계산",
-            "dual_unit_reduce — [신규] N 통화 → GOLD/USD 2유닛 환산",
-            "signal_log   — [신규] 시그널 기록/통계/로그",
-            "fx_pipeline  — [신규] GATE0→Fee→Dual→Signal 풀 파이프라인",
-            "fx_snapshot  — [신규] KRW/JPY/TWD 퀵 스냅샷",
+            # v3.0 FX Engine
+            "gate0_check  — GATE 0 데이터 출처 검증 게이트",
+            "hegemonic_fee— 헤게모니 수수료 계산",
+            "dual_unit_reduce — N 통화 → GOLD/USD 2유닛 환산",
+            "signal_log   — 시그널 기록/통계/로그",
+            "fx_pipeline  — GATE0→Fee→Dual→Signal→Compound 풀 파이프라인",
+            "fx_snapshot  — KRW/JPY/TWD 퀵 스냅샷",
+            # v3.3 신규
+            "compound_simulator — [v3.3] Module 10 복리 재투자 시뮬레이터",
+            "compound_track2    — [v3.3] 원화 기준 복리 시뮬레이션 편의 래퍼",
             "version      — 버전 조회",
         ],
-        "desc": "미국 자본주의 바이탈사인 — 달러 패권 구조를 Φ7 7축으로 해석 + yfinance 실시간 예측 + DSI 스트레스 지수 + FX Engine (GATE 0 → 헤게모니 수수료 → 듀얼유닛 → 시그널 로거)",
+        "desc": "미국 자본주의 바이탈사인 — 달러 패권 구조를 Φ7 7축으로 해석 + yfinance 실시간 예측 + DSI 스트레스 지수 + FX Engine v3.3 (GATE 0 → 헤게모니 수수료 → 듀얼유닛 → 시그널 로거 → 복리 시뮬레이터)",
         "philosophy": "환율은 가격표가 아니다. 달러 시스템은 심장이고, 원달러는 말초혈관 혈압계다.",
         "fx_engine": {
-            "version": "3.0.0",
+            "version": "3.3.0",
             "modules": [
                 "Module 0: GATE 0 — Data Provenance & Integrity (14장)",
                 "Module 3: Hegemonic Fee Calculator (5.3절)",
                 "Module 7: Dual-Unit Reduction Engine (7.4~7.6절)",
                 "Module 8: Accumulation Signal Logger (13장)",
+                "Module 10: Compound Reinvestment Simulator (13.2/13.6절, v3.3 신규)",
             ],
-            "pipeline": "GATE 0 → Fee → Dual-Unit → Signal",
-            "status": "✅ MVP 구현 완료 — 허생전 프로토콜 1단계(Paper Signal Log) 즉시 시작 가능",
+            "pipeline": "GATE 0 → Fee → Dual-Unit → Signal → Compound",
+            "guardrails": (
+                "12개 하드코딩 — 트랙2 구조알파, 레버리지 금지, 8회 미만 자본투입 금지, "
+                "5년 미만 평가 금지, 트랙1 비교 금지, GATE 0 우회 금지"
+            ),
+            "status": "✅ v3.3 투트랙 확정판 — Module 10(복리시뮬레이터) 추가 완료",
         },
     }
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-PARKSY FX Engine v3.0 — Pipeline Orchestrator
+PARKSY FX Engine v3.3 — Pipeline Orchestrator (투트랙 확정판)
 
 실행 파이프라인:
-  GATE 0 → Module 3 (Hegemonic Fee) → Module 7 (Dual-Unit) → Module 8 (Signal Logger)
+  GATE 0 → Module 3 (Hegemonic Fee) → Module 7 (Dual-Unit) → Module 8 (Signal Logger) → Module 10 (Compound Simulator)
 """
 
 import sys, os, json
@@ -18,6 +18,7 @@ import gate0
 import hegemonic_fee as hf
 import dual_unit
 import signal_logger as sl
+import module10_compound_simulator as compound
 
 
 def run_pipeline(
@@ -26,6 +27,9 @@ def run_pipeline(
     surplus: float | None = None,
     year: int | None = None,
     record_signal: bool = True,
+    run_compound: bool = False,
+    compound_monthly: float = 370,
+    compound_years: int = 5,
 ) -> dict:
     """
     FX Engine 풀 파이프라인 실행.
@@ -41,6 +45,9 @@ def run_pipeline(
         surplus: 명목 경상흑자 (선택)
         year: 분석 연도 (선택)
         record_signal: Module 8 시그널 기록 여부
+        run_compound: Module 10 복리 시뮬레이션 실행 여부
+        compound_monthly: 월 적립액 (USD, 기본 $370)
+        compound_years: 시뮬레이션 기간 (년, 기본 5)
 
     Returns:
         파이프라인 전체 결과
@@ -98,10 +105,10 @@ def run_pipeline(
         basis_parts = []
 
         if isinstance(fee_result, dict) and "hegemonic_fee_rate_pct" in fee_result:
-            fee_rate = fee_result["hegemonic_fee_rate_pct"]
-            if fee_rate > 15:
+            fee_rate_val = fee_result["hegemonic_fee_rate_pct"]
+            if fee_rate_val > 15:
                 signal_strength += 0.3
-                basis_parts.append(f"헤게모니 수수료율 {fee_rate}% (15% 초과)")
+                basis_parts.append(f"헤게모니 수수료율 {fee_rate_val}% (15% 초과)")
 
         if gate_result["gate_status"] == "WARNING":
             signal_strength += 0.15
@@ -130,14 +137,23 @@ def run_pipeline(
                 },
             )
 
+    # ── Step 4: Module 10 — Compound Reinvestment Simulator ───────────────────
+    compound_result = None
+    if run_compound:
+        compound_result = compound.run_module10(
+            monthly_contribution=compound_monthly,
+            years=compound_years,
+        )
+
     result = {
-        "pipeline": "PARKSY FX Engine v3.0",
+        "pipeline": "PARKSY FX Engine v3.3",
         "timestamp": timestamp,
         "currency": currency,
         "gate0": gate_result,
         "module3_hegemonic_fee": fee_result,
         "module7_dual_unit": dual_result,
         "module8_signal": signal_result,
+        "module10_compound": compound_result,
         "warnings": warnings if warnings else None,
         "errors": errors if errors else None,
         "pipeline_status": "BLOCKED" if errors else "COMPLETE",
@@ -148,6 +164,9 @@ def run_pipeline(
             "최소 8회 시그널 누적 전 자본투입 금지",
             "End-Station=FX = 로데이터 무시 아님 — 산업/경상수지 데이터는 환율 모델 입력 검증용 사료로 계층 재정렬",
             "GATE 0 무력화 금지 — 로데이터를 완전히 0으로 만들면 GATE 0(인센티브분석/역용시그널)이 통째로 의미 상실",
+            "[v3.3] 트랙2를 '단순 베타헤지/보험'으로만 단정 금지 — 구조알파 추구 별개 복리트랙",
+            "[v3.3] 트랙1·트랙2 수익률 직접비교 그래프 생성 금지 — 상관관계 낮은 별개 곡선",
+            "[v3.3] 5년 미만 데이터로 트랙2 복리성과 단정 금지 — 13.5절 규칙6",
         ],
     }
 
@@ -164,7 +183,7 @@ def run_quick_snapshot() -> dict:
         if r.get("errors"):
             all_ok = False
     return {
-        "pipeline": "PARKSY FX Engine v3.0 — Quick Snapshot",
+        "pipeline": "PARKSY FX Engine v3.3 — Quick Snapshot",
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M KST"),
         "results": results,
         "all_ok": all_ok,

@@ -1,4 +1,4 @@
-# PARKSY FX Engine v3.0 — 100% 기술 명세서
+# PARKSY FX Engine v3.3 — 100% 기술 명세서
 
 ## 1. MCP 모델 아키텍처
 
@@ -14,10 +14,11 @@ Layer 0: LLM 자연어 → 의도 분류 (계산 금지, 라우팅만)
 Layer 1: GATE 0 — 데이터 출처 검증 (우회 불가, 하드코딩)
 Layer 2: Module 3/7 — 헤게모니 수수료 + 듀얼유닛 환산
 Layer 3: Module 8 — 시그널 로거 (기록전용, 매매금지)
-Layer 4: 출력 — JSON 고정, 자연어 숫자추정 금지
+Layer 4: Module 10 — 복리 컴파운드 시뮬레이터 (3-Bucket, 옵션)
+Layer 5: 출력 — JSON 고정, 자연어 숫자추정 금지
 ```
 
-**v2.2 레거시 9개 + v3.0 신규 6개 = 총 15개 툴**
+**v2.2 레거시 9개 + v3.0 신규 6개 + v3.3 신규 2개 + version = 총 18개 툴**
 
 ---
 
@@ -97,7 +98,8 @@ fx_pipeline(currency="KRW"):
   3. Module 3(current_rate, surplus) → hegemonic_fee
   4. Module 7(exposures, gold_price) → dual_unit (옵션)
   5. Module 8(signal_record) → log_append (옵션)
-  6. return {guardrails, timestamp, all_modules}
+  6. Module 10(monthly, years) → compound_sim (옵션, v3.3 신규)
+  7. return {guardrails, timestamp, all_modules}
 ```
 
 ### 4.3 시그널 판정 로직
@@ -125,6 +127,8 @@ if regime_change_flag:         → +0.20
     ↓
 [Module 8] — 시그널 로거 → signal_log.json 누적
     ↓
+[Module 10] — 복리 컴파운드 시뮬레이터 (3-Bucket, 옵션, v3.3)
+    ↓
 [JSON 출력] — guardrails + timestamp + all_results
 ```
 
@@ -139,13 +143,16 @@ Module 8 저장소   → mcp/data/signal_log.json
 ### 5.3 가드레일 (Hardcoded, 우회 불가)
 ```
 1. 사후분석 — 예측 아님
-2. 트랙 2(FX/금 DCA) = 복리 컴파운드 트랙 — 베타헤지/손실방어용 아님
+2. 트랙 2(FX/금 DCA) = 복리 컴파운드 수익 트랙 — 손실방어용 보험 아님
 3. 레버리지 금지 — 현물 자산 매집 기준
 4. 8회 미만 자본투입 금지
 5. GATE 0 우회 금지 — 모든 외부데이터 통과 필수
 6. End-Station=FX ≠ 로데이터 무시
    → 산업/경상수지 데이터 = 직접 베팅 대상(X)
                        = 환율 모델 입력 검증 사료(O)
+7. [v3.3] 트랙2를 '단순 베타헤지/보험'으로만 단정 금지 — 구조알파 추구 별개 복리트랙
+8. [v3.3] 트랙1·트랙2 수익률 직접비교 그래프 생성 금지 — 상관관계 낮은 별개 곡선
+9. [v3.3] 5년 미만 데이터로 트랙2 복리성과 단정 금지 (백서 13.5절 규칙6)
 ```
 
 ---
@@ -186,6 +193,16 @@ Module 8 저장소   → mcp/data/signal_log.json
 → 누적 2회 / 8회 필요 / 자본투입:불가
 ```
 
+### 6.6 복리 시뮬레이션 (v3.3 신규)
+```
+"월 50만원씩 10년 금+USD 복리 시뮬레이션 돌려줘"
+→ compound_track2(monthly_contribution_krw=500000, years=10)
+→ 3-Bucket 복리곡선 + 평가준비도
+
+"월 $370 기본 5년, 금리 5%로 수정"
+→ compound_simulator(monthly_contribution=370, years=5, usd_cash_return=0.05)
+```
+
 ---
 
 ## 7. 효과성 (Effectiveness)
@@ -203,15 +220,21 @@ Module 8 저장소   → mcp/data/signal_log.json
 - 환율 모니터링: 주 5~10분 (1개 변수)
 - 비용 차이: 1/60 수준
 
-### 7.3 복리 누적 메커니즘
+### 7.3 투트랙 복리 컴파운드 (v3.3)
 ```
-헤게모니 수수료 인지 → DCA 기반 USD/금 매집 → 
-시간이 갈수록 누적 우위 (DCA의 수학적 효과) → 
-트랙 1(IP/콘텐츠)과 성격이 다른 독립적 수익 트랙
+[트랙 1] IP/콘텐츠 — 능동적 알파 (Active Alpha)
+[트랙 2] FX/금 DCA — 구조적 알파 복리 누적 (Structural Alpha)
+
+트랙 2 공식:
+  복리_자산(t) = Σ[i=1..t] 매집액(i) × (1 + 자산수익률)^(t-i)
+  
+3-Bucket: USD 현금(40%) + 금(35%) + 단기국채(25%)
+
+핵심: 트랙 2는 '베타 헤지'가 아니라 '구조알파 추구 별개 복리트랙'
+       두 트랙의 수익률 직접 비교 금지 (백서 15.5절 가드레일)
 ```
 
 ### 7.4 한계
-- 단기 타이밍 불가능 — 분기~연간 단위 설계
 - 단기 타이밍 불가능 — 분기~연간 단위 설계
 - GATE 0 검증에도 데이터 품질 한계 존재
 - 금 가격/미국채 금리 변동은 별도 리스크
@@ -227,19 +250,22 @@ flowchart TD
     B -->|수수료 계산| D[Module 3]
     B -->|노출 환산| E[Module 7]
     B -->|시그널 기록| F[Module 8]
+    B -->|복리 시뮬레이션| H[Module 10]
     B -->|전체 실행| G[Pipeline]
-    C --> H[Layer 2: 로데이터 수집]
-    H --> I[Python 강제실행]
-    I --> J[JSON 출력 + 가드레일]
-    D --> I
-    E --> I
-    F --> I
-    G --> C --> D --> E --> F --> I
+    C --> I[Layer 2: 로데이터 수집]
+    I --> J[Python 강제실행]
+    J --> K[JSON 출력 + 가드레일]
+    D --> J
+    E --> J
+    F --> J
+    H --> J
+    G --> C --> D --> E --> F --> H --> J
 ```
 
 ---
 
-**버전**: v3.0.0 | **최종 업데이트**: 2026.06.30
-**모듈 수**: 4 (GATE 0 / Fee / Dual-Unit / Signal) | **MCP 툴**: 15개
+**버전**: v3.3.0 | **최종 업데이트**: 2026.06.30
+**모듈 수**: 5 (GATE 0 / Fee / Dual-Unit / Signal / Compound) | **MCP 툴**: 18개
 **핵심 원칙**: LLM은 숫자를 추정하지 않는다 — Python이 계산한다.
-**가드레일 개수**: 6개 (하드코딩, 우회 불가)
+**가드레일 개수**: 9개 (하드코딩, 우회 불가)
+**트랙 구성**: Track 1 (IP/콘텐츠 Active Alpha) + Track 2 (FX/금 DCA Structural Alpha) — 별개 복리트랙, 직접비교 금지
