@@ -1,0 +1,300 @@
+{
+  "atoms": [
+    {
+      "atom_id": "KA-BODY-EP-BODY-20260417-143451",
+      "domain": "body",
+      "title": "[헬스] 아침 20분 유산소 운동 → 오후 인지 집중력 향상 — ⚠️ 조건부 실행",
+      "thesis": "아침 20분 유산소 운동 → 오후 인지 집중력 향상",
+      "chain": [
+        "유산소 운동",
+        "BDNF 분비 증가",
+        "해마/전전두엽 활성화",
+        "집중력·기억력↑"
+      ],
+      "chain_raw": "유산소 운동 → BDNF 분비 증가 → 해마/전전두엽 활성화 → 집중력·기억력↑",
+      "verdict": "REDUCE",
+      "conviction": "MEDIUM",
+      "confidence": 65,
+      "verdict_reason": "R3 (Lack of afternoon-specific cognitive data)가 HIGH severity와 HIGH probability로 핵심 블로킹 리스크이며, Bull/Bear 증거가 모두 즉각 post-exercise 효과에 초점을 맞춰 오후 지연 효과를 직접 입증하지 못함. Bull의 20min HIIT BDNF 증가 (p<0.001)는 유망하나 소규모 (n=12) young men 한정으로 일반화 어려움. Bear의 지속 주의력 손상 리스크 (MEDIUM/MEDIUM)가 추가되며, Chain의 생물학적 논리는 plausibl하나 실증 데이터 부족으로 전체 conviction 낮음.",
+      "bull_summary": "20분 HIIT 후 BDNF 증가 (p<0.001) 및 작업기억 향상 (DST-F p<0.01), 30분보다 우수",
+      "bear_summary": "고강도 유산소 운동 후 BDNF 증가에도 불구하고 지속 주의력에서 운동 그룹이 대조 그룹보다 더 많은 오",
+      "conditions": "저강도 (moderate aerobic) 20분부터 테스트하고, 1주 후 주관적 오후 집중력 자가평가; HIIT는 피함",
+      "review_trigger": "1주 후 오후 집중력 자가점수 20% 미만 향상 또는 피로 증가 시",
+      "sources": [],
+      "source_path": "/home/dtsli/eae-univ/research/body/EP-BODY-20260417-143451.json",
+      "source_tier": "A급",
+      "registered_at": "2026-06-30 16:50 KST",
+      "metadata": {
+        "created_at": "2026-04-17T05:36:23",
+        "pem_quadrant": "Q3 (물성×미시) — 건강/신체",
+        "category": "건강/신체"
+      }
+    },
+    {
+      "atom_id": "KA-BODY-EP-BODY-20260417-154255",
+      "domain": "body",
+      "title": "[헬스] 아침 20분 유산소 운동 → 오후 인지 집중력 향상 — ⚠️ 조건부 실행",
+      "thesis": "아침 20분 유산소 운동 → 오후 인지 집중력 향상",
+      "chain": [
+        "유산소 운동",
+        "BDNF 분비 증가",
+        "해마/전전두엽 활성화",
+        "집중력·기억력↑"
+      ],
+      "chain_raw": "유산소 운동 → BDNF 분비 증가 → 해마/전전두엽 활성화 → 집중력·기억력↑",
+      "verdict": "REDUCE",
+      "conviction": "MEDIUM",
+      "confidence": 70,
+      "verdict_reason": "R2(집중력 향상 일반화 실패)가 HIGH severity와 HIGH probability로 Cochrane Review에서 인지 영역 무효과를 지적하나, 이는 노인 대상이며 젊은 성인 대상 급성 운동 연구(B1,B2, ,)에서 BDNF 증가와 해마 활성화가 확인되어 thesis chain 일부 뒷받침됨. Bull 증거의 젊은 코호트 편향(R3 MED/MED)과 BDNF 지속성 부족(R1 MED/MED)을 고려해 전체 증거 불일치로 full commitment 피함. Domain base rate(급성 유산소 운동 인지 효과: young adults 긍정적, older mixed) 적용 시 REDUCE 적절.",
+      "bull_summary": "20분 중강도 유산소 운동 후 해마 혈류 10-12% 증가, 15/40/60분 지속",
+      "bear_summary": "노인 대상 메타분석에서 유산소 운동이 인지 영역에서 유의미한 향상을 보이지 않음.",
+      "conditions": "젊은 성인 대상, 중강도 10-20분 준수, 오후 집중력 주관 모니터링 후 조정",
+      "review_trigger": "2주 후 오후 집중력 테스트 점수 10% 미만 향상 시",
+      "sources": [
+        "https://www.society-now.com/sonow/article/kh/kh25090125/kh25090125-BDNF-%EB%87%8C%EA%B0%80%EC%86%8C%EC%84%B1.html",
+        "https://pubmed.ncbi.nlm.nih.gov/31216005/",
+        "https://www.nature.com/articles/s41598-020-60124-0",
+        "https://scholar.kyobobook.co.kr/article/detail/4040049815595",
+        "https://efind-info.com/19"
+      ],
+      "source_path": "/home/dtsli/eae-univ/research/body/EP-BODY-20260417-154255.json",
+      "source_tier": "A급",
+      "registered_at": "2026-06-30 16:50 KST",
+      "metadata": {
+        "created_at": "2026-04-17T06:44:26",
+        "pem_quadrant": "Q3 (물성×미시) — 건강/신체",
+        "category": "건강/신체"
+      }
+    },
+    {
+      "atom_id": "KA-BODY-EP-BODY-20260427-212500",
+      "domain": "body",
+      "title": "당뇨병은 왜 생기는가",
+      "thesis": "당뇨병의 이유",
+      "chain": [
+        "인슐린 저항성",
+        "만성 염증",
+        "베타세포 손상"
+      ],
+      "chain_raw": "인슐린 저항성 → 만성 염증 → 베타세포 손상",
+      "verdict": "HOLD",
+      "conviction": "HIGH",
+      "confidence": 78,
+      "verdict_reason": "당뇨병 발생 기전은 명확하나, 개인별 유전·환경 편차로 인해 단일 해법보다 모니터링 기반 맞춤 대응이 권장됨.",
+      "bull_summary": "당뇨병은 단순 혈당 문제가 아니다. 인슐린 저항성이 선행하고, 지방세포·간·근육에서 만성 염증이 누적되면서 췌장 베타세포가 서서히 기능을 잃는다. 초기에는 췌장이 보상적으로 인슐린을 과분비하지만, 결국 고갈된다. 생활습관 개입(식이 제한, 유산소·저항성 운동 병행)이 진행을 역전시킨다는 임상 근거가 충분하다.",
+      "bear_summary": "유전적 소인이 강한 경우 생활습관 교정만으로는 한계가 있다. 베타세포 손상이 진행되면 회복이 어렵고, 동반 질환(심혈관, 신장, 신경병증)의 관리 비용이 크다. 메트포르민 등 약물 개입이 더 빠른 효과를 보이는 경우가 많다.",
+      "conditions": "운동 개입은 주 150분 이상 유산소 + 주 2회 저항성 운동 병행 시 효과 확인. 식이는 총 칼로리 제한보다 정제 탄수화물 제거가 효과적.",
+      "review_trigger": "",
+      "sources": [
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4478580/",
+        "https://diabetesjournals.org/care/article/46/12/2213/153166/",
+        "https://www.nature.com/articles/s41574-021-00527-z"
+      ],
+      "source_path": "/home/dtsli/eae-univ/research/body/EP-BODY-20260427-212500.json",
+      "source_tier": "A급",
+      "registered_at": "2026-06-30 16:50 KST",
+      "metadata": {
+        "created_at": "2026-04-27T21:22:40",
+        "pem_quadrant": "Q3 (물성×미시) — 건강/신체",
+        "category": "건강/신체"
+      }
+    },
+    {
+      "atom_id": "KA-BODY-EP-BODY-20260427-214610",
+      "domain": "body",
+      "title": "[헬스] 당뇨병의 이유 —",
+      "thesis": "당뇨병의 이유",
+      "chain": [
+        "인슐린 저항성",
+        "만성 염증",
+        "베타세포 손상"
+      ],
+      "chain_raw": "인슐린 저항성 → 만성 염증 → 베타세포 손상",
+      "verdict": "PROCEED",
+      "conviction": "MEDIUM",
+      "confidence": 75,
+      "verdict_reason": "Bull evidence (B1, B2)는 인슐린 저항성 후 IL-1β, TNF-α 등 염증 사이토카인 증가와 macrophage 침윤으로 β-cell apoptosis를 직접 연결하며 체인을 강력히 뒷받침한다. Risk list에서 HIGH severity+probability 위험 없으며, top risk R1은 MEDIUM 수준의 단순화 우려지만 다인자성을 인정하는 중립 verdict로 체인 핵심 유효성 유지된다. Bear 반박은 다른 요인(유전, 산화 스트레스)을 지적하나 체인 부정하지 않으며, GK rat 모델 치료 성공처럼 실증적 지지 강하다.",
+      "bull_summary": "Type 2 diabetes 환자 췌도에서 IL-1β 증가와 면역세포 침윤으로 β-cell apoptosis 유발, 인슐린 저항성 후 β-cell 기능 저하 설명.",
+      "bear_summary": "인슐린 저항성이 만성 염증을 통해 베타세포 손상을 유발한다는 체인이 제2형 당뇨병의 유일하거나",
+      "conditions": "인간 임상 데이터 추가 확인 및 다인자 요인 병행 고려",
+      "review_trigger": "새로운 인간 RCT에서 IL-1Ra 등 염증 억제제 실패 시",
+      "sources": [],
+      "source_path": "/home/dtsli/eae-univ/research/body/EP-BODY-20260427-214610.json",
+      "source_tier": "A급",
+      "registered_at": "2026-06-30 16:50 KST",
+      "metadata": {
+        "created_at": "2026-04-27T12:47:36",
+        "pem_quadrant": "Q3 (물성×미시) — 건강/신체",
+        "category": "건강/신체"
+      }
+    },
+    {
+      "atom_id": "KA-BUTTERFLY-EP-BUTTERFLY-20260417-143623",
+      "domain": "butterfly",
+      "title": "[바디-마인드] Fed 점도표 상향 → 3개월 내 미국 금융주 outperformance — ⚠️ 조건부 실행",
+      "thesis": "Fed 점도표 상향 → 3개월 내 미국 금융주 outperformance",
+      "chain": [
+        "기준금리↑",
+        "순이자마진(NIM) 확대",
+        "은행 EPS 컨센서스 상향",
+        "금융주 주가↑"
+      ],
+      "chain_raw": "기준금리↑ → 순이자마진(NIM) 확대 → 은행 EPS 컨센서스 상향 → 금융주 주가↑",
+      "verdict": "REDUCE",
+      "conviction": "MEDIUM",
+      "confidence": 65,
+      "verdict_reason": "R1 (NIM peak and 2025 decline) presents HIGH severity + HIGH probability risk, with evidence of US bank NIM at 3.24% post-2019 high and forecasted decline, undermining the core chain of NIM expansion leading to EPS upgrades. While Bull evidence cites +8bp EPS consensus upside from March 2026 dot plot long-rate rise to 3.1%, Bear arguments on deposit cost surges (R2) and bear steepening shocks (R3, HIGH severity MEDIUM probability) indicate limited and volatile outperformance potential. Neutral verdicts across risks favor compression over sustained NIM gains, tilting against full thesis conviction despite moderate Bull case.",
+      "bull_summary": "Fed 점도표 상향(2026.3) → 장기 금리 중앙값 3.1% 상승 → NIM 확대 기대 → US 은행 EPS 컨센서스 2026년 +8bp 상향",
+      "bear_summary": "Bear steepening 환경에서 장기 금리 급등이 금융주 및 전체 주식에 고통 유발",
+      "conditions": "set stop-loss at 10% drawdown from entry and hedge with 10yr Treasury futures",
+      "review_trigger": "next FOMC dot plot release or XLF -3% weekly drawdown",
+      "sources": [],
+      "source_path": "/home/dtsli/eae-univ/research/butterfly/EP-BUTTERFLY-20260417-143623.json",
+      "source_tier": "A급",
+      "registered_at": "2026-06-30 16:50 KST",
+      "metadata": {
+        "created_at": "2026-04-17T05:37:51",
+        "pem_quadrant": "Q1 (물성×거시) — 경제/금융",
+        "category": "경제/자유"
+      }
+    },
+    {
+      "atom_id": "KA-BUTTERFLY-EP-BUTTERFLY-20260417-154427",
+      "domain": "butterfly",
+      "title": "[바디-마인드] Fed 점도표 상향 → 3개월 내 미국 금융주 outperformance — ⚠️ 조건부 실행",
+      "thesis": "Fed 점도표 상향 → 3개월 내 미국 금융주 outperformance",
+      "chain": [
+        "기준금리↑",
+        "순이자마진(NIM) 확대",
+        "은행 EPS 컨센서스 상향",
+        "금융주 주가↑"
+      ],
+      "chain_raw": "기준금리↑ → 순이자마진(NIM) 확대 → 은행 EPS 컨센서스 상향 → 금융주 주가↑",
+      "verdict": "REDUCE",
+      "conviction": "MEDIUM",
+      "confidence": 70,
+      "verdict_reason": "R1 (NIM Compression Despite High Rates)은 HIGH severity와 HIGH probability로 chain의 핵심인 NIM 확대를 직접적으로 위협하며, S&P 데이터상 16/20 은행에서 14bp 하락 예상으로 bull의 Fed dot plot 효과를 상쇄. R2와 R3도 MEDIUM-HIGH 확률로 loan losses와 deposit outflows가 EPS 상향을 저해하나, Korean bank precedent (B2: NIM 2bp 상승, profit +3%)가 완전한 halt를 막음. Bull conviction은 dot plot 상향에 강하나 US-specific 압력이 우세해 scale-down 필요.",
+      "bull_summary": "Fed 점도표 상향(2026 PCE 인플레 2.4%→2.7%)으로 기준금리↑ 유지 전망, NIM 확대 통해 은행 EPS 컨센서스 상향 및 주가 outperformance 촉진",
+      "bear_summary": "고금리 지속 시 미국 은행 NIM 압박으로 EPS 상향 실패, 2024년 20대 은행 중 16곳 NIM 14bp 하락 예상",
+      "conditions": "deposit stabilization 확인 후 추가 진입, stop-loss at 5% drawdown",
+      "review_trigger": "Q2 2026 US bank NIM 데이터 발표 (S&P 업데이트)",
+      "sources": [],
+      "source_path": "/home/dtsli/eae-univ/research/butterfly/EP-BUTTERFLY-20260417-154427.json",
+      "source_tier": "A급",
+      "registered_at": "2026-06-30 16:50 KST",
+      "metadata": {
+        "created_at": "2026-04-17T06:45:59",
+        "pem_quadrant": "Q1 (물성×거시) — 경제/금융",
+        "category": "경제/자유"
+      }
+    },
+    {
+      "atom_id": "KA-PHIL-MAGNETIC-CAPITAL",
+      "domain": "philosophy",
+      "title": "매력 자본 (Magnetic Capital)",
+      "thesis": "모든 학문은 '사람의 시선을 붙잡는 힘'으로 간다.",
+      "chain": [],
+      "chain_raw": "",
+      "verdict": "PROCEED",
+      "conviction": "HIGH",
+      "confidence": 85,
+      "verdict_reason": "철학 문서 — EAE 세계관의 공리. 검증 대상이 아닌 전제.",
+      "bull_summary": "",
+      "bear_summary": "",
+      "conditions": "",
+      "review_trigger": "",
+      "sources": [],
+      "source_path": "/home/dtsli/eae-univ/philosophy/magnetic-capital.md",
+      "source_tier": "S급",
+      "registered_at": "2026-06-30 16:50 KST",
+      "metadata": {
+        "created_at": "",
+        "pem_quadrant": "철학/초학문",
+        "category": "철학/세계관",
+        "doc_type": "philosophy_markdown"
+      }
+    },
+    {
+      "atom_id": "KA-PHIL-ORBIT-STRATEGY",
+      "domain": "philosophy",
+      "title": "궤도 전략 (Orbit Strategy)",
+      "thesis": "속도 게임이 아니라 고도 게임. 시간 기반 방어적 성장 전략.",
+      "chain": [],
+      "chain_raw": "",
+      "verdict": "PROCEED",
+      "conviction": "HIGH",
+      "confidence": 85,
+      "verdict_reason": "철학 문서 — EAE 세계관의 공리. 검증 대상이 아닌 전제.",
+      "bull_summary": "",
+      "bear_summary": "",
+      "conditions": "",
+      "review_trigger": "",
+      "sources": [],
+      "source_path": "/home/dtsli/eae-univ/philosophy/orbit-strategy.md",
+      "source_tier": "S급",
+      "registered_at": "2026-06-30 16:50 KST",
+      "metadata": {
+        "created_at": "",
+        "pem_quadrant": "철학/초학문",
+        "category": "철학/세계관",
+        "doc_type": "philosophy_markdown"
+      }
+    },
+    {
+      "atom_id": "KA-PHIL-ROLE-PARALLELISM",
+      "domain": "philosophy",
+      "title": "역할 병렬성 (Role Parallelism)",
+      "thesis": "AI 시대, 한 사람이 여러 역할을 동시에 수행하는 능력에 대하여",
+      "chain": [],
+      "chain_raw": "",
+      "verdict": "PROCEED",
+      "conviction": "HIGH",
+      "confidence": 85,
+      "verdict_reason": "철학 문서 — EAE 세계관의 공리. 검증 대상이 아닌 전제.",
+      "bull_summary": "",
+      "bear_summary": "",
+      "conditions": "",
+      "review_trigger": "",
+      "sources": [],
+      "source_path": "/home/dtsli/eae-univ/philosophy/role-parallelism.md",
+      "source_tier": "S급",
+      "registered_at": "2026-06-30 16:50 KST",
+      "metadata": {
+        "created_at": "",
+        "pem_quadrant": "철학/초학문",
+        "category": "철학/세계관",
+        "doc_type": "philosophy_markdown"
+      }
+    },
+    {
+      "atom_id": "KA-PHIL-SYNTHESIS-INNOVATION",
+      "domain": "philosophy",
+      "title": "조합 혁신 (Synthesis Innovation)",
+      "thesis": "개별 요소는 새롭지 않다. 조합이 새롭다.",
+      "chain": [],
+      "chain_raw": "",
+      "verdict": "PROCEED",
+      "conviction": "HIGH",
+      "confidence": 85,
+      "verdict_reason": "철학 문서 — EAE 세계관의 공리. 검증 대상이 아닌 전제.",
+      "bull_summary": "",
+      "bear_summary": "",
+      "conditions": "",
+      "review_trigger": "",
+      "sources": [],
+      "source_path": "/home/dtsli/eae-univ/philosophy/synthesis-innovation.md",
+      "source_tier": "S급",
+      "registered_at": "2026-06-30 16:50 KST",
+      "metadata": {
+        "created_at": "",
+        "pem_quadrant": "철학/초학문",
+        "category": "철학/세계관",
+        "doc_type": "philosophy_markdown"
+      }
+    }
+  ],
+  "registered_at": "2026-06-30 16:49 KST",
+  "version": "1.0.0",
+  "total_atoms": 10,
+  "updated_at": "2026-06-30 16:50 KST"
+}

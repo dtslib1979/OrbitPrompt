@@ -54,8 +54,15 @@ from module13_sonho import (
     calc_attraction_capital,
     run_module13 as run_sonho,
 )
+from module14_knowledge_atom import (
+    scan_and_register as ka_scan,
+    query_knowledge as ka_query,
+    generate_primer as ka_primer,
+    knowledge_stats as ka_stats,
+    run_module14 as run_knowledge,
+)
 
-VERSION = "3.4.0"
+VERSION = "3.5.0"
 
 mcp = FastMCP("parksy-economy-fx")
 
@@ -641,7 +648,105 @@ def attraction_capital(
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 버전 조회 (v2.2 호환 + v3.0 확장 + v3.4 PEM MCP)
+# v3.5 — Knowledge-Atom MCP (Q1-Q4 범용 / EAE Univ 전환)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@mcp.tool()
+def register_knowledge(
+    include_body: bool = True,
+    include_butterfly: bool = True,
+    include_philosophy: bool = True,
+    force_rescan: bool = False,
+) -> dict:
+    """
+    [v3.5 신규] eae-univ 스캔 → knowledge-atom 레지스트리 구축.
+
+    EAE University의 research/body, research/butterfly, philosophy/ 디렉토리를
+    스캔해 article JSON과 철학 문서를 표준 knowledge-atom으로 등록.
+    등록된 atom은 query_knowledge()로 검색 가능.
+
+    Args:
+        include_body: research/body/ 포함 (기본 True)
+        include_butterfly: research/butterfly/ 포함 (기본 True)
+        include_philosophy: philosophy/ 포함 (기본 True)
+        force_rescan: True면 기존 레지스트리 무시하고 전수 재스캔
+
+    Returns:
+        total_atoms, newly_registered, domain_distribution
+    """
+    return ka_scan(include_body, include_butterfly, include_philosophy, force_rescan)
+
+
+@mcp.tool()
+def query_knowledge(
+    keyword: str = "",
+    domain: str = "",
+    verdict: str = "",
+    min_confidence: int = 0,
+    max_results: int = 20,
+) -> dict:
+    """
+    [v3.5 신규] knowledge-atom 검색.
+
+    등록된 지식원자를 키워드/도메인/평결/신뢰도로 검색.
+    "야 철학 개론 알려줘" → query_knowledge(domain="philosophy")
+    "야 운동 관련 지식 있어?" → query_knowledge(keyword="운동")
+
+    Args:
+        keyword: 제목/테제/체인에서 검색 (공백=전체)
+        domain: 도메인 필터 (body/butterfly/philosophy)
+        verdict: 평결 필터 (PROCEED/REDUCE/HOLD)
+        min_confidence: 최소 신뢰도 0-100
+        max_results: 최대 결과 수 (기본 20)
+
+    Returns:
+        query 조건, total_matches, results(atom 목록)
+    """
+    return ka_query(keyword, domain, verdict, min_confidence, max_results)
+
+
+@mcp.tool()
+def generate_primer(
+    domain: str = "",
+    thesis_keyword: str = "",
+    max_atoms: int = 10,
+    include_analysis: bool = True,
+) -> dict:
+    """
+    [v3.5 신규] knowledge-atom 종합 → 개론서(primer) 생성.
+
+    관련 knowledge-atom을 모아서 개론서 형태로 재구성.
+    각 atom의 thesis/chain/verdict/confidence 기반.
+    "철학 개론서 만들어줘" → generate_primer(domain="philosophy")
+
+    Args:
+        domain: 도메인 필터 (body/butterfly/philosophy)
+        thesis_keyword: 테제 키워드 필터
+        max_atoms: 포함할 최대 atom 수 (기본 10)
+        include_analysis: 종합 분석 포함 여부 (기본 True)
+
+    Returns:
+        title, sections[], summary(verdict분포/공통체인/평균신뢰도)
+    """
+    return ka_primer(domain, thesis_keyword, max_atoms, include_analysis)
+
+
+@mcp.tool()
+def knowledge_stats() -> dict:
+    """
+    [v3.5 신규] knowledge-atom 레지스트리 통계.
+
+    등록된 전체 atom의 도메인별 분포, 평결 분포, 신뢰도 통계, PEM 사분면 분포.
+
+    Returns:
+        total_atoms, domain_distribution, verdict_distribution,
+        confidence_stats, pem_quadrant_distribution
+    """
+    return ka_stats()
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 버전 조회 (v2.2 호환 + v3.0 확장 + v3.4 PEM MCP + v3.5 Knowledge-Atom)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @mcp.tool()
@@ -687,23 +792,27 @@ def version() -> dict:
             # v3.4 PEM Q3 (sonho)
             "sonho_fee          — [PEM Q3] 소호 임대료 헤게모니 수수료",
             "attraction_capital — [PEM Q3] 매력 자본 계수",
+            # v3.5 Knowledge-Atom MCP
+            "register_knowledge — [v3.5] eae-univ 스캔 → knowledge-atom 등록",
+            "query_knowledge    — [v3.5] knowledge-atom 검색 (keyword/domain/verdict/confidence)",
+            "generate_primer    — [v3.5] knowledge-atom 종합 → 개론서 생성",
+            "knowledge_stats    — [v3.5] knowledge-atom 레지스트리 통계",
             # 공통
             "version            — 버전 조회",
         ],
-        "total_tools": 26,
-        "desc": "parksy-economy-fx — FX Engine v3.4 + PEM Q2/Q3/Q4 경제 MCP 통합. "
-                "GATE 0 → 헤게모니 수수료 → 듀얼유닛 → 시그널 로거 → 복리 시뮬레이터 "
-                "+ AI 노동단가 + 플랫폼 수수료 + 소호 경제",
+        "total_tools": 30,
+        "desc": "parksy-economy-fx — FX Engine v3.5 + PEM Q2/Q3/Q4 경제 MCP + Knowledge-Atom MCP 통합. ",
         "philosophy": "환율은 가격표가 아니다. 달러 시스템은 심장이고, 원달러는 말초혈관 혈압계다.",
         "pem_matrix": {
             "Q1": {"name": "FX/환율", "status": "⬛ 완료", "module": "dollar_engine + gate0 + hegemonic_fee + dual_unit"},
             "Q2": {"name": "플랫폼", "status": "🟩 v1.0 구현", "module": "module12_platform_fee"},
             "Q3": {"name": "소호스튜디오", "status": "🟩 v1.0 구현", "module": "module13_sonho"},
             "Q4": {"name": "임률/AI노동", "status": "🟩 v1.0 구현", "module": "module11_ai_labor_rate"},
+            "KA": {"name": "Knowledge-Atom", "status": "🟩 v1.0 구현", "module": "module14_knowledge_atom"},
             "infra": {"name": "공통모듈", "status": "⬜ GATE0/hegemonic_fee 재사용"},
         },
         "fx_engine": {
-            "version": "3.4.0",
+            "version": "3.5.0",
             "modules": [
                 "Module 0: GATE 0 — Data Provenance & Integrity",
                 "Module 3: Hegemonic Fee Calculator",
@@ -713,13 +822,15 @@ def version() -> dict:
                 "Module 11: AI Labor Rate (PEM Q4)",
                 "Module 12: Platform Fee (PEM Q2)",
                 "Module 13: Sonho Economy (PEM Q3)",
+                "Module 14: Knowledge-Atom (EAE Univ 전환)",
             ],
-            "pipeline": "GATE 0 → Fee → Dual-Unit → Signal → Compound | PEM Q2-Q4 병렬",
+            "pipeline": "GATE 0 → Fee → Dual-Unit → Signal → Compound | PEM Q2-Q4 병렬 | Knowledge-Atom 레지스트리",
             "guardrails": (
                 "loose coupling (GATE0 재사용), 사후분석 고정, source_tier 의무 표기, "
-                "Q2/Q3/Q4 간 직접비교 금지 (우열비교 아님), 5년 미만 평가 금지"
+                "Q2/Q3/Q4 간 직접비교 금지 (우열비교 아님), 5년 미만 평가 금지, "
+                "register_knowledge()는 scan_and_register() 경유 (직접 레지스트리 수정 금지)"
             ),
-            "status": "✅ v3.4 PEM MCP 통합판 — Q1(환율) + Q2(플랫폼) + Q3(소호) + Q4(임률) 4사분면 전부 구현",
+            "status": "✅ v3.5 Knowledge-Atom MCP 통합 — Q1(환율) + Q2(플랫폼) + Q3(소호) + Q4(임률) + Knowledge-Atom",
         },
     }
 
