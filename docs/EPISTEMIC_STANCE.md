@@ -61,6 +61,7 @@
 - [`COUNTER_ARGUMENT_LOG.md`](../dollar-system-mcp/docs/COUNTER_ARGUMENT_LOG.md) — 3라운드 논쟁: 학계-실행 모델 오염의 실제 사례
 - [`ENDFX_VERIFICATION.md`](../dollar-system-mcp/docs/ENDFX_VERIFICATION.md) — End-Station=FX 검증 (가드레일 구버전 포함)
 - [`FX_ENGINE_TECH_SPEC.md`](../dollar-system-mcp/docs/FX_ENGINE_TECH_SPEC.md) — FX Engine 기술 명세 (가드레일 #2 수정 예정)
+- [`GEMINI_VERIFICATION.md`](GEMINI_VERIFICATION.md) — Gemini 외부 평가 vs 실제 코드 대조
 
 ---
 
