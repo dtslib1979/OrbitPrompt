@@ -36,8 +36,26 @@ from dual_unit import reduce as dual_unit_reduce
 from signal_logger import record_signal, get_stats, get_log
 from main import run_pipeline, run_quick_snapshot
 from module10_compound_simulator import run_module10, run_module10_for_track2
+from module11_ai_labor_rate import (
+    run_module11 as run_ai_labor,
+    calc_ai_labor_rate,
+    compare_ai_vs_human,
+    labor_hegemonic_fee,
+    list_model_pricing,
+)
+from module12_platform_fee import (
+    calc_platform_fee,
+    benford_view_count_check,
+    reduce_platform_units,
+    fetch_distribution_log,
+)
+from module13_sonho import (
+    calc_sonho_fee,
+    calc_attraction_capital,
+    run_module13 as run_sonho,
+)
 
-VERSION = "3.3.0"
+VERSION = "3.4.0"
 
 mcp = FastMCP("parksy-economy-fx")
 
@@ -417,7 +435,213 @@ def fx_snapshot() -> dict:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 버전 조회 (v2.2 호환 + v3.0 확장)
+# v3.4 — PEM 경제 MCP (Q2/Q3/Q4)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@mcp.tool()
+def ai_labor_rate(
+    token_count: int,
+    usd_per_million_tokens: float = 35.0,
+    session_minutes: float = 60.0,
+    output_count: int = 1,
+    model_name: str = "unknown",
+    source_tier: str = "S급",
+) -> dict:
+    """
+    [v3.4 PEM Q4] AI 노동 단가 계산 — 세션 토큰소모량 기반 실측.
+
+    단일 AI 세션의 시간당 노동단가를 토큰소모량 × 모델단가로 산출.
+    "AI한테 일 시키는데 시간당 얼마 드냐"의 실측값.
+
+    Args:
+        token_count: 세션 총 토큰 소모량 (OrbitPrompt 실제 로그 기준 100K~200K)
+        usd_per_million_tokens: 100만 토큰당 USD. 모델별 기본값: Claude Opus $35(입출력 평균), DeepSeek $0.7
+        session_minutes: 세션 지속 시간 (분)
+        output_count: 생성된 결과물 수
+        model_name: 모델 식별자 (선택)
+        source_tier: 데이터 등급 (S/A/B/C, 기본 S급)
+
+    Returns:
+        session_cost, hourly_rate, source_tier 반영
+    """
+    return calc_ai_labor_rate(token_count, usd_per_million_tokens, session_minutes, output_count, model_name, source_tier)
+
+
+@mcp.tool()
+def ai_vs_human(
+    ai_hourly_rate_usd: float,
+    human_hourly_rate_usd: float,
+    human_source_note: str = "",
+) -> dict:
+    """
+    [v3.4 PEM Q4] AI vs 인간 노동 단가 비교.
+
+    스프레드 수치만 제시 — 해석은 사용자 판단.
+    "AI가 인간을 대체한다"는 결론 자동생성 금지.
+
+    Args:
+        ai_hourly_rate_usd: AI 시간당 단가 (ai_labor_rate 결과)
+        human_hourly_rate_usd: 인간 시간당 단가 (출처 필수 명시)
+        human_source_note: 인간 단가 출처 (예: "2025년 원가회계사 평균연봉")
+
+    Returns:
+        ratio, savings_pct, absolute_spread, cost_effectiveness
+    """
+    return compare_ai_vs_human(ai_hourly_rate_usd, human_hourly_rate_usd, human_source_note=human_source_note)
+
+
+@mcp.tool()
+def labor_fee(
+    productivity_growth_pct: float,
+    real_wage_growth_pct: float,
+    source_tier: str = "B급",
+) -> dict:
+    """
+    [v3.4 PEM Q4] 임률 헤게모니 수수료.
+
+    생산성증가율 vs 실질임금증가율 격차 = AI 시대 노동 헤게모니 수수료.
+    hegemonic_fee.py 계산식 패턴 재사용.
+
+    Args:
+        productivity_growth_pct: 생산성 증가율 (%)
+        real_wage_growth_pct: 실질 임금 증가율 (%)
+        source_tier: 데이터 등급 (기본 B급)
+
+    Returns:
+        gap_pct, hegemonic_fee_rate_pct, fee_ratio_pct
+    """
+    return labor_hegemonic_fee(productivity_growth_pct, real_wage_growth_pct, source_tier)
+
+
+@mcp.tool()
+def platform_fee(
+    gross_view_value_usd: float,
+    net_settlement_usd: float,
+    platform_name: str = "YouTube",
+    source_tier: str = "S급",
+) -> dict:
+    """
+    [v3.4 PEM Q2] 플랫폼 헤게모니 수수료.
+
+    콘텐츠 조회수 가치 대비 실제 정산액 격차 → 유튜브/네이버가 가져가는 구조적 수수료율.
+    hegemonic_fee.py 패턴 재사용.
+
+    Args:
+        gross_view_value_usd: 콘텐츠 조회수 추정 가치 (USD)
+        net_settlement_usd: 실제 정산액 (USD, 0이면 수익화 이전)
+        platform_name: 플랫폼명 (기본 YouTube)
+        source_tier: 데이터 등급
+
+    Returns:
+        hegemonic_fee_rate_pct, settlement_rate_pct, interpretation
+    """
+    return calc_platform_fee(gross_view_value_usd, net_settlement_usd, platform_name, source_tier)
+
+
+@mcp.tool()
+def view_anomaly_check(
+    daily_view_series: list[int],
+    label: str = "daily_views",
+) -> dict:
+    """
+    [v3.4 PEM Q2] 조회수 Benford's Law 검증 — 봇트래픽 탐지.
+
+    GATE 0의 benford_check()를 조회수 시계열에 그대로 재적용.
+    경고만 표시, 판단은 보류 (자동 무효화 금지).
+
+    Args:
+        daily_view_series: 일별 조회수 리스트 (최소 50개 필요)
+        label: 데이터 라벨
+
+    Returns:
+        benford 결과, bot_traffic_suspected, warning
+    """
+    return benford_view_count_check(daily_view_series, label)
+
+
+@mcp.tool()
+def platform_reduce(
+    platform_exposures: list[dict],
+) -> dict:
+    """
+    [v3.4 PEM Q2] N개 플랫폼 → 유효_조회당_단가 1개 유닛 환원.
+
+    dual_unit.py reduce() 패턴 변형: N→1유닛.
+    유튜브/텔레그램/티스토리/네이버를 단일 CPV로 통합.
+
+    Args:
+        platform_exposures: 플랫폼별 노출 데이터.
+            각 항목: {"platform": "youtube", "views": 1000, "settlement_usd": 5.0, "source_tier": "S급"}
+
+    Returns:
+        weighted_avg_cpv, platform_breakdown, total_fee_est
+    """
+    return reduce_platform_units(platform_exposures)
+
+
+@mcp.tool()
+def sonho_fee(
+    monthly_revenue: float,
+    rent: float,
+    depreciation: float = 0.0,
+    overhead: float = 0.0,
+    venue_name: str = "unknown",
+    source_tier: str = "S급",
+) -> dict:
+    """
+    [v3.4 PEM Q3] 소호 임대료 헤게모니 수수료.
+
+    공방/스튜디오 매출 대비 고정비(임대료+감가상각+관리비) 부담률.
+    = 물리공간이 가져가는 구조적 비용.
+    hegemonic_fee.py 패턴 재사용.
+
+    Args:
+        monthly_revenue: 월 매출 (KRW 또는 USD)
+        rent: 월 임대료
+        depreciation: 월 장비 감가상각비
+        overhead: 월 관리비/공과금
+        venue_name: 공간명
+        source_tier: 데이터 등급 (기본 S급)
+
+    Returns:
+        hegemonic_fee_rate_pct, net_margin_pct, interpretation
+    """
+    return calc_sonho_fee(monthly_revenue, rent, depreciation, overhead, venue_name, source_tier)
+
+
+@mcp.tool()
+def attraction_capital(
+    guild_response_count: int,
+    marketing_cost: float = 0.0,
+    time_cost_hours: float = 0.0,
+    hourly_rate_usd: float = 0.0,
+    guild_name: str = "unknown",
+    source_tier: str = "S급",
+) -> dict:
+    """
+    [v3.4 PEM Q3] 매력 자본 계수 — "인류를 측정했다"는 박씨 표현의 수식화.
+
+    길드 모집 응답률 ÷ (마케팅비 + 시간비용).
+    Bourdieu 문화자본 개념의 계량화 버전.
+
+    ⚠️ 이 계수 정의는 1차 확정 후 변경 금지 (시계열 단절 방지).
+
+    Args:
+        guild_response_count: 길드 모집 응답자 수
+        marketing_cost: 마케팅 비용 (USD)
+        time_cost_hours: 투입 시간 (시간)
+        hourly_rate_usd: 시간당 단가 (USD)
+        guild_name: 길드명
+        source_tier: 데이터 등급 (기본 S급)
+
+    Returns:
+        attraction_coefficient, cost_per_response_usd, interpretation
+    """
+    return calc_attraction_capital(guild_response_count, marketing_cost, time_cost_hours, hourly_rate_usd, guild_name, source_tier)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 버전 조회 (v2.2 호환 + v3.0 확장 + v3.4 PEM MCP)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @mcp.tool()
@@ -429,48 +653,73 @@ def version() -> dict:
         name, version, tools, description
     """
     return {
-        "name": "달러 시스템 MCP",
+        "name": "parksy-economy-fx",
         "version": VERSION,
         "tools": [
             # v2.2 (레거시)
-            "analyze      — 환율 4단계 티어 분석 + Φ7 매핑",
-            "structure    — 달러 시스템 버그와 패치의 역사",
-            "phi7         — Φ7 7축 렌즈 맵",
-            "get_timeline — 1944-2024 역사 타임라인",
-            "compare      — 두 환율 비교",
-            "get_drivers  — yfinance 실시간 4개 드라이버",
-            "forecast     — 선형회귀 + DXY 보정 환율 예측",
-            "dsi          — DSI 스트레스 지수 + BS_INDEX + 백테스트",
-            "meal_index   — 한 끼 지수: 달러를 생존 단위로 번역",
+            "analyze            — 환율 4단계 티어 분석 + Φ7 매핑",
+            "structure          — 달러 시스템 버그와 패치의 역사",
+            "phi7               — Φ7 7축 렌즈 맵",
+            "get_timeline       — 1944-2024 역사 타임라인",
+            "compare            — 두 환율 비교",
+            "get_drivers        — yfinance 실시간 4개 드라이버",
+            "forecast           — 선형회귀 + DXY 보정 환율 예측",
+            "dsi                — DSI 스트레스 지수 + BS_INDEX + 백테스트",
+            "meal_index         — 한 끼 지수: 달러를 생존 단위로 번역",
             # v3.0 FX Engine
-            "gate0_check  — GATE 0 데이터 출처 검증 게이트",
-            "hegemonic_fee— 헤게모니 수수료 계산",
-            "dual_unit_reduce — N 통화 → GOLD/USD 2유닛 환산",
-            "signal_log   — 시그널 기록/통계/로그",
-            "fx_pipeline  — GATE0→Fee→Dual→Signal→Compound 풀 파이프라인",
-            "fx_snapshot  — KRW/JPY/TWD 퀵 스냅샷",
+            "gate0_check        — GATE 0 데이터 출처 검증 게이트",
+            "hegemonic_fee      — 헤게모니 수수료 계산",
+            "dual_unit_reduce   — N 통화 → GOLD/USD 2유닛 환산",
+            "signal_log         — 시그널 기록/통계/로그",
+            "fx_pipeline        — GATE0→Fee→Dual→Signal→Compound 풀 파이프라인",
+            "fx_snapshot        — KRW/JPY/TWD 퀵 스냅샷",
             # v3.3 신규
-            "compound_simulator — [v3.3] Module 10 복리 재투자 시뮬레이터",
-            "compound_track2    — [v3.3] 원화 기준 복리 시뮬레이션 편의 래퍼",
-            "version      — 버전 조회",
+            "compound_simulator — Module 10 복리 재투자 시뮬레이터",
+            "compound_track2    — 원화 기준 복리 시뮬레이션 편의 래퍼",
+            # v3.4 PEM Q4 (labor-rate)
+            "ai_labor_rate      — [PEM Q4] AI 노동 단가 실측",
+            "ai_vs_human        — [PEM Q4] AI vs 인간 단가 비교",
+            "labor_fee          — [PEM Q4] 임률 헤게모니 수수료",
+            # v3.4 PEM Q2 (platform-fee)
+            "platform_fee       — [PEM Q2] 플랫폼 헤게모니 수수료",
+            "view_anomaly_check — [PEM Q2] 조회수 Benford 검증 (봇트래픽)",
+            "platform_reduce    — [PEM Q2] N개 플랫폼 → 1개 유닛 환원",
+            # v3.4 PEM Q3 (sonho)
+            "sonho_fee          — [PEM Q3] 소호 임대료 헤게모니 수수료",
+            "attraction_capital — [PEM Q3] 매력 자본 계수",
+            # 공통
+            "version            — 버전 조회",
         ],
-        "desc": "미국 자본주의 바이탈사인 — 달러 패권 구조를 Φ7 7축으로 해석 + yfinance 실시간 예측 + DSI 스트레스 지수 + FX Engine v3.3 (GATE 0 → 헤게모니 수수료 → 듀얼유닛 → 시그널 로거 → 복리 시뮬레이터)",
+        "total_tools": 26,
+        "desc": "parksy-economy-fx — FX Engine v3.4 + PEM Q2/Q3/Q4 경제 MCP 통합. "
+                "GATE 0 → 헤게모니 수수료 → 듀얼유닛 → 시그널 로거 → 복리 시뮬레이터 "
+                "+ AI 노동단가 + 플랫폼 수수료 + 소호 경제",
         "philosophy": "환율은 가격표가 아니다. 달러 시스템은 심장이고, 원달러는 말초혈관 혈압계다.",
+        "pem_matrix": {
+            "Q1": {"name": "FX/환율", "status": "⬛ 완료", "module": "dollar_engine + gate0 + hegemonic_fee + dual_unit"},
+            "Q2": {"name": "플랫폼", "status": "🟩 v1.0 구현", "module": "module12_platform_fee"},
+            "Q3": {"name": "소호스튜디오", "status": "🟩 v1.0 구현", "module": "module13_sonho"},
+            "Q4": {"name": "임률/AI노동", "status": "🟩 v1.0 구현", "module": "module11_ai_labor_rate"},
+            "infra": {"name": "공통모듈", "status": "⬜ GATE0/hegemonic_fee 재사용"},
+        },
         "fx_engine": {
-            "version": "3.3.0",
+            "version": "3.4.0",
             "modules": [
-                "Module 0: GATE 0 — Data Provenance & Integrity (14장)",
-                "Module 3: Hegemonic Fee Calculator (5.3절)",
-                "Module 7: Dual-Unit Reduction Engine (7.4~7.6절)",
-                "Module 8: Accumulation Signal Logger (13장)",
-                "Module 10: Compound Reinvestment Simulator (13.2/13.6절, v3.3 신규)",
+                "Module 0: GATE 0 — Data Provenance & Integrity",
+                "Module 3: Hegemonic Fee Calculator",
+                "Module 7: Dual-Unit Reduction Engine",
+                "Module 8: Accumulation Signal Logger",
+                "Module 10: Compound Reinvestment Simulator",
+                "Module 11: AI Labor Rate (PEM Q4)",
+                "Module 12: Platform Fee (PEM Q2)",
+                "Module 13: Sonho Economy (PEM Q3)",
             ],
-            "pipeline": "GATE 0 → Fee → Dual-Unit → Signal → Compound",
+            "pipeline": "GATE 0 → Fee → Dual-Unit → Signal → Compound | PEM Q2-Q4 병렬",
             "guardrails": (
-                "12개 하드코딩 — 트랙2 구조알파, 레버리지 금지, 8회 미만 자본투입 금지, "
-                "5년 미만 평가 금지, 트랙1 비교 금지, GATE 0 우회 금지"
+                "loose coupling (GATE0 재사용), 사후분석 고정, source_tier 의무 표기, "
+                "Q2/Q3/Q4 간 직접비교 금지 (우열비교 아님), 5년 미만 평가 금지"
             ),
-            "status": "✅ v3.3 투트랙 확정판 — Module 10(복리시뮬레이터) 추가 완료",
+            "status": "✅ v3.4 PEM MCP 통합판 — Q1(환율) + Q2(플랫폼) + Q3(소호) + Q4(임률) 4사분면 전부 구현",
         },
     }
 
