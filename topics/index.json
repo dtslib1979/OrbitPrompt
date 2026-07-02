@@ -53,14 +53,14 @@
       "name": "바디",
       "nameEn": "Body Systems",
       "track": "A+B",
-      "files": ["medicine.json", "28-repos-medical-map.md", "body-it-nation-system-map.md", "system-variables.md", "headquarters.md", "body-solution.md", "body-unit-dictionary.md", "body-paradigm.md"],
-      "count": 21,
+      "files": ["medicine.json", "28-repos-medical-map.md", "body-it-nation-system-map.md", "system-variables.md", "headquarters.md", "body-solution.md", "body-unit-dictionary.md", "body-paradigm.md", "body-usage.md"],
+      "count": 22,
       "autoSuggest": true,
       "pipelinePriority": 3
     }
   ],
   "stats": {
-    "totalTopics": 48,
-    "autoSuggestTopics": 43
+    "totalTopics": 49,
+    "autoSuggestTopics": 44
   }
 }
