@@ -1,0 +1,204 @@
+{
+  "category": "medicine",
+  "categoryName": "의학",
+  "categoryNameEn": "Medicine",
+  "version": "1.0.0",
+  "topics": [
+    {
+      "id": "internal-medicine",
+      "title": "내과",
+      "titleEn": "Internal Medicine",
+      "unit": "진단과 치료",
+      "unitEn": "Diagnosis & Treatment",
+      "difficulty": 3,
+      "keywords": ["진단", "전신", "만성질환", "감별진단"],
+      "outline": {
+        "intro": "몸 전체를 보는 눈 — 내과는 가장 먼저 열어야 할 창이다",
+        "main": "증상→징후→검사→진단→치료의 순환. 시스템적 사고가 전부다",
+        "outro": "다음은 각 계통별 분과로 들어간다"
+      }
+    },
+    {
+      "id": "surgery",
+      "title": "외과",
+      "titleEn": "Surgery",
+      "unit": "수술과 중재",
+      "unitEn": "Surgery & Intervention",
+      "difficulty": 3,
+      "keywords": ["수술", "절개", "봉합", "해부"],
+      "outline": {
+        "intro": "말이 안 통하면 메스를 든다 — 외과는 행동이다",
+        "main": "해부학적 접근 + 술기 + 회복. 구조를 바꾸는 치료",
+        "outro": "수술실 밖에서도 외과적 사고는 필요하다"
+      }
+    },
+    {
+      "id": "pediatrics",
+      "title": "소아청소년과",
+      "titleEn": "Pediatrics",
+      "unit": "성장과 발달",
+      "unitEn": "Growth & Development",
+      "difficulty": 2,
+      "keywords": ["성장", "발달", "예방접종", "영유아"],
+      "outline": {
+        "intro": "어른을 작게 줄인 게 아니다 — 아이는 별개의 존재다",
+        "main": "성장 곡선, 발달 단계, 영양. 모든 약은 체중 기반",
+        "outro": "아이를 보면 미래가 보인다"
+      }
+    },
+    {
+      "id": "neurology",
+      "title": "신경과",
+      "titleEn": "Neurology",
+      "unit": "신경계",
+      "unitEn": "Nervous System",
+      "difficulty": 4,
+      "keywords": ["뇌", "신경", "기억", "의식"],
+      "outline": {
+        "intro": "의식이란 무엇인가 — 신경과는 철학과 의학의 경계다",
+        "main": "뇌는 전기화학적 네트워크. 병변 위치가 모든 걸 결정한다",
+        "outro": "기억을 저장한다는 건 무엇일까"
+      }
+    },
+    {
+      "id": "psychiatry",
+      "title": "정신건강의학과",
+      "titleEn": "Psychiatry",
+      "unit": "정신과 마음",
+      "unitEn": "Mind & Mental Health",
+      "difficulty": 4,
+      "keywords": ["정신", "감정", "트라우마", "치유"],
+      "outline": {
+        "intro": "보이지 않는 병 — 정신과는 가장 어렵고 가장 중요하다",
+        "main": "약물 + 대화 + 환경. 세 가지 축으로 접근한다",
+        "outro": "마음은 뇌의 현상일까, 별개의 영역일까"
+      }
+    },
+    {
+      "id": "radiology",
+      "title": "영상의학과",
+      "titleEn": "Radiology",
+      "unit": "영상 진단",
+      "unitEn": "Diagnostic Imaging",
+      "difficulty": 3,
+      "keywords": ["X-ray", "CT", "MRI", "초음파"],
+      "outline": {
+        "intro": "보이지 않는 걸 보는 기술 — 영상의학은 현대 진단의 눈이다",
+        "main": "X-ray→CT→MRI→초음파. 각각의 물리학과 적응증",
+        "outro": "AI가 영상의학과를 대체할까"
+      }
+    },
+    {
+      "id": "rehabilitation",
+      "title": "재활의학과",
+      "titleEn": "Rehabilitation Medicine",
+      "unit": "회복과 적응",
+      "unitEn": "Recovery & Adaptation",
+      "difficulty": 2,
+      "keywords": ["재활", "물리치료", "작업치료", "보행"],
+      "outline": {
+        "intro": "치료는 끝났지만 인생은 계속된다 — 재활은 그 다음이다",
+        "main": "남은 기능을 최대화하는 기술. 포기하지 않는 의학",
+        "outro": "한계를 인정하는 용기와 넘보는 도전"
+      }
+    },
+    {
+      "id": "emergency",
+      "title": "응급의학과",
+      "titleEn": "Emergency Medicine",
+      "unit": "위기 대응",
+      "unitEn": "Crisis Response",
+      "difficulty": 4,
+      "keywords": ["응급", "소생", "트리아지", "골든타임"],
+      "outline": {
+        "intro": "골든타임을 아는 것과 행동하는 것 사이의 간격",
+        "main": "ABCDE 접근. 중증도 분류. 먼저 죽을 사람부터 살린다",
+        "outro": "응급실은 병원의 현관이자 전쟁터다"
+      }
+    },
+    {
+      "id": "dermatology",
+      "title": "피부과",
+      "titleEn": "Dermatology",
+      "unit": "피부와 외피",
+      "unitEn": "Skin & Integument",
+      "difficulty": 2,
+      "keywords": ["피부", "발진", "여드름", "레이저"],
+      "outline": {
+        "intro": "피부는 가장 큰 장기이자 가장 먼저 보이는 얼굴이다",
+        "main": "표피·진피·피하지방. 구조를 알면 병변이 보인다",
+        "outro": "화장품과 치료의 경계는 점점 흐려진다"
+      }
+    },
+    {
+      "id": "ophthalmology",
+      "title": "안과",
+      "titleEn": "Ophthalmology",
+      "unit": "시각계",
+      "unitEn": "Visual System",
+      "difficulty": 3,
+      "keywords": ["눈", "시력", "망막", "백내장"],
+      "outline": {
+        "intro": "눈은 뇌가 세상을 만나는 창문이다",
+        "main": "각막→수정체→망막→시신경. 빛이 신호로 바뀌는 과정",
+        "outro": "보는 것과 보이는 것의 차이"
+      }
+    },
+    {
+      "id": "orthopedics",
+      "title": "정형외과",
+      "titleEn": "Orthopedics",
+      "unit": "근골격계",
+      "unitEn": "Musculoskeletal System",
+      "difficulty": 3,
+      "keywords": ["뼈", "관절", "인대", "골절"],
+      "outline": {
+        "intro": "몸의 구조가 무너지면 모든 게 무너진다",
+        "main": "골절 정복, 관절 치환, 인대 재건. 구조를 바로 세운다",
+        "outro": "움직임이 전부다 — 기능 회복이 목표"
+      }
+    },
+    {
+      "id": "obgyn",
+      "title": "산부인과",
+      "titleEn": "Obstetrics & Gynecology",
+      "unit": "생식과 출산",
+      "unitEn": "Reproduction & Birth",
+      "difficulty": 3,
+      "keywords": ["임신", "출산", "여성건강", "호르몬"],
+      "outline": {
+        "intro": "새 생명이 들어오는 문 — 산부인과는 시작의 의학이다",
+        "main": "월경→임신→분만→폐경. 여성 생애 주기 전반",
+        "outro": "태어난다는 것은 가장 근원적인 의학의 질문"
+      }
+    },
+    {
+      "id": "pathology",
+      "title": "병리과",
+      "titleEn": "Pathology",
+      "unit": "질병의 본질",
+      "unitEn": "Nature of Disease",
+      "difficulty": 4,
+      "keywords": ["조직", "세포", "암", "염증"],
+      "outline": {
+        "intro": "질병의 본질을 묻는 학문 — 병리과는 의학의 철학이다",
+        "main": "조직切片, 세포진단, 부검. 눈으로 보고 판단한다",
+        "outro": "모든 진단의 최종 확인자는 병리과다"
+      }
+    },
+    {
+      "id": "preventive",
+      "title": "예방의학",
+      "titleEn": "Preventive Medicine",
+      "unit": "예방과 공중보건",
+      "unitEn": "Prevention & Public Health",
+      "difficulty": 2,
+      "keywords": ["예방", "역학", "공중보건", "건강검진"],
+      "outline": {
+        "intro": "아프기 전에 관리하는 의학 — 가장 경제적이고 가장 어렵다",
+        "main": "역학, 통계, 건강검진. 개인이 아닌 집단을 본다",
+        "outro": "예방이 치료보다 낫다는 말의 무게"
+      }
+    }
+  ]
+}

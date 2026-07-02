@@ -1,7 +1,7 @@
 {
   "version": "1.1.0",
   "description": "OrbitPrompt Topics Database",
-  "lastUpdated": "2026-05-28",
+  "lastUpdated": "2026-07-02",
   "categories": [
     {
       "id": "grandparent",
@@ -46,10 +46,21 @@
       "nameEn": "PWA Demo",
       "count": 6,
       "autoSuggest": true
+    },
+    {
+      "id": "medicine",
+      "dir": "medicine/",
+      "name": "의학",
+      "nameEn": "Medicine",
+      "track": "A+B",
+      "files": ["medicine.json", "28-repos-medical-map.md"],
+      "count": 15,
+      "autoSuggest": true,
+      "pipelinePriority": 3
     }
   ],
   "stats": {
-    "totalTopics": 32,
-    "autoSuggestTopics": 27
+    "totalTopics": 47,
+    "autoSuggestTopics": 42
   }
 }
