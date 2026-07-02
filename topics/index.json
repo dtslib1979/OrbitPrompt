@@ -53,8 +53,8 @@
       "name": "의학",
       "nameEn": "Medicine",
       "track": "A+B",
-      "files": ["medicine.json", "28-repos-medical-map.md", "body-it-nation-system-map.md"],
-      "count": 16,
+      "files": ["medicine.json", "28-repos-medical-map.md", "body-it-nation-system-map.md", "system-variables.md"],
+      "count": 17,
       "autoSuggest": true,
       "pipelinePriority": 3
     }
