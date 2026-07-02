@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>철학 카테고리 마스터 — OrbitPrompt 철학 지도</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#07070d;--gold:#d4af37;--brass:#b8982a;--ink:#f0e8d8;--dim:rgba(240,232,216,.5);--muted:rgba(240,232,216,.3);--cyan:#22d3ee;--purple:#a855f7;--green:#4ade80;--blue:#60a5fa;--red:#f87171;--orange:#fb923c}
+html,body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;font-size:14px;line-height:1.7}
+body{padding:48px 20px;max-width:960px;margin:0 auto}
+h1{font-size:28px;font-weight:600;color:var(--gold);margin-bottom:4px;letter-spacing:-.02em}
+h2{font-size:18px;font-weight:600;color:#fff;margin:36px 0 12px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06)}
+h3{font-size:14px;font-weight:500;color:var(--gold);margin:20px 0 8px}
+.tagline{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;margin-bottom:32px}
+.counter{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gold);background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.15);border-radius:6px;padding:8px 14px;display:inline-block;margin-bottom:20px}
+.counter span{color:#fff;font-size:18px}
+.cat-grid{display:grid;grid-template-columns:1fr;gap:10px;margin:12px 0}
+.cat-card{border-radius:8px;padding:14px 16px;position:relative}
+.cat-card .num{font-family:'JetBrains Mono',monospace;font-size:10px;opacity:.5;margin-bottom:2px}
+.cat-card .title{font-weight:600;font-size:15px;margin-bottom:4px}
+.cat-card .desc{font-size:12px;opacity:.65;margin-bottom:6px}
+.cat-card .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.cat-card .tag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(255,255,255,.06)}
+.system{background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.12)}
+.system .title{color:var(--cyan)}
+.moment{background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.12)}
+.moment .title{color:var(--orange)}
+.bridge{background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.12)}
+.bridge .title{color:var(--purple)}
+.mcp-tag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 6px;border-radius:3px;display:inline-block;margin-right:3px}
+.mcp{background:rgba(34,211,238,.1);color:var(--cyan)}
+.doc{background:rgba(255,255,255,.05);color:var(--muted)}
+.phi7{background:rgba(168,85,247,.1);color:var(--purple)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px}
+th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.15em;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.06)}
+td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--dim)}
+td:first-child{color:#fff;font-weight:500}
+.stats-row{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+.stat-card{flex:1;min-width:120px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:12px;text-align:center}
+.stat-card .num{font-size:28px;font-weight:600;color:var(--gold);font-family:'JetBrains Mono',monospace}
+.stat-card .label{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.08em}
+footer{margin-top:48px;padding-top:16px;border-top:1px solid rgba(255,255,255,.04);font-size:10px;color:var(--muted);text-align:center;font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+<h1>철학 카테고리 마스터</h1>
+<div class="tagline">OrbitPrompt 철학 지도 — 반복과 순간, 그리고 그 사이를 잇는 MCP</div>
+
+<div class="counter">총 <span>12</span>개 철학 카테고리 · <span>36</span>개 하위 도메인 · <span>11</span>개 MCP · <span>7</span>축 Φ7</div>
+
+<div class="stats-row">
+<div class="stat-card"><div class="num">6</div><div class="label">반복/시스템</div></div>
+<div class="stat-card"><div class="num">4</div><div class="label">순간/창조</div></div>
+<div class="stat-card"><div class="num">2</div><div class="label">브리지/방법론</div></div>
+</div>
+
+<!-- ============================================ -->
+<!-- PART 1: SYSTEM / REPETITION                  -->
+<!-- ============================================ -->
+<h2>Ⅰ. 반복 영역 — 시스템·구조·자동화 (6개)</h2>
+<p style="color:var(--dim);font-size:12px;margin-bottom:16px">프로그래밍+MCP로 직접 모델링·예측·자동화 가능한 철학 영역</p>
+
+<div class="cat-grid">
+
+<div class="cat-card system">
+<div class="num">#01</div>
+<div class="title">존재론 · 몸-시스템 프레임</div>
+<div class="desc">몸을 신경/순환/면역/에너지/내분비 5축으로 보고, 차·컴퓨터·국가·조직을 전부 이 축으로 매핑. "존재가 어떻게 구조화되어 있는가"를 다루는 형이상학.</div>
+<div class="tags">
+<span class="tag mcp">topics/body/</span>
+<span class="tag mcp">PHI7-ECO-COUNTER-METHOD.md</span>
+<span class="tag doc">docs/PARKSY-FAB-PHILOSOPHY.md</span>
+</div>
+</div>
+
+<div class="cat-card system">
+<div class="num">#02</div>
+<div class="title">기술철학 · 매체 전환</div>
+<div class="desc">"철학자의 책 대신 철학자의 MCP 레포". 기존 철학(책/논문)을 MCP+GitHub+YouTube로 전환. LLM을 공저자/편집자/PD로 활용. 프로그래밍=사유의 새로운 도구.</div>
+<div class="tags">
+<span class="tag mcp">JUSTIFICATION-v2.md</span>
+<span class="tag phi7">PHILOSOPHER-AUTOMATION-REPORT.md</span>
+<span class="tag doc">docs/WHITEPAPER-FINAL-20260608.md</span>
+</div>
+</div>
+
+<div class="cat-card system">
+<div class="num">#03</div>
+<div class="title">경제철학 · 자본주의 OS</div>
+<div class="desc">외환(FX) 엔진 + 정치경제 모델(PEM)을 MCP로 구현. 자본주의를 OS로 바라보는 프레임. 재무비율 분석, 통화쌍 예측, 정치-경제 상호작용 시뮬레이션.</div>
+<div class="tags">
+<span class="tag mcp">dollar-system-mcp</span>
+<span class="tag mcp">parksy-finance-mcp</span>
+<span class="tag doc">docs/finance-ratio/</span>
+</div>
+</div>
+
+<div class="cat-card system">
+<div class="num">#04</div>
+<div class="title">정치철학 · 브랜치 파트너십</div>
+<div class="desc">위계 없는 조직 모델. "전부 브랜치다, fork 비용 0". 정치 MCP로 정치인 분석/정책 비교/선거 시뮬레이션. 빵꾸단(Branch Team) 운영.</div>
+<div class="tags">
+<span class="tag mcp">political-mcp</span>
+<span class="tag mcp">branch-philosophy-mcp</span>
+<span class="tag doc">docs/PARTNERSHIP-PHILOSOPHY.md</span>
+</div>
+</div>
+
+<div class="cat-card system">
+<div class="num">#05</div>
+<div class="title">비교철학 · Φ7 카운터</div>
+<div class="desc">Φ7 7축(Meta/Reverse/Modular/Language/Zoom/Spiral/Quantum)으로 철학자 간 유사도 분석 및 랭킹. "니체와 박씨의 결정적 차이"를 툴로 증명.</div>
+<div class="tags">
+<span class="tag phi7">philosophy-counter-mcp</span>
+<span class="tag phi7">chan-dae-counter.md (#001~#008)</span>
+<span class="tag doc">docs/PHI7-ECO-COUNTER-METHOD.md</span>
+</div>
+</div>
+
+<div class="cat-card system">
+<div class="num">#06</div>
+<div class="title">교육철학 · 지식 컴파일러</div>
+<div class="desc">AI 시대 교육 패러다임. 강의를 MCP+레포로 자동화. eae-univ 사내대학과 연동. 지식을 컴파일해서 실행 가능한 형태로 배포.</div>
+<div class="tags">
+<span class="tag mcp">edu-mcp</span>
+<span class="tag doc">docs/EDU-ART-ENGINEER.md</span>
+<span class="tag doc">docs/WORKING-CLASS-LEBENSPHILOSOPHIE.md</span>
+</div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<!-- PART 2: MOMENT / CREATION                    -->
+<!-- ============================================ -->
+<h2>Ⅱ. 순간 영역 — 이벤트·스냅샷·창조 (4개)</h2>
+<p style="color:var(--dim);font-size:12px;margin-bottom:16px">STT+스냅샷으로 캡처하고, 콘텐츠·문서·API로 "표현"까지는 하지만 최종 창조는 인간에게 남기는 영역</p>
+
+<div class="cat-grid">
+
+<div class="cat-card moment">
+<div class="num">#07</div>
+<div class="title">사건철학 · 스냅샷+Making Film</div>
+<div class="desc">"반복되지 않는 순간을 캡처한다". STT로 떠든 특정 순간의 생각·감정·통찰을 텍스트로 캡처→레포·유튜브·오디오북으로 변환. Making Film이 유일한 비자동화 출력 포트.</div>
+<div class="tags">
+<span class="tag doc">PHILOSOPHER-AUTOMATION-REPORT.md</span>
+<span class="tag doc">boards/parksy-capture-tutorial.html</span>
+</div>
+</div>
+
+<div class="cat-card moment">
+<div class="num">#08</div>
+<div class="title">미학 · 편집 제로</div>
+<div class="desc">"웹페이지 열면 그게 방송, 화면 녹화=완성물, 편집 제로". 편집하지 않음이 하나의 미학적 선택. 칠판 PWA의 Setup+Broadcast Mode 이분법이 미학을 구현한 형태.</div>
+<div class="tags">
+<span class="tag doc">prompts/chalkboard/</span>
+<span class="tag doc">boards/memorial-tribute.html</span>
+<span class="tag doc">boards/music-curation.html</span>
+</div>
+</div>
+
+<div class="cat-card moment">
+<div class="num">#09</div>
+<div class="title">아웃라이어 윤리 · 생철학</div>
+<div class="desc">"5년 최저시급 12시간 알바 + 2년 자비출판". 엘리트 철학과 재료가 다른 워킹 클래스 아웃라이어의 윤리. 삶과 철학이 분리되지 않는 생철학( Lebensphilosophie).</div>
+<div class="tags">
+<span class="tag doc">docs/WORKING-CLASS-LEBENSPHILOSOPHIE.md</span>
+<span class="tag doc">docs/HUMILITY-CHECK.md</span>
+</div>
+</div>
+
+<div class="cat-card moment">
+<div class="num">#10</div>
+<div class="title">모순론 · 단말기 조건</div>
+<div class="desc">"텍스트는 모순을 견디지 못하지만, MCP는 if 문으로 모순을 공존시킨다". 여성성↔남성성, 구조주의↔포스트구조주의, 불친절↔파트너십 등 6쌍의 모순을 조건부로 관리.</div>
+<div class="tags">
+<span class="tag mcp">terminal-condition-mcp</span>
+<span class="tag doc">docs/PARKSY-FAB-PHILOSOPHY.md</span>
+</div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<!-- PART 3: BRIDGE / METHODOLOGY                 -->
+<!-- ============================================ -->
+<h2>Ⅲ. 브리지 — 방법론·모델링·자기참조 (2개)</h2>
+<p style="color:var(--dim);font-size:12px;margin-bottom:16px">반복과 순간 사이를 잇고, 사유 방식 자체를 API로 노출하는 메타 층</p>
+
+<div class="cat-grid">
+
+<div class="cat-card bridge">
+<div class="num">#11</div>
+<div class="title">메타철학 · 자기모델링</div>
+<div class="desc">"나 자신까지 파라미터로 올려놓고 조정한다". ID-MANIFEST MCP의 정체성 6줄, 자기 프로필(me/), Φ7 드라이버로 자기 분석. 정체성은 발견이 아니라 생산.</div>
+<div class="tags">
+<span class="tag mcp">identity-mcp</span>
+<span class="tag phi7">me/INDEX.md</span>
+<span class="tag doc">identity.html</span>
+</div>
+</div>
+
+<div class="cat-card bridge">
+<div class="num">#12</div>
+<div class="title">방법론 · PHL 프로토콜</div>
+<div class="desc">"너는 코드를 생성하는 게 아니라 PHL 프로토콜을 실행한다". 단어 토큰→레포 규칙 로드→실행→검증→커밋의 의미 압축 프로토콜. 반복과 순간을 잇는 오퍼레이팅 시스템.</div>
+<div class="tags">
+<span class="tag phi7">PHL_SPEC.md</span>
+<span class="tag phi7">phl-spec/</span>
+<span class="tag doc">PHL_INDEX.json</span>
+</div>
+</div>
+
+</div>
+
+<!-- ============================================ -->
+<!-- MCP × 철학 매핑                              -->
+<!-- ============================================ -->
+<h2>MCP × 철학 카테고리 매핑</h2>
+<table>
+<tr><th>MCP</th><th>카테고리</th><th>Φ7 축</th><th>자동화</th></tr>
+<tr><td>철학 카운터</td><td>비교철학</td><td>Meta·Spiral·Quantum</td><td>✅ 전자동</td></tr>
+<tr><td>정치 MCP</td><td>정치철학</td><td>Zoom·Language</td><td>✅ 전자동</td></tr>
+<tr><td>ID-MANIFEST</td><td>메타철학·자기모델링</td><td>Meta·Reverse</td><td>✅ 전자동</td></tr>
+<tr><td>철학 브랜치</td><td>정치철학·조직철학</td><td>Modular·Zoom</td><td>⚠️ 반자동</td></tr>
+<tr><td>단말기 조건</td><td>모순론·변증법</td><td>Reverse·Quantum</td><td>⚠️ 반자동</td></tr>
+<tr><td>축구 MCP</td><td>예측·시뮬레이션 방법론</td><td>Modular·Quantum</td><td>✅ 전자동</td></tr>
+<tr><td>달러 시스템</td><td>경제철학</td><td>Modular·Zoom·Spiral</td><td>✅ 전자동</td></tr>
+<tr><td>Edu MCP</td><td>교육철학</td><td>Meta·Modular</td><td>✅ 전자동</td></tr>
+<tr><td>Media MCP</td><td>기술철학·미디어</td><td>Modular·Language</td><td>✅ 전자동</td></tr>
+<tr><td>금융 MCP</td><td>경제철학</td><td>Modular·Spiral</td><td>✅ 전자동</td></tr>
+<tr><td>Module Gallery</td><td>시스템 철학</td><td>Modular·Meta</td><td>✅ 전자동</td></tr>
+</table>
+
+<!-- ============================================ -->
+<!-- Φ7 7축 정의                                  -->
+<!-- ============================================ -->
+<h2>Φ7 7축 — 철학 분석 프레임워크</h2>
+<table>
+<tr><th>축</th><th>명칭</th><th>핵심</th><th>해당 카테고리</th></tr>
+<tr><td>🧠 Meta</td><td>메타</td><td>전체를 보는 눈. 방법론·자기인식·체계 설계</td><td>#01 #02 #11 #12</td></tr>
+<tr><td>🔄 Reverse</td><td>리버스</td><td>거꾸로 읽기. 역방향 설계·실패 분석</td><td>#10 #11</td></tr>
+<tr><td>🧩 Modular</td><td>모듈러</td><td>조립하기. 재사용·시스템 설계·실행 중심</td><td>#03 #04 #06</td></tr>
+<tr><td>💬 Language</td><td>랭귀지</td><td>언어로 마감. 프레이밍·내러티브·개념 제안</td><td>#02 #08</td></tr>
+<tr><td>🔍 Zoom</td><td>줌</td><td>스케일 조절. 개인→도시→국가·계급·권력</td><td>#04 #09</td></tr>
+<tr><td>📈 Spiral</td><td>스파이럴</td><td>반복 상승. 변증법·발전·자기극복</td><td>#01 #05 #06</td></tr>
+<tr><td>⚡ Quantum</td><td>퀀텀</td><td>도약. 예측·시뮬레이션·이변</td><td>#03 #05 #07 #10</td></tr>
+</table>
+
+<!-- ============================================ -->
+<!-- SUMMARY                                      -->
+<!-- ============================================ -->
+<h2>종합</h2>
+<div class="cat-card system" style="border-color:var(--gold);background:rgba(212,175,55,.04)">
+<div class="title" style="color:var(--gold)">철학자 박씨의 철학 커버리지</div>
+<div class="desc" style="font-size:13px;line-height:1.8">
+<strong style="color:#fff">반복 영역 (6개):</strong> 존재론·기술철학·경제철학·정치철학·비교철학·교육철학<br>
+<strong style="color:#fff">순간 영역 (4개):</strong> 사건철학·미학·아웃라이어 윤리·모순론<br>
+<strong style="color:#fff">브리지 (2개):</strong> 메타철학·방법론<br><br>
+<strong style="color:var(--gold)">핵심 명제:</strong><br>
+"설명할 수 있고, 규칙으로 정의할 수 있고, 반복할 수 있는 것은 전부 MCP로 자동화한다.<br>
+설명할 수 없고, 규칙이 없고, 한 번뿐인 순간은 Making Film으로 남긴다.<br>
+그리고 이 둘을 연결하는 게 PHL 프로토콜과 Φ7 7축 프레임워크다."
+</div>
+</div>
+
+<footer>OrbitPrompt · 철학 카테고리 마스터 v1.0 · 2026-07-02</footer>
+</body>
+</html>
