@@ -30,9 +30,9 @@ header nav a:hover{color:var(--gold)}
 #sv{width:100%;height:100%;display:block;cursor:grab}
 #sv:active{cursor:grabbing}
 .e{fill:none;stroke-linecap:round;pointer-events:none;transition:opacity .35s}
-.hub-text{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.15em;text-anchor:middle;dominant-baseline:middle;pointer-events:none;text-transform:uppercase;font-weight:500}
-.leaf-text{font-family:'Inter',sans-serif;font-size:6px;text-anchor:middle;dominant-baseline:middle;pointer-events:none;font-weight:400;letter-spacing:.03em}
-.center-text{font-family:'Playfair Display',serif;font-style:italic;font-size:14px;text-anchor:middle;dominant-baseline:middle;pointer-events:none;fill:var(--gold)}
+.hub-text{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.15em;text-anchor:middle;dominant-baseline:middle;pointer-events:none;text-transform:uppercase;font-weight:500}
+.leaf-text{font-family:'Inter',sans-serif;font-size:7px;text-anchor:middle;dominant-baseline:middle;pointer-events:none;font-weight:400;letter-spacing:.02em}
+.center-text{font-family:'Playfair Display',serif;font-style:italic;font-size:18px;text-anchor:middle;dominant-baseline:middle;pointer-events:none;fill:var(--gold)}
 #controls{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:6px;align-items:center}
 #controls button{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:8px;padding:4px 10px;border-radius:4px;cursor:pointer;transition:all .25s;pointer-events:auto}
 #controls button:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.06)}
@@ -66,7 +66,13 @@ footer a:hover{color:var(--gold)}
 <div class="sub">드래그로 이동 · 핀치로 확대 · 노드 탭해서 열기</div>
 </div>
 
-<div id="cv"><svg id="sv"></svg></div>
+<div id="cv"><svg id="sv">
+  <defs>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="glow-sm"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="shadow"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#000" flood-opacity=".5"/></filter>
+  </defs>
+</svg></div>
 <div id="info-panel"><span class="ip-label">◆</span><span class="ip-title"></span><span class="ip-path"></span></div>
 
 <div id="controls">
@@ -140,7 +146,7 @@ var HUBS=[
 
 // ── SVG HELPERS ──
 var sv=document.getElementById("sv"),cv=document.getElementById("cv");
-var W=600,H=600;
+var W=1400,H=1400;
 sv.setAttribute("viewBox",-W/2+" "+ -H/2+" "+W+" "+H);
 var ns="http://www.w3.org/2000/svg";
 function el(t,a){var e=document.createElementNS(ns,t);if(a)for(var k in a)a.hasOwnProperty(k)&&e.setAttribute(k,a[k]);return e}
@@ -156,11 +162,11 @@ nodes.push(centerNode);
 nodeMap.center=centerNode;
 
 // Hub positions initial (pentagon)
-var hubRadius=130;
+var hubRadius=250;
 HUBS.forEach(function(h,i){
   var a=i/HUBS.length*Math.PI*2-Math.PI/2;
   var hx=Math.cos(a)*hubRadius,hy=Math.sin(a)*hubRadius;
-  var hn={id:"hub_"+h.id, x:hx,y:hy,fx:0,fy:0,vx:0,vy:0,radius:12,color:h.color,type:"hub",label:h.label,hubId:h.id,edges:[]};
+  var hn={id:"hub_"+h.id, x:hx,y:hy,fx:0,fy:0,vx:0,vy:0,radius:16,color:h.color,type:"hub",label:h.label,hubId:h.id,edges:[]};
   nodes.push(hn);nodeMap[hn.id]=hn;
 
   // Center→hub edge
@@ -169,10 +175,10 @@ HUBS.forEach(function(h,i){
   hn.edges.push(e1);centerNode.edges.push(e1);
 
   h.leaves.forEach(function(l,j){
-    var ld=28+(j%3)*5;
-    var la=a+(j-h.leaves.length/2)*0.25;
-    var lx=hx+Math.cos(la)*ld,ly=hy+Math.sin(la)*ld*0.6;
-    var ln={id:"leaf_"+h.id+"_"+j, x:lx,y:ly,fx:0,fy:0,vx:0,vy:0,radius:5,color:h.color,type:"leaf",label:l.label,href:l.href,hubId:h.id,edges:[]};
+    var ld=45+(j%3)*15;
+    var la=a+(j-h.leaves.length/2)*0.2;
+    var lx=hx+Math.cos(la)*ld,ly=hy+Math.sin(la)*ld*0.5;
+    var ln={id:"leaf_"+h.id+"_"+j, x:lx,y:ly,fx:0,fy:0,vx:0,vy:0,radius:7,color:h.color,type:"leaf",label:l.label,href:l.href,hubId:h.id,edges:[]};
     nodes.push(ln);nodeMap[ln.id]=ln;
 
     var e2={from:hn.id,to:ln.id};
@@ -184,14 +190,14 @@ HUBS.forEach(function(h,i){
 // ── SVG BUILD ──
 function buildSVG(){
   edges.forEach(function(e){
-    var line=el("line",{"class":"e",stroke:C_MUTED,"stroke-width":.4});
+    var line=el("line",{"class":"e",stroke:C_MUTED,"stroke-width":.6});
     sv.appendChild(line);
     e.el=line;
   });
 
   // Center glow rings
-  sv.appendChild(el("circle",{cx:0,cy:0,r:38,fill:"none",stroke:C_GOLD,"stroke-width":.3,opacity:.06}));
-  sv.appendChild(el("circle",{cx:0,cy:0,r:55,fill:"none",stroke:C_GOLD,"stroke-width":.2,opacity:.04}));
+  sv.appendChild(el("circle",{cx:0,cy:0,r:80,fill:"none",stroke:C_GOLD,"stroke-width":.3,opacity:.08,filter:"url(#glow)"}));
+  sv.appendChild(el("circle",{cx:0,cy:0,r:120,fill:"none",stroke:C_GOLD,"stroke-width":.2,opacity:.04}));
 
   var ct=el("text",{x:0,y:0,"class":"center-text"});ct.textContent="OrbitPrompt";sv.appendChild(ct);
 
@@ -200,14 +206,16 @@ function buildSVG(){
     var g=el("g",{"data-id":n.id,"class":"nn"});
 
     if(n.type==="hub"){
-      g.appendChild(el("circle",{cx:0,cy:0,r:n.radius,fill:n.color,opacity:.75}));
-      g.appendChild(el("circle",{cx:0,cy:0,r:3,fill:"#fff",opacity:.3}));
-      var t=el("text",{x:0,y:n.radius+11,"class":"hub-text",fill:n.color});t.textContent=n.label;
+      g.appendChild(el("circle",{cx:0,cy:0,r:n.radius+2,fill:"rgba(0,0,0,.3)",filter:"url(#shadow)"}));
+      g.appendChild(el("circle",{cx:0,cy:0,r:n.radius,fill:n.color,opacity:.85}));
+      g.appendChild(el("circle",{cx:0,cy:0,r:4,fill:"#fff",opacity:.4}));
+      var t=el("text",{x:0,y:n.radius+13,"class":"hub-text",fill:n.color});t.textContent=n.label;
       g.appendChild(t);
     }else{
-      g.appendChild(el("circle",{cx:0,cy:0,r:14,fill:"transparent",cursor:"pointer"}));
-      g.appendChild(el("circle",{cx:0,cy:0,r:n.radius,fill:n.color,opacity:.5}));
-      var t=el("text",{x:0,y:n.radius+9,"class":"leaf-text",fill:n.color});t.textContent=n.label;
+      g.appendChild(el("circle",{cx:0,cy:0,r:18,fill:"transparent",cursor:"pointer"}));
+      g.appendChild(el("circle",{cx:0,cy:0,r:n.radius+1,fill:"rgba(0,0,0,.2)",filter:"url(#shadow)"}));
+      g.appendChild(el("circle",{cx:0,cy:0,r:n.radius,fill:n.color,opacity:.6}));
+      var t=el("text",{x:0,y:n.radius+11,"class":"leaf-text",fill:n.color});t.textContent=n.label;
       g.appendChild(t);
     }
 
@@ -219,7 +227,7 @@ function buildSVG(){
   // Cross-hub edges
   var crossPairs=[["hub_phil","hub_mcp"],["hub_phil","hub_gen"],["hub_mcp","hub_gen"],["hub_mcp","hub_mod"],["hub_mod","hub_arc"],["hub_gen","hub_arc"]];
   crossPairs.forEach(function(p){
-    var l=el("line",{"class":"e",stroke:"rgba(255,255,255,.04)","stroke-width":.3,"stroke-dasharray":"2,3"});
+    var l=el("line",{"class":"e",stroke:"rgba(255,255,255,.06)","stroke-width":.5,"stroke-dasharray":"3,4"});
     sv.appendChild(l);
     edges.push({from:p[0],to:p[1],el:l,dash:true});
   });
@@ -227,7 +235,7 @@ function buildSVG(){
 buildSVG();
 
 // ── PHYSICS ──
-var REP=600, ATT=0.008, GRAV=0.0025, DAMP=0.82, MIN_D=18, REST=55;
+var REP=25000, ATT=0.004, GRAV=0.0006, DAMP=0.82, MIN_D=25, REST=100, GROUP_REP_MULT=0.12;
 var simRunning=true,simFrames=0;
 
 function physicsTick(){
@@ -237,9 +245,11 @@ function physicsTick(){
     var a=nodes[i];if(a.type==="center")continue;
     for(var j=i+1;j<nodes.length;j++){
       var b=nodes[j];if(b.type==="center")continue;
+      var sameGroup=(a.hubId&&b.hubId&&a.hubId===b.hubId);
+      var repMult=sameGroup?GROUP_REP_MULT:1.0;
       var dx=b.x-a.x, dy=b.y-a.y;
       var d=Math.max(Math.hypot(dx,dy),MIN_D);
-      var f=REP/(d*d);
+      var f=REP*repMult/(d*d);
       var fx=f*dx/d, fy=f*dy/d;
       a.fx-=fx;a.fy-=fy;
       b.fx+=fx;b.fy+=fy;
@@ -272,10 +282,10 @@ function physicsTick(){
   });
 
   simFrames++;
-  if(simFrames>300){
+  if(simFrames>400){
     var m=0;
     nodes.forEach(function(n){if(n.type!=="center")m=Math.max(m,Math.hypot(n.vx,n.vy));});
-    if(m<0.03)simRunning=false;
+    if(m<0.05)simRunning=false;
   }
 }
 
@@ -317,11 +327,11 @@ function scrToSvg(cx,cy){
 
 function hitNode(cx,cy){
   var p=scrToSvg(cx,cy);
-  var best=null,bestD=30;
+  var best=null,bestD=45;
   nodes.forEach(function(n){
     if(n.type==="center")return;
     var d=Math.hypot(n.x-p.x,n.y-p.y);
-    var thresh=n.type==="hub"?18:14;
+    var thresh=n.type==="hub"?30:22;
     if(d<thresh&&d<bestD){bestD=d;best=n;}
   });
   return best;
@@ -445,10 +455,10 @@ document.getElementById("btn-reset").addEventListener("click",function(){
     var hn=nodeMap["hub_"+h.id];if(!hn)return;
     hn.x=hx;hn.y=hy;hn.vx=0;hn.vy=0;
     h.leaves.forEach(function(l,j){
-      var ld=28+(j%3)*5;
-      var la=a+(j-h.leaves.length/2)*0.25;
+      var ld=45+(j%3)*15;
+      var la=a+(j-h.leaves.length/2)*0.2;
       var ln=nodeMap["leaf_"+h.id+"_"+j];if(!ln)return;
-      ln.x=hx+Math.cos(la)*ld;ln.y=hy+Math.sin(la)*ld*0.6;ln.vx=0;ln.vy=0;
+      ln.x=hx+Math.cos(la)*ld;ln.y=hy+Math.sin(la)*ld*0.5;ln.vx=0;ln.vy=0;
     });
   });
   wakeSim();tz=1;panX=0;panY=0;dx=0;dy=0;zoom=1;
